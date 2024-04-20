@@ -1,0 +1,15 @@
+[package]
+name = "konnektoren-core"
+version = "0.1.0"
+edition = "2021"
+description = "Core library for Konnektoren"
+license = "MIT"
+repository = "https://github.com/Konnektoren/konnektoren-rs"
+readme = "../README.md"
+authors = ["Christian M <chriamue@gmail.com>"]
+keywords = ["konnektoren", "core", "library"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
