@@ -11,7 +11,7 @@ pub enum Challenge {
 
 impl Default for Challenge {
     fn default() -> Self {
-        let data = include_str!("../assets/1.yml");
+        let data = include_str!("../assets/konnektoren.yml");
         serde_yaml::from_str(data).unwrap()
     }
 }
@@ -26,7 +26,7 @@ mod tests {
         match challenge {
             Challenge::MultipleChoice(dataset) => {
                 assert_eq!(dataset.name, "Konnektoren");
-                assert_eq!(dataset.options.len(), 4);
+                assert_eq!(dataset.options.len(), 5);
                 assert!(dataset.questions.len() > 0);
             }
         }
