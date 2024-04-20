@@ -1,0 +1,15 @@
+id: "konnektoren"
+name: "Konnektoren"
+challenges:
+  - id: "konnektoren-1"
+    name: "Konnektoren 1"
+    description: "Have a look at the first Konnektoren"
+    challenge: "konnektoren"
+    questions: 10
+    unlock_points: 0
+  - id: "konnektoren-2"
+    name: "Konnektoren 2"
+    description: "Have a look at the second Konnektoren"
+    challenge: "konnektoren"
+    questions: 12
+    unlock_points: 10
