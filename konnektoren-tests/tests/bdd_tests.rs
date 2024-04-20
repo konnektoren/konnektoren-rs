@@ -6,17 +6,25 @@ use std::boxed::Box;
 
 #[derive(Debug, World)]
 pub struct BddWorld {
-    session: Session,
-    challenge: ChallengeType,
-    game_path: GamePath,
+    pub session: Session,
+    pub challenge: ChallengeType,
+    pub game_path: GamePath,
+    pub factory: Option<ChallengeFactory>,
 }
 
 impl Default for BddWorld {
     fn default() -> Self {
+        let session = Session::new("123".to_string());
+        let challenge = ChallengeType::default();
+        let game_path = GamePath::default();
+        let mut factory = ChallengeFactory::new();
+        factory.challenge_types.push(challenge.clone());
+
         let world = Self {
-            session: Session::new("123".to_string()),
-            challenge: ChallengeType::default(),
-            game_path: GamePath::default(),
+            session,
+            challenge,
+            game_path,
+            factory: Some(factory),
         };
         world
     }

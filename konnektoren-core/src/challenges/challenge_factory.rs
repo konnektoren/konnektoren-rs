@@ -2,6 +2,7 @@ use crate::challenges::challenge::Challenge;
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_type::ChallengeType;
 
+#[derive(Debug, Clone)]
 pub struct ChallengeFactory {
     pub challenge_types: Vec<ChallengeType>,
 }

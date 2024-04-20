@@ -7,11 +7,14 @@ pub mod session;
 pub type Xp = i32;
 
 pub mod prelude {
+    pub use crate::challenges::Challenge;
     pub use crate::challenges::ChallengeConfig;
+    pub use crate::challenges::ChallengeFactory;
     pub use crate::challenges::ChallengeType;
     pub use crate::challenges::MultipleChoice;
     pub use crate::challenges::MultipleChoiceOption;
     pub use crate::challenges::Question;
+    pub use crate::game::Game;
     pub use crate::game::GamePath;
     pub use crate::player_profile::PlayerProfile;
     pub use crate::session::Session;
