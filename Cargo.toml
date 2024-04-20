@@ -1,5 +1,5 @@
 [workspace]
 
 members = [
-    "konnektoren-core",
+    "konnektoren-core", "konnektoren-tests",
 ]
