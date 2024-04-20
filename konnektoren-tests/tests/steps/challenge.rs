@@ -82,3 +82,48 @@ async fn the_challenge_be_identified_as(world: &mut BddWorld, id: String) {
         }
     }
 }
+
+#[given(expr = "a multiple choice challenge is set up with a question of option {int}")]
+async fn a_multiple_choice_challenge_is_set_up_with_a_question_of_option(
+    world: &mut BddWorld,
+    option: usize,
+) {
+    let id = "123".to_string();
+    let name = "Test".to_string();
+    let options = vec![MultipleChoiceOption {
+        id: option,
+        name: "Option".to_string(),
+    }];
+    let questions = vec![Question {
+        question: "Question".to_string(),
+        help: "Help 1".to_string(),
+        option,
+    }];
+    let dataset = MultipleChoice {
+        id,
+        name,
+        options,
+        questions,
+    };
+    world.challenge = ChallengeType::MultipleChoice(dataset);
+}
+
+#[when(expr = "the multiple choice challenge is solved with option {int}")]
+async fn the_multiple_choice_challenge_is_solved_with_option(world: &mut BddWorld, option: usize) {
+    let mut challenge_result = ChallengeResult::default();
+    let input = ChallengeInput::MultipleChoice(MultipleChoiceOption {
+        id: option,
+        name: "Option".to_string(),
+    });
+    let result = challenge_result.add_input(input);
+    assert!(result.is_ok());
+    world.challenge_result = Some(challenge_result);
+}
+
+#[then(expr = "the result performance should be at least {int}")]
+async fn the_result_performance_should_be_at_least(world: &mut BddWorld, performance: i32) {
+    let challenge_result = world.challenge_result.as_ref().unwrap();
+    let challenge = &world.challenge;
+    let score = challenge.performance(&challenge_result);
+    assert!(score >= performance);
+}

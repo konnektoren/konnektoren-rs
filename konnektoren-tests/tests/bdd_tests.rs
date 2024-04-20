@@ -8,6 +8,7 @@ use std::boxed::Box;
 pub struct BddWorld {
     pub session: Session,
     pub challenge: ChallengeType,
+    pub challenge_result: Option<ChallengeResult>,
     pub game_path: GamePath,
     pub factory: Option<ChallengeFactory>,
 }
@@ -23,6 +24,7 @@ impl Default for BddWorld {
         let world = Self {
             session,
             challenge,
+            challenge_result: None,
             game_path,
             factory: Some(factory),
         };
