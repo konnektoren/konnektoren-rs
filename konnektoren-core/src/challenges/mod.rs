@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 pub mod multiple_choice;
 pub use multiple_choice::MultipleChoice;
+pub use multiple_choice::MultipleChoiceOption;
+pub use multiple_choice::Question;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Challenge {

@@ -7,12 +7,14 @@ use std::boxed::Box;
 #[derive(Debug, World)]
 pub struct BddWorld {
     session: Session,
+    challenge: Challenge,
 }
 
 impl Default for BddWorld {
     fn default() -> Self {
         let world = Self {
             session: Session::new("123".to_string()),
+            challenge: Challenge::default(),
         };
         world
     }
