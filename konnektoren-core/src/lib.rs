@@ -6,7 +6,7 @@ pub mod session;
 pub type Xp = i32;
 
 pub mod prelude {
-    pub use crate::challenges::Challenge;
+    pub use crate::challenges::ChallengeType;
     pub use crate::challenges::MultipleChoice;
     pub use crate::challenges::MultipleChoiceOption;
     pub use crate::challenges::Question;
