@@ -1,7 +1,7 @@
 use crate::challenges::multiple_choice::MultipleChoice;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ChallengeType {
     #[serde(rename = "multiple-choice")]
     MultipleChoice(MultipleChoice),

@@ -1,11 +1,13 @@
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_type::ChallengeType;
+use crate::challenges::challenge_result::ChallengeResult;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Challenge {
     pub challenge_type: ChallengeType,
     pub challenge_config: ChallengeConfig,
+    pub challenge_result: ChallengeResult,
 }
 
 impl Challenge {
@@ -13,6 +15,22 @@ impl Challenge {
         Challenge {
             challenge_type: challenge_type.clone(),
             challenge_config: challenge_config.clone(),
+            challenge_result: ChallengeResult::default(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_challenge() {
+        let challenge_type = ChallengeType::default();
+        let challenge_config = ChallengeConfig::default();
+        let challenge = Challenge::new(&challenge_type, &challenge_config);
+        assert_eq!(challenge.challenge_type, challenge_type);
+        assert_eq!(challenge.challenge_config, challenge_config);
+        assert_eq!(challenge.challenge_result, ChallengeResult::default());
     }
 }
