@@ -5,6 +5,7 @@ pub mod challenge_input;
 pub mod challenge_result;
 pub mod challenge_type;
 pub mod multiple_choice;
+pub mod performance;
 pub mod solvable;
 
 pub use challenge::Challenge;
@@ -16,4 +17,5 @@ pub use challenge_type::ChallengeType;
 pub use multiple_choice::MultipleChoice;
 pub use multiple_choice::MultipleChoiceOption;
 pub use multiple_choice::Question;
+pub use performance::Performance;
 pub use solvable::Solvable;

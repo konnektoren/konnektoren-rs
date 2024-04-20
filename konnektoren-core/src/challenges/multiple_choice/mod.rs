@@ -16,9 +16,9 @@ pub struct MultipleChoiceOption {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Question {
-    question: String,
-    help: String,
-    option: usize,
+    pub question: String,
+    pub help: String,
+    pub option: usize,
 }
 
 #[cfg(test)]

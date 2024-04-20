@@ -3,7 +3,7 @@ use crate::challenges::challenge_result::ChallengeResult;
 use crate::challenges::challenge_type::ChallengeType;
 use serde::{Deserialize, Serialize};
 
-use super::Solvable;
+use super::{Performance, Solvable};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Challenge {
@@ -28,6 +28,12 @@ impl Solvable for Challenge {
             Ok(_) => Ok(true),
             Err(_) => Ok(false),
         }
+    }
+}
+
+impl Performance for Challenge {
+    fn performance(&self, result: &ChallengeResult) -> i32 {
+        self.challenge_type.performance(result)
     }
 }
 
