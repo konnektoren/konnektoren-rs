@@ -1,3 +1,4 @@
+pub mod challenges;
 pub mod player_profile;
 pub mod session;
 
