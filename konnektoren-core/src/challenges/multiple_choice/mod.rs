@@ -10,8 +10,8 @@ pub struct MultipleChoice {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct MultipleChoiceOption {
-    id: usize,
-    name: String,
+    pub id: usize,
+    pub name: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

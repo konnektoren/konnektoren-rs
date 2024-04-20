@@ -23,6 +23,6 @@ mod tests {
     fn default_game_path() {
         let game_path = GamePath::default();
         assert_eq!(game_path.name, "Konnektoren");
-        assert!(game_path.challenges.len() > 0);
+        assert!(!game_path.challenges.is_empty());
     }
 }

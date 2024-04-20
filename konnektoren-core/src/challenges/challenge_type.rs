@@ -49,7 +49,7 @@ mod tests {
             ChallengeType::MultipleChoice(dataset) => {
                 assert_eq!(dataset.name, "Konnektoren");
                 assert_eq!(dataset.options.len(), 5);
-                assert!(dataset.questions.len() > 0);
+                assert!(!dataset.questions.is_empty());
             }
         }
     }

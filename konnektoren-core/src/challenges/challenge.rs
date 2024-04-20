@@ -1,7 +1,9 @@
 use crate::challenges::challenge_config::ChallengeConfig;
-use crate::challenges::challenge_type::ChallengeType;
 use crate::challenges::challenge_result::ChallengeResult;
+use crate::challenges::challenge_type::ChallengeType;
 use serde::{Deserialize, Serialize};
+
+use super::Solvable;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Challenge {
@@ -16,6 +18,15 @@ impl Challenge {
             challenge_type: challenge_type.clone(),
             challenge_config: challenge_config.clone(),
             challenge_result: ChallengeResult::default(),
+        }
+    }
+}
+
+impl Solvable for Challenge {
+    fn solve(&mut self, input: super::ChallengeInput) -> anyhow::Result<bool> {
+        match self.challenge_result.add_input(input) {
+            Ok(_) => Ok(true),
+            Err(_) => Ok(false),
         }
     }
 }
