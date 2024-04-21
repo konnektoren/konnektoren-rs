@@ -58,3 +58,7 @@ include::src/02_architecture_constraints.adoc[]
 <<<<
 // 3. Context and Scope
 include::src/03_context_and_scope.adoc[]
+
+<<<<
+// 4. Solution Strategy
+include::src/04_solution_strategy.adoc[]

@@ -1,0 +1,65 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-solution-strategy]]
+== Solution Strategy
+
+ifdef::arc42help[]
+[role="arc42help"]
+****
+.Contents
+A short summary and explanation of the fundamental decisions and solution strategies, that shape system architecture. It includes
+
+* technology decisions
+* decisions about the top-level decomposition of the system, e.g., usage of an architectural pattern or design pattern
+* decisions on how to achieve key quality goals
+* relevant organizational decisions, e.g., selecting a development process or delegating certain tasks to third parties.
+
+.Motivation
+These decisions form the cornerstones for your architecture. They are the foundation for many other detailed decisions or implementation rules.
+
+.Form
+Keep the explanations of such key decisions short.
+
+Motivate what was decided and why it was decided that way,
+based upon problem statement, quality goals, and key constraints.
+Refer to details in the following sections.
+
+.Further Information
+See https://docs.arc42.org/section-4/[Solution Strategy] in the arc42 documentation.
+****
+endif::arc42help[]
+
+=== Technology Decisions
+
+**Web-Based Platform:** 
+To ensure accessibility and ease of maintenance, Konnektoren is designed as a web-based platform. This approach allows users to access the system across various devices without the need for native applications.
+
+**Rust and Yew Framework:**
+We chose Rust due to its performance, reliability, and robust type system. The Yew framework supports creating interactive UIs with WebAssembly, offering a reactive framework that is ideal for complex user interfaces like those required by Konnektoren.
+
+=== Architectural Decisions
+
+**Github Pages Hosting:**
+The front-end application is hosted on Github Pages, providing a cost-effective and scalable solution for serving static content. This choice aligns with our goal of minimizing operational costs while ensuring high availability.
+
+**SPA (Single Page Application):**
+The front end is built as a SPA, which interacts with the back-end services via RESTful APIs. This choice supports a seamless and responsive user experience by reducing page reloads and dynamically updating the user interface.
+
+**Serverless Architecture:**
+The system is designed as a serverless architecture to reduce operational overhead and improve scalability. By leveraging cloud services like Cloudflare Workers, we can focus on developing features rather than managing infrastructure.
+
+**Cloudflare Proxy:**
+Cloudflare Workers are used as a proxy to secure the communication between the front end and back end, providing an additional layer of security and performance optimization. This decision aligns with our security and performance goals.
+
+=== Achieving Quality Goals
+
+**Usability and User Engagement:**
+To achieve high usability, the UI/UX is designed to be intuitive and engaging, leveraging gamification techniques to motivate learners. Regular user testing ensures that the interface meets the needs of the target audience.
+
+**Reliability and Scalability:**
+Using cloud-based services and modern DevOps practices ensures that the system is both reliable and scalable. Automated testing and deployment facilitate continuous improvement and responsiveness to user demands.
+
+=== Organizational Decisions
+
+**Agile Development Process:**
+The project adopts an Agile methodology to allow for flexibility in development and to incorporate feedback efficiently. This process supports iterative development and continuous improvement, aligning with our quality goals.
