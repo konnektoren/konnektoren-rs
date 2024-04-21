@@ -1,7 +1,7 @@
 use crate::challenges::challenge_config::ChallengeConfig;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct GamePath {
     pub id: String,
     pub name: String,
