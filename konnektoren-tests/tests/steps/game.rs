@@ -1,5 +1,5 @@
 use crate::BddWorld;
-use konnektoren_core::game::GamePath;
+use konnektoren_core::game::{Game, GamePath};
 
 use cucumber::{given, then};
 
@@ -17,4 +17,17 @@ async fn game_path_should_be_named(world: &mut BddWorld, name: String) {
 #[then(expr = "it should have at least {int} challenges")]
 async fn it_should_have_at_least_challenges(world: &mut BddWorld, challenges: usize) {
     assert!(world.game_path.challenges.len() >= challenges);
+}
+
+#[given(regex = "default game is loaded")]
+async fn default_game_is_loaded(world: &mut BddWorld) {
+    let default_game = Game::default();
+
+    world.game_path = default_game.game_path.clone();
+    world.game = default_game;
+}
+
+#[then(expr = "the challenge history should have at least {int} entry")]
+async fn the_challenge_history_should_have_at_least_entry(world: &mut BddWorld, entries: usize) {
+    assert!(world.game.challenge_history.len() >= entries);
 }

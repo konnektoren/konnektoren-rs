@@ -4,10 +4,7 @@ use yew::prelude::*;
 
 #[function_component]
 pub fn App() -> Html {
-    let game = Game {
-        game_path: GamePath::default(),
-        challenge_factory: ChallengeFactory::default(),
-    };
+    let game = Game::default();
 
     html! {
         <div class="app">

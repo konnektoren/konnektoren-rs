@@ -1,12 +1,14 @@
 pub mod game_path;
-use crate::challenges::{Challenge, ChallengeFactory, Performance};
+use crate::challenges::{Challenge, ChallengeFactory, ChallengeHistory, Performance};
 use crate::Xp;
 use anyhow::Result;
 pub use game_path::GamePath;
 
+#[derive(Debug, Default, Clone)]
 pub struct Game {
     pub game_path: GamePath,
     pub challenge_factory: ChallengeFactory,
+    pub challenge_history: ChallengeHistory,
 }
 
 impl Game {

@@ -1,17 +1,17 @@
 use crate::BddWorld;
-use konnektoren_core::prelude::*;
+use konnektoren_core::{challenges::Solvable, prelude::*};
 
 use cucumber::{given, then, when};
 
 #[given(expr = "default challenge is loaded")]
 async fn default_challenge_is_loaded(world: &mut BddWorld) {
-    let default_challenge = ChallengeType::default();
-    world.challenge = default_challenge;
+    let default_challenge_type = ChallengeType::default();
+    world.challenge_type = default_challenge_type;
 }
 
 #[then(expr = "it should be a MultipleChoice challenge named {string}")]
 async fn it_should_be_a_multiple_choice_challenge_named(world: &mut BddWorld, name: String) {
-    match &world.challenge {
+    match &world.challenge_type {
         ChallengeType::MultipleChoice(dataset) => {
             assert_eq!(dataset.name, name);
         }
@@ -20,7 +20,7 @@ async fn it_should_be_a_multiple_choice_challenge_named(world: &mut BddWorld, na
 
 #[then(expr = "it should have exactly {int} options")]
 async fn it_should_have_exactly_options(world: &mut BddWorld, options: usize) {
-    match &world.challenge {
+    match &world.challenge_type {
         ChallengeType::MultipleChoice(dataset) => {
             assert_eq!(dataset.options.len(), options);
         }
@@ -29,7 +29,7 @@ async fn it_should_have_exactly_options(world: &mut BddWorld, options: usize) {
 
 #[then(expr = "it should have at least {int} questions")]
 async fn it_should_have_at_least_questions(world: &mut BddWorld, questions: usize) {
-    match &world.challenge {
+    match &world.challenge_type {
         ChallengeType::MultipleChoice(dataset) => {
             assert!(dataset.questions.len() >= questions);
         }
@@ -62,12 +62,12 @@ async fn a_challenge_of_is_created_with_questions(
     };
     let factory = world.factory.as_ref().unwrap();
     let challenge = factory.create_challenge(&challenge_config);
-    world.challenge = challenge.unwrap().challenge_type.clone();
+    world.challenge_type = challenge.unwrap().challenge_type.clone();
 }
 
 #[then(expr = "the challenge should have exactly {int} questions")]
 async fn the_challenge_should_have_exactly_questions(world: &mut BddWorld, questions: usize) {
-    match &world.challenge {
+    match &world.challenge_type {
         ChallengeType::MultipleChoice(dataset) => {
             assert_eq!(dataset.questions.len(), questions);
         }
@@ -76,7 +76,7 @@ async fn the_challenge_should_have_exactly_questions(world: &mut BddWorld, quest
 
 #[then(expr = "the challenge be identified as {string}")]
 async fn the_challenge_be_identified_as(world: &mut BddWorld, id: String) {
-    match &world.challenge {
+    match &world.challenge_type {
         ChallengeType::MultipleChoice(dataset) => {
             assert_eq!(dataset.id, id);
         }
@@ -105,25 +105,34 @@ async fn a_multiple_choice_challenge_is_set_up_with_a_question_of_option(
         options,
         questions,
     };
-    world.challenge = ChallengeType::MultipleChoice(dataset);
+    world.challenge_type = ChallengeType::MultipleChoice(dataset);
+    let challenge = Challenge::new(&world.challenge_type, &ChallengeConfig::default());
+    world.challenge = Some(challenge);
 }
 
 #[when(expr = "the multiple choice challenge is solved with option {int}")]
 async fn the_multiple_choice_challenge_is_solved_with_option(world: &mut BddWorld, option: usize) {
-    let mut challenge_result = ChallengeResult::default();
+    let challenge = world.challenge.as_mut().expect("No challenge");
+
     let input = ChallengeInput::MultipleChoice(MultipleChoiceOption {
         id: option,
         name: "Option".to_string(),
     });
-    let result = challenge_result.add_input(input);
+    let result = challenge.solve(input);
     assert!(result.is_ok());
-    world.challenge_result = Some(challenge_result);
+
+    world.challenge_result = Some(challenge.challenge_result.clone());
+
+    world
+        .game
+        .challenge_history
+        .add_challenge(challenge.clone());
 }
 
 #[then(expr = "the result performance should be at least {int}")]
 async fn the_result_performance_should_be_at_least(world: &mut BddWorld, performance: i32) {
     let challenge_result = world.challenge_result.as_ref().unwrap();
     let challenge = &world.challenge;
-    let score = challenge.performance(&challenge_result);
+    let score = challenge.as_ref().unwrap().performance(&challenge_result);
     assert!(score >= performance);
 }
