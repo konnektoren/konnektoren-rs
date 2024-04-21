@@ -62,7 +62,7 @@ async fn a_challenge_of_is_created_with_questions(
     };
     let factory = world.factory.as_ref().unwrap();
     let challenge = factory.create_challenge(&challenge_config);
-    world.challenge = challenge.challenge_type.clone();
+    world.challenge = challenge.unwrap().challenge_type.clone();
 }
 
 #[then(expr = "the challenge should have exactly {int} questions")]

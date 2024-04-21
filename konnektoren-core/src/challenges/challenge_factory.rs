@@ -1,6 +1,7 @@
 use crate::challenges::challenge::Challenge;
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_type::ChallengeType;
+use anyhow::Result;
 
 #[derive(Debug, Default, Clone)]
 pub struct ChallengeFactory {
@@ -14,16 +15,16 @@ impl ChallengeFactory {
         }
     }
 
-    pub fn create_challenge(&self, challenge_config: &ChallengeConfig) -> Challenge {
+    pub fn create_challenge(&self, challenge_config: &ChallengeConfig) -> Result<Challenge> {
         let challenge_type = self
             .challenge_types
             .iter()
             .find(|challenge_type| challenge_type.id() == challenge_config.challenge)
-            .unwrap();
-        Challenge::new(
+            .ok_or_else(|| anyhow::anyhow!("Challenge type not found"))?;
+        Ok(Challenge::new(
             &challenge_type.of_questions(challenge_config.questions),
             challenge_config,
-        )
+        ))
     }
 }
 
@@ -43,7 +44,7 @@ mod tests {
         };
 
         let challenge = challenge_factory.create_challenge(&challenge_config);
-        match challenge.challenge_type {
+        match challenge.unwrap().challenge_type {
             ChallengeType::MultipleChoice(dataset) => {
                 assert_eq!(dataset.questions.len(), 2);
             }
