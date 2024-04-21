@@ -50,3 +50,7 @@ endif::arc42help[]
 <<<<
 // 1. Introduction and Goals
 include::src/01_introduction_and_goals.adoc[]
+
+<<<<
+// 2. Architecture Constraints
+include::src/02_architecture_constraints.adoc[]

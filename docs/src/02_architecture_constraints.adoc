@@ -1,0 +1,56 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-architecture-constraints]]
+== Architecture Constraints
+
+ifdef::arc42help[]
+[role="arc42help"]
+****
+.Contents
+Any requirement that constrains software architects in their freedom of design and implementation decisions or decisions about the development process. These constraints sometimes go beyond individual systems and are valid for whole organizations and companies.
+
+.Motivation
+Architects should know exactly where they are free in their design decisions and where they must adhere to constraints.
+Constraints must always be dealt with; they may be negotiable, though.
+
+.Form
+Simple tables of constraints with explanations.
+If needed you can subdivide them into
+technical constraints, organizational and political constraints, and
+conventions (e.g., programming or versioning guidelines, documentation, or naming conventions).
+
+.Further Information
+See https://docs.arc42.org/section-2/[Architecture Constraints] in the arc42 documentation.
+****
+endif::arc42help[]
+
+=== Technical Constraints
+
+[options="header",cols="2,5"]
+|===
+| Constraint | Explanation
+| Programming Language | The library must be developed in Rust to be compatible to yew frontend but also able to compile to wasm.
+| Browser Compatibility | The application must support the latest versions of Chrome, Firefox, and Safari to ensure a wide user reach.
+| Scalability | The system must use serverless architecture to handle unpredictable loads and maintain cost efficiency.
+|===
+
+=== Organizational and Political Constraints
+
+[options="header",cols="2,5"]
+|===
+| Constraint | Explanation
+| Data Privacy | All features must comply with the GDPR as the platform will be used by users from the European Union.
+| Budget Limitations | The project has a fixed budget which restricts the extent of third-party services and tools that can be employed.
+| Development Timeline | The project has no fixed timeline.
+|===
+
+=== Conventions
+
+[options="header",cols="2,5"]
+|===
+| Constraint | Explanation
+| Code Style Guidelines | The project must adhere to Rust's official style guide to maintain code consistency across the development team.
+| Versioning Guidelines | Semantic Versioning (SemVer) must be used for all project releases to ensure clarity and consistency in version management.
+| Documentation Standards | Library core code must be documented using Rustdoc to ensure that maintenance and future development are facilitated.
+| Naming Conventions | Variables, functions, and modules must follow a clear and descriptive naming convention as outlined in the internal developer guide.
+|===
