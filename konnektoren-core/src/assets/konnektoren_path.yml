@@ -5,11 +5,11 @@ challenges:
     name: "Konnektoren 1"
     description: "Have a look at the first Konnektoren"
     challenge: "konnektoren"
-    questions: 10
+    tasks: 10
     unlock_points: 0
   - id: "konnektoren-2"
     name: "Konnektoren 2"
     description: "Have a look at the second Konnektoren"
     challenge: "konnektoren"
-    questions: 12
+    tasks: 12
     unlock_points: 10

@@ -12,7 +12,7 @@ pub fn challenge_config_component(props: &ChallengeConfigComponentProps) -> Html
         <div class="challenge-config" id={props.challenge_config.id.to_string()}>
             <h2>{&props.challenge_config.name}</h2>
             <p>{&props.challenge_config.description}</p>
-            <p>{format!("Questions: {}", props.challenge_config.questions)}</p>
+            <p>{format!("Tasks: {}", props.challenge_config.tasks)}</p>
             <p>{format!("Unlock Points: {}", props.challenge_config.unlock_points)}</p>
         </div>
     }

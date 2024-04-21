@@ -6,7 +6,7 @@ pub struct ChallengeConfig {
     pub name: String,
     pub description: String,
     pub challenge: String,
-    pub questions: usize,
+    pub tasks: usize,
     pub unlock_points: usize,
 }
 
@@ -17,7 +17,7 @@ impl Default for ChallengeConfig {
             name: "Konnektoren #1".to_string(),
             description: "Your first Konnektoren challenge!".to_string(),
             challenge: "konnektoren".to_string(),
-            questions: 10,
+            tasks: 10,
             unlock_points: 0,
         }
     }
@@ -37,7 +37,7 @@ mod tests {
             "Your first Konnektoren challenge!"
         );
         assert_eq!(challenge_config.challenge, "konnektoren");
-        assert_eq!(challenge_config.questions, 10);
+        assert_eq!(challenge_config.tasks, 10);
         assert_eq!(challenge_config.unlock_points, 0);
     }
 }

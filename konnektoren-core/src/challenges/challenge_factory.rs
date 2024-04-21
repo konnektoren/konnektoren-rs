@@ -22,7 +22,7 @@ impl ChallengeFactory {
             .find(|challenge_type| challenge_type.id() == challenge_config.challenge)
             .ok_or_else(|| anyhow::anyhow!("Challenge type not found"))?;
         Ok(Challenge::new(
-            &challenge_type.of_questions(challenge_config.questions),
+            &challenge_type.of_tasks(challenge_config.tasks),
             challenge_config,
         ))
     }
@@ -39,7 +39,7 @@ mod tests {
         challenge_factory.challenge_types.push(challenge_type);
         let challenge_config = ChallengeConfig {
             challenge: "konnektoren".to_string(),
-            questions: 2,
+            tasks: 2,
             ..Default::default()
         };
 

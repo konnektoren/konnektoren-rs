@@ -53,11 +53,11 @@ async fn a_default_challenge_is_loaded_to_the_factory(world: &mut BddWorld) {
 async fn a_challenge_of_is_created_with_questions(
     world: &mut BddWorld,
     challenge: String,
-    questions: usize,
+    tasks: usize,
 ) {
     let challenge_config = ChallengeConfig {
         challenge: challenge.replace("\"", ""),
-        questions,
+        tasks,
         ..Default::default()
     };
     let factory = world.factory.as_ref().unwrap();

@@ -17,11 +17,11 @@ impl Default for ChallengeType {
 }
 
 impl ChallengeType {
-    pub fn of_questions(&self, questions: usize) -> Self {
+    pub fn of_tasks(&self, tasks: usize) -> Self {
         match self {
             ChallengeType::MultipleChoice(dataset) => {
                 let mut new_dataset = dataset.clone();
-                new_dataset.questions = dataset.questions.iter().take(questions).cloned().collect();
+                new_dataset.questions = dataset.questions.iter().take(tasks).cloned().collect();
                 ChallengeType::MultipleChoice(new_dataset)
             }
         }
@@ -77,7 +77,7 @@ mod tests {
     #[test]
     fn new_challenge() {
         let challenge = ChallengeType::default();
-        let new_challenge = challenge.of_questions(2);
+        let new_challenge = challenge.of_tasks(2);
         match new_challenge {
             ChallengeType::MultipleChoice(dataset) => {
                 assert_eq!(dataset.questions.len(), 2);
