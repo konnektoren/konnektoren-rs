@@ -2,5 +2,5 @@
 resolver = "2"
 
 members = [
-    "konnektoren-core", "konnektoren-tests", "konnektoren-yew"
+    "konnektoren-core", "konnektoren-tests", "konnektoren-tui", "konnektoren-yew"
 ]
