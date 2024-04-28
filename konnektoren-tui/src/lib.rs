@@ -1,4 +1,5 @@
 mod app;
+mod challenge_widget;
 mod tui;
 
 pub mod prelude {

@@ -1,5 +1,7 @@
+use crate::challenge_widget::ChallengeWidget;
 use crate::tui::Tui;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+use konnektoren_core::challenges::{Challenge, ChallengeFactory, ChallengeType};
 use ratatui::{
     prelude::*,
     symbols::border,
@@ -13,13 +15,26 @@ use std::io;
 #[derive(Debug, Default)]
 pub struct App {
     title: String,
+    challenge_factory: ChallengeFactory,
+    challenge: Challenge,
     exit: bool,
 }
 
 impl App {
     pub fn new() -> Self {
+        let mut challenge_factory = ChallengeFactory::new();
+        challenge_factory
+            .challenge_types
+            .push(ChallengeType::default());
+
+        let challenge = challenge_factory
+            .create_challenge(&Default::default())
+            .unwrap();
+
         App {
             title: " Konnektoren ".into(),
+            challenge_factory,
+            challenge,
             ..Self::default()
         }
     }
@@ -81,6 +96,15 @@ impl Widget for &App {
             .centered()
             .block(block)
             .render(area, buf);
+
+        let challenge_widget = ChallengeWidget {
+            challenge: &self.challenge,
+        };
+        let area = area.inner(&Margin {
+            horizontal: 1,
+            vertical: 1,
+        });
+        challenge_widget.render(area, buf);
     }
 }
 
