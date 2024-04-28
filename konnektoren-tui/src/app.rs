@@ -99,6 +99,7 @@ impl Widget for &App {
 
         let challenge_widget = ChallengeWidget {
             challenge: &self.challenge,
+            show_help: true,
         };
         let area = area.inner(&Margin {
             horizontal: 1,
