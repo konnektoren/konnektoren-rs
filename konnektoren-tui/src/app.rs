@@ -1,6 +1,10 @@
 use crate::challenge_widget::ChallengeWidget;
+
+#[cfg(feature = "crossterm")]
 use crate::tui::Tui;
+#[cfg(feature = "crossterm")]
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+
 use konnektoren_core::challenges::{Challenge, ChallengeFactory, ChallengeType};
 use ratatui::{
     prelude::*,
@@ -39,12 +43,14 @@ impl App {
         }
     }
 
+    #[cfg(feature = "crossterm")]
     pub fn run(&mut self, terminal: &mut Tui) -> io::Result<()> {
         terminal.clear()?;
         terminal.hide_cursor()?;
 
         while !self.exit {
             terminal.draw(|frame| self.render_frame(frame))?;
+
             self.handle_events()?;
         }
         Ok(())
@@ -54,10 +60,11 @@ impl App {
         frame.render_widget(self, frame.size());
     }
 
-    fn exit(&mut self) {
+    pub fn exit(&mut self) {
         self.exit = true;
     }
 
+    #[cfg(feature = "crossterm")]
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
             KeyCode::Char('q') => self.exit(),
@@ -66,6 +73,7 @@ impl App {
     }
 
     fn handle_events(&mut self) -> io::Result<()> {
+        #[cfg(feature = "crossterm")]
         match event::read()? {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 self.handle_key_event(key_event)
@@ -114,6 +122,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[cfg(feature = "crossterm")]
     fn handle_key_event() -> io::Result<()> {
         let mut app = App::default();
         app.handle_key_event(KeyCode::Char('q').into());
