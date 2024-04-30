@@ -12,6 +12,7 @@ use crate::options_widget::OptionsWidget;
 pub struct ChallengeWidget<'a> {
     pub challenge: &'a Challenge,
     pub show_help: bool,
+    pub current_question: usize,
 }
 
 impl<'a> Widget for ChallengeWidget<'a> {
@@ -23,14 +24,21 @@ impl<'a> Widget for ChallengeWidget<'a> {
                     .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
                     .split(area);
 
-                let title = Title::from(" Question ".bold());
+                let title = Title::from(
+                    format!(
+                        " Question ({}/{})",
+                        self.current_question + 1,
+                        self.challenge.challenge_config.tasks
+                    )
+                    .bold(),
+                );
 
                 let block = Block::default()
                     .title(title.alignment(Alignment::Left))
                     .borders(Borders::ALL)
                     .border_set(border::ROUNDED);
 
-                let question = dataset.questions.get(0).unwrap();
+                let question = dataset.questions.get(self.current_question).unwrap();
                 let help = question.help.as_str();
 
                 let mut lines = vec![Line::from(vec![question.question.as_str().into()])];

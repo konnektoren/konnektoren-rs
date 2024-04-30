@@ -21,6 +21,7 @@ pub struct App {
     title: String,
     challenge_factory: ChallengeFactory,
     challenge: Challenge,
+    current_question: usize,
     exit: bool,
 }
 
@@ -64,10 +65,25 @@ impl App {
         self.exit = true;
     }
 
+    pub fn next_question(&mut self) {
+        let max_questions = self.challenge.challenge_config.tasks;
+        if self.current_question < max_questions - 1 {
+            self.current_question += 1;
+        }
+    }
+
+    pub fn previous_question(&mut self) {
+        if self.current_question > 0 {
+            self.current_question -= 1;
+        }
+    }
+
     #[cfg(feature = "crossterm")]
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
             KeyCode::Char('q') => self.exit(),
+            KeyCode::Left => self.previous_question(),
+            KeyCode::Right => self.next_question(),
             _ => {}
         }
     }
@@ -87,7 +103,14 @@ impl App {
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let title = Title::from(self.title.as_str().bold());
-        let instructions = Title::from(Line::from(vec![" Quit ".into(), "<Q> ".blue().bold()]));
+        let instructions = Title::from(Line::from(vec![
+            " Previous ".into(),
+            "<Left>".blue().bold(),
+            " Next ".into(),
+            "<Right>".blue().bold(),
+            " Quit ".into(),
+            "<Q> ".blue().bold(),
+        ]));
         let block = Block::default()
             .title(title.alignment(Alignment::Center))
             .title(
@@ -108,6 +131,7 @@ impl Widget for &App {
         let challenge_widget = ChallengeWidget {
             challenge: &self.challenge,
             show_help: true,
+            current_question: self.current_question,
         };
         let area = area.inner(&Margin {
             horizontal: 1,
