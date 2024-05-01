@@ -8,7 +8,7 @@ use ratatui::{
     },
 };
 
-use crate::options_widget::OptionsWidget;
+use crate::{options_widget::OptionsWidget, results_widget::ResultsWidget};
 pub struct ChallengeWidget<'a> {
     pub challenge: &'a Challenge,
     pub show_help: bool,
@@ -48,13 +48,21 @@ impl<'a> Widget for ChallengeWidget<'a> {
 
                 let text = Text::from(lines);
 
+                let layout2 = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints(vec![Constraint::Percentage(60), Constraint::Percentage(40)])
+                    .split(layout[1]);
+
                 Paragraph::new(text)
                     .centered()
                     .block(block)
                     .render(layout[0], buf);
 
                 let options = OptionsWidget::new(&self.challenge);
-                options.render(layout[1], buf);
+                options.render(layout2[0], buf);
+
+                let results = ResultsWidget::new(&self.challenge);
+                results.render(layout2[1], buf);
             }
         }
     }
