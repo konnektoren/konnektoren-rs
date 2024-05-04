@@ -1,12 +1,15 @@
-use crate::challenge_widget::ChallengeWidget;
+use crate::{challenge_tabs::ChallengeTabs, challenge_widget::ChallengeWidget};
 
 #[cfg(feature = "crossterm")]
 use crate::tui::Tui;
 #[cfg(feature = "crossterm")]
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 
-use konnektoren_core::challenges::{
-    multiple_choice, Challenge, ChallengeFactory, ChallengeInput, ChallengeType, Solvable,
+use konnektoren_core::{
+    challenges::{
+        multiple_choice, Challenge, ChallengeFactory, ChallengeInput, ChallengeType, Solvable,
+    },
+    game::Game,
 };
 use ratatui::{
     prelude::*,
@@ -22,6 +25,7 @@ use std::io;
 pub struct App {
     title: String,
     challenge_factory: ChallengeFactory,
+    game: Game,
     challenge: Challenge,
     current_question: usize,
     exit: bool,
@@ -136,6 +140,7 @@ impl App {
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let title = Title::from(self.title.as_str().bold());
+
         let instructions = Title::from(Line::from(vec![
             " Previous ".into(),
             "<Left>".blue().bold(),
@@ -161,16 +166,25 @@ impl Widget for &App {
             .block(block)
             .render(area, buf);
 
+        let area: Rect = area.inner(&Margin {
+            horizontal: 1,
+            vertical: 1,
+        });
+
+        let vertical =
+            layout::Layout::vertical([layout::Constraint::Length(1), layout::Constraint::Min(0)]);
+        let [tab_area, inner_area] = vertical.areas(area);
+
+        let tabs = ChallengeTabs::new(&self.game.game_path, 0);
+
+        tabs.render(tab_area, buf);
+
         let challenge_widget = ChallengeWidget {
             challenge: &self.challenge,
             show_help: true,
             current_question: self.current_question,
         };
-        let area = area.inner(&Margin {
-            horizontal: 1,
-            vertical: 1,
-        });
-        challenge_widget.render(area, buf);
+        challenge_widget.render(inner_area, buf);
     }
 }
 
