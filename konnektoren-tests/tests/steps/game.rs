@@ -31,3 +31,8 @@ async fn default_game_is_loaded(world: &mut BddWorld) {
 async fn the_challenge_history_should_have_at_least_entry(world: &mut BddWorld, entries: usize) {
     assert!(world.game.challenge_history.len() >= entries);
 }
+
+#[then(expr = "the game should have at least {int} challenges")]
+async fn the_game_should_have_at_least_challenges(world: &mut BddWorld, challenges: usize) {
+    assert!(world.game.game_path.challenge_ids().len() >= challenges);
+}

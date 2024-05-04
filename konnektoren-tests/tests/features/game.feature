@@ -11,3 +11,8 @@ Feature: Game
     When the multiple choice challenge is solved with option 1
     Then the result performance should be at least 100
     And the challenge history should have at least 1 entry
+
+  Scenario: List all challenges
+    Given default game is loaded
+    Then the game should have at least 2 challenges
+  

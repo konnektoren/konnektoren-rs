@@ -21,6 +21,10 @@ impl GamePath {
             .iter()
             .find(|challenge| challenge.id == challenge_config_id)
     }
+
+    pub fn challenge_ids(&self) -> Vec<String> {
+        self.challenges.iter().map(|challenge| challenge.id.clone()).collect()
+    }
 }
 
 #[cfg(test)]
@@ -41,5 +45,12 @@ mod tests {
         assert!(challenge_config.is_none());
         let challenge_config = game_path.get_challenge_config("konnektoren-1");
         assert!(challenge_config.is_some());
+    }
+
+    #[test]
+    fn test_challenge_ids() {
+        let game_path = GamePath::default();
+        let challenge_ids = game_path.challenge_ids();
+        assert_eq!(challenge_ids.len(), game_path.challenges.len());
     }
 }
