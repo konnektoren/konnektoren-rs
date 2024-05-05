@@ -25,3 +25,30 @@ impl Game {
             * challenge.stars(&challenge.challenge_result)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn create_challenge() {
+        let game = Game::default();
+        let challenge = game.create_challenge("unknown");
+        assert!(challenge.is_err());
+        assert_eq!(game.game_path.challenge_ids().len(), 2);
+        assert_eq!(
+            game.game_path.challenge_ids(),
+            vec!["konnektoren-1", "konnektoren-2"]
+        );
+        let challenge = game.create_challenge("konnektoren-1");
+        assert!(challenge.is_ok());
+    }
+
+    #[test]
+    fn calculate_xp_reward() {
+        let game = Game::default();
+        let challenge = game.create_challenge("konnektoren-1").unwrap();
+        let xp = game.calculate_xp_reward(&challenge);
+        assert_eq!(xp, 0);
+    }
+}

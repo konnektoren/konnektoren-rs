@@ -3,9 +3,17 @@ use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_type::ChallengeType;
 use anyhow::Result;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Clone)]
 pub struct ChallengeFactory {
     pub challenge_types: Vec<ChallengeType>,
+}
+
+impl Default for ChallengeFactory {
+    fn default() -> Self {
+        ChallengeFactory {
+            challenge_types: vec![ChallengeType::default()],
+        }
+    }
 }
 
 impl ChallengeFactory {

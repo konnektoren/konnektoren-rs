@@ -23,7 +23,10 @@ impl GamePath {
     }
 
     pub fn challenge_ids(&self) -> Vec<String> {
-        self.challenges.iter().map(|challenge| challenge.id.clone()).collect()
+        self.challenges
+            .iter()
+            .map(|challenge| challenge.id.clone())
+            .collect()
     }
 }
 
