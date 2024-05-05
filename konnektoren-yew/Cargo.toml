@@ -18,3 +18,4 @@ wasm-bindgen = { version = "0.2", features = ["serde"] }
 yew = { version = "0.21", features = ["csr"] }
 
 konnektoren-core = { path = "../konnektoren-core" }
+log = "0.4.21"
