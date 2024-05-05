@@ -2,10 +2,7 @@ use konnektoren_core::challenges::{Challenge, ChallengeType};
 use ratatui::{
     prelude::*,
     symbols::border,
-    widgets::{
-        block::{Position, Title},
-        Block, Borders, Paragraph,
-    },
+    widgets::{block::Title, Block, Borders, Paragraph},
 };
 
 use crate::{options_widget::OptionsWidget, results_widget::ResultsWidget};

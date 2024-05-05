@@ -28,6 +28,7 @@ pub struct App {
     game: Game,
     challenge: Challenge,
     current_question: usize,
+    current_challenge: usize,
     exit: bool,
 }
 
@@ -78,6 +79,31 @@ impl App {
         }
     }
 
+    pub fn next_challenge(&mut self) {
+        let max_challenges = self.game.game_path.challenges.len();
+        if self.current_challenge < max_challenges - 1 {
+            self.current_challenge += 1;
+            let challenge_config = &self.game.game_path.challenges[self.current_challenge];
+            self.challenge = self
+                .game
+                .create_challenge(&challenge_config.id)
+                .unwrap_or_default();
+            self.current_question = 0;
+        }
+    }
+
+    pub fn previous_challenge(&mut self) {
+        if self.current_challenge > 0 {
+            self.current_challenge -= 1;
+            let challenge_config = &self.game.game_path.challenges[self.current_challenge];
+            self.challenge = self
+                .game
+                .create_challenge(&challenge_config.id)
+                .unwrap_or_default();
+            self.current_question = 0;
+        }
+    }
+
     pub fn solve_option(&mut self, option_id: usize) -> anyhow::Result<()> {
         let challenge_input = match self.challenge.challenge_type {
             ChallengeType::MultipleChoice(ref dataset) => {
@@ -110,6 +136,8 @@ impl App {
             KeyCode::Char('q') => self.exit(),
             KeyCode::Left => self.previous_question(),
             KeyCode::Right => self.next_question(),
+            KeyCode::Tab => self.next_challenge(),
+            KeyCode::BackTab => self.previous_challenge(),
             KeyCode::Char('0') => self.solve_option(0)?,
             KeyCode::Char('1') => self.solve_option(1)?,
             KeyCode::Char('2') => self.solve_option(2)?,
@@ -175,7 +203,7 @@ impl Widget for &App {
             layout::Layout::vertical([layout::Constraint::Length(1), layout::Constraint::Min(0)]);
         let [tab_area, inner_area] = vertical.areas(area);
 
-        let tabs = ChallengeTabs::new(&self.game.game_path, 0);
+        let tabs = ChallengeTabs::new(&self.game.game_path, self.current_challenge);
 
         tabs.render(tab_area, buf);
 
@@ -196,7 +224,7 @@ mod tests {
     #[cfg(feature = "crossterm")]
     fn handle_key_event() -> io::Result<()> {
         let mut app = App::default();
-        app.handle_key_event(KeyCode::Char('q').into()).unwrap_err();
+        app.handle_key_event(KeyCode::Char('q').into()).unwrap();
         assert_eq!(app.exit, true);
 
         Ok(())
