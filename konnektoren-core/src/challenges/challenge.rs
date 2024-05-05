@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use super::{Performance, Solvable};
 
-#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Challenge {
     pub challenge_type: ChallengeType,
     pub challenge_config: ChallengeConfig,

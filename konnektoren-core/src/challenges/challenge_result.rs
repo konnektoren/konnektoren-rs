@@ -17,7 +17,7 @@ impl ChallengeResult {
     pub fn add_input(&mut self, input: ChallengeInput) -> anyhow::Result<()> {
         match self {
             ChallengeResult::MultipleChoice(options) => match input {
-                super::ChallengeInput::MultipleChoice(option) => {
+                ChallengeInput::MultipleChoice(option) => {
                     options.push(option);
                     Ok(())
                 }
