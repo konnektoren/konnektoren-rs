@@ -8,6 +8,7 @@ pub struct ChallengeConfig {
     pub challenge: String,
     pub tasks: usize,
     pub unlock_points: usize,
+    pub position: Option<(i32, i32)>,
 }
 
 impl Default for ChallengeConfig {
@@ -19,6 +20,7 @@ impl Default for ChallengeConfig {
             challenge: "konnektoren".to_string(),
             tasks: 10,
             unlock_points: 0,
+            position: Some((0, 0)),
         }
     }
 }

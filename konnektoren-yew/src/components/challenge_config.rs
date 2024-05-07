@@ -50,6 +50,7 @@ mod tests {
             tasks: 2,
             unlock_points: 10,
             challenge: "konnektoren".to_string(),
+            position: None,
         };
         let on_new = Some(Callback::noop());
         let result = render_new_button(&on_new, challenge_config.clone());
