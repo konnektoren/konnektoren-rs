@@ -1,6 +1,7 @@
 mod app;
 mod challenge_tabs;
 mod challenge_widget;
+mod map_widget;
 mod options_widget;
 mod results_widget;
 #[cfg(feature = "crossterm")]

@@ -1,4 +1,6 @@
-use crate::{challenge_tabs::ChallengeTabs, challenge_widget::ChallengeWidget};
+use crate::{
+    challenge_tabs::ChallengeTabs, challenge_widget::ChallengeWidget, map_widget::MapWidget,
+};
 
 #[cfg(feature = "crossterm")]
 use crate::tui::Tui;
@@ -29,6 +31,7 @@ pub struct App {
     challenge: Challenge,
     current_question: usize,
     current_challenge: usize,
+    show_map: bool,
     exit: bool,
 }
 
@@ -130,6 +133,10 @@ impl App {
         }
     }
 
+    pub fn toggl_map(&mut self) {
+        self.show_map = !self.show_map;
+    }
+
     #[cfg(feature = "crossterm")]
     fn handle_key_event(&mut self, key_event: KeyEvent) -> anyhow::Result<()> {
         match key_event.code {
@@ -148,6 +155,7 @@ impl App {
             KeyCode::Char('7') => self.solve_option(7)?,
             KeyCode::Char('8') => self.solve_option(8)?,
             KeyCode::Char('9') => self.solve_option(9)?,
+            KeyCode::Char('m') => self.toggl_map(),
             _ => {}
         }
         Ok(())
@@ -163,6 +171,28 @@ impl App {
         };
         Ok(())
     }
+
+    fn render_challenges(&self, area: Rect, buf: &mut Buffer) {
+        let vertical =
+            layout::Layout::vertical([layout::Constraint::Length(1), layout::Constraint::Min(0)]);
+        let [tab_area, inner_area] = vertical.areas(area);
+
+        let tabs = ChallengeTabs::new(&self.game.game_path, self.current_challenge);
+
+        tabs.render(tab_area, buf);
+
+        let challenge_widget = ChallengeWidget {
+            challenge: &self.challenge,
+            show_help: true,
+            current_question: self.current_question,
+        };
+        challenge_widget.render(inner_area, buf);
+    }
+
+    fn render_map(&self, area: Rect, buf: &mut Buffer) {
+        let map = MapWidget::new(&self.game.game_path);
+        map.render(area, buf);
+    }
 }
 
 impl Widget for &App {
@@ -174,6 +204,8 @@ impl Widget for &App {
             "<Left>".blue().bold(),
             " Next ".into(),
             "<Right>".blue().bold(),
+            " Map ".into(),
+            "<M>".blue().bold(),
             " Quit ".into(),
             "<Q> ".blue().bold(),
         ]));
@@ -199,20 +231,10 @@ impl Widget for &App {
             vertical: 1,
         });
 
-        let vertical =
-            layout::Layout::vertical([layout::Constraint::Length(1), layout::Constraint::Min(0)]);
-        let [tab_area, inner_area] = vertical.areas(area);
-
-        let tabs = ChallengeTabs::new(&self.game.game_path, self.current_challenge);
-
-        tabs.render(tab_area, buf);
-
-        let challenge_widget = ChallengeWidget {
-            challenge: &self.challenge,
-            show_help: true,
-            current_question: self.current_question,
-        };
-        challenge_widget.render(inner_area, buf);
+        match self.show_map {
+            true => self.render_map(area, buf),
+            _ => self.render_challenges(area, buf),
+        }
     }
 }
 
