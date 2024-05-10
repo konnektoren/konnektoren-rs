@@ -190,7 +190,7 @@ impl App {
     }
 
     fn render_map(&self, area: Rect, buf: &mut Buffer) {
-        let map = MapWidget::new(&self.game.game_path);
+        let map = MapWidget::new(&self.game.game_path, self.current_challenge);
         map.render(area, buf);
     }
 }

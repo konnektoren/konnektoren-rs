@@ -5,6 +5,7 @@ use ratatui::{
 };
 
 pub struct MapWidget<'a> {
+    current_challenge: usize,
     path: &'a GamePath,
 }
 
@@ -36,8 +37,11 @@ impl MapWidget<'_> {
 }
 
 impl<'a> MapWidget<'a> {
-    pub fn new(path: &'a GamePath) -> Self {
-        MapWidget { path }
+    pub fn new(path: &'a GamePath, current_challenge: usize) -> Self {
+        MapWidget {
+            path,
+            current_challenge,
+        }
     }
 
     fn process_challenges(&self) -> Vec<(String, f64, f64)> {
@@ -49,6 +53,23 @@ impl<'a> MapWidget<'a> {
                 (challenge.name.to_string(), x as f64 * 10.0, y as f64 * 10.0)
             })
             .collect()
+    }
+
+    fn draw_challenge(&self, index: usize, challenge: &str, x: f64, y: f64, ctx: &mut Context) {
+        let color = if self.current_challenge == index {
+            Color::Red
+        } else {
+            Color::Yellow
+        };
+
+        ctx.draw(&Rectangle {
+            x,
+            y,
+            width: 1.0,
+            height: 1.0,
+            color,
+        });
+        ctx.print(x, y, format!("{}", challenge).set_style(color));
     }
 
     fn draw_map(
@@ -65,15 +86,8 @@ impl<'a> MapWidget<'a> {
             .marker(Marker::Braille)
             .paint(|ctx| {
                 let mut last: Option<(f64, f64)> = None;
-                for (name, x, y) in challenges {
-                    ctx.draw(&Rectangle {
-                        x: *x,
-                        y: *y,
-                        width: 1.0,
-                        height: 1.0,
-                        color: Color::Yellow,
-                    });
-                    ctx.print(*x, *y, format!("{}", name).yellow());
+                for (index, (name, x, y)) in challenges.iter().enumerate() {
+                    self.draw_challenge(index, name, *x, *y, ctx);
                     if let Some((x1, y1)) = last {
                         ctx.draw(&Line {
                             x1,
