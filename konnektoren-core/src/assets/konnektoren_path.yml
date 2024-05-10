@@ -14,4 +14,11 @@ challenges:
     challenge: "konnektoren"
     tasks: 12
     unlock_points: 10
-    position: [1, 2]
+    position: [2, 2]
+  - id: "konnektoren-3"
+    name: "Konnektoren 3"
+    description: "Have a look at the third Konnektoren"
+    challenge: "konnektoren"
+    tasks: 15
+    unlock_points: 20
+    position: [5, -1]
