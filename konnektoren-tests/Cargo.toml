@@ -8,7 +8,7 @@ konnektoren-core = { path = "../konnektoren-core" }
 
 [dev-dependencies]
 cucumber = "0.20"
-tokio = { version = "1.10", features = ["macros", "rt-multi-thread", "time"] }
+tokio = { version = "1.37", features = ["macros", "rt-multi-thread", "time"] }
 
 [[test]]
 name = "bdd_tests"

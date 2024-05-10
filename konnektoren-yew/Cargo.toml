@@ -13,7 +13,7 @@ path = "src/main.rs"
 
 [dependencies]
 implicit-clone = "0.4.9"
-indexmap = "2.2.5"
+indexmap = "2.2.6"
 wasm-bindgen = { version = "0.2", features = ["serde"] }
 yew = { version = "0.21", features = ["csr"] }
 
