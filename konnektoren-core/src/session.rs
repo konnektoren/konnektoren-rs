@@ -1,17 +1,22 @@
 use serde::{Deserialize, Serialize};
 
-use crate::player_profile::PlayerProfile;
+use crate::{game::GameState, player_profile::PlayerProfile};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Session {
     pub id: String,
     pub player_profile: PlayerProfile,
+    pub game_state: GameState,
 }
 
 impl Session {
     pub fn new(id: String) -> Self {
         let player_profile = PlayerProfile::new(id.clone());
-        Session { id, player_profile }
+        Session {
+            id,
+            player_profile,
+            game_state: GameState::default(),
+        }
     }
 }
 

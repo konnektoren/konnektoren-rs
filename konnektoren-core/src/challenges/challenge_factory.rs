@@ -2,8 +2,9 @@ use crate::challenges::challenge::Challenge;
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_type::ChallengeType;
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChallengeFactory {
     pub challenge_types: Vec<ChallengeType>,
 }

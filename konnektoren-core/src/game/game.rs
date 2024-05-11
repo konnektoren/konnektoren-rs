@@ -1,10 +1,11 @@
 use crate::challenges::{Challenge, ChallengeFactory, ChallengeHistory, Performance};
 use crate::Xp;
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
 
 use super::GamePath;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Game {
     pub game_path: GamePath,
     pub challenge_factory: ChallengeFactory,

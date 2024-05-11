@@ -1,6 +1,8 @@
+use serde::{Deserialize, Serialize};
+
 use super::Challenge;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ChallengeHistory {
     pub challenges: Vec<Challenge>,
 }
