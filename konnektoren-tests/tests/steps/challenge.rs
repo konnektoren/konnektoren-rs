@@ -136,3 +136,13 @@ async fn the_result_performance_should_be_at_least(world: &mut BddWorld, perform
     let score = challenge.as_ref().unwrap().performance(&challenge_result);
     assert!(score >= performance);
 }
+
+#[given(expr = "the current challenge is {string}")]
+#[then(expr = "the current challenge is {string}")]
+async fn the_current_challenge_is(world: &mut BddWorld, name: String) {
+    let current_challenge = world.session.game_state.current_challenge_index;
+    let challenge = world.session.game_state.game.game_path.challenges[current_challenge]
+        .id
+        .clone();
+    assert_eq!(name, challenge, "Challenge name mismatch");
+}
