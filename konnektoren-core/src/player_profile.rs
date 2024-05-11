@@ -11,9 +11,20 @@ pub struct PlayerProfile {
 
 impl PlayerProfile {
     pub fn new(id: String) -> Self {
-        let name = "Anonymous".to_string();
-        let xp = 0;
-        PlayerProfile { id, name, xp }
+        PlayerProfile {
+            id,
+            ..Default::default()
+        }
+    }
+}
+
+impl Default for PlayerProfile {
+    fn default() -> Self {
+        PlayerProfile {
+            id: "".to_string(),
+            name: "Anonymous".to_string(),
+            xp: 0,
+        }
     }
 }
 
