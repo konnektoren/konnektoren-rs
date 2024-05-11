@@ -21,10 +21,6 @@ impl ChallengeResult {
                     options.push(option);
                     Ok(())
                 }
-                _ => Err(anyhow::Error::new(std::io::Error::new(
-                    std::io::ErrorKind::InvalidInput,
-                    "Invalid input type for MultipleChoice challenge result",
-                ))),
             },
         }
     }
