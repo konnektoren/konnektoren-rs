@@ -4,18 +4,15 @@ use crate::{
 
 #[cfg(feature = "crossterm")]
 use crate::tui::Tui;
+
 #[cfg(feature = "crossterm")]
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 
 use konnektoren_core::{
-    challenges::{
-        multiple_choice, Challenge, ChallengeFactory, ChallengeInput, ChallengeType, Solvable,
-    },
     commands::{
-        game_commands::{NextChallengeCommand, PreviousChallengeCommand},
+        game_commands::{NextChallengeCommand, PreviousChallengeCommand, SolveOptionCommand},
         GameCommand,
     },
-    game::{Game, GameState},
     session::Session,
 };
 use ratatui::{
@@ -26,14 +23,11 @@ use ratatui::{
         Block, Borders, Paragraph,
     },
 };
-use std::io;
 
 #[derive(Debug, Default)]
 pub struct App {
     title: String,
-    challenge_factory: ChallengeFactory,
     session: Session,
-    challenge: Challenge,
     current_question: usize,
     show_map: bool,
     exit: bool,
@@ -41,25 +35,14 @@ pub struct App {
 
 impl App {
     pub fn new() -> Self {
-        let mut challenge_factory = ChallengeFactory::new();
-        challenge_factory
-            .challenge_types
-            .push(ChallengeType::default());
-
-        let challenge = challenge_factory
-            .create_challenge(&Default::default())
-            .unwrap();
-
         App {
             title: " Konnektoren ".into(),
-            challenge_factory,
-            challenge,
             ..Self::default()
         }
     }
 
     #[cfg(feature = "crossterm")]
-    pub fn run(&mut self, terminal: &mut Tui) -> io::Result<()> {
+    pub fn run(&mut self, terminal: &mut Tui) -> anyhow::Result<()> {
         terminal.clear()?;
         terminal.hide_cursor()?;
 
@@ -80,7 +63,9 @@ impl App {
     }
 
     pub fn next_question(&mut self) {
-        let max_questions = self.challenge.challenge_config.tasks;
+        let challenge_config = &self.session.game_state.game.game_path.challenges
+            [self.session.game_state.current_challenge_index];
+        let max_questions = challenge_config.tasks;
         if self.current_question < max_questions - 1 {
             self.current_question += 1;
         }
@@ -90,15 +75,7 @@ impl App {
         let command = NextChallengeCommand();
 
         match command.execute(&mut self.session.game_state) {
-            Ok(_) => {
-                let challenge_config = &self.session.game_state.game.game_path.challenges
-                    [self.session.game_state.current_challenge_index];
-                self.challenge = self
-                    .session
-                    .game_state
-                    .game
-                    .create_challenge(&challenge_config.id)
-                    .unwrap_or_default();
+            Ok(()) => {
                 self.current_question = 0;
             }
             Err(_) => {}
@@ -109,15 +86,7 @@ impl App {
         let command = PreviousChallengeCommand();
 
         match command.execute(&mut self.session.game_state) {
-            Ok(_) => {
-                let challenge_config = &self.session.game_state.game.game_path.challenges
-                    [self.session.game_state.current_challenge_index];
-                self.challenge = self
-                    .session
-                    .game_state
-                    .game
-                    .create_challenge(&challenge_config.id)
-                    .unwrap_or_default();
+            Ok(()) => {
                 self.current_question = 0;
             }
             Err(_) => {}
@@ -125,22 +94,16 @@ impl App {
     }
 
     pub fn solve_option(&mut self, option_id: usize) -> anyhow::Result<()> {
-        let challenge_input = match self.challenge.challenge_type {
-            ChallengeType::MultipleChoice(ref dataset) => {
-                let option = match dataset.options.get(option_id) {
-                    Some(option) => option,
-                    None => {
-                        return Err(anyhow::anyhow!(format!("Invalid option id: {}", option_id)))
-                    }
-                };
-                ChallengeInput::MultipleChoice(multiple_choice::MultipleChoiceOption {
-                    id: option.id,
-                    name: option.name.clone(),
-                })
-            }
+        let command = SolveOptionCommand {
+            option_index: option_id,
         };
-        self.challenge.solve(challenge_input)?;
-        self.next_question();
+
+        match command.execute(&mut self.session.game_state) {
+            Ok(()) => {
+                self.next_question();
+            }
+            Err(_) => {}
+        }
         Ok(())
     }
 
@@ -178,7 +141,7 @@ impl App {
         Ok(())
     }
 
-    fn handle_events(&mut self) -> io::Result<()> {
+    fn handle_events(&mut self) -> anyhow::Result<()> {
         #[cfg(feature = "crossterm")]
         match event::read()? {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
@@ -202,7 +165,7 @@ impl App {
         tabs.render(tab_area, buf);
 
         let challenge_widget = ChallengeWidget {
-            challenge: &self.challenge,
+            challenge: &self.session.game_state.challenge,
             show_help: true,
             current_question: self.current_question,
         };
@@ -267,7 +230,7 @@ mod tests {
 
     #[test]
     #[cfg(feature = "crossterm")]
-    fn handle_key_event() -> io::Result<()> {
+    fn handle_key_event() -> anyhow::Result<()> {
         let mut app = App::default();
         app.handle_key_event(KeyCode::Char('q').into()).unwrap();
         assert_eq!(app.exit, true);
