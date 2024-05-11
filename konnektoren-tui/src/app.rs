@@ -11,7 +11,12 @@ use konnektoren_core::{
     challenges::{
         multiple_choice, Challenge, ChallengeFactory, ChallengeInput, ChallengeType, Solvable,
     },
-    game::Game,
+    commands::{
+        game_commands::{NextChallengeCommand, PreviousChallengeCommand},
+        GameCommand,
+    },
+    game::{Game, GameState},
+    session::Session,
 };
 use ratatui::{
     prelude::*,
@@ -27,10 +32,9 @@ use std::io;
 pub struct App {
     title: String,
     challenge_factory: ChallengeFactory,
-    game: Game,
+    session: Session,
     challenge: Challenge,
     current_question: usize,
-    current_challenge: usize,
     show_map: bool,
     exit: bool,
 }
@@ -83,27 +87,40 @@ impl App {
     }
 
     pub fn next_challenge(&mut self) {
-        let max_challenges = self.game.game_path.challenges.len();
-        if self.current_challenge < max_challenges - 1 {
-            self.current_challenge += 1;
-            let challenge_config = &self.game.game_path.challenges[self.current_challenge];
-            self.challenge = self
-                .game
-                .create_challenge(&challenge_config.id)
-                .unwrap_or_default();
-            self.current_question = 0;
+        let command = NextChallengeCommand();
+
+        match command.execute(&mut self.session.game_state) {
+            Ok(_) => {
+                let challenge_config = &self.session.game_state.game.game_path.challenges
+                    [self.session.game_state.current_challenge_index];
+                self.challenge = self
+                    .session
+                    .game_state
+                    .game
+                    .create_challenge(&challenge_config.id)
+                    .unwrap_or_default();
+                self.current_question = 0;
+            }
+            Err(_) => {}
         }
     }
 
     pub fn previous_challenge(&mut self) {
-        if self.current_challenge > 0 {
-            self.current_challenge -= 1;
-            let challenge_config = &self.game.game_path.challenges[self.current_challenge];
-            self.challenge = self
-                .game
-                .create_challenge(&challenge_config.id)
-                .unwrap_or_default();
-            self.current_question = 0;
+        let command = PreviousChallengeCommand();
+
+        match command.execute(&mut self.session.game_state) {
+            Ok(_) => {
+                let challenge_config = &self.session.game_state.game.game_path.challenges
+                    [self.session.game_state.current_challenge_index];
+                self.challenge = self
+                    .session
+                    .game_state
+                    .game
+                    .create_challenge(&challenge_config.id)
+                    .unwrap_or_default();
+                self.current_question = 0;
+            }
+            Err(_) => {}
         }
     }
 
@@ -177,7 +194,10 @@ impl App {
             layout::Layout::vertical([layout::Constraint::Length(1), layout::Constraint::Min(0)]);
         let [tab_area, inner_area] = vertical.areas(area);
 
-        let tabs = ChallengeTabs::new(&self.game.game_path, self.current_challenge);
+        let tabs = ChallengeTabs::new(
+            &self.session.game_state.game.game_path,
+            self.session.game_state.current_challenge_index,
+        );
 
         tabs.render(tab_area, buf);
 
@@ -190,7 +210,10 @@ impl App {
     }
 
     fn render_map(&self, area: Rect, buf: &mut Buffer) {
-        let map = MapWidget::new(&self.game.game_path, self.current_challenge);
+        let map = MapWidget::new(
+            &self.session.game_state.game.game_path,
+            self.session.game_state.current_challenge_index,
+        );
         map.render(area, buf);
     }
 }
