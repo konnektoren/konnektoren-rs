@@ -10,7 +10,10 @@ use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 
 use konnektoren_core::{
     commands::{
-        game_commands::{NextChallengeCommand, PreviousChallengeCommand, SolveOptionCommand},
+        game_commands::{
+            NextChallengeCommand, NextTaskCommand, PreviousChallengeCommand, PreviousTaskCommand,
+            SolveOptionCommand,
+        },
         GameCommand,
     },
     session::Session,
@@ -28,7 +31,6 @@ use ratatui::{
 pub struct App {
     title: String,
     session: Session,
-    current_question: usize,
     show_map: bool,
     exit: bool,
 }
@@ -63,34 +65,33 @@ impl App {
     }
 
     pub fn next_question(&mut self) {
-        let challenge_config = &self.session.game_state.game.game_path.challenges
-            [self.session.game_state.current_challenge_index];
-        let max_questions = challenge_config.tasks;
-        if self.current_question < max_questions - 1 {
-            self.current_question += 1;
-        }
+        let command = NextTaskCommand();
+        command
+            .execute(&mut self.session.game_state)
+            .unwrap_or_default();
+    }
+
+    pub fn previous_question(&mut self) {
+        let command = PreviousTaskCommand();
+        command
+            .execute(&mut self.session.game_state)
+            .unwrap_or_default();
     }
 
     pub fn next_challenge(&mut self) {
         let command = NextChallengeCommand();
 
-        match command.execute(&mut self.session.game_state) {
-            Ok(()) => {
-                self.current_question = 0;
-            }
-            Err(_) => {}
-        }
+        command
+            .execute(&mut self.session.game_state)
+            .unwrap_or_default();
     }
 
     pub fn previous_challenge(&mut self) {
         let command = PreviousChallengeCommand();
 
-        match command.execute(&mut self.session.game_state) {
-            Ok(()) => {
-                self.current_question = 0;
-            }
-            Err(_) => {}
-        }
+        command
+            .execute(&mut self.session.game_state)
+            .unwrap_or_default();
     }
 
     pub fn solve_option(&mut self, option_id: usize) -> anyhow::Result<()> {
@@ -98,19 +99,7 @@ impl App {
             option_index: option_id,
         };
 
-        match command.execute(&mut self.session.game_state) {
-            Ok(()) => {
-                self.next_question();
-            }
-            Err(_) => {}
-        }
-        Ok(())
-    }
-
-    pub fn previous_question(&mut self) {
-        if self.current_question > 0 {
-            self.current_question -= 1;
-        }
+        command.execute(&mut self.session.game_state)
     }
 
     pub fn toggl_map(&mut self) {
@@ -167,7 +156,7 @@ impl App {
         let challenge_widget = ChallengeWidget {
             challenge: &self.session.game_state.challenge,
             show_help: true,
-            current_question: self.current_question,
+            current_question: self.session.game_state.current_task_index,
         };
         challenge_widget.render(inner_area, buf);
     }
