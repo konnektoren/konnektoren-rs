@@ -24,6 +24,7 @@ impl GameCommand for NextChallengeCommand {
             .game
             .create_challenge(&challenge_config.id)
             .unwrap_or_default();
+        state.current_task_index = 0;
 
         Ok(())
     }
@@ -43,6 +44,33 @@ impl GameCommand for PreviousChallengeCommand {
             .game
             .create_challenge(&challenge_config.id)
             .unwrap_or_default();
+        state.current_task_index = 0;
+        Ok(())
+    }
+}
+
+pub struct NextTaskCommand();
+
+impl GameCommand for NextTaskCommand {
+    fn execute(&self, state: &mut GameState) -> Result<()> {
+        let challenge_config = &state.game.game_path.challenges[state.current_challenge_index];
+        let max_questions = challenge_config.tasks;
+        if state.current_task_index >= max_questions - 1 {
+            return Err(anyhow!("No more tasks"));
+        }
+        state.current_task_index += 1;
+        Ok(())
+    }
+}
+
+pub struct PreviousTaskCommand();
+
+impl GameCommand for PreviousTaskCommand {
+    fn execute(&self, state: &mut GameState) -> Result<()> {
+        if state.current_task_index == 0 {
+            return Err(anyhow!("No previous tasks"));
+        }
+        state.current_task_index -= 1;
         Ok(())
     }
 }
@@ -68,6 +96,10 @@ impl GameCommand for SolveOptionCommand {
             }
         };
         state.challenge.solve(challenge_input)?;
+
+        let next_question_command = NextTaskCommand();
+        next_question_command.execute(state).unwrap_or_default();
+
         Ok(())
     }
 }
@@ -119,5 +151,22 @@ mod tests {
         command.execute(&mut state).unwrap();
         let command = SolveOptionCommand { option_index: 0 };
         command.execute(&mut state).unwrap();
+    }
+
+    #[test]
+    fn next_task() {
+        let mut state = GameState::default();
+        let command = NextTaskCommand();
+        command.execute(&mut state).unwrap();
+        assert_eq!(state.current_task_index, 1);
+    }
+
+    #[test]
+    fn previous_task() {
+        let mut state = GameState::default();
+        state.current_task_index = 1;
+        let command = PreviousTaskCommand();
+        command.execute(&mut state).unwrap();
+        assert_eq!(state.current_task_index, 0);
     }
 }
