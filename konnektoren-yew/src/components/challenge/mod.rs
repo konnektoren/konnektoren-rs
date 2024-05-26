@@ -24,25 +24,12 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
         },
     };
 
-    let on_action = Callback::from(|action| match action {
-        ChallengeActions::Next => {
-            log::info!("Next");
-        }
-        ChallengeActions::Previous => {
-            log::info!("Previous");
-        }
-        ChallengeActions::Help => {
-            log::info!("Help");
-        }
-    });
-
     html! {
         <div class="challenge">
             <h2>{&props.challenge.challenge_type.name()}</h2>
             <p>{format!("Tasks: {}", props.challenge.challenge_config.tasks)}</p>
             <p>{format!("Unlock Points: {}", props.challenge.challenge_config.unlock_points)}</p>
             {challenge_component}
-            <ChallengeActionsComponent {on_action} />
         </div>
     }
 }
