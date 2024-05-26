@@ -69,7 +69,7 @@ impl<'a> MapWidget<'a> {
             height: 1.0,
             color,
         });
-        ctx.print(x, y, format!("{}", challenge).set_style(color));
+        ctx.print(x, y, challenge.to_string().set_style(color));
     }
 
     fn draw_map(

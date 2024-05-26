@@ -55,10 +55,10 @@ impl<'a> Widget for ChallengeWidget<'a> {
                     .block(block)
                     .render(layout[0], buf);
 
-                let options = OptionsWidget::new(&self.challenge);
+                let options = OptionsWidget::new(self.challenge);
                 options.render(layout2[0], buf);
 
-                let results = ResultsWidget::new(&self.challenge);
+                let results = ResultsWidget::new(self.challenge);
                 results.render(layout2[1], buf);
             }
         }

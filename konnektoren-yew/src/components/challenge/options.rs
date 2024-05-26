@@ -11,7 +11,7 @@ pub struct OptionsComponentProps {
 pub fn options_component(props: &OptionsComponentProps) -> Html {
     html! {
         <div class="multiple-choice-options">
-            {for props.options.iter().map(|option| render_option(option))}
+            {for props.options.iter().map(render_option)}
         </div>
     }
 }

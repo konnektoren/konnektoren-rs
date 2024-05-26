@@ -18,7 +18,7 @@ impl Game {
             .game_path
             .get_challenge_config(challenge_config_id)
             .ok_or_else(|| anyhow::anyhow!("Challenge config not found"))?;
-        Ok(self.challenge_factory.create_challenge(challenge_config)?)
+        self.challenge_factory.create_challenge(challenge_config)
     }
 
     pub fn calculate_xp_reward(&self, challenge: &Challenge) -> Xp {

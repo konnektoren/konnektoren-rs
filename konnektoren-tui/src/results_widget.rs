@@ -16,7 +16,7 @@ pub struct ResultsWidget<'a> {
 impl<'a> ResultsWidget<'a> {
     pub fn new(challenge: &'a Challenge) -> Self {
         ResultsWidget {
-            challenge: &challenge,
+            challenge,
         }
     }
 }
@@ -53,14 +53,13 @@ impl<'a> Widget for ResultsWidget<'a> {
                         };
                         let line = Line::from(vec![
                             format!(" {}: {} ", question.question, option.name).into(),
-                            correct.into(),
+                            correct,
                         ]);
                         text.push_line(line);
                         text
                     },
                 )
             }
-            _ => Text::default(),
         };
 
         let text = text.into_iter().rev().collect::<Vec<Line>>();
