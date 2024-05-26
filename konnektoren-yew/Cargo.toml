@@ -12,6 +12,7 @@ name = "konnektoren-yew-bin"
 path = "src/main.rs"
 
 [dependencies]
+console_log = "1.0"
 implicit-clone = "0.4.9"
 indexmap = "2.2.6"
 wasm-bindgen = { version = "0.2", features = ["serde"] }
