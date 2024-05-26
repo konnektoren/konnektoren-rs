@@ -1,4 +1,5 @@
 use super::{ChallengeActions, ChallengeActionsComponent, OptionsComponent, QuestionComponent};
+use crate::components::ProgressBar;
 use konnektoren_core::challenges::MultipleChoice;
 use yew::prelude::*;
 
@@ -35,6 +36,7 @@ pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
             <h2>{"Multiple Choice"}</h2>
             <p>{&props.challenge.id}</p>
             <p>{&props.challenge.name}</p>
+            <ProgressBar value={*task_index} max={task_count} label={format!("Question {} of {}", *task_index, task_count)}/>
             <QuestionComponent question={props.challenge.questions[*task_index].clone()} />
             <OptionsComponent options={props.challenge.options.clone()} />
             <ChallengeActionsComponent {on_action} />
