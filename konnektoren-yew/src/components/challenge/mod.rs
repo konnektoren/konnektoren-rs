@@ -3,6 +3,7 @@ use yew::prelude::*;
 
 mod actions;
 mod multiple_choice;
+mod multiple_choice_result;
 mod options;
 mod question;
 
