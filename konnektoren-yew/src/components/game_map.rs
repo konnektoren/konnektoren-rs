@@ -11,13 +11,13 @@ pub struct GameMapComponentProps {
 
 const SCALE: i32 = 10;
 
-fn draw_circle(x: i32, y: i32, color: &str, on_click: Callback<MouseEvent>) -> Html {
+fn draw_circle(x: i32, y: i32, class_name: &str, on_click: Callback<MouseEvent>) -> Html {
     html! {
         <circle
+            class={class_name.to_string()}
             cx={(x * SCALE).to_string()}
             cy={(-y * SCALE).to_string()}
             r="3"
-            fill={color.to_string()}
             onclick={on_click}
         />
     }
@@ -104,7 +104,7 @@ pub fn game_map_component(props: &GameMapComponentProps) -> Html {
                 {for props.game_path.challenges.iter().enumerate().map(|(index, challenge)| {
                     let (x, y) = challenge.position.unwrap_or((0, 0));
                     let next_challenge = props.game_path.challenges.get(index + 1);
-                    let color = if props.current_challenge == index { "red" } else { "yellow" };
+                    let class_name = if props.current_challenge == index { "selected-circle" } else { "unselected-circle" };
 
                     let on_click = {
                         let on_select_challenge = props.on_select_challenge.clone();
@@ -123,7 +123,7 @@ pub fn game_map_component(props: &GameMapComponentProps) -> Html {
                             } else {
                                 html!(<></>)
                             }}
-                            {draw_circle(x, y, color, on_click.clone())}
+                            {draw_circle(x, y, class_name, on_click.clone())}
                             {draw_text(x, y, &challenge.name, on_click)}
                         </>
                     }
