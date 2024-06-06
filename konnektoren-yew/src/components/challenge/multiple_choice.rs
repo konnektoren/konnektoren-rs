@@ -8,6 +8,8 @@ use yew::prelude::*;
 #[derive(Properties, PartialEq)]
 pub struct MultipleChoiceComponentProps {
     pub challenge: MultipleChoice,
+    #[prop_or_default]
+    pub on_finish: Option<Callback<ChallengeResult>>,
 }
 
 #[function_component(MultipleChoiceComponent)]
@@ -42,16 +44,21 @@ pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
         let task_index = task_index.clone();
         let challenge_result_clone = challenge_result.clone();
         let total_tasks = props.challenge.questions.len();
+        let on_finish = props.on_finish.clone();
 
         Callback::from(move |option: MultipleChoiceOption| {
             let mut challenge_result_update = (*challenge_result_clone).clone();
             challenge_result_update
                 .add_input(ChallengeInput::MultipleChoice(option.clone()))
                 .unwrap();
-            challenge_result_clone.set(challenge_result_update);
+            challenge_result_clone.set(challenge_result_update.clone());
 
             if *task_index < total_tasks - 1 {
                 task_index.set(*task_index + 1);
+            } else {
+                if let Some(on_finish) = on_finish.as_ref() {
+                    on_finish.emit(challenge_result_update.clone());
+                }
             }
         })
     };

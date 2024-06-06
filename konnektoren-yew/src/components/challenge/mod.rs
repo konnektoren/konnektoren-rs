@@ -9,6 +9,7 @@ mod question;
 
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use multiple_choice::MultipleChoiceComponent;
+pub use multiple_choice_result::MultipleChoiceResultComponent;
 pub use options::OptionsComponent;
 pub use question::QuestionComponent;
 
@@ -19,10 +20,28 @@ pub struct ChallengeComponentProps {
 
 #[function_component(ChallengeComponent)]
 pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
-    let challenge_component = match &props.challenge.challenge_type {
-        ChallengeType::MultipleChoice(challenge) => html! {
-            <MultipleChoiceComponent challenge={challenge.clone()} />
+    let challenge_result = use_state(|| Option::<ChallengeResult>::None);
+
+    let handle_finish = {
+        let challenge_result = challenge_result.clone();
+        Callback::from(move |result: ChallengeResult| {
+            log::info!("Challenge Result: {:?}", result);
+            challenge_result.set(Some(result));
+        })
+    };
+
+    let challenge_component = match (&*challenge_result, &props.challenge.challenge_type) {
+        (None, ChallengeType::MultipleChoice(challenge)) => html! {
+            <MultipleChoiceComponent challenge={challenge.clone()} on_finish={handle_finish} />
         },
+        _ => html! {},
+    };
+
+    let challenge_result_component = match (&*challenge_result, &props.challenge.challenge_type) {
+        (Some(result), ChallengeType::MultipleChoice(challenge)) => html! {
+            <MultipleChoiceResultComponent challenge={challenge.clone()} challenge_result={result.clone()} />
+        },
+        _ => html! {},
     };
 
     html! {
@@ -35,6 +54,7 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
                 <p>{format!("Unlock Points: {}", props.challenge.challenge_config.unlock_points)}</p>
             </div>
             {challenge_component}
+            {challenge_result_component}
         </div>
     }
 }
