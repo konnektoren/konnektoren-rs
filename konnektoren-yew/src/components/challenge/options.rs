@@ -23,7 +23,7 @@ fn render_option(
 ) -> Html {
     let option_clone = option.clone();
     let on_select = on_select.clone();
-    let on_change = Callback::from(move |_| {
+    let on_select = Callback::from(move |_| {
         let option = option_clone.clone();
         if let Some(on_select) = on_select.as_ref() {
             on_select.emit(option);
@@ -32,7 +32,7 @@ fn render_option(
 
     html! {
         <div class="multiple-choice-option">
-            <input type="radio" name="multiple-choice-option" id={option.id.to_string()} onchange={on_change} />
+            <input type="radio" name="multiple-choice-option" id={option.id.to_string()} onclick={on_select} />
             <label for={option.id.to_string()}>{&option.name}</label>
         </div>
     }

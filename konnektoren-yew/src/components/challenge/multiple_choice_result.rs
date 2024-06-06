@@ -37,7 +37,6 @@ pub fn multiple_choice_result_component(props: &MultipleChoiceResultComponentPro
                 }
             })
             .collect::<Vec<Html>>(),
-        _ => vec![],
     };
 
     html! {
