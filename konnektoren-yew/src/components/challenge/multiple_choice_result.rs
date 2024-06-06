@@ -10,30 +10,41 @@ pub struct MultipleChoiceResultComponentProps {
 #[function_component(MultipleChoiceResultComponent)]
 pub fn multiple_choice_result_component(props: &MultipleChoiceResultComponentProps) -> Html {
     let results = match &props.challenge_result {
-        ChallengeResult::MultipleChoice(options) => {
-            props.challenge.questions.iter().zip(options.iter()).fold(
-                Vec::new(),
-                |mut results, (question, option)| {
-                    let correct = if question.option == option.id {
-                        "Correct"
-                    } else {
-                        "Incorrect"
-                    };
-                    results.push(format!(
-                        " {}: {} - {}",
-                        question.question, option.name, correct
-                    ));
-                    results
-                },
-            )
-        }
+        ChallengeResult::MultipleChoice(options) => props
+            .challenge
+            .questions
+            .iter()
+            .zip(options.iter())
+            .map(|(question, option)| {
+                let is_correct = question.option == option.id;
+                let class_name = if is_correct {
+                    "result-correct"
+                } else {
+                    "result-incorrect"
+                };
+                let text = format!("{}: {} - ", question.question, option.name);
+
+                html! {
+                    <li class={class_name}>
+                        <div class={class_name}>{text}<span>{
+                            if is_correct {
+                                "Correct"
+                            } else {
+                                "Incorrect"
+                            }
+                        }</span></div>
+                    </li>
+                }
+            })
+            .collect::<Vec<Html>>(),
+        _ => vec![],
     };
 
     html! {
         <div class="challenge-result">
             <h2>{"Challenge Result"}</h2>
             <ul>
-                {for results.iter().map(|result| html! { <li>{result}</li> })}
+                {for results.into_iter()}
             </ul>
         </div>
     }
