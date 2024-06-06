@@ -14,12 +14,15 @@ pub struct MultipleChoiceComponentProps {
 pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
     let task_index = use_state(|| 0);
     let challenge_result = use_state(|| ChallengeResult::default());
+    let with_help = use_state(|| false);
 
     let task_count = props.challenge.questions.len();
 
     let task_index_clone = task_index.clone();
+    let with_help_clone = with_help.clone();
     let on_action = Callback::from(move |action| {
         let task_index = task_index_clone.clone();
+        let with_help = with_help_clone.clone();
         match action {
             ChallengeActions::Next => {
                 log::info!("Next");
@@ -31,6 +34,7 @@ pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
             }
             ChallengeActions::Help => {
                 log::info!("Help");
+                with_help.set(!*with_help);
             }
         }
     });
@@ -48,7 +52,7 @@ pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
     html! {
         <div class="multiple-choice">
             <ProgressBar value={*task_index} max={task_count} label={format!("Question {} of {}", *task_index, task_count)}/>
-            <QuestionComponent question={props.challenge.questions[*task_index].clone()} />
+            <QuestionComponent question={props.challenge.questions[*task_index].clone()} help={*with_help} />
             <OptionsComponent options={props.challenge.options.clone()} on_select={on_option} />
             <ChallengeActionsComponent {on_action} />
             <MultipleChoiceResultComponent challenge={props.challenge.clone()} challenge_result={(*challenge_result).clone()} />
