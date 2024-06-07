@@ -6,12 +6,14 @@ mod multiple_choice;
 mod multiple_choice_result;
 mod options;
 mod question;
+mod result_summary;
 
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use multiple_choice::MultipleChoiceComponent;
 pub use multiple_choice_result::MultipleChoiceResultComponent;
 pub use options::OptionsComponent;
 pub use question::QuestionComponent;
+pub use result_summary::ResultSummaryComponent;
 
 #[derive(Properties, PartialEq)]
 pub struct ChallengeComponentProps {
