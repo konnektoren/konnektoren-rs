@@ -18,6 +18,8 @@ pub use result_summary::ResultSummaryComponent;
 #[derive(Properties, PartialEq)]
 pub struct ChallengeComponentProps {
     pub challenge: Challenge,
+    #[prop_or_default]
+    pub on_finish: Option<Callback<ChallengeResult>>,
 }
 
 #[function_component(ChallengeComponent)]
@@ -26,9 +28,13 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
 
     let handle_finish = {
         let challenge_result = challenge_result.clone();
+        let on_finish = props.on_finish.clone();
         Callback::from(move |result: ChallengeResult| {
             log::info!("Challenge Result: {:?}", result);
-            challenge_result.set(Some(result));
+            challenge_result.set(Some(result.clone()));
+            if let Some(on_finish) = on_finish.as_ref() {
+                on_finish.emit(result);
+            }
         })
     };
 
