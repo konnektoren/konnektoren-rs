@@ -1,5 +1,6 @@
 use super::{ChallengeActions, ChallengeActionsComponent, OptionsComponent, QuestionComponent};
-use crate::components::challenge::multiple_choice_result::MultipleChoiceResultComponent;
+use crate::components::challenge::ChallengeEvent;
+use crate::components::challenge::MultipleChoiceResultComponent;
 use crate::components::ProgressBar;
 use konnektoren_core::challenges::{MultipleChoice, MultipleChoiceOption};
 use konnektoren_core::prelude::{ChallengeInput, ChallengeResult};
@@ -10,6 +11,8 @@ pub struct MultipleChoiceComponentProps {
     pub challenge: MultipleChoice,
     #[prop_or_default]
     pub on_finish: Option<Callback<ChallengeResult>>,
+    #[prop_or_default]
+    pub on_event: Option<Callback<ChallengeEvent>>,
 }
 
 #[function_component(MultipleChoiceComponent)]
@@ -22,16 +25,26 @@ pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
         let task_index = task_index.clone();
         let show_help = show_help.clone();
         let total_tasks = props.challenge.questions.len();
+        let on_event = props.on_event.clone();
 
         Callback::from(move |action: ChallengeActions| match action {
             ChallengeActions::Next => {
                 if *task_index < total_tasks - 1 {
-                    task_index.set(*task_index + 1);
+                    let next_task_index = *task_index + 1;
+                    task_index.set(next_task_index);
+
+                    if let Some(on_event) = on_event.as_ref() {
+                        on_event.emit(ChallengeEvent::NextTask(next_task_index));
+                    }
                 }
             }
             ChallengeActions::Previous => {
                 if *task_index > 0 {
-                    task_index.set(*task_index - 1);
+                    let previous_task_index = *task_index - 1;
+                    task_index.set(previous_task_index);
+                    if let Some(on_event) = on_event.as_ref() {
+                        on_event.emit(ChallengeEvent::PreviousTask(previous_task_index));
+                    }
                 }
             }
             ChallengeActions::Help => {
@@ -45,6 +58,7 @@ pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
         let challenge_result_clone = challenge_result.clone();
         let total_tasks = props.challenge.questions.len();
         let on_finish = props.on_finish.clone();
+        let on_event = props.on_event.clone();
 
         Callback::from(move |option: MultipleChoiceOption| {
             let mut challenge_result_update = (*challenge_result_clone).clone();
@@ -54,10 +68,18 @@ pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
             challenge_result_clone.set(challenge_result_update.clone());
 
             if *task_index < total_tasks - 1 {
-                task_index.set(*task_index + 1);
+                let next_task_index = *task_index + 1;
+                task_index.set(next_task_index);
+
+                if let Some(on_event) = on_event.as_ref() {
+                    on_event.emit(ChallengeEvent::NextTask(next_task_index));
+                }
             } else {
                 if let Some(on_finish) = on_finish.as_ref() {
                     on_finish.emit(challenge_result_update.clone());
+                }
+                if let Some(on_event) = on_event.as_ref() {
+                    on_event.emit(ChallengeEvent::Finish(challenge_result_update.clone()));
                 }
             }
         })

@@ -2,6 +2,7 @@ use konnektoren_core::prelude::*;
 use yew::prelude::*;
 
 mod actions;
+mod events;
 mod multiple_choice;
 mod multiple_choice_result;
 mod options;
@@ -9,6 +10,7 @@ mod question;
 mod result_summary;
 
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
+pub use events::ChallengeEvent;
 pub use multiple_choice::MultipleChoiceComponent;
 pub use multiple_choice_result::MultipleChoiceResultComponent;
 pub use options::OptionsComponent;
@@ -20,6 +22,8 @@ pub struct ChallengeComponentProps {
     pub challenge: Challenge,
     #[prop_or_default]
     pub on_finish: Option<Callback<ChallengeResult>>,
+    #[prop_or_default]
+    pub on_event: Option<Callback<ChallengeEvent>>,
 }
 
 #[function_component(ChallengeComponent)]
@@ -29,18 +33,31 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
     let handle_finish = {
         let challenge_result = challenge_result.clone();
         let on_finish = props.on_finish.clone();
+        let on_event = props.on_event.clone();
         Callback::from(move |result: ChallengeResult| {
             log::info!("Challenge Result: {:?}", result);
             challenge_result.set(Some(result.clone()));
             if let Some(on_finish) = on_finish.as_ref() {
-                on_finish.emit(result);
+                on_finish.emit(result.clone());
+            }
+            if let Some(on_event) = on_event.as_ref() {
+                on_event.emit(ChallengeEvent::Finish(result));
+            }
+        })
+    };
+
+    let handle_event = {
+        let on_event = props.on_event.clone();
+        Callback::from(move |event: ChallengeEvent| {
+            if let Some(on_event) = on_event.as_ref() {
+                on_event.emit(event);
             }
         })
     };
 
     let challenge_component = match (&*challenge_result, &props.challenge.challenge_type) {
         (None, ChallengeType::MultipleChoice(challenge)) => html! {
-            <MultipleChoiceComponent challenge={challenge.clone()} on_finish={handle_finish} />
+            <MultipleChoiceComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
         },
         _ => html! {},
     };
