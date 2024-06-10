@@ -24,6 +24,12 @@ impl ChallengeResult {
             },
         }
     }
+
+    pub fn len(&self) -> usize {
+        match self {
+            ChallengeResult::MultipleChoice(options) => options.len(),
+        }
+    }
 }
 
 #[cfg(test)]

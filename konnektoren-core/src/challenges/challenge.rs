@@ -25,7 +25,19 @@ impl Challenge {
 impl Solvable for Challenge {
     fn solve(&mut self, input: super::ChallengeInput) -> anyhow::Result<bool> {
         match self.challenge_result.add_input(input) {
-            Ok(_) => Ok(true),
+            Ok(_) => {
+                let index = self.challenge_result.len();
+                let question = match self.challenge_type {
+                    ChallengeType::MultipleChoice(ref mc) => mc.questions.get(index),
+                };
+                let result = match self.challenge_result {
+                    ChallengeResult::MultipleChoice(ref mc) => mc.get(index),
+                };
+                match (question, result) {
+                    (Some(question), Some(result)) => Ok(question.option == result.id),
+                    _ => Ok(false),
+                }
+            }
             Err(_) => Ok(false),
         }
     }
@@ -40,6 +52,8 @@ impl Performance for Challenge {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::challenges::challenge_input::ChallengeInput;
+    use crate::challenges::MultipleChoiceOption;
 
     #[test]
     fn new_challenge() {
@@ -49,5 +63,16 @@ mod tests {
         assert_eq!(challenge.challenge_type, challenge_type);
         assert_eq!(challenge.challenge_config, challenge_config);
         assert_eq!(challenge.challenge_result, ChallengeResult::default());
+    }
+
+    #[test]
+    fn solve_challenge() {
+        let challenge_type = ChallengeType::default();
+        let challenge_config = ChallengeConfig::default();
+        let mut challenge = Challenge::new(&challenge_type, &challenge_config);
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
+        let result = challenge.solve(input);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), false);
     }
 }

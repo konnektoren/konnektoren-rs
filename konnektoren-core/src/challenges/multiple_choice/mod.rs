@@ -8,7 +8,7 @@ pub struct MultipleChoice {
     pub questions: Vec<Question>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct MultipleChoiceOption {
     pub id: usize,
     pub name: String,
