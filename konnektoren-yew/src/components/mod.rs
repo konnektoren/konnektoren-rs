@@ -2,6 +2,7 @@ pub mod challenge;
 pub mod challenge_config;
 pub mod game_map;
 pub mod game_path;
+pub mod profile;
 pub mod progress_bar;
 
 pub use challenge::ChallengeComponent;

@@ -1,3 +1,4 @@
+use crate::components::profile::ProfileConfigComponent;
 use crate::components::{
     challenge::ChallengeComponent, game_map::GameMapComponent, game_path::GamePathComponent,
 };
@@ -38,6 +39,7 @@ pub fn App() -> Html {
 
     html! {
         <div class="app">
+            <ProfileConfigComponent />
             <GamePathComponent game_path={game.game_path.clone()} on_challenge_config={new_challenge_cb} />
             {
                 if let Some(ref challenge) = *challenge {
