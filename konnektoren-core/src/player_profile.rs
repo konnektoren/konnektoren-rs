@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::Xp;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PlayerProfile {
     pub id: String,
     pub name: String,
