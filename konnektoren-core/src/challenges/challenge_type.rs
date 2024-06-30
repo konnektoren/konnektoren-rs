@@ -41,7 +41,7 @@ impl ChallengeType {
 }
 
 impl Performance for ChallengeType {
-    fn performance(&self, result: &ChallengeResult) -> i32 {
+    fn performance(&self, result: &ChallengeResult) -> u32 {
         match (self, result) {
             (ChallengeType::MultipleChoice(dataset), ChallengeResult::MultipleChoice(options)) => {
                 let mut score = 0;
@@ -50,7 +50,7 @@ impl Performance for ChallengeType {
                         score += 1;
                     }
                 }
-                100 * score / dataset.questions.len() as i32
+                100 * score / dataset.questions.len() as u32
             }
         }
     }

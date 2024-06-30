@@ -30,6 +30,12 @@ impl ChallengeResult {
             ChallengeResult::MultipleChoice(options) => options.len(),
         }
     }
+
+    pub fn is_empty(&self) -> bool {
+        match self {
+            ChallengeResult::MultipleChoice(options) => options.is_empty(),
+        }
+    }
 }
 
 #[cfg(test)]

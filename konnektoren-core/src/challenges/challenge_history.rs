@@ -19,6 +19,10 @@ impl ChallengeHistory {
     pub fn len(&self) -> usize {
         self.challenges.len()
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.challenges.is_empty()
+    }
 }
 
 #[cfg(test)]

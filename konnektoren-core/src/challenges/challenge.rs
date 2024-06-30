@@ -44,7 +44,7 @@ impl Solvable for Challenge {
 }
 
 impl Performance for Challenge {
-    fn performance(&self, result: &ChallengeResult) -> i32 {
+    fn performance(&self, result: &ChallengeResult) -> u32 {
         self.challenge_type.performance(result)
     }
 }

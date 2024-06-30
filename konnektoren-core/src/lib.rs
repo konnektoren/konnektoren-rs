@@ -5,7 +5,7 @@ pub mod player_profile;
 pub mod session;
 
 /// experience points
-pub type Xp = i32;
+pub type Xp = u32;
 
 pub mod prelude {
     pub use crate::challenges::Challenge;
