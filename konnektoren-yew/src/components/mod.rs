@@ -10,3 +10,8 @@ pub use challenge_config::ChallengeConfigComponent;
 pub use game_map::GameMapComponent;
 pub use game_path::GamePathComponent;
 pub use progress_bar::ProgressBar;
+
+#[cfg(feature = "storage")]
+pub use profile::ProfileConfigComponent;
+#[cfg(feature = "storage")]
+pub use profile::ProfilePointsComponent;

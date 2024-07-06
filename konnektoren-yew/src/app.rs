@@ -1,7 +1,10 @@
-use crate::components::profile::ProfileConfigComponent;
 use crate::components::{
     challenge::ChallengeComponent, game_map::GameMapComponent, game_path::GamePathComponent,
 };
+
+#[cfg(feature = "storage")]
+use crate::components::profile::{ProfileConfigComponent, ProfilePointsComponent};
+
 use konnektoren_core::prelude::*;
 use log;
 use yew::prelude::*;
@@ -37,9 +40,24 @@ pub fn App() -> Html {
         })
     };
 
+    let profile_config_component = {
+        #[cfg(feature = "storage")]
+        html! {<ProfileConfigComponent />}
+        #[cfg(not(feature = "storage"))]
+        html! {<></>}
+    };
+
+    let profile_points_component = {
+        #[cfg(feature = "storage")]
+        html! {<ProfilePointsComponent />}
+        #[cfg(not(feature = "storage"))]
+        html! {<></>}
+    };
+
     html! {
         <div class="app">
-            <ProfileConfigComponent />
+            {profile_config_component}
+            {profile_points_component}
             <GamePathComponent game_path={game.game_path.clone()} on_challenge_config={new_challenge_cb} />
             {
                 if let Some(ref challenge) = *challenge {
