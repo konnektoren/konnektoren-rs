@@ -5,6 +5,9 @@ pub mod game_path;
 pub mod profile;
 pub mod progress_bar;
 
+#[cfg(feature = "music")]
+pub mod music;
+
 pub use challenge::ChallengeComponent;
 pub use challenge_config::ChallengeConfigComponent;
 pub use game_map::GameMapComponent;
@@ -15,3 +18,6 @@ pub use progress_bar::ProgressBar;
 pub use profile::ProfileConfigComponent;
 #[cfg(feature = "storage")]
 pub use profile::ProfilePointsComponent;
+
+#[cfg(feature = "music")]
+pub use music::MusicComponent;

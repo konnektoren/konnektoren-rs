@@ -1,5 +1,6 @@
 use crate::components::{
     challenge::ChallengeComponent, game_map::GameMapComponent, game_path::GamePathComponent,
+    MusicComponent,
 };
 
 #[cfg(feature = "storage")]
@@ -56,6 +57,7 @@ pub fn App() -> Html {
 
     html! {
         <div class="app">
+            <MusicComponent />
             {profile_config_component}
             {profile_points_component}
             <GamePathComponent game_path={game.game_path.clone()} on_challenge_config={new_challenge_cb} />
