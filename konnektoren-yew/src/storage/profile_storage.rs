@@ -1,5 +1,5 @@
 use crate::storage::Storage;
-use gloo_storage::{LocalStorage, Storage as _};
+use gloo::storage::{LocalStorage, Storage as _};
 use konnektoren_core::prelude::PlayerProfile;
 
 #[derive(Debug, Default)]
