@@ -18,6 +18,7 @@ pub struct MultipleChoiceOption {
 pub struct Question {
     pub question: String,
     pub help: String,
+    pub image: Option<String>,
     pub option: usize,
 }
 
@@ -44,11 +45,13 @@ mod tests {
                 question: "Question 1".to_string(),
                 help: "Help 1".to_string(),
                 option: 1,
+                image: None,
             },
             Question {
                 question: "Question 2".to_string(),
                 help: "Help 2".to_string(),
                 option: 2,
+                image: None,
             },
         ];
         let dataset = MultipleChoice {
