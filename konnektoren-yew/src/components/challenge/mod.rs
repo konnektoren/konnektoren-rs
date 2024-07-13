@@ -1,9 +1,11 @@
+use konnektoren_core::challenges::challenge_config::ChallengeVariant;
 use konnektoren_core::prelude::*;
 use yew::prelude::*;
 
 mod actions;
 mod events;
 mod multiple_choice;
+mod multiple_choice_circle;
 mod multiple_choice_result;
 mod options;
 mod question;
@@ -12,6 +14,7 @@ mod result_summary;
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use events::ChallengeEvent;
 pub use multiple_choice::MultipleChoiceComponent;
+pub use multiple_choice_circle::MultipleChoiceCircleComponent;
 pub use multiple_choice_result::MultipleChoiceResultComponent;
 pub use options::OptionsComponent;
 pub use question::QuestionComponent;
@@ -20,6 +23,8 @@ pub use result_summary::ResultSummaryComponent;
 #[derive(Properties, PartialEq)]
 pub struct ChallengeComponentProps {
     pub challenge: Challenge,
+    #[prop_or_default]
+    pub variant: Option<ChallengeVariant>,
     #[prop_or_default]
     pub on_finish: Option<Callback<ChallengeResult>>,
     #[prop_or_default]
@@ -55,9 +60,22 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
         })
     };
 
-    let challenge_component = match (&*challenge_result, &props.challenge.challenge_type) {
-        (None, ChallengeType::MultipleChoice(challenge)) => html! {
-            <MultipleChoiceComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+    let challenge_component = match (
+        &*challenge_result,
+        &props.challenge.challenge_type,
+        &props.variant.clone().unwrap_or_default(),
+    ) {
+        (None, ChallengeType::MultipleChoice(challenge), ChallengeVariant::MultipleChoice) => {
+            html! {
+                <MultipleChoiceComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+            }
+        }
+        (
+            None,
+            ChallengeType::MultipleChoice(challenge),
+            ChallengeVariant::MultipleChoiceCircle,
+        ) => html! {
+            <MultipleChoiceCircleComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
         },
         _ => html! {},
     };
