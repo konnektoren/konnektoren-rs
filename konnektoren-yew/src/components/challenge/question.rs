@@ -10,9 +10,24 @@ pub struct QuestionComponentProps {
 
 #[function_component(QuestionComponent)]
 pub fn question_component(props: &QuestionComponentProps) -> Html {
+    let image = if let Some(image) = &props.question.image {
+        if image.starts_with("fa-") {
+            html! {
+                <i class={format!("fas {}", image)}></i>
+            }
+        } else {
+            html! {
+                <img src={image.to_string()} class="question-image" />
+            }
+        }
+    } else {
+        html! {}
+    };
+
     html! {
         <div class="question">
             <h2>{"Question"}</h2>
+            {image}
             <p>{&props.question.question}</p>
             <div class="help">
                 {if props.help {
