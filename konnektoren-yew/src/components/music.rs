@@ -1,3 +1,4 @@
+use uuid::Uuid;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
 
@@ -5,6 +6,8 @@ const MUSIC_URL: &str = "https://konnektoren.help/assets/fanfare-3-rpg.ogg";
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct Props {
+    #[prop_or_default]
+    pub id: Option<String>,
     #[prop_or_default]
     pub url: Option<String>,
     #[prop_or_default]
@@ -14,6 +17,7 @@ pub struct Props {
 impl Default for Props {
     fn default() -> Self {
         Self {
+            id: None,
             url: Some(MUSIC_URL.to_string()),
             repeat: Some(true),
         }
@@ -46,8 +50,10 @@ pub fn music_component(props: &Props) -> Html {
         }
     });
 
+    let id = (&props).id.clone().unwrap_or(Uuid::new_v4().to_string());
+
     html! {
-        <div class="music-component">
+        <div {id} class="music-component">
             <audio ref={audio_ref} />
         </div>
     }

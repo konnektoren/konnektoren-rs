@@ -37,6 +37,7 @@ web-sys = { version = "0.3.*", features = [
     "DomTokenList"
 ] }
 yew = { version = "0.21", features = ["csr"] }
+uuid = { version = "1.10.0", features = ["v4"] }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"

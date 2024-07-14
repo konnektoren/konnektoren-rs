@@ -1,7 +1,5 @@
 use super::{OptionsComponent, QuestionComponent};
-use crate::components::challenge::multiple_choice::{
-    create_handle_option_selection, Props,
-};
+use crate::components::challenge::multiple_choice::{create_handle_option_selection, Props};
 use crate::components::ProgressBar;
 use konnektoren_core::challenges::ChallengeResult;
 use yew::prelude::*;
