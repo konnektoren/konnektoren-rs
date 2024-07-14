@@ -1,12 +1,15 @@
 use konnektoren_core::prelude::*;
 use yew::prelude::*;
 
+pub type ChallengeIndex = usize;
+pub type Coordinate = (i32, i32);
+
 #[derive(Properties, PartialEq)]
 pub struct GameMapComponentProps {
     pub game_path: GamePath,
     pub current_challenge: usize,
     #[prop_or_default]
-    pub on_select_challenge: Option<Callback<usize>>,
+    pub on_select_challenge: Option<Callback<(Option<ChallengeIndex>, Coordinate)>>,
 }
 
 const SCALE: i32 = 10;
@@ -16,7 +19,7 @@ fn draw_circle(x: i32, y: i32, class_name: &str, on_click: Callback<MouseEvent>)
         <circle
             class={class_name.to_string()}
             cx={(x * SCALE).to_string()}
-            cy={(-y * SCALE).to_string()}
+            cy={(y * SCALE).to_string()}
             r="3"
             onclick={on_click}
         />
@@ -27,7 +30,7 @@ fn draw_text(x: i32, y: i32, name: &str, on_click: Callback<MouseEvent>) -> Html
     html! {
         <text
             x={(x * SCALE).to_string()}
-            y={(-y * SCALE).to_string()}
+            y={(y * SCALE).to_string()}
             font-size="3"
             text-anchor="middle"
             alignment-baseline="middle"
@@ -42,9 +45,9 @@ fn draw_line(x1: i32, y1: i32, x2: i32, y2: i32) -> Html {
     html! {
         <line
             x1={(x1 * SCALE).to_string()}
-            y1={(-y1 * SCALE).to_string()}
-            x2={(x2* SCALE).to_string()}
-            y2={(-y2* SCALE).to_string()}
+            y1={(y1 * SCALE).to_string()}
+            x2={(x2 * SCALE).to_string()}
+            y2={(y2 * SCALE).to_string()}
             stroke="black"
             stroke-width="2"
         />
@@ -75,7 +78,7 @@ fn calculate_bounds(challenges: &[(String, i32, i32)]) -> ([i32; 2], [i32; 2]) {
 
     (
         [x_min - SCALE, x_max + 2 * SCALE],
-        [2 * y_min - SCALE, y_max + 4 * SCALE],
+        [y_min - SCALE, y_max + 2 * SCALE],
     )
 }
 
@@ -93,13 +96,32 @@ pub fn game_map_component(props: &GameMapComponentProps) -> Html {
             .collect::<Vec<_>>(),
     );
 
+    let on_map_click = {
+        let on_select_challenge = props.on_select_challenge.clone();
+        Callback::from(move |e: MouseEvent| {
+            let (x, y) = (e.offset_x(), e.offset_y());
+            if let Some(ref callback) = on_select_challenge {
+                callback.emit((None, (x, y)));
+            }
+        })
+    };
+
+    let view_box = format!(
+        "{} {} {} {}",
+        bounds.0[0],
+        bounds.1[0],
+        bounds.0[1] - bounds.0[0],
+        bounds.1[1] - bounds.1[0]
+    );
+
     html! {
-        <div class="game-map">
+        <div class="map">
             <h1>{&props.game_path.name}</h1>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox={format!("{} {} {} {}", bounds.0[0], bounds.1[0], bounds.0[1], bounds.1[1])}
+                viewBox={view_box}
                 class="game-map-svg"
+                onclick={on_map_click}
             >
                 {for props.game_path.challenges.iter().enumerate().map(|(index, challenge)| {
                     let (x, y) = challenge.position.unwrap_or((0, 0));
@@ -108,9 +130,11 @@ pub fn game_map_component(props: &GameMapComponentProps) -> Html {
 
                     let on_click = {
                         let on_select_challenge = props.on_select_challenge.clone();
-                        Callback::from(move |_| {
+                        Callback::from(move |e: MouseEvent| {
+                            e.stop_propagation();
+                            let (x, y) = (e.offset_x(), e.offset_y());
                             if let Some(ref callback) = on_select_challenge {
-                                callback.emit(index);
+                                callback.emit((Some(index), (x, y)));
                             }
                         })
                     };

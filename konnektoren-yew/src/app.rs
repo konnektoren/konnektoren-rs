@@ -6,6 +6,7 @@ use crate::components::{
 #[cfg(feature = "storage")]
 use crate::components::profile::{ProfileConfigComponent, ProfilePointsComponent};
 
+use crate::components::game_map::{ChallengeIndex, Coordinate};
 use konnektoren_core::prelude::*;
 use log;
 use yew::prelude::*;
@@ -29,16 +30,22 @@ pub fn App() -> Html {
     let on_map_challenge_cb = {
         let game = game.clone();
         let challenge = challenge.clone();
-        Callback::from(move |challenge_index: usize| {
-            if let Some(challenge_config) = game.game_path.challenges.get(challenge_index) {
-                match game.create_challenge(&challenge_config.id) {
-                    Ok(c) => challenge.set(Some(c)),
-                    Err(_) => log::error!("Challenge creation failed"),
+        Callback::from(
+            move |(challenge_index, coords): (Option<ChallengeIndex>, Coordinate)| {
+                let (x, y) = coords;
+                if let Some(challenge_index) = challenge_index {
+                    log::info!("Challenge index: {}, x: {}, y: {}", challenge_index, x, y);
+                    if let Some(challenge_config) = game.game_path.challenges.get(challenge_index) {
+                        match game.create_challenge(&challenge_config.id) {
+                            Ok(c) => challenge.set(Some(c)),
+                            Err(_) => log::error!("Challenge creation failed"),
+                        }
+                    }
+                } else {
+                    log::error!("Challenge not found");
                 }
-            } else {
-                log::error!("Challenge not found");
-            }
-        })
+            },
+        )
     };
 
     let profile_config_component = {

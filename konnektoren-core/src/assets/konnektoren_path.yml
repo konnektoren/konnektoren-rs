@@ -22,3 +22,17 @@ challenges:
     tasks: 15
     unlock_points: 20
     position: [5, -1]
+  - id: "konnektoren-4"
+    name: "Konnektoren 4"
+    description: "Have a look at the fourth Konnektoren"
+    challenge: "konnektoren"
+    tasks: 20
+    unlock_points: 30
+    position: [4, 2]
+  - id: "konnektoren-5"
+    name: "Konnektoren 5"
+    description: "Have a look at the fifth Konnektoren"
+    challenge: "konnektoren"
+    tasks: 25
+    unlock_points: 40
+    position: [5, 1]
