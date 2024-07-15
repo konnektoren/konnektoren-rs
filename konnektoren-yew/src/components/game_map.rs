@@ -10,6 +10,8 @@ pub struct GameMapComponentProps {
     pub current_challenge: usize,
     #[prop_or_default]
     pub on_select_challenge: Option<Callback<(Option<ChallengeIndex>, Coordinate)>>,
+    #[prop_or_default]
+    pub points: Option<usize>,
 }
 
 const SCALE: i32 = 10;
@@ -126,7 +128,20 @@ pub fn game_map_component(props: &GameMapComponentProps) -> Html {
                 {for props.game_path.challenges.iter().enumerate().map(|(index, challenge)| {
                     let (x, y) = challenge.position.unwrap_or((0, 0));
                     let next_challenge = props.game_path.challenges.get(index + 1);
-                    let class_name = if props.current_challenge == index { "selected-circle" } else { "unselected-circle" };
+
+                    let locked_class_name = if let Some(points) = props.points {
+                        if points >= challenge.unlock_points {
+                            "unlocked-circle"
+                        } else {
+                            "locked-circle"
+                        }
+                    } else {
+                        "unlocked-circle"
+                    };
+
+                    let selected_class_name = if props.current_challenge == index { "selected-circle" } else { "unselected-circle" };
+
+                    let class_name = format!("{} {}", selected_class_name, locked_class_name);
 
                     let on_click = {
                         let on_select_challenge = props.on_select_challenge.clone();
@@ -147,7 +162,7 @@ pub fn game_map_component(props: &GameMapComponentProps) -> Html {
                             } else {
                                 html!(<></>)
                             }}
-                            {draw_circle(x, y, class_name, on_click.clone())}
+                            {draw_circle(x, y, &class_name, on_click.clone())}
                             {draw_text(x, y, &challenge.name, on_click)}
                         </>
                     }
