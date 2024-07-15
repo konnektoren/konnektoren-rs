@@ -1,5 +1,6 @@
 use konnektoren_core::challenges::Question;
 use yew::prelude::*;
+use crate::components::TranslateComponent;
 
 #[derive(Properties, PartialEq)]
 pub struct QuestionComponentProps {
@@ -32,7 +33,10 @@ pub fn question_component(props: &QuestionComponentProps) -> Html {
             <div class="help">
                 {if props.help {
                     html! {
+                        <>
                         <p>{&props.question.help}</p>
+                        <TranslateComponent text={ (&props.question.help).to_string() } />
+                        </>
                     }
                 } else {
                     html! {}
