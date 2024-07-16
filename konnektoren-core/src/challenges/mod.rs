@@ -22,3 +22,4 @@ pub use multiple_choice::MultipleChoiceOption;
 pub use multiple_choice::Question;
 pub use performance::Performance;
 pub use solvable::Solvable;
+pub use sort_table::{SortTable, SortTableRow};

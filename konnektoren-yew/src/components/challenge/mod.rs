@@ -10,6 +10,8 @@ mod multiple_choice_result;
 mod options;
 mod question;
 mod result_summary;
+mod sort_table;
+mod sort_table_result;
 
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use events::ChallengeEvent;
@@ -19,6 +21,8 @@ pub use multiple_choice_result::MultipleChoiceResultComponent;
 pub use options::OptionsComponent;
 pub use question::QuestionComponent;
 pub use result_summary::ResultSummaryComponent;
+pub use sort_table::SortTableComponent;
+pub use sort_table_result::SortTableResultComponent;
 
 #[derive(Properties, PartialEq)]
 pub struct ChallengeComponentProps {
@@ -76,6 +80,9 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
             ChallengeVariant::MultipleChoiceCircle,
         ) => html! {
             <MultipleChoiceCircleComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+        },
+        (None, ChallengeType::SortTable(challenge), ChallengeVariant::SortTable) => html! {
+            <SortTableComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
         },
         _ => html! {},
     };

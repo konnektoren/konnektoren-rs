@@ -6,7 +6,9 @@ use crate::components::{
 #[cfg(feature = "storage")]
 use crate::components::profile::{ProfileConfigComponent, ProfilePointsComponent};
 
+use crate::components::challenge::SortTableComponent;
 use crate::components::game_map::{ChallengeIndex, Coordinate};
+use konnektoren_core::challenges::SortTable;
 use konnektoren_core::prelude::*;
 use log;
 use yew::prelude::*;
@@ -15,6 +17,7 @@ use yew::prelude::*;
 pub fn App() -> Html {
     let game = Game::default();
     let challenge: UseStateHandle<Option<Challenge>> = use_state(|| None);
+    let sort_table_challenge = SortTable::default();
 
     let new_challenge_cb = {
         let game = game.clone();
@@ -64,7 +67,7 @@ pub fn App() -> Html {
 
     html! {
         <div class="app">
-            <MusicComponent />
+            <MusicComponent repeat={false} />
             {profile_config_component}
             {profile_points_component}
             <GamePathComponent game_path={game.game_path.clone()} on_challenge_config={new_challenge_cb} />
@@ -80,6 +83,7 @@ pub fn App() -> Html {
                 current_challenge={0}
                 on_select_challenge={on_map_challenge_cb}
             />
+            <SortTableComponent challenge={sort_table_challenge} on_finish={Callback::noop()} on_event={Callback::noop()} />
         </div>
     }
 }

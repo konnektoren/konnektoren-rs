@@ -9,6 +9,13 @@ pub struct SortTable {
     pub rows: Vec<SortTableRow>,
 }
 
+impl Default for SortTable {
+    fn default() -> Self {
+        let data = include_str!("../../assets/personal_pronouns.yml");
+        serde_yaml::from_str(data).unwrap()
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct SortTableColumn {
     pub id: String,

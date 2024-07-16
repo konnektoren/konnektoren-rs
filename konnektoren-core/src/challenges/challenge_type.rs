@@ -64,7 +64,7 @@ impl Performance for ChallengeType {
             (ChallengeType::SortTable(dataset), ChallengeResult::SortTable(rows)) => {
                 let mut score = 0;
                 for (row, option) in dataset.rows.iter().zip(rows.iter()) {
-                    if row.id == option.id {
+                    if row.values.eq(option.values.as_slice()) {
                         score += 1;
                     }
                 }
