@@ -8,6 +8,7 @@ pub mod challenge_type;
 pub mod multiple_choice;
 pub mod performance;
 pub mod solvable;
+mod sort_table;
 
 pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;
