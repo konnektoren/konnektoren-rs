@@ -1,0 +1,28 @@
+sort-table:
+  id: "personal_pronouns"
+  name: "Personal Pronouns"
+  description: "Match the personal pronouns in their correct case (Nominativ, Akkusativ, Dativ)"
+  columns:
+    - id: "nominativ"
+      title: "Nominativ"
+      description: "The subject of the sentence."
+    - id: "akkusativ"
+      title: "Akkusativ"
+      description: "The direct object of the sentence."
+    - id: "dativ"
+      title: "Dativ"
+      description: "The indirect object of the sentence."
+
+  rows:
+    - id: 0
+      values: ["ich", "mich", "mir"]
+    - id: 1
+      values: ["du", "dich", "dir"]
+    - id: 2
+      values: ["er/sie/es", "ihn/sie/es", "ihm/ihr/ihm"]
+    - id: 3
+      values: ["wir", "uns", "uns"]
+    - id: 4
+      values: ["ihr", "euch", "euch"]
+    - id: 5
+      values: ["sie/Sie", "sie/Sie", "ihnen/Ihnen"]
