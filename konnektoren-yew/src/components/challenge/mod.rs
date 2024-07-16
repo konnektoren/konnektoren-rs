@@ -3,6 +3,7 @@ use konnektoren_core::prelude::*;
 use yew::prelude::*;
 
 mod actions;
+mod challenge_history_summary;
 mod events;
 mod multiple_choice;
 mod multiple_choice_circle;
@@ -15,6 +16,7 @@ mod sort_table_result;
 
 use crate::components::ChallengeInfoComponent;
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
+pub use challenge_history_summary::ChallengeHistorySummaryComponent;
 pub use events::ChallengeEvent;
 pub use multiple_choice::MultipleChoiceComponent;
 pub use multiple_choice_circle::MultipleChoiceCircleComponent;
