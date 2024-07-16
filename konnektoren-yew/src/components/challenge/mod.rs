@@ -13,6 +13,7 @@ mod result_summary;
 mod sort_table;
 mod sort_table_result;
 
+use crate::components::ChallengeInfoComponent;
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use events::ChallengeEvent;
 pub use multiple_choice::MultipleChoiceComponent;
@@ -38,6 +39,7 @@ pub struct ChallengeComponentProps {
 #[function_component(ChallengeComponent)]
 pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
     let challenge_result = use_state(|| Option::<ChallengeResult>::None);
+    let show_challenge_info = use_state(|| false);
 
     let handle_finish = {
         let challenge_result = challenge_result.clone();
@@ -94,15 +96,24 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
         _ => html! {},
     };
 
+    let challenge_info = {
+        let show_info = *show_challenge_info;
+        html! {
+            <>
+                <button class="challenge-info-button" onclick={
+                Callback::from(move |_| show_challenge_info.set(!show_info))}>
+                    {if show_info { "X" } else { "?" }}
+                </button>
+                <div class="challenge-info" style={if show_info { "display: block;" } else { "display: none;" }}>
+                <ChallengeInfoComponent challenge_config={props.challenge.challenge_config.clone()} />
+                </div>
+            </>
+        }
+    };
+
     html! {
         <div class="challenge">
-            <h2>{&props.challenge.challenge_type.name()}</h2>
-            <div class="tasks-info">
-                <p>{format!("Tasks: {}", props.challenge.challenge_config.tasks)}</p>
-            </div>
-            <div class="unlock-points-info">
-                <p>{format!("Unlock Points: {}", props.challenge.challenge_config.unlock_points)}</p>
-            </div>
+            {challenge_info}
             {challenge_component}
             {challenge_result_component}
         </div>

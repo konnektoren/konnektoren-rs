@@ -1,3 +1,4 @@
+use crate::components::ChallengeInfoComponent;
 use konnektoren_core::prelude::*;
 use yew::prelude::*;
 
@@ -12,16 +13,7 @@ pub struct ChallengeConfigComponentProps {
 pub fn challenge_config_component(props: &ChallengeConfigComponentProps) -> Html {
     html! {
         <div class="challenge-config" id={props.challenge_config.id.to_string()}>
-            <h2>{&props.challenge_config.name}</h2>
-            <div class="challenge-description">
-                <p>{&props.challenge_config.description}</p>
-            </div>
-            <div class="tasks-info">
-                <p>{format!("Tasks: {}", props.challenge_config.tasks)}</p>
-            </div>
-            <div class="unlock-points-info">
-                <p>{format!("Unlock Points: {}", props.challenge_config.unlock_points)}</p>
-            </div>
+            <ChallengeInfoComponent challenge_config={props.challenge_config.clone()} />
             {render_new_button(&props.on_new, props.challenge_config.clone())}
         </div>
     }
