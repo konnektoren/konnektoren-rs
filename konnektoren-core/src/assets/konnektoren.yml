@@ -1,4 +1,4 @@
-multiple-choice:
+!multiple-choice
   id: "konnektoren"
   name: "Konnektoren"
   options:

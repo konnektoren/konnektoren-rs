@@ -97,6 +97,7 @@ async fn a_multiple_choice_challenge_is_set_up_with_a_question_of_option(
     let questions = vec![Question {
         question: "Question".to_string(),
         help: "Help 1".to_string(),
+        image: None,
         option,
     }];
     let dataset = MultipleChoice {

@@ -36,10 +36,10 @@ mod tests {
         let game = Game::default();
         let challenge = game.create_challenge("unknown");
         assert!(challenge.is_err());
-        assert_eq!(game.game_path.challenge_ids().len(), 3);
+        assert_eq!(game.game_path.challenge_ids().len(), 5);
         assert_eq!(
             game.game_path.challenge_ids(),
-            vec!["konnektoren-1", "konnektoren-2", "konnektoren-3"]
+            vec!["konnektoren-1", "konnektoren-2", "konnektoren-3", "konnektoren-4", "konnektoren-5"]
         );
         let challenge = game.create_challenge("konnektoren-1");
         assert!(challenge.is_ok());

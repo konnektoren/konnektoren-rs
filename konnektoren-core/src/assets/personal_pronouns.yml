@@ -1,4 +1,4 @@
-sort-table:
+!sort-table
   id: "personal_pronouns"
   name: "Personal Pronouns"
   description: "Match the personal pronouns in their correct case (Nominativ, Akkusativ, Dativ)"

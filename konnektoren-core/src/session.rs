@@ -31,6 +31,6 @@ mod tests {
         assert_eq!(session.id, id);
         assert_eq!(session.player_profile.id, id);
         assert_eq!(session.player_profile.name, "Anonymous");
-        assert_eq!(session.game_state.game.game_path.challenge_ids().len(), 3);
+        assert_eq!(session.game_state.game.game_path.challenge_ids().len(), 5);
     }
 }

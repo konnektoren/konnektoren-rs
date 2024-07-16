@@ -140,8 +140,10 @@ mod tests {
         let command = NextChallengeCommand();
         command.execute(&mut state).unwrap();
         command.execute(&mut state).unwrap();
+        command.execute(&mut state).unwrap();
+        command.execute(&mut state).unwrap();
         assert!(command.execute(&mut state).is_err());
-        assert_eq!(state.current_challenge_index, 2);
+        assert_eq!(state.current_challenge_index, 4);
     }
 
     #[test]
