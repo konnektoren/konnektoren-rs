@@ -94,6 +94,9 @@ impl GameCommand for SolveOptionCommand {
                     name: option.name.clone(),
                 })
             }
+            _ => {
+                return Err(anyhow!("Invalid challenge type"));
+            }
         };
         state.challenge.solve(challenge_input)?;
 

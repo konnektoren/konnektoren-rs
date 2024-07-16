@@ -61,6 +61,7 @@ impl<'a> Widget for ChallengeWidget<'a> {
                 let results = ResultsWidget::new(self.challenge);
                 results.render(layout2[1], buf);
             }
+            _ => panic!("Invalid challenge type"),
         }
     }
 }

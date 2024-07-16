@@ -57,6 +57,7 @@ mod tests {
             ChallengeType::MultipleChoice(dataset) => {
                 assert_eq!(dataset.questions.len(), 2);
             }
+            _ => panic!("Invalid challenge type"),
         }
     }
 }

@@ -24,6 +24,7 @@ pub fn is_correct(
     let question = challenge.questions.get(index);
     let result = match challenge_result {
         ChallengeResult::MultipleChoice(ref mc) => mc.get(index),
+        _ => None,
     };
     match (question, result) {
         (Some(question), Some(result)) => question.option == result.id,

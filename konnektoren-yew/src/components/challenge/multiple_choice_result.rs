@@ -37,6 +37,7 @@ pub fn multiple_choice_result_component(props: &MultipleChoiceResultComponentPro
                 }
             })
             .collect::<Vec<Html>>(),
+        _ => panic!("Invalid challenge type"),
     };
 
     html! {

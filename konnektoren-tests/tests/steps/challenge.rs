@@ -15,6 +15,7 @@ async fn it_should_be_a_multiple_choice_challenge_named(world: &mut BddWorld, na
         ChallengeType::MultipleChoice(dataset) => {
             assert_eq!(dataset.name, name);
         }
+        _ => panic!("Invalid challenge type"),
     }
 }
 
@@ -24,6 +25,7 @@ async fn it_should_have_exactly_options(world: &mut BddWorld, options: usize) {
         ChallengeType::MultipleChoice(dataset) => {
             assert_eq!(dataset.options.len(), options);
         }
+        _ => panic!("Invalid challenge type"),
     }
 }
 
@@ -33,6 +35,7 @@ async fn it_should_have_at_least_questions(world: &mut BddWorld, questions: usiz
         ChallengeType::MultipleChoice(dataset) => {
             assert!(dataset.questions.len() >= questions);
         }
+        _ => panic!("Invalid challenge type"),
     }
 }
 
@@ -71,6 +74,7 @@ async fn the_challenge_should_have_exactly_questions(world: &mut BddWorld, quest
         ChallengeType::MultipleChoice(dataset) => {
             assert_eq!(dataset.questions.len(), questions);
         }
+        _ => panic!("Invalid challenge type"),
     }
 }
 
@@ -80,6 +84,7 @@ async fn the_challenge_be_identified_as(world: &mut BddWorld, id: String) {
         ChallengeType::MultipleChoice(dataset) => {
             assert_eq!(dataset.id, id);
         }
+        _ => panic!("Invalid challenge type"),
     }
 }
 

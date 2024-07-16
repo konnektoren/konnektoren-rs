@@ -1,10 +1,12 @@
 use crate::challenges::multiple_choice::MultipleChoiceOption;
+use crate::challenges::sort_table::SortTableRow;
 use crate::challenges::ChallengeInput;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ChallengeResult {
     MultipleChoice(Vec<MultipleChoiceOption>),
+    SortTable(Vec<SortTableRow>),
 }
 
 impl Default for ChallengeResult {
@@ -21,6 +23,14 @@ impl ChallengeResult {
                     options.push(option);
                     Ok(())
                 }
+                _ => panic!("Invalid challenge input"),
+            },
+            ChallengeResult::SortTable(rows) => match input {
+                ChallengeInput::SortTable(row) => {
+                    rows.push(row);
+                    Ok(())
+                }
+                _ => panic!("Invalid challenge input"),
             },
         }
     }
@@ -28,12 +38,14 @@ impl ChallengeResult {
     pub fn len(&self) -> usize {
         match self {
             ChallengeResult::MultipleChoice(options) => options.len(),
+            ChallengeResult::SortTable(rows) => rows.len(),
         }
     }
 
     pub fn is_empty(&self) -> bool {
         match self {
             ChallengeResult::MultipleChoice(options) => options.is_empty(),
+            ChallengeResult::SortTable(rows) => rows.is_empty(),
         }
     }
 }
@@ -49,6 +61,7 @@ mod tests {
             ChallengeResult::MultipleChoice(options) => {
                 assert!(options.is_empty());
             }
+            _ => panic!("Invalid challenge result"),
         }
     }
 
@@ -65,6 +78,7 @@ mod tests {
             ChallengeResult::MultipleChoice(options) => {
                 assert_eq!(options.len(), 1);
             }
+            _ => panic!("Invalid challenge result"),
         }
     }
 }

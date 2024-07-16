@@ -15,9 +15,7 @@ pub struct ResultsWidget<'a> {
 
 impl<'a> ResultsWidget<'a> {
     pub fn new(challenge: &'a Challenge) -> Self {
-        ResultsWidget {
-            challenge,
-        }
+        ResultsWidget { challenge }
     }
 }
 
@@ -60,6 +58,7 @@ impl<'a> Widget for ResultsWidget<'a> {
                     },
                 )
             }
+            _ => todo!("Implement other challenge types"),
         };
 
         let text = text.into_iter().rev().collect::<Vec<Line>>();

@@ -38,6 +38,7 @@ impl Widget for OptionsWidget {
                 let text = Text::from(options.collect::<Vec<Line>>());
                 Paragraph::new(text).block(block).render(area, buf);
             }
+            _ => panic!("Invalid challenge type"),
         }
     }
 }

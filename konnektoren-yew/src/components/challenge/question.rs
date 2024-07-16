@@ -1,6 +1,6 @@
+use crate::components::TranslateComponent;
 use konnektoren_core::challenges::Question;
 use yew::prelude::*;
-use crate::components::TranslateComponent;
 
 #[derive(Properties, PartialEq)]
 pub struct QuestionComponentProps {
