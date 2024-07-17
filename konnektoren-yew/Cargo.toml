@@ -16,6 +16,7 @@ default = ["effects", "music", "storage"]
 effects = ["gloo/timers", "gloo/futures", "wasm-bindgen-futures"]
 music = []
 storage = ["gloo/storage"]
+yew-preview = ["dep:yew-preview"]
 
 [dependencies]
 console_log = "1.0"
@@ -33,7 +34,7 @@ web-sys = { version = "0.3.*", features = [
     "HtmlSelectElement", "Window", "DomTokenList",
     "DragEvent", "TouchList", "Touch"] }
 yew = { version = "0.21", features = ["csr"] }
-yew-preview = { git = "https://github.com/chriamue/yew-preview" }
+yew-preview = { git = "https://github.com/chriamue/yew-preview", optional = true }
 uuid = { version = "1.10.0", features = ["v4"] }
 rand = "0.9.0-alpha.1"
 

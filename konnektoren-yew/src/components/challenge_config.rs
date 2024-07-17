@@ -65,3 +65,26 @@ mod tests {
         }
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        ChallengeConfigComponent,
+        ChallengeConfigComponentProps {
+            challenge_config: ChallengeConfig {
+                id: "".to_string(),
+                name: "Challenge Name".to_string(),
+                description: "Challenge Description".to_string(),
+                challenge: "".to_string(),
+                variant: None,
+                tasks: 5,
+                unlock_points: 10,
+                position: None,
+            },
+            on_new: None,
+        },
+    );
+}

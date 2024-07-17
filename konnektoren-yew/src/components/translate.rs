@@ -19,3 +19,22 @@ pub fn translate(props: &TranslateProps) -> Html {
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        TranslateComponent,
+        TranslateProps {
+            text: "Hallo Welt".to_string()
+        },
+        (
+            "Hello World",
+            TranslateProps {
+                text: "Hello World".to_string()
+            }
+        )
+    );
+}

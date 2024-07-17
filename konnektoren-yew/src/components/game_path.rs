@@ -27,3 +27,11 @@ pub fn game_path_component(props: &GamePathComponentProps) -> Html {
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(GamePathComponent, GamePathComponentProps::default(),);
+}

@@ -22,3 +22,26 @@ pub fn progress_bar(props: &ProgressBarProps) -> Html {
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        ProgressBar,
+        ProgressBarProps {
+            value: 50,
+            max: Some(100),
+            label: "50%".to_string()
+        },
+        (
+            "75%",
+            ProgressBarProps {
+                value: 75,
+                max: Some(100),
+                label: "75%".to_string()
+            }
+        )
+    );
+}

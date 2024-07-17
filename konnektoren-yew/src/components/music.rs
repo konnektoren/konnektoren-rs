@@ -60,3 +60,26 @@ pub fn music_component(props: &MusicComponentProps) -> Html {
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        MusicComponent,
+        MusicComponentProps {
+            id: Some("music-component".to_string()),
+            url: Some(MUSIC_URL.to_string()),
+            repeat: Some(false),
+        },
+        (
+            "repeat",
+            MusicComponentProps {
+                id: Some("music-component".to_string()),
+                url: Some(MUSIC_URL.to_string()),
+                repeat: Some(true),
+            }
+        )
+    );
+}

@@ -171,3 +171,11 @@ pub fn game_map_component(props: &GameMapComponentProps) -> Html {
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(GameMapComponent, GameMapComponentProps::default(),);
+}

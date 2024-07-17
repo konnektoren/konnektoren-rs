@@ -1,25 +1,22 @@
 use crate::components::{
     challenge::ChallengeComponent, game_map::GameMapComponent, game_path::GamePathComponent,
-    MusicComponent,
+    ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent, ProgressBar,
+    TranslateComponent,
 };
 
 #[cfg(feature = "storage")]
 use crate::components::profile::{ProfileConfigComponent, ProfilePointsComponent};
 
 use crate::components::challenge::multiple_choice::MultipleChoiceComponentProps;
-use crate::components::challenge::sort_table::SortTableComponentProps;
 use crate::components::challenge::{
-    ChallengeComponentProps, MultipleChoiceCircleComponent, MultipleChoiceComponent,
-    SortTableComponent,
+    MultipleChoiceCircleComponent, MultipleChoiceComponent, SortTableComponent,
 };
-use crate::components::game_map::{ChallengeIndex, Coordinate, GameMapComponentProps};
-use crate::components::game_path::GamePathComponentProps;
-use crate::components::music::MusicComponentProps;
+use crate::components::game_map::{ChallengeIndex, Coordinate};
 use konnektoren_core::prelude::*;
 use log;
 use yew::prelude::*;
-use yew_preview::prelude::PreviewPage;
-use yew_preview::{create_component_item, ComponentItem, ComponentList};
+#[cfg(feature = "yew-preview")]
+use yew_preview::{create_component_item, prelude::*};
 
 #[function_component]
 pub fn Example() -> Html {
@@ -101,36 +98,8 @@ pub fn App() -> Html {
         _ => unreachable!(),
     };
 
+    #[cfg(feature = "yew-preview")]
     let component_list: ComponentList = vec![
-        create_component_item!(
-            "MusicComponent",
-            MusicComponent,
-            vec![
-                (
-                    "no repeat",
-                    MusicComponentProps {
-                        repeat: Some(false),
-                        ..Default::default()
-                    }
-                ),
-                ("default", MusicComponentProps::default())
-            ]
-        ),
-        create_component_item!(
-            "ProfileConfigComponent",
-            ProfileConfigComponent,
-            vec![("default", ())]
-        ),
-        create_component_item!(
-            "GamePathComponent",
-            GamePathComponent,
-            vec![("default", GamePathComponentProps::default())]
-        ),
-        create_component_item!(
-            "GameMapComponent",
-            GameMapComponent,
-            vec![("default", GameMapComponentProps::default())]
-        ),
         create_component_item!(
             "MultipleChoiceComponent",
             MultipleChoiceComponent,
@@ -153,22 +122,26 @@ pub fn App() -> Html {
                 }
             )]
         ),
-        create_component_item!(
-            "SortTableComponent",
-            SortTableComponent,
-            vec![("default", SortTableComponentProps::default())]
-        ),
-        create_component_item!(
-            "ChallengeComponent",
-            ChallengeComponent,
-            vec![("default", ChallengeComponentProps::default())]
-        ),
+        SortTableComponent::preview(),
+        ChallengeComponent::preview(),
+        ProfileConfigComponent::preview(),
+        ProfilePointsComponent::preview(),
+        ChallengeConfigComponent::preview(),
+        ChallengeInfoComponent::preview(),
+        GameMapComponent::preview(),
+        GamePathComponent::preview(),
+        MusicComponent::preview(),
+        ProgressBar::preview(),
+        TranslateComponent::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];
 
+    #[cfg(feature = "yew-preview")]
     html! {
-        <div class="app">
-            <PreviewPage components={component_list} />
-        </div>
+        <PreviewPage components={component_list} />
+    }
+    #[cfg(not(feature = "yew-preview"))]
+    html! {
+        <Example />
     }
 }

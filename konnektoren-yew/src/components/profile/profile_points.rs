@@ -14,3 +14,11 @@ pub fn profile_points_component() -> Html {
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(ProfilePointsComponent, (),);
+}

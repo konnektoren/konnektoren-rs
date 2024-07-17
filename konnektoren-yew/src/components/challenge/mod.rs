@@ -121,3 +121,11 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(ChallengeComponent, ChallengeComponentProps::default(),);
+}

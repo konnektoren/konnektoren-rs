@@ -257,3 +257,17 @@ pub fn sort_table_comp(props: &SortTableComponentProps) -> Html {
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        SortTableComponent,
+        SortTableComponentProps {
+            challenge: SortTable::default(),
+            ..Default::default()
+        },
+    );
+}
