@@ -3,7 +3,7 @@ use yew::prelude::*;
 
 use crate::components::challenge_config::ChallengeConfigComponent;
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Default)]
 pub struct GamePathComponentProps {
     pub game_path: GamePath,
     #[prop_or_default]

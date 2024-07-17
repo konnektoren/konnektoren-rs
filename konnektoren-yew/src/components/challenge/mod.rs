@@ -5,14 +5,14 @@ use yew::prelude::*;
 mod actions;
 mod challenge_history_summary;
 mod events;
-mod multiple_choice;
-mod multiple_choice_circle;
+pub mod multiple_choice;
+pub mod multiple_choice_circle;
 mod multiple_choice_result;
 mod options;
-mod question;
-mod result_summary;
-mod sort_table;
-mod sort_table_result;
+pub mod question;
+pub mod result_summary;
+pub mod sort_table;
+pub mod sort_table_result;
 
 use crate::components::ChallengeInfoComponent;
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
@@ -27,7 +27,7 @@ pub use result_summary::ResultSummaryComponent;
 pub use sort_table::SortTableComponent;
 pub use sort_table_result::SortTableResultComponent;
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Default)]
 pub struct ChallengeComponentProps {
     pub challenge: Challenge,
     #[prop_or_default]

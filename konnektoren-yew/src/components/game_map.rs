@@ -4,7 +4,7 @@ use yew::prelude::*;
 pub type ChallengeIndex = usize;
 pub type Coordinate = (i32, i32);
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Default)]
 pub struct GameMapComponentProps {
     pub game_path: GamePath,
     pub current_challenge: usize,

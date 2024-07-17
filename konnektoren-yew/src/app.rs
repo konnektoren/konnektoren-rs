@@ -6,18 +6,25 @@ use crate::components::{
 #[cfg(feature = "storage")]
 use crate::components::profile::{ProfileConfigComponent, ProfilePointsComponent};
 
-use crate::components::challenge::SortTableComponent;
-use crate::components::game_map::{ChallengeIndex, Coordinate};
-use konnektoren_core::challenges::SortTable;
+use crate::components::challenge::multiple_choice::MultipleChoiceComponentProps;
+use crate::components::challenge::sort_table::SortTableComponentProps;
+use crate::components::challenge::{
+    ChallengeComponentProps, MultipleChoiceCircleComponent, MultipleChoiceComponent,
+    SortTableComponent,
+};
+use crate::components::game_map::{ChallengeIndex, Coordinate, GameMapComponentProps};
+use crate::components::game_path::GamePathComponentProps;
+use crate::components::music::MusicComponentProps;
 use konnektoren_core::prelude::*;
 use log;
 use yew::prelude::*;
+use yew_preview::prelude::PreviewPage;
+use yew_preview::{create_component_item, ComponentItem, ComponentList};
 
 #[function_component]
-pub fn App() -> Html {
+pub fn Example() -> Html {
     let game = Game::default();
     let challenge: UseStateHandle<Option<Challenge>> = use_state(|| None);
-    let sort_table_challenge = SortTable::default();
 
     let new_challenge_cb = {
         let game = game.clone();
@@ -64,10 +71,8 @@ pub fn App() -> Html {
         #[cfg(not(feature = "storage"))]
         html! {<></>}
     };
-
     html! {
-        <div class="app">
-            <MusicComponent repeat={false} />
+        <div>
             {profile_config_component}
             {profile_points_component}
             <GamePathComponent game_path={game.game_path.clone()} on_challenge_config={new_challenge_cb} />
@@ -83,7 +88,87 @@ pub fn App() -> Html {
                 current_challenge={0}
                 on_select_challenge={on_map_challenge_cb}
             />
-            <SortTableComponent challenge={sort_table_challenge} on_finish={Callback::noop()} on_event={Callback::noop()} />
+        </div>
+    }
+}
+
+#[function_component]
+pub fn App() -> Html {
+    let game = Game::default();
+    let default_challenge = game.create_challenge("konnektoren-1").unwrap();
+    let default_multiple_choice: MultipleChoice = match &default_challenge.challenge_type {
+        ChallengeType::MultipleChoice(multiple_choice) => multiple_choice.clone(),
+        _ => unreachable!(),
+    };
+
+    let component_list: ComponentList = vec![
+        create_component_item!(
+            "MusicComponent",
+            MusicComponent,
+            vec![
+                (
+                    "no repeat",
+                    MusicComponentProps {
+                        repeat: Some(false),
+                        ..Default::default()
+                    }
+                ),
+                ("default", MusicComponentProps::default())
+            ]
+        ),
+        create_component_item!(
+            "ProfileConfigComponent",
+            ProfileConfigComponent,
+            vec![("default", ())]
+        ),
+        create_component_item!(
+            "GamePathComponent",
+            GamePathComponent,
+            vec![("default", GamePathComponentProps::default())]
+        ),
+        create_component_item!(
+            "GameMapComponent",
+            GameMapComponent,
+            vec![("default", GameMapComponentProps::default())]
+        ),
+        create_component_item!(
+            "MultipleChoiceComponent",
+            MultipleChoiceComponent,
+            vec![(
+                "default",
+                MultipleChoiceComponentProps {
+                    challenge: default_multiple_choice.clone(),
+                    ..Default::default()
+                }
+            )]
+        ),
+        create_component_item!(
+            "MultipleChoiceCircleComponent",
+            MultipleChoiceCircleComponent,
+            vec![(
+                "default",
+                MultipleChoiceComponentProps {
+                    challenge: default_multiple_choice.clone(),
+                    ..Default::default()
+                }
+            )]
+        ),
+        create_component_item!(
+            "SortTableComponent",
+            SortTableComponent,
+            vec![("default", SortTableComponentProps::default())]
+        ),
+        create_component_item!(
+            "ChallengeComponent",
+            ChallengeComponent,
+            vec![("default", ChallengeComponentProps::default())]
+        ),
+        create_component_item!("Example", Example, vec![("default", ())]),
+    ];
+
+    html! {
+        <div class="app">
+            <PreviewPage components={component_list} />
         </div>
     }
 }

@@ -7,8 +7,8 @@ use konnektoren_core::challenges::{
 };
 use yew::prelude::*;
 
-#[derive(Properties, PartialEq)]
-pub struct Props {
+#[derive(Properties, PartialEq, Default)]
+pub struct MultipleChoiceComponentProps {
     pub challenge: MultipleChoice,
     #[prop_or_default]
     pub on_finish: Option<Callback<ChallengeResult>>,
@@ -106,10 +106,14 @@ pub fn create_handle_option_selection(
 }
 
 #[function_component(MultipleChoiceComponent)]
-pub fn multiple_choice_component(props: &Props) -> Html {
+pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
     let task_index = use_state(|| 0);
     let challenge_result = use_state(ChallengeResult::default);
     let show_help = use_state(|| false);
+
+    if *task_index >= props.challenge.questions.len() {
+        return html! {};
+    }
 
     let handle_action = create_handle_action(
         task_index.clone(),

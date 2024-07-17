@@ -4,8 +4,8 @@ use wasm_bindgen::JsCast;
 use web_sys::{DragEvent, Element, TouchEvent};
 use yew::prelude::*;
 
-#[derive(Properties, PartialEq)]
-pub struct Props {
+#[derive(Properties, PartialEq, Default)]
+pub struct SortTableComponentProps {
     pub challenge: SortTable,
     #[prop_or_default]
     pub on_finish: Option<Callback<ChallengeResult>>,
@@ -42,8 +42,8 @@ fn shuffle(rows: &Vec<SortTableRow>) -> Vec<SortTableRow> {
 }
 
 #[function_component(SortTableComponent)]
-pub fn sort_table_comp(props: &Props) -> Html {
-    let Props {
+pub fn sort_table_comp(props: &SortTableComponentProps) -> Html {
+    let SortTableComponentProps {
         challenge,
         on_finish,
         on_event,

@@ -5,7 +5,7 @@ use yew::prelude::*;
 const MUSIC_URL: &str = "https://konnektoren.help/assets/fanfare-3-rpg.ogg";
 
 #[derive(Properties, Clone, PartialEq)]
-pub struct Props {
+pub struct MusicComponentProps {
     #[prop_or_default]
     pub id: Option<String>,
     #[prop_or_default]
@@ -14,7 +14,7 @@ pub struct Props {
     pub repeat: Option<bool>,
 }
 
-impl Default for Props {
+impl Default for MusicComponentProps {
     fn default() -> Self {
         Self {
             id: None,
@@ -25,7 +25,7 @@ impl Default for Props {
 }
 
 #[function_component(MusicComponent)]
-pub fn music_component(props: &Props) -> Html {
+pub fn music_component(props: &MusicComponentProps) -> Html {
     let audio_ref = use_node_ref();
 
     use_effect({
@@ -33,8 +33,10 @@ pub fn music_component(props: &Props) -> Html {
         let music_url = (&props)
             .url
             .clone()
-            .unwrap_or(Props::default().url.unwrap());
-        let repeat = (&props).repeat.unwrap_or(Props::default().repeat.unwrap());
+            .unwrap_or(MusicComponentProps::default().url.unwrap());
+        let repeat = (&props)
+            .repeat
+            .unwrap_or(MusicComponentProps::default().repeat.unwrap());
         move || {
             let audio_element = audio_ref
                 .cast::<HtmlAudioElement>()

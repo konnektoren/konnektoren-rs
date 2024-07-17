@@ -1,14 +1,20 @@
 use super::{OptionsComponent, QuestionComponent};
-use crate::components::challenge::multiple_choice::{create_handle_option_selection, Props};
+use crate::components::challenge::multiple_choice::{
+    create_handle_option_selection, MultipleChoiceComponentProps,
+};
 use crate::components::ProgressBar;
 use konnektoren_core::challenges::ChallengeResult;
 use yew::prelude::*;
 
 #[function_component(MultipleChoiceCircleComponent)]
-pub fn multiple_choice_circle_component(props: &Props) -> Html {
+pub fn multiple_choice_circle_component(props: &MultipleChoiceComponentProps) -> Html {
     let task_index = use_state(|| 0);
     let challenge_result = use_state(ChallengeResult::default);
     let show_help = use_state(|| false);
+
+    if *task_index >= props.challenge.questions.len() {
+        return html! {};
+    }
 
     let handle_option_selection = create_handle_option_selection(
         task_index.clone(),
