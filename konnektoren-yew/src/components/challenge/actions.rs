@@ -21,3 +21,16 @@ pub fn challenge_actions_component(props: &ChallengeActionsComponentProps) -> Ht
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        ChallengeActionsComponent,
+        ChallengeActionsComponentProps {
+            on_action: Callback::noop()
+        },
+    );
+}

@@ -4,14 +4,14 @@ use web_sys::{window, HtmlElement};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
-pub struct Props {
+pub struct BlinkAnimationProps {
     pub target_id: String,
     pub duration: Option<Duration>,
     pub color: String,
 }
 
 #[function_component(BlinkAnimation)]
-pub fn blink_animation(props: &Props) -> Html {
+pub fn blink_animation(props: &BlinkAnimationProps) -> Html {
     let target_id = props.target_id.clone();
     let duration = props.duration.unwrap_or(Duration::from_secs(2)).as_millis() as f64;
     let color = props.color.clone();
@@ -53,4 +53,35 @@ pub fn blink_animation(props: &Props) -> Html {
     html! {
         <style>{style}</style>
     }
+}
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        BlinkAnimation,
+        BlinkAnimationProps {
+            target_id: "blink-animation".to_string(),
+            duration: Some(Duration::from_secs(2)),
+            color: "red".to_string(),
+        },
+        (
+            "1 second",
+            BlinkAnimationProps {
+                target_id: "blink-animation".to_string(),
+                duration: Some(Duration::from_secs(1)),
+                color: "red".to_string(),
+            }
+        ),
+        (
+            "blue",
+            BlinkAnimationProps {
+                target_id: "blink-animation".to_string(),
+                duration: Some(Duration::from_secs(2)),
+                color: "blue".to_string(),
+            }
+        )
+    );
 }

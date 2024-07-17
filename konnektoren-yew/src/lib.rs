@@ -10,4 +10,5 @@ pub mod storage;
 pub mod prelude {
     pub use crate::app::App;
     pub use crate::components::*;
+    pub use crate::effects::*;
 }

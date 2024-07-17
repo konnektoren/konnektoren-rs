@@ -45,3 +45,48 @@ pub fn question_component(props: &QuestionComponentProps) -> Html {
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        QuestionComponent,
+        QuestionComponentProps {
+            question: Question {
+                question: "What is the capital of Germany?".to_string(),
+                help: "Berlin".to_string(),
+                image: None,
+                option: 0,
+            },
+            help: false,
+        },
+        (
+            "With Image",
+            QuestionComponentProps {
+                question: Question {
+                    question: "What is the capital of Germany?".to_string(),
+                    help: "Berlin".to_string(),
+                    image: Some(
+                        "https://www.rust-lang.org/logos/rust-logo-512x512.png".to_string()
+                    ),
+                    option: 0,
+                },
+                help: false,
+            }
+        ),
+        (
+            "With Help",
+            QuestionComponentProps {
+                question: Question {
+                    question: "What is the capital of Germany?".to_string(),
+                    help: "Berlin".to_string(),
+                    image: None,
+                    option: 0,
+                },
+                help: true,
+            }
+        )
+    );
+}

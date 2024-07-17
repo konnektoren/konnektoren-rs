@@ -12,6 +12,8 @@ use crate::components::challenge::{
     MultipleChoiceCircleComponent, MultipleChoiceComponent, SortTableComponent,
 };
 use crate::components::game_map::{ChallengeIndex, Coordinate};
+use crate::effects::BlinkAnimation;
+use crate::prelude::{ChallengeActionsComponent, OptionsComponent, QuestionComponent};
 use konnektoren_core::prelude::*;
 use log;
 use yew::prelude::*;
@@ -100,6 +102,7 @@ pub fn App() -> Html {
 
     #[cfg(feature = "yew-preview")]
     let component_list: ComponentList = vec![
+        BlinkAnimation::preview(),
         create_component_item!(
             "MultipleChoiceComponent",
             MultipleChoiceComponent,
@@ -126,12 +129,15 @@ pub fn App() -> Html {
         ChallengeComponent::preview(),
         ProfileConfigComponent::preview(),
         ProfilePointsComponent::preview(),
+        ChallengeActionsComponent::preview(),
         ChallengeConfigComponent::preview(),
         ChallengeInfoComponent::preview(),
         GameMapComponent::preview(),
         GamePathComponent::preview(),
         MusicComponent::preview(),
+        OptionsComponent::preview(),
         ProgressBar::preview(),
+        QuestionComponent::preview(),
         TranslateComponent::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];

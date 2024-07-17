@@ -10,7 +10,7 @@ pub mod translate;
 #[cfg(feature = "music")]
 pub mod music;
 
-pub use challenge::ChallengeComponent;
+pub use challenge::*;
 pub use challenge_config::ChallengeConfigComponent;
 pub use challenge_info::ChallengeInfoComponent;
 pub use game_map::GameMapComponent;

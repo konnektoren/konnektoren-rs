@@ -37,3 +37,30 @@ fn render_option(
         </div>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        OptionsComponent,
+        OptionsComponentProps {
+            options: vec![
+                MultipleChoiceOption {
+                    id: 1,
+                    name: "Option 1".to_string(),
+                },
+                MultipleChoiceOption {
+                    id: 2,
+                    name: "Option 2".to_string(),
+                },
+                MultipleChoiceOption {
+                    id: 3,
+                    name: "Option 3".to_string(),
+                },
+            ],
+            on_select: None,
+        },
+    );
+}
