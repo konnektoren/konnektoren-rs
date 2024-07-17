@@ -35,7 +35,7 @@ pub fn question_component(props: &QuestionComponentProps) -> Html {
                     html! {
                         <>
                         <p>{&props.question.help}</p>
-                        <TranslateComponent text={ (&props.question.help).to_string() } />
+                        <TranslateComponent text={ props.question.help.to_string() } />
                         </>
                     }
                 } else {

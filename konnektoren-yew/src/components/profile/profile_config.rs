@@ -21,7 +21,7 @@ pub fn profile_config_component() -> Html {
         let profile = profile.clone();
         Callback::from(move |_| {
             let mut updated_profile: PlayerProfile = (*profile).clone();
-            updated_profile.name = (*name).clone();
+            updated_profile.name.clone_from(&*name);
             ProfileStorage::default().update(updated_profile.clone());
             profile.set(updated_profile);
         })

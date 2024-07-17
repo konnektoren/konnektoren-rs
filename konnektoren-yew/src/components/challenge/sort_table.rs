@@ -13,12 +13,12 @@ pub struct SortTableComponentProps {
     pub on_event: Option<Callback<ChallengeEvent>>,
 }
 
-fn shuffle(rows: &Vec<SortTableRow>) -> Vec<SortTableRow> {
+fn shuffle(rows: &[SortTableRow]) -> Vec<SortTableRow> {
     use rand::seq::SliceRandom;
     use rand::thread_rng;
     let mut rng = thread_rng();
 
-    let mut rows = rows.clone();
+    let mut rows = rows.to_owned();
 
     let mut columns: Vec<Vec<String>> = vec![vec![]; rows[0].values.len()];
 
@@ -28,13 +28,13 @@ fn shuffle(rows: &Vec<SortTableRow>) -> Vec<SortTableRow> {
         }
     }
 
-    for col in 1..columns.len() {
-        columns[col].shuffle(&mut rng);
+    for columns in columns.iter_mut().skip(1) {
+        columns.shuffle(&mut rng);
     }
 
     for (row_idx, row) in rows.iter_mut().enumerate() {
-        for col_idx in 1..columns.len() {
-            row.values[col_idx] = columns[col_idx][row_idx].clone();
+        for (col_idx, _) in columns.iter().enumerate().skip(1) {
+            row.values[col_idx].clone_from(&columns[col_idx][row_idx]);
         }
     }
 

@@ -30,11 +30,11 @@ pub fn music_component(props: &MusicComponentProps) -> Html {
 
     use_effect({
         let audio_ref = audio_ref.clone();
-        let music_url = (&props)
+        let music_url = props
             .url
             .clone()
             .unwrap_or(MusicComponentProps::default().url.unwrap());
-        let repeat = (&props)
+        let repeat = props
             .repeat
             .unwrap_or(MusicComponentProps::default().repeat.unwrap());
         move || {
@@ -46,13 +46,13 @@ pub fn music_component(props: &MusicComponentProps) -> Html {
             audio_element.set_autoplay(true);
 
             move || {
-                let _ = audio_element.pause().expect("Failed to pause audio");
+                audio_element.pause().expect("Failed to pause audio");
                 audio_element.set_src("");
             }
         }
     });
 
-    let id = (&props).id.clone().unwrap_or(Uuid::new_v4().to_string());
+    let id = props.id.clone().unwrap_or(Uuid::new_v4().to_string());
 
     html! {
         <div {id} class="music-component">

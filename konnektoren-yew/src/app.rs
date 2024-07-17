@@ -117,7 +117,7 @@ pub fn App() -> Html {
             vec![(
                 "default",
                 MultipleChoiceComponentProps {
-                    challenge: default_multiple_choice.clone(),
+                    challenge: default_multiple_choice,
                     ..Default::default()
                 }
             )]
