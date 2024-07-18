@@ -18,6 +18,7 @@ pub use challenge_history::ChallengeHistory;
 pub use challenge_input::ChallengeInput;
 pub use challenge_result::ChallengeResult;
 pub use challenge_type::ChallengeType;
+pub use informative::{Informative, InformativeText};
 pub use multiple_choice::MultipleChoice;
 pub use multiple_choice::MultipleChoiceOption;
 pub use multiple_choice::Question;
