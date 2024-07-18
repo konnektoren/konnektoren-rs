@@ -76,6 +76,7 @@ impl Performance for ChallengeType {
                 }
                 100 * score / dataset.rows.len() as u32
             }
+            (ChallengeType::Informative(_), ChallengeResult::Informative) => 100,
             _ => panic!("Invalid challenge type"),
         }
     }

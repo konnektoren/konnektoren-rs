@@ -6,6 +6,8 @@ mod actions;
 mod challenge_history_summary;
 mod events;
 mod informative;
+mod informative_markdown;
+mod informative_result;
 pub mod multiple_choice;
 pub mod multiple_choice_circle;
 mod multiple_choice_result;
@@ -20,6 +22,8 @@ pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use challenge_history_summary::ChallengeHistorySummaryComponent;
 pub use events::ChallengeEvent;
 pub use informative::InformativeComponent;
+pub use informative_markdown::InformativeMarkdownComponent;
+pub use informative_result::InformativeResultComponent;
 pub use multiple_choice::MultipleChoiceComponent;
 pub use multiple_choice_circle::MultipleChoiceCircleComponent;
 pub use multiple_choice_result::MultipleChoiceResultComponent;
@@ -90,6 +94,14 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
         (None, ChallengeType::SortTable(challenge), ChallengeVariant::SortTable) => html! {
             <SortTableComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
         },
+        (None, ChallengeType::Informative(challenge), ChallengeVariant::InformativeText) => html! {
+            <InformativeComponent challenge={challenge.clone()} on_finish={handle_finish} />
+        },
+        (None, ChallengeType::Informative(challenge), ChallengeVariant::InformativeMarkdown) => {
+            html! {
+                <InformativeMarkdownComponent challenge={challenge.clone()} on_finish={handle_finish} />
+            }
+        }
         _ => html! {},
     };
 

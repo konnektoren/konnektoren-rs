@@ -118,7 +118,7 @@ pub fn game_map_component(props: &GameMapComponentProps) -> Html {
 
     html! {
         <div class="map">
-            <h1>{&props.game_path.name}</h1>
+            <h2>{&props.game_path.name}</h2>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox={view_box}

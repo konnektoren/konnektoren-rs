@@ -17,7 +17,7 @@ pub fn informative_component(props: &InformativeComponentProps) -> Html {
     let on_finish = props.on_finish.clone();
     let on_finish = Callback::from(move |_| {
         if let Some(on_finish) = on_finish.as_ref() {
-            on_finish.emit(ChallengeResult::default());
+            on_finish.emit(ChallengeResult::Informative);
         }
     });
 

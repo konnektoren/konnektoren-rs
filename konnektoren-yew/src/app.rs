@@ -14,7 +14,8 @@ use crate::components::challenge::{
 use crate::components::game_map::{ChallengeIndex, Coordinate};
 use crate::effects::BlinkAnimation;
 use crate::prelude::{
-    ChallengeActionsComponent, InformativeComponent, OptionsComponent, QuestionComponent,
+    ChallengeActionsComponent, InformativeComponent, InformativeMarkdownComponent,
+    OptionsComponent, QuestionComponent,
 };
 use konnektoren_core::prelude::*;
 use log;
@@ -135,6 +136,7 @@ pub fn App() -> Html {
         ChallengeConfigComponent::preview(),
         ChallengeInfoComponent::preview(),
         InformativeComponent::preview(),
+        InformativeMarkdownComponent::preview(),
         GameMapComponent::preview(),
         GamePathComponent::preview(),
         MusicComponent::preview(),

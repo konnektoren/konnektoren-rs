@@ -9,6 +9,10 @@ pub enum ChallengeVariant {
     MultipleChoiceCircle,
     #[serde(rename = "sort-table")]
     SortTable,
+    #[serde(rename = "informative-text")]
+    InformativeText,
+    #[serde(rename = "informative-markdown")]
+    InformativeMarkdown
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

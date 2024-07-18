@@ -23,9 +23,9 @@ console_log = "1.0"
 log = "0.4.21"
 implicit-clone = "0.4.9"
 indexmap = "2.2.6"
-gloo = { version = "0.11.0" }
-gloo-storage = { version = "0.3.0", optional = true }
+gloo = { version = "0.11.0", features = ["net"] }
 konnektoren-core = { path = "../konnektoren-core" }
+markdown = { version ="1.0.0-alpha.18" }
 serde_json = "1.0.117"
 wasm-bindgen = { version = "0.2", features = ["serde"] }
 wasm-bindgen-futures = { version = "0.4.42", optional = true }
@@ -37,6 +37,7 @@ yew = { version = "0.21", features = ["csr"] }
 yew-preview = { git = "https://github.com/chriamue/yew-preview", optional = true }
 uuid = { version = "1.10.0", features = ["v4"] }
 rand = "0.9.0-alpha.1"
+anyhow = "1.0.86"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
