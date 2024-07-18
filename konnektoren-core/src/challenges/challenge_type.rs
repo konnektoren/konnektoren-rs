@@ -1,4 +1,5 @@
 use super::{ChallengeResult, Performance};
+use crate::challenges::informative::Informative;
 use crate::challenges::multiple_choice::MultipleChoice;
 use crate::challenges::sort_table::SortTable;
 use serde::{Deserialize, Serialize};
@@ -9,6 +10,8 @@ pub enum ChallengeType {
     MultipleChoice(MultipleChoice),
     #[serde(rename = "sort-table")]
     SortTable(SortTable),
+    #[serde(rename = "informative")]
+    Informative(Informative),
 }
 
 impl Default for ChallengeType {
@@ -31,6 +34,7 @@ impl ChallengeType {
                 new_dataset.rows = dataset.rows.iter().take(tasks).cloned().collect();
                 ChallengeType::SortTable(new_dataset)
             }
+            ChallengeType::Informative(dataset) => ChallengeType::Informative(dataset.clone()),
         }
     }
 
@@ -38,6 +42,7 @@ impl ChallengeType {
         match self {
             ChallengeType::MultipleChoice(dataset) => &dataset.name,
             ChallengeType::SortTable(dataset) => &dataset.name,
+            ChallengeType::Informative(dataset) => &dataset.name,
         }
     }
 
@@ -45,6 +50,7 @@ impl ChallengeType {
         match self {
             ChallengeType::MultipleChoice(dataset) => &dataset.id,
             ChallengeType::SortTable(dataset) => &dataset.id,
+            ChallengeType::Informative(dataset) => &dataset.id,
         }
     }
 }

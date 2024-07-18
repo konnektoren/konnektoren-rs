@@ -1,0 +1,9 @@
+!informative
+id: "personal_pronouns_info"
+name: "Personal Pronouns Info"
+description: "Match the personal pronouns in their correct case (Nominativ, Akkusativ, Dativ)"
+text:
+  - language: "de"
+    text: "Die Personalpronomen sind Wörter, die Personen oder Dinge bezeichnen, ohne sie beim Namen zu nennen."
+  - language: "en"
+    text: "Personal pronouns are words that refer to people or things without naming them."

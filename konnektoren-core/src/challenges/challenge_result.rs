@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 pub enum ChallengeResult {
     MultipleChoice(Vec<MultipleChoiceOption>),
     SortTable(Vec<SortTableRow>),
+    Informative,
 }
 
 impl Default for ChallengeResult {
@@ -32,6 +33,7 @@ impl ChallengeResult {
                 }
                 _ => panic!("Invalid challenge input"),
             },
+            ChallengeResult::Informative => Ok(()),
         }
     }
 
@@ -39,6 +41,7 @@ impl ChallengeResult {
         match self {
             ChallengeResult::MultipleChoice(options) => options.len(),
             ChallengeResult::SortTable(rows) => rows.len(),
+            ChallengeResult::Informative => 0,
         }
     }
 
@@ -46,6 +49,7 @@ impl ChallengeResult {
         match self {
             ChallengeResult::MultipleChoice(options) => options.is_empty(),
             ChallengeResult::SortTable(rows) => rows.is_empty(),
+            ChallengeResult::Informative => true,
         }
     }
 }

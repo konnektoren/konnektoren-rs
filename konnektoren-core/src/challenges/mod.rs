@@ -5,6 +5,7 @@ pub mod challenge_history;
 pub mod challenge_input;
 pub mod challenge_result;
 pub mod challenge_type;
+mod informative;
 pub mod multiple_choice;
 pub mod performance;
 pub mod solvable;
