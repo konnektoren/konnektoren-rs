@@ -6,8 +6,11 @@ use yew::prelude::*;
 #[derive(Properties, PartialEq)]
 pub struct BlinkAnimationProps {
     pub target_id: String,
+    #[prop_or_default]
     pub duration: Option<Duration>,
     pub color: String,
+    #[prop_or_default]
+    pub class_name: Option<String>,
 }
 
 #[function_component(BlinkAnimation)]
@@ -16,7 +19,11 @@ pub fn blink_animation(props: &BlinkAnimationProps) -> Html {
     let duration = props.duration.unwrap_or(Duration::from_secs(2)).as_millis() as f64;
     let color = props.color.clone();
 
-    let class_name = format!("blink-animation-{}", target_id);
+    let class_name = props
+        .class_name
+        .as_ref()
+        .unwrap_or(&format!("blink-animation-{}", target_id))
+        .to_string();
 
     let style = format!(
         "@keyframes {} {{
@@ -66,6 +73,7 @@ mod preview {
             target_id: "blink-animation".to_string(),
             duration: Some(Duration::from_secs(2)),
             color: "red".to_string(),
+            class_name: None
         },
         (
             "1 second",
@@ -73,6 +81,7 @@ mod preview {
                 target_id: "blink-animation".to_string(),
                 duration: Some(Duration::from_secs(1)),
                 color: "red".to_string(),
+                class_name: None
             }
         ),
         (
@@ -81,6 +90,7 @@ mod preview {
                 target_id: "blink-animation".to_string(),
                 duration: Some(Duration::from_secs(2)),
                 color: "blue".to_string(),
+                class_name: None
             }
         )
     );
