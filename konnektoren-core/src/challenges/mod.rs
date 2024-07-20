@@ -8,9 +8,9 @@ pub mod challenge_type;
 mod informative;
 pub mod multiple_choice;
 pub mod performance;
+mod performance_record;
 pub mod solvable;
 mod sort_table;
-mod performance_record;
 
 pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;

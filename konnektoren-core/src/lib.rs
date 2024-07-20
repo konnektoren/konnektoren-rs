@@ -4,6 +4,9 @@ pub mod game;
 pub mod player_profile;
 pub mod session;
 
+#[cfg(feature = "certificates")]
+pub mod certificates;
+
 /// experience points
 pub type Xp = u32;
 
