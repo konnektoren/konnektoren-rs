@@ -12,7 +12,8 @@ name = "konnektoren-yew-bin"
 path = "src/main.rs"
 
 [features]
-default = ["effects", "music", "storage"]
+default = ["certificates", "effects", "music", "storage"]
+certificates = ["konnektoren-core/certificates"]
 effects = ["gloo/timers", "gloo/futures", "wasm-bindgen-futures"]
 music = []
 storage = ["gloo/storage"]
@@ -36,6 +37,7 @@ web-sys = { version = "0.3.*", features = [
 yew = { version = "0.21", features = ["csr"] }
 yew-preview = { git = "https://github.com/chriamue/yew-preview", optional = true }
 uuid = { version = "1.10.0", features = ["v4"] }
+urlencoding = "2.1.3"
 rand = "0.9.0-alpha.1"
 anyhow = "1.0.86"
 

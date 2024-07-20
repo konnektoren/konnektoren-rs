@@ -14,9 +14,12 @@ use crate::components::challenge::{
 use crate::components::game_map::{ChallengeIndex, Coordinate};
 use crate::effects::BlinkAnimation;
 use crate::prelude::{
-    ChallengeActionsComponent, InformativeComponent, InformativeMarkdownComponent,
-    OptionsComponent, QuestionComponent,
+    ChallengeActionsComponent, InformativeComponent,
+    InformativeMarkdownComponent, OptionsComponent, QuestionComponent,
 };
+#[cfg(feature = "certificates")]
+use crate::components::CertificateComponent;
+
 use konnektoren_core::prelude::*;
 use log;
 use yew::prelude::*;
@@ -144,6 +147,7 @@ pub fn App() -> Html {
         ProgressBar::preview(),
         QuestionComponent::preview(),
         TranslateComponent::preview(),
+        CertificateComponent::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];
 

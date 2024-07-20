@@ -7,6 +7,7 @@ pub mod profile;
 pub mod progress_bar;
 pub mod translate;
 
+mod certificates;
 #[cfg(feature = "music")]
 pub mod music;
 
@@ -17,6 +18,9 @@ pub use game_map::GameMapComponent;
 pub use game_path::GamePathComponent;
 pub use progress_bar::ProgressBar;
 pub use translate::TranslateComponent;
+
+#[cfg(feature = "certificates")]
+pub use certificates::*;
 
 #[cfg(feature = "storage")]
 pub use profile::ProfileConfigComponent;
