@@ -1,4 +1,5 @@
 use super::keypair_from_static_str;
+use crate::challenges::PerformanceRecord;
 use anyhow::{anyhow, Result};
 use base64::{engine::general_purpose, Engine as _};
 use chrono::{DateTime, Utc};
@@ -6,9 +7,8 @@ use ed25519_dalek::{ed25519::SignatureBytes, Signature, Signer, Verifier};
 use serde::{Deserialize, Serialize};
 use sha2::Digest;
 use sha2::Sha256;
-use crate::challenges::PerformanceRecord;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Hash, Eq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Hash, Eq, Default)]
 pub struct CertificateData {
     pub game_path_name: String,
     pub total_challenges: usize,

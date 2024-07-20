@@ -14,7 +14,7 @@ crate-type = ["rlib"]
 
 [features]
 default = ["certificates"]
-certificates = ["base64", "sha2", "serde_cbor", "ed25519-dalek", "rmp-serde"]
+certificates = ["base64", "sha2", "serde_cbor", "ed25519-dalek", "rmp-serde", "image", "imageproc", "ab_glyph", "plot_icon", "qrcode"]
 
 [dependencies]
 anyhow = "1.0"
@@ -28,3 +28,8 @@ sha2 = { version = "0.10.8", optional = true }
 serde_cbor = { version = "0.11.2", optional = true }
 ed25519-dalek = { version = "2.1.1", default-features = false, optional = true }
 rmp-serde = { version = "1.1.2", optional = true }
+image = { version = "0.25.1", optional = true }
+imageproc = { version = "0.25", optional = true }
+ab_glyph = { version = "0.2.28", optional = true }
+qrcode = { version = "0.14.1", optional = true }
+plot_icon = { version = "0.3.0", optional = true }

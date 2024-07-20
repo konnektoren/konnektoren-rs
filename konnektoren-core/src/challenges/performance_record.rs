@@ -33,7 +33,6 @@ impl PerformanceRecord {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
