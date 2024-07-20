@@ -12,6 +12,7 @@ use crate::components::challenge::{
     MultipleChoiceCircleComponent, MultipleChoiceComponent, SortTableComponent,
 };
 use crate::components::game_map::{ChallengeIndex, Coordinate};
+#[cfg(feature = "effects")]
 use crate::effects::BlinkAnimation;
 use crate::prelude::{
     ChallengeActionsComponent, InformativeComponent,
