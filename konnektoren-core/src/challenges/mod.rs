@@ -10,6 +10,7 @@ pub mod multiple_choice;
 pub mod performance;
 pub mod solvable;
 mod sort_table;
+mod performance_record;
 
 pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;
@@ -23,5 +24,6 @@ pub use multiple_choice::MultipleChoice;
 pub use multiple_choice::MultipleChoiceOption;
 pub use multiple_choice::Question;
 pub use performance::Performance;
+pub use performance_record::PerformanceRecord;
 pub use solvable::Solvable;
 pub use sort_table::{SortTable, SortTableRow};
