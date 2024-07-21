@@ -1,6 +1,8 @@
+use gloo::timers::callback::Timeout;
 use konnektoren_core::certificates::{create_certificate_data_url, CertificateData};
 use urlencoding::encode;
 use yew::prelude::*;
+use yew_hooks::{use_clipboard, UseClipboardHandle};
 
 #[derive(Properties, PartialEq, Clone, Debug, Default)]
 pub struct CertificateProps {
@@ -13,22 +15,46 @@ pub struct CertificateProps {
 
 #[function_component(CertificateComponent)]
 pub fn certificate(props: &CertificateProps) -> Html {
-    let encoded_code: String = encode(&props.certificate_data.to_base64()).into_owned();
+    let clipboard_handle: UseClipboardHandle = use_clipboard();
+    let show_copied_message = use_state(|| false);
 
-    let img_src = match (&props.hostname, &props.protocol) {
-        (Some(hostname), Some(protocol)) => {
-            let share_url = format!(
-                "{}://{}/?page=results&code={}",
-                protocol, hostname, encoded_code
-            );
+    let share_url = format!(
+        "{}://{}/?page=results&code={}",
+        props.protocol.clone().unwrap_or_default(),
+        props.hostname.clone().unwrap_or_default(),
+        &props.certificate_data.to_base64()
+    );
 
-            create_certificate_data_url(&props.certificate_data, &share_url, hostname)
-                .map_err(|err| html! { <p>{ "Error creating certificate image: " }{ err }</p> })
-                .ok()
-        }
-        _ => create_certificate_data_url(&props.certificate_data, "", "")
-            .map_err(|err| html! { <p>{ "Error creating certificate image: " }{ err }</p> })
-            .ok(),
+    let img_src = {
+        create_certificate_data_url(
+            &props.certificate_data,
+            &share_url,
+            &props.hostname.clone().unwrap_or_default(),
+        )
+        .map_err(|err| html! { <p>{ "Error creating certificate image: " }{ err }</p> })
+        .ok()
+    };
+
+    let share_url = format!(
+        "{}//{}/?page=results&code={}",
+        props.protocol.clone().unwrap_or_default(),
+        props.hostname.clone().unwrap_or_default(),
+        encode(&props.certificate_data.to_base64())
+    );
+
+    let on_share_click = {
+        let clipboard_handle = clipboard_handle.clone();
+        let data = share_url.clone();
+        let show_copied_message = show_copied_message.clone();
+        Callback::from(move |_| {
+            clipboard_handle.write_text(data.to_string());
+            show_copied_message.set(true);
+            let show_copied_message = show_copied_message.clone();
+            Timeout::new(3000, move || {
+                show_copied_message.set(false);
+            })
+            .forget();
+        })
     };
 
     html! {
@@ -41,6 +67,13 @@ pub fn certificate(props: &CertificateProps) -> Html {
                 <p><strong>{ "Solved Challenges: " }</strong>{ &props.certificate_data.solved_challenges }</p>
                 <p><strong>{ "Performance Percentage: " }</strong>{ format!("{}%", &props.certificate_data.performance_percentage) }</p>
                 <p><strong>{ "Date: " }</strong>{ &props.certificate_data.date.to_string() }</p>
+            </div>
+            <div class="share-section">
+                <input type="text" class="share-url-input" readonly=true value={share_url.clone()} />
+                <button onclick={on_share_click}>{ "Share This Achievement" }</button>
+                if *show_copied_message {
+                    <p class="copied-message">{"Link copied to clipboard!"}</p>
+                }
             </div>
             <div class="certificate-image">
                 {
