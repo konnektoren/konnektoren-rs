@@ -1,9 +1,9 @@
-use std::collections::HashMap;
 use crate::challenges::{ChallengeHistory, Performance};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Hash)]
 pub struct PerformanceRecord {
     pub game_path_id: String,
     pub profile_name: String,
