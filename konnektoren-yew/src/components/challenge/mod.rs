@@ -42,6 +42,8 @@ pub struct ChallengeComponentProps {
     pub on_finish: Option<Callback<ChallengeResult>>,
     #[prop_or_default]
     pub on_event: Option<Callback<ChallengeEvent>>,
+    #[prop_or_default]
+    pub language: Option<String>,
 }
 
 #[function_component(ChallengeComponent)]
@@ -95,11 +97,11 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
             <SortTableComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
         },
         (None, ChallengeType::Informative(challenge), ChallengeVariant::InformativeText) => html! {
-            <InformativeComponent challenge={challenge.clone()} on_finish={handle_finish} />
+            <InformativeComponent challenge={challenge.clone()} on_finish={handle_finish} language={props.language.clone()} />
         },
         (None, ChallengeType::Informative(challenge), ChallengeVariant::InformativeMarkdown) => {
             html! {
-                <InformativeMarkdownComponent challenge={challenge.clone()} on_finish={handle_finish} />
+                <InformativeMarkdownComponent challenge={challenge.clone()} on_finish={handle_finish} language={props.language.clone()}  />
             }
         }
         _ => html! {},
