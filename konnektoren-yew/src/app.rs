@@ -18,9 +18,10 @@ use crate::components::CertificateComponent;
 use crate::effects::BlinkAnimation;
 use crate::prelude::{
     ChallengeActionsComponent, InformativeComponent, InformativeMarkdownComponent,
-    OptionsComponent, QuestionComponent,
+    OptionsComponent, QuestionComponent, SelectLanguage,
 };
 
+use crate::i18n::{I18nConfig, I18nProvider};
 use konnektoren_core::prelude::*;
 use log;
 use yew::prelude::*;
@@ -107,6 +108,8 @@ pub fn App() -> Html {
         _ => unreachable!(),
     };
 
+    let i18n_config = I18nConfig::default();
+
     #[cfg(feature = "yew-preview")]
     let component_list: ComponentList = vec![
         BlinkAnimation::preview(),
@@ -149,12 +152,15 @@ pub fn App() -> Html {
         QuestionComponent::preview(),
         TranslateComponent::preview(),
         CertificateComponent::preview(),
+        SelectLanguage::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];
 
     #[cfg(feature = "yew-preview")]
     html! {
-        <PreviewPage components={component_list} />
+        <I18nProvider config={i18n_config}>
+            <PreviewPage components={component_list} />
+        </I18nProvider>
     }
     #[cfg(not(feature = "yew-preview"))]
     html! {

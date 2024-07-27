@@ -5,6 +5,7 @@ pub mod game_map;
 pub mod game_path;
 pub mod profile;
 pub mod progress_bar;
+pub mod select_language;
 pub mod translate;
 
 mod certificates;
@@ -17,6 +18,7 @@ pub use challenge_info::ChallengeInfoComponent;
 pub use game_map::GameMapComponent;
 pub use game_path::GamePathComponent;
 pub use progress_bar::ProgressBar;
+pub use select_language::SelectLanguage;
 pub use translate::TranslateComponent;
 
 #[cfg(feature = "certificates")]
