@@ -1,0 +1,221 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-runtime-view]]
+== Runtime View
+
+ifdef::arc42help[]
+[role="arc42help"]
+****
+.Contents
+The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios from the following areas:
+
+* important use cases or features: how do building blocks execute them?
+* interactions at critical external interfaces: how do building blocks cooperate with users and neighboring systems?
+* operation and administration: launch, start-up, stop
+* error and exception scenarios
+
+Remark: The main criterion for the choice of possible scenarios (sequences, workflows) is their *architectural relevance*. It is *not* important to describe a large number of scenarios. You should rather document a representative selection.
+
+.Motivation
+You should understand how (instances of) building blocks of your system perform their job and communicate at runtime.
+You will mainly capture scenarios in your documentation to communicate your architecture to stakeholders that are less willing or able to read and understand the static models (building block view, deployment view).
+
+.Form
+There are many notations for describing scenarios, e.g.
+
+* numbered list of steps (in natural language)
+* activity diagrams or flow charts
+* sequence diagrams
+* BPMN or EPCs (event process chains)
+* state machines
+* ...
+
+
+.Further Information
+
+See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
+
+****
+endif::arc42help[]
+
+=== Profile Update Scenario
+
+This scenario describes the process of a user updating their profile name in the `konnektoren` system. The user's name is stored in the browser's local storage.
+
+[plantuml, profile-update, png]
+----
+@startuml
+actor User
+participant WebApp as "Konnektoren Yew"
+participant LocalStorage
+
+User -> WebApp : Open Profile Page
+User -> WebApp : Update Name
+WebApp -> LocalStorage : Save Updated Name
+LocalStorage --> WebApp : Acknowledge Save
+WebApp -> User : Display Success Message
+@enduml
+----
+
+* **Step 1:** The User opens the profile page on the Konnektoren Yew application.
+* **Step 2:** The User updates their name from "anonymous" to their own name.
+* **Step 3:** The Yew frontend saves the updated name in the browser's local storage.
+* **Step 4:** The local storage acknowledges the save to the Yew frontend.
+* **Step 5:** The Yew frontend displays a success message to the User.
+
+=== User Selects Challenge on Map Scenario
+
+This scenario describes the process of a user selecting a challenge on the map in the `konnektoren` system. The user can view information about the challenge and start it, or encounter an error if they do not have enough points to unlock the challenge.
+
+[plantuml, user-selects-challenge, png]
+----
+@startuml
+actor User
+participant WebApp as "Konnektoren Yew"
+participant Core as "Konnektoren Core"
+participant LocalStorage
+
+User -> WebApp : Open Map Page
+WebApp -> Core : Load User Profile
+WebApp -> Core : Load Game State
+Core -> LocalStorage : Retrieve User Profile and Game State
+LocalStorage --> Core : Send Profile and Game State Data
+Core --> WebApp : Send Loaded Data
+WebApp -> User : Display Map with Challenges
+
+User -> WebApp : Select Challenge on Map
+WebApp -> Core : Check Challenge Requirements
+alt Challenge Locked
+    Core -> WebApp : Send Error Response
+    WebApp -> User : Display Error Dialog (Challenge Locked)
+else Challenge Unlocked
+    Core -> WebApp : Send Challenge Info
+    WebApp -> User : Display Challenge Info Dialog
+    User -> WebApp : Start Challenge
+    WebApp -> User : Redirect to Challenge URL
+end
+@enduml
+----
+
+* **Step 1:** The User opens the map page on the Konnektoren Yew application.
+* **Step 2:** The Yew frontend requests the user profile and game state from the Konnektoren Core.
+* **Step 3:** The Core retrieves the user profile and game state from the local storage.
+* **Step 4:** The local storage sends the profile and game state data back to the Core.
+* **Step 5:** The Core sends the loaded data to the Yew frontend.
+* **Step 6:** The Yew frontend displays the map with the available challenges to the User.
+* **Step 7:** The User selects a challenge on the map.
+* **Step 8:** The Yew frontend checks the challenge requirements with the Core.
+* **Step 9:**
+* If the challenge is locked, the Core sends an error response back to the Yew frontend, which then displays an error dialog indicating that the challenge is locked.
+* If the challenge is unlocked, the Core sends the challenge info back to the Yew frontend, which displays a challenge info dialog to the User.
+* **Step 10:** If the challenge is unlocked, the User can start the challenge, which redirects them to the challenge URL.
+
+=== Challenge Participation Scenario
+
+This scenario describes the process of a user participating in a grammar challenge.
+
+[plantuml, challenge-participation, png]
+----
+@startuml
+actor User
+participant WebApp as "Konnektoren Yew"
+participant Core as "Konnektoren Core"
+participant ChallengeConfig as "Challenge Config"
+participant ChallengeModule as "Challenge Module"
+
+User -> WebApp : Start Challenge
+WebApp -> Core : Request Challenge Data
+Core -> ChallengeConfig : Get Challenge Questions
+ChallengeConfig --> Core : Return Challenge Questions
+Core -> WebApp : Send Challenge Data
+WebApp -> User : Display Challenge Questions
+
+User -> WebApp : Submit Answers
+WebApp -> Core : Send Answers
+Core -> ChallengeModule : Evaluate Answers
+ChallengeModule --> Core : Return Results
+Core -> WebApp : Send Results
+WebApp -> User : Display Results
+
+WebApp -> Core : Award Points
+Core -> UserProfile : Update Points
+UserProfile --> Core : Acknowledge Update
+Core -> WebApp : Confirm Points Awarded
+WebApp -> User : Display Points Awarded
+@enduml
+----
+
+* **Step 1:** The User starts a challenge on the Konnektoren Yew application.
+* **Step 2:** The Yew frontend requests challenge data from the Konnektoren Core.
+* **Step 3:** The Core retrieves challenge questions from the Challenge Config.
+* **Step 4:** The Challenge Config returns the challenge questions to the Core.
+* **Step 5:** The Core sends the challenge data to the Yew frontend.
+* **Step 6:** The Yew frontend displays the challenge questions to the User.
+* **Step 7:** The User submits their answers through the Yew frontend.
+* **Step 8:** The Yew frontend sends the answers to the Core.
+* **Step 9:** The Core evaluates the answers using the Challenge Module.
+* **Step 10:** The Challenge Module returns the evaluation results to the Core.
+* **Step 11:** The Core sends the results to the Yew frontend.
+* **Step 12:** The Yew frontend displays the results to the User.
+* **Step 13:** The WebApp requests to award points for the challenge.
+* **Step 14:** The Core updates the user's points in the UserProfile.
+* **Step 15:** The UserProfile acknowledges the points update to the Core.
+* **Step 16:** The Core confirms the points awarded to the WebApp.
+* **Step 17:** The WebApp displays the points awarded to the User.
+
+=== Leaderboard and Certificate Scenario
+
+This scenario describes the process of a user obtaining a certificate after completing challenges and the interaction with the leaderboard.
+
+[plantuml, leaderboard-certificate, png]
+----
+@startuml
+actor User
+participant WebApp as "Konnektoren Yew"
+participant Core as "Konnektoren Core"
+participant CertificateModule as "Certificate Module"
+participant LeaderboardModule as "Leaderboard Module"
+participant BackendAPI as "Konnektoren API"
+
+User -> WebApp : Visit Profile Page
+WebApp -> Core : Request Profile Data
+Core -> WebApp : Send Profile Data
+WebApp -> User : Display Profile Data
+
+User -> WebApp : Claim Certificate
+WebApp -> CertificateModule : Generate Certificate
+CertificateModule --> WebApp : Return Certificate Data
+
+WebApp -> Core : Send Certificate Data
+Core -> BackendAPI : Store Certificate Data
+BackendAPI --> Core : Acknowledge Data Storage
+Core -> WebApp : Confirm Certificate Stored
+WebApp -> User : Display Certificate
+
+User -> WebApp : Visit Leaderboard
+WebApp -> Core : Request Leaderboard Data
+Core -> BackendAPI : Get Top 10 Performances
+BackendAPI --> Core : Return Top 10 Performances
+Core -> WebApp : Send Leaderboard Data
+WebApp -> User : Display Leaderboard
+@enduml
+----
+
+* **Step 1:** The User visits the profile page on the Konnektoren Yew application.
+* **Step 2:** The Yew frontend requests profile data from the Konnektoren Core.
+* **Step 3:** The Core sends the profile data to the Yew frontend.
+* **Step 4:** The Yew frontend displays the profile data to the User.
+* **Step 5:** The User claims a certificate.
+* **Step 6:** The Yew frontend requests certificate generation from the Certificate Module.
+* **Step 7:** The Certificate Module generates and returns the certificate data to the Yew frontend.
+* **Step 8:** The Yew frontend sends the certificate data to the Core.
+* **Step 9:** The Core stores the certificate data via a REST API call to the BackendAPI.
+* **Step 10:** The BackendAPI acknowledges the data storage to the Core.
+* **Step 11:** The Core confirms the certificate storage to the Yew frontend.
+* **Step 12:** The Yew frontend displays the certificate to the User.
+* **Step 13:** The User visits the leaderboard page.
+* **Step 14:** The Yew frontend requests leaderboard data from the Konnektoren Core.
+* **Step 15:** The Core requests the top 10 performances from the BackendAPI.
+* **Step 16:** The BackendAPI returns the top 10 performances to the Core.
+* **Step 17:** The Core sends the leaderboard data to the Yew frontend.
+* **Step 18:** The Yew frontend displays the leaderboard to the User.
