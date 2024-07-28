@@ -7,7 +7,7 @@ ifdef::arc42help[]
 [role="arc42help"]
 ****
 .Contents
-A short summary and explanation of the fundamental decisions and solution strategies, that shape system architecture. It includes
+A short summary and explanation of the fundamental decisions and solution strategies that shape system architecture. It includes
 
 * technology decisions
 * decisions about the top-level decomposition of the system, e.g., usage of an architectural pattern or design pattern
@@ -31,7 +31,7 @@ endif::arc42help[]
 
 === Technology Decisions
 
-**Web-Based Platform:** 
+**Web-Based Platform:**
 To ensure accessibility and ease of maintenance, Konnektoren is designed as a web-based platform. This approach allows users to access the system across various devices without the need for native applications.
 
 **Rust and Yew Framework:**
@@ -39,8 +39,8 @@ We chose Rust due to its performance, reliability, and robust type system. The Y
 
 === Architectural Decisions
 
-**Github Pages Hosting:**
-The front-end application is hosted on Github Pages, providing a cost-effective and scalable solution for serving static content. This choice aligns with our goal of minimizing operational costs while ensuring high availability.
+**GitHub Pages Hosting:**
+The front-end application is hosted on GitHub Pages, providing a cost-effective and scalable solution for serving static content. This choice aligns with our goal of minimizing operational costs while ensuring high availability.
 
 **SPA (Single Page Application):**
 The front end is built as a SPA, which interacts with the back-end services via RESTful APIs. This choice supports a seamless and responsive user experience by reducing page reloads and dynamically updating the user interface.

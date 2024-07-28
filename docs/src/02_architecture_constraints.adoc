@@ -29,9 +29,10 @@ endif::arc42help[]
 [options="header",cols="2,5"]
 |===
 | Constraint | Explanation
-| Programming Language | The library must be developed in Rust to be compatible to yew frontend but also able to compile to wasm.
+| Programming Language | The library must be developed in Rust to be compatible with the Yew frontend and also able to compile to WebAssembly (Wasm).
 | Browser Compatibility | The application must support the latest versions of Chrome, Firefox, and Safari to ensure a wide user reach.
-| Scalability | The system must use serverless architecture to handle unpredictable loads and maintain cost efficiency.
+| Scalability | The system must use a serverless architecture to handle unpredictable loads and maintain cost efficiency.
+| Backend Services | Backend services should be implemented using Rust and hosted on a scalable cloud platform.
 |===
 
 === Organizational and Political Constraints
@@ -41,7 +42,8 @@ endif::arc42help[]
 | Constraint | Explanation
 | Data Privacy | All features must comply with the GDPR as the platform will be used by users from the European Union.
 | Budget Limitations | The project has a fixed budget which restricts the extent of third-party services and tools that can be employed.
-| Development Timeline | The project has no fixed timeline.
+| Development Timeline | The project has a flexible timeline, with no fixed deadlines for completion.
+| Stakeholder Involvement | Regular feedback must be obtained from key stakeholders, including educators and end-users, to guide the development process.
 |===
 
 === Conventions
@@ -51,6 +53,8 @@ endif::arc42help[]
 | Constraint | Explanation
 | Code Style Guidelines | The project must adhere to Rust's official style guide to maintain code consistency across the development team.
 | Versioning Guidelines | Semantic Versioning (SemVer) must be used for all project releases to ensure clarity and consistency in version management.
-| Documentation Standards | Library core code must be documented using Rustdoc to ensure that maintenance and future development are facilitated.
-| Naming Conventions | Variables, functions, and modules must follow a clear and descriptive naming convention as outlined in the internal developer guide.
+| Documentation Standards | Core library code must be documented using Rustdoc to facilitate maintenance and future development.
+| Naming Conventions | Variables, functions, and modules must follow clear and descriptive naming conventions as outlined in the internal developer guide.
+| Testing Guidelines | Automated tests must be written for all new features and bug fixes to ensure code reliability and prevent regressions.
+| Security Practices | Follow industry best practices for security, including dependency checks, and vulnerability assessments.
 |===

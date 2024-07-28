@@ -71,7 +71,6 @@ E.g. UML deployment diagram describing channels to neighboring systems, together
 ****
 endif::arc42help[]
 
-
 [options="header",cols="3*"]
 |===
 | I/O | Channel | Protocol

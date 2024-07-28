@@ -6,12 +6,12 @@ ifndef::imagesdir[:imagesdir: ../images]
 ifdef::arc42help[]
 [role="arc42help"]
 ****
-Describes the relevant requirements and the driving forces that software architects and development team must consider. 
+Describes the relevant requirements and the driving forces that software architects and the development team must consider.
 These include
 
-* underlying business goals, 
-* essential features, 
-* essential functional requirements, 
+* underlying business goals,
+* essential features,
+* essential functional requirements,
 * quality goals for the architecture, and
 * relevant stakeholders and their expectations.
 ****
@@ -80,6 +80,8 @@ endif::arc42help[]
 | Usability | Users should find the platform easy to navigate and understand. | High
 | Reliability | The platform should have minimal downtime and quick recovery from failures. | High
 | Scalability | The system should handle a significant increase in user numbers without performance issues. | Medium
+| Performance | The platform should respond quickly to user actions and load content efficiently. | Medium
+| Security | User data must be protected against unauthorized access and breaches. | High
 |===
 
 === Stakeholders
@@ -113,4 +115,27 @@ endif::arc42help[]
 | Developers | [Contact Information] | Clear requirements, well-defined development environment, and realistic timelines.
 | End Users (Students) | [Contact Information] | A user-friendly platform that makes learning German grammar enjoyable and effective.
 | Educational Institutions | [Contact Information] | A platform that can be integrated into existing curriculums and provide measurable improvements in language proficiency.
+| Support Team | [Contact Information] | Tools and documentation to assist users with technical issues.
+| Content Creators | [Contact Information] | Easy-to-use tools for creating and updating educational content.
+| Marketing Team | [Contact Information] | Features and updates that can be promoted to attract and retain users.
 |===
+
+== Constraints
+
+=== Technical Constraints
+
+- The platform must be developed using web technologies (HTML, CSS, JavaScript, Rust/WASM).
+- It should be compatible with modern web browsers (Chrome, Firefox, Safari, Edge).
+- The backend services should be implemented in Rust and hosted on a scalable cloud platform.
+- Integration with third-party services (e.g., payment gateways, social media APIs) must follow industry standards for security and reliability.
+
+=== Organizational Constraints
+
+- The project should align with the educational goals and standards set by partner educational institutions.
+- All content must be reviewed and approved by language experts to ensure accuracy and quality.
+- The development team should follow agile methodologies with regular sprints and reviews.
+
+=== Legal Constraints
+
+- The platform must comply with data protection regulations (e.g., GDPR, CCPA) to ensure user privacy and data security.
+- All educational content should be original or properly licensed to avoid copyright issues.
