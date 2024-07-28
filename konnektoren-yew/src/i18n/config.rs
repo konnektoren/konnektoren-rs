@@ -54,6 +54,20 @@ impl I18nConfig {
 
         translation[text].as_str().unwrap_or(text).to_string()
     }
+
+    pub fn merge_translation(&mut self, lang: &str, translation: serde_json::Value) {
+        match self.translations.get(lang) {
+            Some(existing) => {
+                let mut merged = existing.clone();
+                merged.as_object_mut().unwrap().extend(translation.as_object().unwrap().clone());
+                self.translations.insert(lang.to_string(), merged);
+            }
+            None => {
+                self.translations.insert(lang.to_string(), translation);
+            }
+        }
+
+    }
 }
 
 #[cfg(test)]
@@ -153,5 +167,21 @@ mod tests {
         assert_eq!(config.get_translation("Hello", Some("en")), "Hello");
         assert_eq!(config.get_translation("Hello", Some("de")), "Hallo");
         assert_eq!(config.get_translation("Hello", Some("es")), "Hello");
+    }
+
+    #[test]
+    fn test_merge_translation() {
+        let mut translations = HashMap::new();
+        translations.insert(
+            "de".to_string(),
+            json!({ "Hello": "Hello" }),
+        );
+
+        let mut config = I18nConfig::new(vec!["en", "de"], translations, "en".to_string());
+
+        let translation = json!({ "World": "Welt" });
+        config.merge_translation("de", translation.clone());
+
+        assert_eq!(config.translations.get("de").unwrap()["World"], "Welt");
     }
 }
