@@ -20,9 +20,12 @@ impl PlayerProfile {
 
 impl Default for PlayerProfile {
     fn default() -> Self {
+        let mut generator = names::Generator::default();
+        let name = generator.next().unwrap();
+
         PlayerProfile {
             id: "".to_string(),
-            name: "Anonymous".to_string(),
+            name,
             xp: 0,
         }
     }
