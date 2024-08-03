@@ -10,6 +10,7 @@ pub fn profile_points_component() -> Html {
     html! {
         <div class="profile-points">
             <div class="icon">{"⭐️"}</div>
+            <div class="profile-name">{ &profile.name }</div>
             <div class="points">{ points }</div>
         </div>
     }
