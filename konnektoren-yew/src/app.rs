@@ -16,10 +16,7 @@ use crate::components::game_map::{ChallengeIndex, Coordinate};
 use crate::components::CertificateComponent;
 #[cfg(feature = "effects")]
 use crate::effects::BlinkAnimation;
-use crate::prelude::{
-    ChallengeActionsComponent, InformativeComponent, InformativeMarkdownComponent,
-    OptionsComponent, QuestionComponent, SelectLanguage,
-};
+use crate::prelude::{ChallengeActionsComponent, InformativeComponent, InformativeMarkdownComponent, OptionsComponent, QuestionComponent, ReadText, SelectLanguage};
 
 use crate::i18n::{I18nConfig, I18nProvider};
 use konnektoren_core::prelude::*;
@@ -152,6 +149,7 @@ pub fn App() -> Html {
         QuestionComponent::preview(),
         TranslateComponent::preview(),
         CertificateComponent::preview(),
+        ReadText::preview(),
         SelectLanguage::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];
