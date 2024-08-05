@@ -5,6 +5,7 @@ use crate::components::challenge::multiple_choice::{
 use crate::components::ProgressBar;
 use konnektoren_core::challenges::ChallengeResult;
 use yew::prelude::*;
+use crate::prelude::ReadText;
 
 #[function_component(MultipleChoiceCircleComponent)]
 pub fn multiple_choice_circle_component(props: &MultipleChoiceComponentProps) -> Html {
@@ -40,6 +41,7 @@ pub fn multiple_choice_circle_component(props: &MultipleChoiceComponentProps) ->
                 question={props.challenge.questions[*task_index].clone()}
                 help={*show_help}
             />
+            <ReadText text={props.challenge.questions[*task_index].question.clone()} lang="de-DE" />
         </div>
     }
 }
