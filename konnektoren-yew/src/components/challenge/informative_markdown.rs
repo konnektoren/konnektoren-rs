@@ -93,14 +93,14 @@ async fn fetch_markdown(path: &str) -> Result<String, String> {
     let response = Request::get(path)
         .send()
         .await
-        .map_err(|_| "Failed to fetch the file".to_string())?;
+        .map_err(|_| format!("Failed to fetch the file {}", path))?;
     if response.status() == 200 {
         response
             .text()
             .await
-            .map_err(|_| "Failed to read the file content".to_string())
+            .map_err(|_| format!("Failed to read the file content of {}", path))
     } else {
-        Err("File not found".to_string())
+        Err(format!("File not found: {}", path))
     }
 }
 
