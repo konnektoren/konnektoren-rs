@@ -59,14 +59,16 @@ impl I18nConfig {
         match self.translations.get(lang) {
             Some(existing) => {
                 let mut merged = existing.clone();
-                merged.as_object_mut().unwrap().extend(translation.as_object().unwrap().clone());
+                merged
+                    .as_object_mut()
+                    .unwrap()
+                    .extend(translation.as_object().unwrap().clone());
                 self.translations.insert(lang.to_string(), merged);
             }
             None => {
                 self.translations.insert(lang.to_string(), translation);
             }
         }
-
     }
 }
 
@@ -172,10 +174,7 @@ mod tests {
     #[test]
     fn test_merge_translation() {
         let mut translations = HashMap::new();
-        translations.insert(
-            "de".to_string(),
-            json!({ "Hello": "Hello" }),
-        );
+        translations.insert("de".to_string(), json!({ "Hello": "Hello" }));
 
         let mut config = I18nConfig::new(vec!["en", "de"], translations, "en".to_string());
 

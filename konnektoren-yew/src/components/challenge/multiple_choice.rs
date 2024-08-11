@@ -2,11 +2,11 @@ use super::{ChallengeActions, ChallengeActionsComponent, OptionsComponent, Quest
 use crate::components::challenge::ChallengeEvent;
 use crate::components::challenge::MultipleChoiceResultComponent;
 use crate::components::ProgressBar;
+use crate::prelude::ReadText;
 use konnektoren_core::challenges::{
     ChallengeInput, ChallengeResult, MultipleChoice, MultipleChoiceOption,
 };
 use yew::prelude::*;
-use crate::prelude::ReadText;
 
 #[derive(Properties, PartialEq, Default)]
 pub struct MultipleChoiceComponentProps {

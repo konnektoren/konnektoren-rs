@@ -3,9 +3,9 @@ use crate::components::challenge::multiple_choice::{
     create_handle_option_selection, MultipleChoiceComponentProps,
 };
 use crate::components::ProgressBar;
+use crate::prelude::ReadText;
 use konnektoren_core::challenges::ChallengeResult;
 use yew::prelude::*;
-use crate::prelude::ReadText;
 
 #[function_component(MultipleChoiceCircleComponent)]
 pub fn multiple_choice_circle_component(props: &MultipleChoiceComponentProps) -> Html {

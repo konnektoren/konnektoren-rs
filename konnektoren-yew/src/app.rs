@@ -16,7 +16,10 @@ use crate::components::game_map::{ChallengeIndex, Coordinate};
 use crate::components::CertificateComponent;
 #[cfg(feature = "effects")]
 use crate::effects::BlinkAnimation;
-use crate::prelude::{ChallengeActionsComponent, InformativeComponent, InformativeMarkdownComponent, OptionsComponent, QuestionComponent, ReadText, SelectLanguage};
+use crate::prelude::{
+    ChallengeActionsComponent, InformativeComponent, InformativeMarkdownComponent,
+    OptionsComponent, QuestionComponent, ReadText, SelectLanguage,
+};
 
 use crate::i18n::{I18nConfig, I18nProvider};
 use konnektoren_core::prelude::*;
@@ -49,7 +52,9 @@ pub fn Example() -> Html {
                 let (x, y) = coords;
                 if let Some(challenge_index) = challenge_index {
                     log::info!("Challenge index: {}, x: {}, y: {}", challenge_index, x, y);
-                    if let Some(challenge_config) = game.game_path.challenges.get(challenge_index) {
+                    if let Some(challenge_config) =
+                        game.game_paths[0].challenges.get(challenge_index)
+                    {
                         match game.create_challenge(&challenge_config.id) {
                             Ok(c) => challenge.set(Some(c)),
                             Err(_) => log::error!("Challenge creation failed"),
@@ -79,7 +84,7 @@ pub fn Example() -> Html {
         <div>
             {profile_config_component}
             {profile_points_component}
-            <GamePathComponent game_path={game.game_path.clone()} on_challenge_config={new_challenge_cb} />
+            <GamePathComponent game_path={game.game_paths[0].clone()} on_challenge_config={new_challenge_cb} />
             {
                 if let Some(ref challenge) = *challenge {
                     html! { <ChallengeComponent challenge={challenge.clone()} /> }
@@ -88,7 +93,7 @@ pub fn Example() -> Html {
                 }
             }
             <GameMapComponent
-                game_path={game.game_path.clone()}
+                game_path={game.game_paths[0].clone()}
                 current_challenge={0}
                 on_select_challenge={on_map_challenge_cb}
             />
