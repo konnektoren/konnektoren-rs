@@ -23,7 +23,7 @@ async fn it_should_have_at_least_challenges(world: &mut BddWorld, challenges: us
 async fn default_game_is_loaded(world: &mut BddWorld) {
     let default_game = Game::default();
 
-    world.game_path = default_game.game_path.clone();
+    world.game_path = default_game.game_paths[0].clone();
     world.game = default_game;
 }
 
@@ -34,5 +34,5 @@ async fn the_challenge_history_should_have_at_least_entry(world: &mut BddWorld, 
 
 #[then(expr = "the game should have at least {int} challenges")]
 async fn the_game_should_have_at_least_challenges(world: &mut BddWorld, challenges: usize) {
-    assert!(world.game.game_path.challenge_ids().len() >= challenges);
+    assert!(world.game.game_paths[0].challenge_ids().len() >= challenges);
 }

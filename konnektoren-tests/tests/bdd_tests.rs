@@ -23,7 +23,7 @@ impl Default for BddWorld {
         let mut factory = ChallengeFactory::new();
         factory.challenge_types.push(challenge_type.clone());
         let game = Game {
-            game_path: game_path.clone(),
+            game_paths: vec![game_path.clone()],
             challenge_factory: factory.clone(),
             challenge_history: Default::default(),
         };
