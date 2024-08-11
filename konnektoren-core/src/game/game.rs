@@ -1,23 +1,41 @@
-use crate::challenges::{Challenge, ChallengeFactory, ChallengeHistory, Performance};
+use crate::challenges::{
+    Challenge, ChallengeConfig, ChallengeFactory, ChallengeHistory, Performance,
+};
 use crate::Xp;
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 use super::GamePath;
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Game {
-    pub game_path: GamePath,
+    pub game_paths: Vec<GamePath>,
     pub challenge_factory: ChallengeFactory,
     pub challenge_history: ChallengeHistory,
 }
 
+impl Default for Game {
+    fn default() -> Self {
+        let game_path = GamePath::default();
+        Game {
+            game_paths: vec![game_path],
+            challenge_factory: ChallengeFactory::default(),
+            challenge_history: Default::default(),
+        }
+    }
+}
+
 impl Game {
     pub fn create_challenge(&self, challenge_config_id: &str) -> Result<Challenge> {
-        let challenge_config = self
-            .game_path
-            .get_challenge_config(challenge_config_id)
-            .ok_or_else(|| anyhow::anyhow!("Challenge config not found"))?;
+        let challenge_config: Option<&ChallengeConfig> = self
+            .game_paths
+            .iter()
+            .map(|game_path| game_path.get_challenge_config(challenge_config_id))
+            .find(|challenge_config| challenge_config.is_some())
+            .flatten();
+
+        let challenge_config =
+            challenge_config.ok_or_else(|| anyhow::anyhow!("Challenge config not found"))?;
         self.challenge_factory.create_challenge(challenge_config)
     }
 
@@ -36,9 +54,9 @@ mod tests {
         let game = Game::default();
         let challenge = game.create_challenge("unknown");
         assert!(challenge.is_err());
-        assert_eq!(game.game_path.challenge_ids().len(), 5);
+        assert_eq!(game.game_paths[0].challenge_ids().len(), 5);
         assert_eq!(
-            game.game_path.challenge_ids(),
+            game.game_paths[0].challenge_ids(),
             vec![
                 "konnektoren-1",
                 "konnektoren-2",

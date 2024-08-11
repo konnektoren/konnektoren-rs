@@ -6,20 +6,26 @@ use crate::{
     prelude::{ChallengeInput, ChallengeType},
 };
 
-use anyhow::{anyhow, Result};
-
 use super::GameCommand;
+use crate::prelude::GamePath;
+use anyhow::{anyhow, Result};
 
 pub struct NextChallengeCommand();
 
 impl GameCommand for NextChallengeCommand {
     fn execute(&self, state: &mut GameState) -> Result<()> {
-        if state.current_challenge_index + 1 >= state.game.game_path.challenge_ids().len() {
+        let current_game_path: &GamePath = &state
+            .game
+            .game_paths
+            .get(state.current_game_path)
+            .expect("Invalid game path index");
+
+        if state.current_challenge_index + 1 >= current_game_path.challenge_ids().len() {
             return Err(anyhow!("No more challenges"));
         }
         state.current_challenge_index += 1;
 
-        let challenge_config = &state.game.game_path.challenges[state.current_challenge_index];
+        let challenge_config = &current_game_path.challenges[state.current_challenge_index];
         state.challenge = state
             .game
             .create_challenge(&challenge_config.id)
@@ -38,8 +44,12 @@ impl GameCommand for PreviousChallengeCommand {
             return Err(anyhow!("No previous challenges"));
         }
         state.current_challenge_index -= 1;
-
-        let challenge_config = &state.game.game_path.challenges[state.current_challenge_index];
+        let current_game_path: &GamePath = &state
+            .game
+            .game_paths
+            .get(state.current_game_path)
+            .expect("Invalid game path index");
+        let challenge_config = &current_game_path.challenges[state.current_challenge_index];
         state.challenge = state
             .game
             .create_challenge(&challenge_config.id)
@@ -53,7 +63,12 @@ pub struct NextTaskCommand();
 
 impl GameCommand for NextTaskCommand {
     fn execute(&self, state: &mut GameState) -> Result<()> {
-        let challenge_config = &state.game.game_path.challenges[state.current_challenge_index];
+        let current_game_path: &GamePath = &state
+            .game
+            .game_paths
+            .get(state.current_game_path)
+            .expect("Invalid game path index");
+        let challenge_config = &current_game_path.challenges[state.current_challenge_index];
         let max_questions = challenge_config.tasks;
         if state.current_task_index >= max_questions - 1 {
             return Err(anyhow!("No more tasks"));

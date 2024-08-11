@@ -6,6 +6,7 @@ use crate::{game::Game, prelude::Challenge};
 pub struct GameState {
     pub game: Game,
     pub challenge: Challenge,
+    pub current_game_path: usize,
     pub current_challenge_index: usize,
     pub current_task_index: usize,
 }
@@ -17,6 +18,7 @@ impl GameState {
         GameState {
             game,
             challenge,
+            current_game_path: 0,
             current_challenge_index: 0,
             current_task_index: 0,
         }
@@ -36,7 +38,7 @@ mod tests {
     #[test]
     fn new_state() {
         let state = GameState::default();
-        assert_eq!(state.game.game_path.challenge_ids().len(), 5);
+        assert_eq!(state.game.game_paths[0].challenge_ids().len(), 5);
     }
 
     #[test]

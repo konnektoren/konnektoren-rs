@@ -3,7 +3,7 @@ use ab_glyph::{Font, FontRef, PxScale, ScaleFont};
 use anyhow::Result;
 use base64::engine::general_purpose;
 use base64::Engine as _;
-use image::{imageops, DynamicImage, ImageBuffer, ImageFormat, Luma, Rgba, RgbaImage, ImageReader};
+use image::{imageops, DynamicImage, ImageBuffer, ImageFormat, ImageReader, Luma, Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use imageproc::rect::Rect;
 use plot_icon::generate_png;
