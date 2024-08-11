@@ -147,7 +147,7 @@ impl App {
         let [tab_area, inner_area] = vertical.areas(area);
 
         let tabs = ChallengeTabs::new(
-            &self.session.game_state.game.game_path,
+            &self.session.game_state.game.game_paths[0],
             self.session.game_state.current_challenge_index,
         );
 
@@ -163,7 +163,7 @@ impl App {
 
     fn render_map(&self, area: Rect, buf: &mut Buffer) {
         let map = MapWidget::new(
-            &self.session.game_state.game.game_path,
+            &self.session.game_state.game.game_paths[0],
             self.session.game_state.current_challenge_index,
         );
         map.render(area, buf);
