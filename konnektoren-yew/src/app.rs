@@ -18,7 +18,7 @@ use crate::components::CertificateComponent;
 use crate::effects::BlinkAnimation;
 use crate::prelude::{
     ChallengeActionsComponent, InformativeComponent, InformativeMarkdownComponent,
-    OptionsComponent, QuestionComponent, ReadText, SelectLanguage,
+    OptionsComponent, QuestionComponent, ReadText, SelectLanguage, SelectLevelComp,
 };
 
 use crate::i18n::{I18nConfig, I18nProvider};
@@ -156,6 +156,7 @@ pub fn App() -> Html {
         CertificateComponent::preview(),
         ReadText::preview(),
         SelectLanguage::preview(),
+        SelectLevelComp::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];
 

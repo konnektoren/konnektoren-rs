@@ -11,6 +11,7 @@ pub mod translate;
 mod certificates;
 #[cfg(feature = "music")]
 pub mod music;
+mod select_level;
 
 pub use challenge::*;
 pub use challenge_config::ChallengeConfigComponent;
@@ -19,6 +20,7 @@ pub use game_map::GameMapComponent;
 pub use game_path::GamePathComponent;
 pub use progress_bar::ProgressBar;
 pub use select_language::SelectLanguage;
+pub use select_level::SelectLevelComp;
 pub use translate::TranslateComponent;
 
 #[cfg(feature = "certificates")]
