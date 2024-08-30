@@ -4,6 +4,10 @@ use serde::{Deserialize, Serialize};
 pub struct Custom {
     pub id: String,
     pub name: String,
+    pub description: String,
+    pub html: String,
+    pub css: String,
+    pub js: String,
     pub data: serde_json::Value,
 }
 
@@ -18,10 +22,28 @@ mod tests {
         let data = serde_json::json!({
             "key": "value"
         });
-        let dataset = Custom { id, name, data };
+        let dataset = Custom { id, name, html: "".to_string(), css: "".to_string(), js: "".to_string(), data };
 
         assert_eq!(dataset.id, id);
         assert_eq!(dataset.name, name);
         assert_eq!(dataset.data, data);
+    }
+
+    #[test]
+    fn serialize_dataset() {
+        let json_str = r#"{"id":"123","name":"Test","html":"","css":"","js":"","data":{"key":"value"}}"#;
+        let dataset = Custom {
+            id: "123".to_string(),
+            name: "Test".to_string(),
+            html: "".to_string(),
+            css: "".to_string(),
+            js: "".to_string(),
+            data: serde_json::json!({
+                "key": "value"
+            }),
+        };
+
+        let serialized = serde_json::to_string(&dataset).unwrap();
+        assert_eq!(serialized, json_str);
     }
 }

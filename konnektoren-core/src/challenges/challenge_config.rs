@@ -13,6 +13,8 @@ pub enum ChallengeVariant {
     InformativeText,
     #[serde(rename = "informative-markdown")]
     InformativeMarkdown,
+    #[serde(rename = "custom")]
+    Custom,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
