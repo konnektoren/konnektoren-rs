@@ -1,5 +1,5 @@
-use web_sys::HtmlSelectElement;
 use konnektoren_core::prelude::GamePath;
+use web_sys::HtmlSelectElement;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Default)]

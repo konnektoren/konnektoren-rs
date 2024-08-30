@@ -4,6 +4,7 @@ use yew::prelude::*;
 
 mod actions;
 mod challenge_history_summary;
+pub mod custom;
 mod events;
 mod informative;
 mod informative_markdown;
@@ -20,6 +21,7 @@ pub mod sort_table_result;
 use crate::components::ChallengeInfoComponent;
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use challenge_history_summary::ChallengeHistorySummaryComponent;
+pub use custom::CustomComponent;
 pub use events::ChallengeEvent;
 pub use informative::InformativeComponent;
 pub use informative_markdown::InformativeMarkdownComponent;
