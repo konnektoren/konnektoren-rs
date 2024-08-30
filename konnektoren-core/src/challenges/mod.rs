@@ -11,6 +11,7 @@ pub mod performance;
 mod performance_record;
 pub mod solvable;
 mod sort_table;
+mod custom;
 
 pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;
@@ -27,3 +28,4 @@ pub use performance::Performance;
 pub use performance_record::PerformanceRecord;
 pub use solvable::Solvable;
 pub use sort_table::{SortTable, SortTableRow};
+pub use custom::Custom;

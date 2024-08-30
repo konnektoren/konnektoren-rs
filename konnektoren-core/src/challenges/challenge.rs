@@ -31,11 +31,13 @@ impl Solvable for Challenge {
                     ChallengeType::MultipleChoice(ref mc) => mc.questions.get(index),
                     ChallengeType::SortTable(_) => None,
                     ChallengeType::Informative(_) => None,
+                    ChallengeType::Custom(_) => None,
                 };
                 let result = match self.challenge_result {
                     ChallengeResult::MultipleChoice(ref mc) => mc.get(index),
                     ChallengeResult::SortTable(_) => None,
                     ChallengeResult::Informative => None,
+                    ChallengeResult::Custom => None,
                 };
                 match (question, result) {
                     (Some(question), Some(result)) => Ok(question.option == result.id),
