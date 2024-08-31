@@ -22,7 +22,15 @@ mod tests {
         let data = serde_json::json!({
             "key": "value"
         });
-        let dataset = Custom { id, name, html: "".to_string(), css: "".to_string(), js: "".to_string(), data };
+        let dataset = Custom {
+            id: id.clone(),
+            name: name.clone(),
+            description: "".to_string(),
+            html: "".to_string(),
+            css: "".to_string(),
+            js: "".to_string(),
+            data: data.clone(),
+        };
 
         assert_eq!(dataset.id, id);
         assert_eq!(dataset.name, name);
@@ -31,10 +39,12 @@ mod tests {
 
     #[test]
     fn serialize_dataset() {
-        let json_str = r#"{"id":"123","name":"Test","html":"","css":"","js":"","data":{"key":"value"}}"#;
+        let json_str =
+            r#"{"id":"123","name":"Test","description":"","html":"","css":"","js":"","data":{"key":"value"}}"#;
         let dataset = Custom {
             id: "123".to_string(),
             name: "Test".to_string(),
+            description: "".to_string(),
             html: "".to_string(),
             css: "".to_string(),
             js: "".to_string(),
