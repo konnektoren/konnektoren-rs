@@ -17,11 +17,13 @@ pub mod question;
 pub mod result_summary;
 pub mod sort_table;
 pub mod sort_table_result;
+mod custom_result;
 
 use crate::components::ChallengeInfoComponent;
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use challenge_history_summary::ChallengeHistorySummaryComponent;
 pub use custom::CustomComponent;
+pub use custom_result::CustomResultComponent;
 pub use events::ChallengeEvent;
 pub use informative::InformativeComponent;
 pub use informative_markdown::InformativeMarkdownComponent;
