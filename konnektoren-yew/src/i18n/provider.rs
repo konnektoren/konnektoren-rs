@@ -1,5 +1,6 @@
 use crate::i18n::config::I18nConfig;
 use crate::i18n::SelectedLanguage;
+use gloo::utils::window;
 use yew::prelude::*;
 use yew_i18n::{YewI18n, YewI18nConfig};
 
@@ -11,7 +12,19 @@ pub struct I18nProviderProps {
 
 #[function_component(I18nProvider)]
 pub fn i18n_provider(props: &I18nProviderProps) -> Html {
-    let selected_language = SelectedLanguage::new(&props.config.default_language);
+    let browser_language = window()
+        .navigator()
+        .language()
+        .unwrap_or_else(|| props.config.default_language.clone());
+    let selected_language = if props
+        .config
+        .supported_languages
+        .contains(&&browser_language.as_str())
+    {
+        SelectedLanguage::new(browser_language.as_str())
+    } else {
+        SelectedLanguage::new(props.config.default_language.as_str())
+    };
 
     let mut i18n = YewI18n::new(
         YewI18nConfig {

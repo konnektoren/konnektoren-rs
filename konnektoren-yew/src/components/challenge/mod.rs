@@ -5,6 +5,7 @@ use yew::prelude::*;
 mod actions;
 mod challenge_history_summary;
 pub mod custom;
+mod custom_result;
 mod events;
 mod informative;
 mod informative_markdown;
@@ -17,7 +18,6 @@ pub mod question;
 pub mod result_summary;
 pub mod sort_table;
 pub mod sort_table_result;
-mod custom_result;
 
 use crate::components::ChallengeInfoComponent;
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
