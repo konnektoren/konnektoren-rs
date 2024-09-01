@@ -1,3 +1,4 @@
+use crate::storage::{SettingsStorage, Storage};
 use gloo::timers::callback::Timeout;
 use gloo::utils::window;
 use web_sys::SpeechSynthesisUtterance;
@@ -12,6 +13,8 @@ pub struct ReadTextProps {
 
 #[function_component(ReadText)]
 pub fn read_text(props: &ReadTextProps) -> Html {
+    let settings = SettingsStorage::default().get("").unwrap_or_default();
+
     let text_clone = props.text.clone();
     let lang_clone = props.lang.clone();
     use_effect(move || {
@@ -20,6 +23,7 @@ pub fn read_text(props: &ReadTextProps) -> Html {
                 let utterance = SpeechSynthesisUtterance::new().unwrap();
                 utterance.set_text(&text_clone);
                 utterance.set_lang(&lang_clone);
+                utterance.set_volume(settings.sound_volume);
                 speech_synthesis.speak(&utterance);
             }
         })

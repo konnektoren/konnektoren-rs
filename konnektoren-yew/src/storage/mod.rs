@@ -1,4 +1,5 @@
 pub mod profile_storage;
+mod settings_storage;
 
 pub trait Storage {
     const NAME: &'static str;
@@ -11,3 +12,4 @@ pub trait Storage {
 }
 
 pub use profile_storage::ProfileStorage;
+pub use settings_storage::SettingsStorage;

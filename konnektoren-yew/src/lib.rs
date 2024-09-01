@@ -3,6 +3,8 @@ pub mod components;
 
 pub mod i18n;
 
+pub mod model;
+
 #[cfg(feature = "effects")]
 pub mod effects;
 
@@ -14,4 +16,6 @@ pub mod prelude {
     pub use crate::components::*;
     #[cfg(feature = "effects")]
     pub use crate::effects::*;
+    pub use crate::i18n::*;
+    pub use crate::model::*;
 }

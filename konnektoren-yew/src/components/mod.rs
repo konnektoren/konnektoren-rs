@@ -12,6 +12,7 @@ mod certificates;
 #[cfg(feature = "music")]
 pub mod music;
 mod select_level;
+mod settings;
 
 pub use challenge::*;
 pub use challenge_config::ChallengeConfigComponent;
@@ -33,3 +34,5 @@ pub use profile::ProfilePointsComponent;
 
 #[cfg(feature = "music")]
 pub use music::MusicComponent;
+
+pub use settings::*;

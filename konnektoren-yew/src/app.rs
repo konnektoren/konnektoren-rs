@@ -1,7 +1,7 @@
 use crate::components::{
     challenge::ChallengeComponent, game_map::GameMapComponent, game_path::GamePathComponent,
     ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent, ProgressBar,
-    TranslateComponent,
+    SettingsComponent, TranslateComponent,
 };
 
 #[cfg(feature = "storage")]
@@ -157,6 +157,7 @@ pub fn App() -> Html {
         ReadText::preview(),
         SelectLanguage::preview(),
         SelectLevelComp::preview(),
+        SettingsComponent::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];
 

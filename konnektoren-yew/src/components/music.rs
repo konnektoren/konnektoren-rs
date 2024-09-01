@@ -1,3 +1,4 @@
+use crate::storage::{SettingsStorage, Storage};
 use uuid::Uuid;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
@@ -26,6 +27,8 @@ impl Default for MusicComponentProps {
 
 #[function_component(MusicComponent)]
 pub fn music_component(props: &MusicComponentProps) -> Html {
+    let settings = SettingsStorage::default().get("").unwrap_or_default();
+
     let audio_ref = use_node_ref();
 
     use_effect({
@@ -44,6 +47,7 @@ pub fn music_component(props: &MusicComponentProps) -> Html {
             audio_element.set_src(&music_url);
             audio_element.set_loop(repeat);
             audio_element.set_autoplay(true);
+            audio_element.set_volume(settings.music_volume as f64);
 
             move || {
                 audio_element.pause().expect("Failed to pause audio");
