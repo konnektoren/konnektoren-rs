@@ -1,6 +1,11 @@
+use std::rc::Rc;
+use std::cell::RefCell;
 use crate::components::ChallengeEvent;
 use gloo::net::http::Request;
+use gloo::utils::format::JsValueSerdeExt;
 use konnektoren_core::challenges::{ChallengeResult, Custom};
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::js_sys::eval;
 use yew::prelude::*;
 
@@ -19,6 +24,11 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
     let css_content = use_state(|| "".to_string());
     let js_content = use_state(|| "".to_string());
     let loading = use_state(|| true);
+
+    // Store the closure inside Rc<RefCell<>> to persist it
+    let js_event_callback = use_state(|| {
+        Rc::new(RefCell::new(None::<Closure<dyn FnMut(JsValue)>>))
+    });
 
     {
         let html_content = html_content.clone();
@@ -47,23 +57,55 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
     {
         let js_code = (*js_content).clone();
         let challenge_json = serde_json::to_string_pretty(&props.challenge).unwrap();
-        use_effect_with(js_code.clone(), move |_| {
+        let event_callback = props.on_event.clone();
+
+        let js_event_callback_clone = js_event_callback.clone();
+        use_effect_with(event_callback.clone(), move |_| {
+            let closure = Closure::wrap(Box::new(move |event: JsValue| {
+                let event_callback = event_callback.clone();
+                if let Some(event_callback) = event_callback.as_ref() {
+                    let challenge_event: ChallengeEvent = event.into();
+                    event_callback.emit(challenge_event);
+                }
+            }) as Box<dyn FnMut(JsValue)>);
+
+            *js_event_callback_clone.borrow_mut() = Some(closure);
+
+            || ()
+        });
+
+        let event_callback = props.on_event.clone();
+
+        use_effect_with((js_code.clone(), event_callback.clone()), move |_| {
             let complete_js_code = format!("const challenge = {}; {}", challenge_json, js_code);
+
+            let window = web_sys::window().unwrap();
+            let global_obj = window.as_ref();
+            let callback_name = JsValue::from_str("emit_challenge_event");
+
+            if let Some(js_event_callback) = &*js_event_callback.borrow() {
+                let callback_ref = js_event_callback.as_ref().unchecked_ref();
+                if let Err(err) = js_sys::Reflect::set(global_obj, &callback_name, callback_ref) {
+                    log::error!("Failed to set callback on window object: {:?}", err);
+                }
+            }
+
             if let Err(err) = eval(&complete_js_code) {
                 log::error!("JavaScript execution failed: {:?}", err);
             }
-            || ()
+
+            || () // Clean-up function
         });
     }
 
-    let parsed = Html::from_html_unchecked(AttrValue::from((*html_content).clone()));
+    let parsed_html = Html::from_html_unchecked(AttrValue::from((*html_content).clone()));
 
     html! {
         <div class="custom-challenge">
             <style>
                 {(*css_content).clone()}
             </style>
-            {parsed}
+            {parsed_html}
         </div>
     }
 }
