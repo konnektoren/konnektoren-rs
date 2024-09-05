@@ -76,7 +76,15 @@ async fn fetch_content(path: &str, handle: UseStateHandle<String>) {
 }
 
 async fn fetch_file(path: &str) -> Result<String, String> {
+    let header_value = match path.split('.').last() {
+        Some("js") => "application/javascript",
+        Some("css") => "text/css",
+        Some("html") => "text/html",
+        _ => "text/plain",
+    };
+
     let response = Request::get(path)
+        .header("Accept", header_value)
         .send()
         .await
         .map_err(|_| format!("Failed to fetch the file {}", path))?;
