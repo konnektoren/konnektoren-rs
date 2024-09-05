@@ -1,3 +1,4 @@
+use crate::components::ChallengeEvent;
 use gloo::net::http::Request;
 use konnektoren_core::challenges::{ChallengeResult, Custom};
 use wasm_bindgen_futures::js_sys::eval;
@@ -8,6 +9,8 @@ pub struct CustomComponentProps {
     pub challenge: Custom,
     #[prop_or_default]
     pub on_finish: Option<Callback<ChallengeResult>>,
+    #[prop_or_default]
+    pub on_event: Option<Callback<ChallengeEvent>>,
 }
 
 #[function_component(CustomComponent)]

@@ -108,6 +108,9 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
                 <InformativeMarkdownComponent challenge={challenge.clone()} on_finish={handle_finish} language={props.language.clone()}  />
             }
         }
+        (None, ChallengeType::Custom(challenge), ChallengeVariant::Custom) => html! {
+            <CustomComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+        },
         _ => html! {},
     };
 
