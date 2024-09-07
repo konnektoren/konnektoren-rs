@@ -10,6 +10,7 @@ pub mod translate;
 
 mod adventure_map;
 mod certificates;
+mod map;
 #[cfg(feature = "music")]
 pub mod music;
 mod select_level;
@@ -21,6 +22,7 @@ pub use challenge_config::ChallengeConfigComponent;
 pub use challenge_info::ChallengeInfoComponent;
 pub use game_map::GameMapComponent;
 pub use game_path::GamePathComponent;
+pub use map::*;
 pub use progress_bar::ProgressBar;
 pub use select_language::SelectLanguage;
 pub use select_level::SelectLevelComp;

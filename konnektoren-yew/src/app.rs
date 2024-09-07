@@ -18,8 +18,8 @@ use crate::components::CertificateComponent;
 use crate::effects::BlinkAnimation;
 use crate::prelude::{
     AdventureMapComponent, ChallengeActionsComponent, InformativeComponent,
-    InformativeMarkdownComponent, OptionsComponent, QuestionComponent, ReadText, SelectLanguage,
-    SelectLevelComp,
+    InformativeMarkdownComponent, MapComponent, OptionsComponent, QuestionComponent, ReadText,
+    SelectLanguage, SelectLevelComp,
 };
 
 use crate::i18n::{I18nConfig, I18nProvider};
@@ -147,7 +147,7 @@ pub fn App() -> Html {
         ChallengeInfoComponent::preview(),
         InformativeComponent::preview(),
         InformativeMarkdownComponent::preview(),
-        AdventureMapComponent::preview(),
+        MapComponent::preview(),
         GameMapComponent::preview(),
         GamePathComponent::preview(),
         MusicComponent::preview(),
