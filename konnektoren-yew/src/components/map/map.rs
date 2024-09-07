@@ -46,7 +46,7 @@ pub fn map_component(props: &MapComponentProps) -> Html {
     let view_box_state = use_state(|| svg_bounds.clone());
     let zoom_level = use_state(|| 1.0);
     let is_dragging = use_state(|| false);
-    let last_mouse_pos = use_state(|| (0.0, 0.0));
+    let last_touch_pos = use_state(|| (0.0, 0.0));
     let view_box_position = use_state(|| svg_bounds.0.clone());
 
     let handle_wheel =
@@ -54,7 +54,16 @@ pub fn map_component(props: &MapComponentProps) -> Html {
 
     let on_mouse_move = on_mouse_move_callback(
         &is_dragging,
-        &last_mouse_pos,
+        &last_touch_pos,
+        &view_box_position,
+        &zoom_level,
+        &view_box_state,
+        svg_bounds,
+    );
+
+    let on_touch_move = on_touch_move_callback(
+        &is_dragging,
+        &last_touch_pos,
         &view_box_position,
         &zoom_level,
         &view_box_state,
@@ -63,14 +72,29 @@ pub fn map_component(props: &MapComponentProps) -> Html {
 
     let on_mouse_down = {
         let is_dragging = is_dragging.clone();
-        let last_mouse_pos = last_mouse_pos.clone();
+        let last_touch_pos = last_touch_pos.clone();
         Callback::from(move |e: MouseEvent| {
             is_dragging.set(true);
-            last_mouse_pos.set((e.client_x() as f64, e.client_y() as f64));
+            last_touch_pos.set((e.client_x() as f64, e.client_y() as f64));
+        })
+    };
+
+    let on_touch_start = {
+        let is_dragging = is_dragging.clone();
+        let last_touch_pos = last_touch_pos.clone();
+        Callback::from(move |e: TouchEvent| {
+            let touch = e.touches().get(0).unwrap();
+            is_dragging.set(true);
+            last_touch_pos.set((touch.client_x() as f64, touch.client_y() as f64));
         })
     };
 
     let on_mouse_up = {
+        let is_dragging = is_dragging.clone();
+        Callback::from(move |_| is_dragging.set(false))
+    };
+
+    let on_touch_end = {
         let is_dragging = is_dragging.clone();
         Callback::from(move |_| is_dragging.set(false))
     };
@@ -111,6 +135,9 @@ pub fn map_component(props: &MapComponentProps) -> Html {
             onmousedown={on_mouse_down}
             onmouseup={on_mouse_up}
             onmousemove={on_mouse_move}
+            ontouchstart={on_touch_start}
+            ontouchend={on_touch_end}
+            ontouchmove={on_touch_move}
         >
             <h2>{&props.game_path.name}</h2>
             <SvgMap
@@ -130,6 +157,58 @@ pub fn map_component(props: &MapComponentProps) -> Html {
             </div>
         </div>
     }
+}
+
+fn on_touch_move_callback(
+    is_dragging: &UseStateHandle<bool>,
+    last_touch_pos: &UseStateHandle<(f64, f64)>,
+    view_box_position: &UseStateHandle<SvgCoordinate>,
+    zoom_level: &UseStateHandle<f64>,
+    view_box: &UseStateHandle<(SvgCoordinate, SvgCoordinate)>,
+    bounds: (SvgCoordinate, SvgCoordinate),
+) -> Callback<TouchEvent> {
+    let is_dragging = is_dragging.clone();
+    let last_touch_pos = last_touch_pos.clone();
+    let view_box_position = view_box_position.clone();
+    let zoom_level = zoom_level.clone();
+    let view_box = view_box.clone();
+
+    Callback::from(move |e: TouchEvent| {
+        if *is_dragging {
+            let touch = e.touches().get(0).unwrap();
+            let (dx, dy) =
+                calculate_mouse_delta(touch.client_x(), touch.client_y(), &*last_touch_pos);
+            let (dx, dy) = (dx.max(-1.0).min(1.0), dy.max(-1.0).min(1.0));
+
+            if dx.is_nan() || dy.is_nan() {
+                log::error!("Invalid touch movement delta: dx={}, dy={}", dx, dy);
+                return;
+            }
+
+            last_touch_pos.set((touch.client_x() as f64, touch.client_y() as f64));
+
+            let (view_box_width, view_box_height) = calculate_view_box_size(bounds, *zoom_level);
+            if view_box_width > 0 && view_box_height > 0 {
+                let (new_view_box_x, new_view_box_y) = calculate_new_view_box_position(
+                    &view_box_position,
+                    dx,
+                    dy,
+                    view_box_width,
+                    view_box_height,
+                    bounds,
+                );
+
+                update_view_box(
+                    &view_box_position,
+                    &view_box,
+                    new_view_box_x,
+                    new_view_box_y,
+                    view_box_width,
+                    view_box_height,
+                );
+            }
+        }
+    })
 }
 
 fn adjust_zoom(
