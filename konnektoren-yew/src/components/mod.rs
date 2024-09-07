@@ -8,12 +8,14 @@ pub mod progress_bar;
 pub mod select_language;
 pub mod translate;
 
+mod adventure_map;
 mod certificates;
 #[cfg(feature = "music")]
 pub mod music;
 mod select_level;
 mod settings;
 
+pub use adventure_map::AdventureMapComponent;
 pub use challenge::*;
 pub use challenge_config::ChallengeConfigComponent;
 pub use challenge_info::ChallengeInfoComponent;

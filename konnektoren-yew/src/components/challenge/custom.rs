@@ -1,9 +1,9 @@
-use std::rc::Rc;
-use std::cell::RefCell;
 use crate::components::ChallengeEvent;
 use gloo::net::http::Request;
 use gloo::utils::format::JsValueSerdeExt;
 use konnektoren_core::challenges::{ChallengeResult, Custom};
+use std::cell::RefCell;
+use std::rc::Rc;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::js_sys::eval;
@@ -26,9 +26,8 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
     let loading = use_state(|| true);
 
     // Store the closure inside Rc<RefCell<>> to persist it
-    let js_event_callback = use_state(|| {
-        Rc::new(RefCell::new(None::<Closure<dyn FnMut(JsValue)>>))
-    });
+    let js_event_callback =
+        use_state(|| Rc::new(RefCell::new(None::<Closure<dyn FnMut(JsValue)>>)));
 
     {
         let html_content = html_content.clone();

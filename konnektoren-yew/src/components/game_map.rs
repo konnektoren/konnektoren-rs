@@ -12,9 +12,11 @@ pub struct GameMapComponentProps {
     pub on_select_challenge: Option<Callback<(Option<ChallengeIndex>, Coordinate)>>,
     #[prop_or_default]
     pub points: Option<usize>,
+    #[prop_or_default]
+    pub image_src: Option<String>,
 }
 
-const SCALE: i32 = 10;
+pub const SCALE: i32 = 10;
 
 fn draw_circle(x: i32, y: i32, class_name: &str, on_click: Callback<MouseEvent>) -> Html {
     html! {
