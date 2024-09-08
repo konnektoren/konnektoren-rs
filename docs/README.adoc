@@ -79,6 +79,10 @@ include::src/07_deployment_view.adoc[]
 // 8. Cross-cutting Concepts
 include::src/08_concepts.adoc[]
 
+<<<<
+// 10. Quality Requirements
+include::src/10_quality_requirements.adoc[]
+
 // 11. Technical Risks
 include::src/11_technical_risks.adoc[]
 

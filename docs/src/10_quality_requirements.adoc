@@ -1,0 +1,48 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-quality-scenarios]]
+== Quality Requirements
+
+=== Quality Tree
+
+[plantuml, quality-tree, svg]
+....
+@startuml quality-tree
+:Quality;
+:Performance;
+:Security;
+:Scalability;
+:Usability;
+:Maintainability;
+
+:Performance --> :Fast response times for user interactions;
+:Security --> :Data encryption and signature verification;
+:Scalability --> :Support for increasing user load;
+:Usability --> :Intuitive UI for web and Telegram apps;
+:Maintainability --> :Modular design for easy updates;
+@enduml
+....
+
+The quality tree breaks down key quality goals of the *konnektoren.help* project, categorized into performance, security, scalability, usability, and maintainability.
+
+=== Quality Scenarios
+
+[cols="1,3", options="header"]
+|===
+|Quality Attribute |Scenario Description
+
+|**Performance**
+|The system must respond to user interactions (e.g., open a challenge or updating the leaderboard) within 1 second in 95% of cases.
+
+|**Security**
+|User data must be encrypted both in transit and at rest. The system must verify certificates using digital signatures to ensure data authenticity.
+
+|**Scalability**
+|The system should scale to handle up to 1,000 concurrent users without significant degradation in performance.
+
+|**Usability**
+|The web and Telegram apps must have an intuitive interface. Users should be able to create challenges and view leaderboards with minimal guidance.
+
+|**Maintainability**
+|The system's core library and UI components should be modular, allowing new features or bug fixes to be added without impacting existing functionality.
+|===
