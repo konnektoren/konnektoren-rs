@@ -1,4 +1,10 @@
+#[cfg(feature = "js")]
+mod konnektoren_js;
+
 use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "js")]
+pub use konnektoren_js::KonnektorenJs;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Custom {
@@ -39,8 +45,7 @@ mod tests {
 
     #[test]
     fn serialize_dataset() {
-        let json_str =
-            r#"{"id":"123","name":"Test","description":"","html":"","css":"","js":"","data":{"key":"value"}}"#;
+        let json_str = r#"{"id":"123","name":"Test","description":"","html":"","css":"","js":"","data":{"key":"value"}}"#;
         let dataset = Custom {
             id: "123".to_string(),
             name: "Test".to_string(),

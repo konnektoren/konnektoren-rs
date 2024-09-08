@@ -27,3 +27,9 @@ pub mod prelude {
     pub use crate::session::Session;
     pub use crate::Xp;
 }
+
+#[cfg(feature = "js")]
+#[cfg(test)]
+mod tests {
+    wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+}
