@@ -1,3 +1,6 @@
+use crate::challenges::Custom;
+use js_sys::Reflect;
+use serde_wasm_bindgen::to_value;
 use std::cell::RefCell;
 use std::rc::Rc;
 use wasm_bindgen::closure::Closure;
@@ -23,18 +26,22 @@ impl KonnektorenJs {
         }
     }
 
-    /// Sets the challenge data in the JavaScript `window.konnektoren.challenge`.
-    pub fn set_challenge_data(&self, challenge_json: &str) {
+    /// Sets the challenge data in the JavaScript `window.konnektoren.challenge` as a `JsValue`.
+    pub fn set_challenge_data(&self, challenge_data: Custom) {
         let window = web_sys::window().unwrap();
         let global_obj = window.as_ref();
 
-        let konnektoren_obj =
-            js_sys::Reflect::get(global_obj, &JsValue::from_str("konnektoren")).unwrap();
+        // Convert the `Custom` struct to `JsValue` using `serde-wasm-bindgen::to_value`
+        let js_challenge_data = to_value(&challenge_data).unwrap();
 
-        js_sys::Reflect::set(
+        // Get `window.konnektoren`
+        let konnektoren_obj = Reflect::get(global_obj, &JsValue::from_str("konnektoren")).unwrap();
+
+        // Set the challenge data as a plain object under `window.konnektoren.challenge`
+        Reflect::set(
             &konnektoren_obj,
             &JsValue::from_str("challenge"),
-            &JsValue::from_str(challenge_json),
+            &js_challenge_data,
         )
         .unwrap();
     }

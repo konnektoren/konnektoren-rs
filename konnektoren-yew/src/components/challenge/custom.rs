@@ -47,13 +47,13 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
     }
 
     {
-        let challenge_json = serde_json::to_string_pretty(&props.challenge).unwrap();
+        let challenge = props.challenge.clone();
         let js_code = (*js_content).clone();
         let on_event = props.on_event.clone();
         let konnektoren_js = konnektoren_js.clone();
 
-        use_effect_with((challenge_json.clone(), js_code.clone()), move |_| {
-            konnektoren_js.set_challenge_data(&challenge_json);
+        use_effect_with((challenge.clone(), js_code.clone()), move |_| {
+            konnektoren_js.set_challenge_data(challenge);
 
             konnektoren_js.expose_send_event(move |event: JsValue| {
                 if let Some(on_event_callback) = &on_event {
@@ -61,9 +61,7 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
                     on_event_callback.emit(challenge_event);
                 }
             });
-
-            let complete_js_code = format!("const challenge = {}; {}", challenge_json, js_code);
-            konnektoren_js.execute_js(&complete_js_code);
+            konnektoren_js.execute_js(&js_code);
 
             || ()
         });
