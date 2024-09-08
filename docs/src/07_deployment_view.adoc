@@ -1,0 +1,95 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-deployment-view]]
+
+== Deployment View
+
+=== Infrastructure Level 1
+
+_**Deployment Overview Diagram**_
+
+[plantuml, deployment-overview, svg]
+....
+@startuml deployment-overview
+!define C4Deployment
+
+C4Deployment
+
+node "Cloudflare Proxy" {
+  node "GitHub Pages" {
+    [WASM Page]
+  }
+}
+
+node "Docker Container" {
+  [Axum Server] <<Container>>
+}
+
+[WASM Page] --> [Cloudflare Proxy] : Deployed through GitHub Pages
+[Cloudflare Proxy] --> [Axum Server] : Proxy REST API calls to the leaderboard
+
+@enduml
+....
+
+Motivation::
+
+The *konnektoren.help* project uses a decentralized deployment model. The front-end is deployed as a static WASM page hosted on GitHub Pages, with Cloudflare acting as a proxy for secure, global content delivery. The back-end leaderboard service is a Docker container running an Axum server, communicating via REST API.
+
+Quality and/or Performance Features::
+
+- The Cloudflare proxy provides enhanced performance by caching static assets and offering DDoS protection.
+- Using Docker for the Axum server enables containerized, reproducible, and scalable deployments.
+
+Mapping of Building Blocks to Infrastructure::
+
+- *WASM Page* is deployed on *GitHub Pages* behind the *Cloudflare Proxy*.
+- *Axum Server* is deployed inside a *Docker Container* and handles the leaderboard functionality through REST API.
+- Cloudflare is responsible for routing traffic and optimizing delivery for the WASM page.
+- REST API is used to connect the WASM front-end with the leaderboard server.
+
+=== Infrastructure Level 2
+
+==== _GitHub Pages Infrastructure_
+
+_**GitHub Pages Hosting Diagram**_
+
+[plantuml, github-pages-deployment, svg]
+....
+@startuml github-pages-deployment
+node "GitHub Infrastructure" {
+  [GitHub Pages] <<Static Hosting>>
+}
+
+node "User Browser" {
+  [WASM Page]
+}
+
+[User Browser] --> [GitHub Pages] : Access hosted page
+
+@enduml
+....
+
+The WASM front-end is deployed on GitHub Pages and accessed by users through their browsers. GitHub Pages hosts the static WASM content and serves it globally.
+
+==== _Axum Server in Docker_
+
+_**Axum Server Deployment Diagram**_
+
+[plantuml, axum-server-deployment, svg]
+....
+@startuml axum-server-deployment
+node "Server Infrastructure" {
+  node "Docker Host" {
+    [Axum Server] <<Docker Container>>
+  }
+}
+
+node "Leaderboard Database" {
+  [Database] <<External System>>
+}
+
+[Axum Server] --> [Database]
+@enduml
+....
+
+The Axum server, running in a Docker container, handles leaderboard functionalities. It communicates with the leaderboard database.
