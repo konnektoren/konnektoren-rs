@@ -1,0 +1,94 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-concepts]]
+== Cross-cutting Concepts
+
+=== Core Library and UI Components
+
+The *konnektoren* project is built around a core library that contains the business logic. This library is decoupled from any specific user interface and can be reused across different applications. Additionally, reusable UI components are provided, making it easier to integrate and combine them in various applications such as web apps and Telegram apps.
+
+[plantuml, core-library, svg]
+....
+@startuml core-library
+package "Konnektoren Core" {
+  class BusinessLogic {
+    +processData()
+    +verifyCertificate()
+  }
+
+  package "UI Components" {
+    class UIComponent1
+    class UIComponent2
+    UIComponent1 -- BusinessLogic
+    UIComponent2 -- BusinessLogic
+  }
+}
+
+UIComponent1 <|-- WebApp
+UIComponent2 <|-- TelegramApp
+
+@enduml
+....
+
+The diagram above shows the relationship between the core library, UI components, and the two apps (Web and Telegram) using these components.
+
+=== Web3-Oriented Architecture
+
+The apps are designed with a web3-oriented architecture, minimizing server-side storage. User data, except for the leaderboard, is stored client-side to ensure privacy and security. The system also employs encryption and digital signatures to verify certificates and user data.
+
+[plantuml, web3-architecture, svg]
+....
+@startuml
+actor User
+node "Client" {
+  [Local Storage] <<client-side storage>>
+  [App Logic]
+}
+
+node "Server" {
+  [Leaderboard Database] <<Server-Side Storage>>
+}
+
+User --> [App Logic] : Interaction
+[App Logic] --> [Local Storage] : Store user data
+[App Logic] --> [Leaderboard Database] : Update leaderboard
+
+@enduml
+....
+
+This architecture ensures minimal dependency on centralized servers, following web3 principles. Only essential data, like the leaderboard, is stored server-side, while user data remains in local storage.
+
+=== Encryption and Signatures for Verification
+
+To ensure data integrity and security, the system uses encryption and signatures to verify certificates. This is a key part of the system’s security, ensuring that data shared between users and the server is verified without relying on a central authority.
+
+[plantuml, encryption-diagram, svg]
+....
+@startuml
+actor User
+
+node "Client" {
+  [Encryption] <<Client-Side Operation>>
+  [SignatureVerification] <<Client-Side Operation>>
+}
+
+node "Server" {
+  [Certificate Authority] <<Server-Side Operation>>
+}
+
+User --> [Encryption] : Encrypt/Decrypt data
+[Encryption] --> [SignatureVerification] : Sign/Verify certificates
+[SignatureVerification] --> [Certificate Authority] : Verify signature
+
+@enduml
+....
+
+Encryption and digital signatures are central to the system’s security model, ensuring that all certificates are securely verified and that data is protected at rest and in transit.
+
+=== No Backend Logging and Analytics
+
+To preserve privacy, the *konnektoren.help* system does not employ any backend logging. Google Analytics is used minimally to help improve the product while adhering to privacy standards.
+
+'''
+
+This documentation provides a clear description of the concepts that cross-cut multiple areas of the *konnektoren.help* project. By adhering to web3 principles, employing encryption, and focusing on a modular, reusable core, the system ensures security and flexibility in its design.
