@@ -78,3 +78,7 @@ include::src/07_deployment_view.adoc[]
 <<<<
 // 8. Cross-cutting Concepts
 include::src/08_concepts.adoc[]
+
+<<<<
+// 12. Glossary
+include::src/12_glossary.adoc[]

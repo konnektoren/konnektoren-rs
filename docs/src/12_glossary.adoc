@@ -1,0 +1,51 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-glossary]]
+== Glossary
+
+[cols="e,2e", options="header"]
+|===
+|Term |Definition
+
+|Challenge
+|In the context of *konnektoren.help*, a challenge refers to an exercise or task that users must complete.
+
+|Leaderboard
+|A ranking system that displays users based on their results from completed challenges.
+
+|Core Library
+|The main library in *konnektoren.help* containing the core business logic, separate from UI components.
+
+|UI Components
+|Reusable user interface elements provided by the *konnektoren.help* framework, which can be integrated into web and Telegram apps.
+
+|Web3 Architecture
+|A decentralized approach where user data is stored on the client-side, minimizing reliance on centralized servers.
+
+|Client-Side Storage
+|Data stored locally on the user's device, as opposed to being saved on a remote server. In *konnektoren.help*, only minimal data (e.g., leaderboard information) is stored server-side.
+
+|Encryption
+|The process of encoding data to prevent unauthorized access. *konnektoren.help* uses encryption to protect user data.
+
+|Signature Verification
+|A cryptographic process that verifies the authenticity of certificates or documents in *konnektoren.help* using digital signatures.
+
+|REST API
+|A stateless communication protocol that allows systems to interact. In *konnektoren.help*, the leaderboard and other components communicate via REST API.
+
+|Docker
+|A platform used to deploy applications inside isolated containers. The *konnektoren.help* leaderboard is hosted in a Docker container.
+
+|Axum
+|A Rust-based web framework used in *konnektoren.help* to handle the leaderboard server.
+
+|GitHub Pages
+|A static web hosting service provided by GitHub, used to deploy the WASM front-end for *konnektoren.help*.
+
+|WASM (WebAssembly)
+|A binary instruction format for a stack-based virtual machine, used for running applications at near-native speed in the browser. *konnektoren.help* uses WASM for its web app.
+
+|Cloudflare Proxy
+|A service that accelerates and secures web traffic by acting as an intermediary between users and servers. It is used in *konnektoren.help* to provide security and optimization.
+|===
