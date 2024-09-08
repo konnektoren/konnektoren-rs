@@ -1,0 +1,55 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-technical-risks]]
+== Risks and Technical Debts
+
+[cols="1,3", options="header"]
+|===
+|Risk/Technical Debt |Description and Mitigation
+
+|**Dependency on Client-Side Data Storage (Web3 Architecture)**
+|Since most user data is stored client-side to adhere to web3 principles, there is a risk of data loss or inconsistency if users clear their browser storage or lose access to their local environment.
+
+*Mitigation*: Implement clear instructions for users to back up important data. Optionally, provide an opt-in feature for secure, server-side backups (with encryption).
+
+|**Security of Client-Side Encryption**
+|Client-side encryption and signature verification are core components, but if improperly implemented or flawed, it can lead to serious security breaches (e.g., data leakage, certificate spoofing).
+
+*Mitigation*: Use well-established cryptographic libraries, conduct thorough security audits, and encourage penetration testing.
+
+|**Performance Overhead with WebAssembly (WASM)**
+|WebAssembly may introduce performance overhead in browsers with less robust support, or the size of the WASM binary could lead to slower load times, especially in low-bandwidth environments.
+
+*Mitigation*: Optimize WASM binaries, use lazy loading, and conduct performance profiling for different environments.
+
+|**Dependency on Third-Party Services (Cloudflare, Google Analytics)**
+|The reliance on third-party services (e.g., Cloudflare for proxy and Google Analytics) introduces risks if those services experience downtime, are discontinued, or change their terms of service.
+
+*Mitigation*: Design the system to degrade gracefully if third-party services are unavailable, and consider alternatives or backups for critical services.
+
+|**Docker Container Security**
+|Using Docker for the leaderboard backend introduces potential security risks if the container is improperly configured, outdated, or vulnerable to attacks like container escapes or privilege escalations.
+
+*Mitigation*: Regularly update Docker images, enforce security best practices (e.g., use non-root users in containers), and scan for vulnerabilities.
+
+|**Axum Framework Maturity**
+|Axum is a relatively new framework, and while Rust is known for its safety, there may be unaddressed issues or fewer resources/community support compared to more mature frameworks.
+
+*Mitigation*: Keep up with the latest Axum releases and actively monitor any security patches. Maintain modularity to enable easy swapping of frameworks if necessary.
+
+|**Lack of Backend Logging**
+|Not having any backend logging may limit the ability to debug or identify issues in production, which could slow down response times when dealing with critical bugs.
+
+*Mitigation*: Implement selective or opt-in backend logging for critical events (e.g., anonymized logging), ensuring it adheres to privacy principles.
+
+|**Complexity of Multi-Environment Deployment**
+|Managing deployments across different environments (development, staging, production) can become complex, particularly if deployment configurations are not properly maintained or synchronized.
+
+*Mitigation*: Use containerization (Docker) and Infrastructure as Code (IaC) tools like Terraform or Ansible to standardize deployments across environments.
+
+|**Technical Debt from UI Component Reuse**
+|While reusing UI components across different applications (web app and Telegram app) is efficient, it might lead to technical debt if changes in the core components lead to compatibility issues between apps.
+
+*Mitigation*: Ensure thorough version control of UI components and maintain backward compatibility or well-documented upgrade paths.
+|===
+
