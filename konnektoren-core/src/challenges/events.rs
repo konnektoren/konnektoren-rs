@@ -1,8 +1,9 @@
-use js_sys::{Object, Reflect};
-use konnektoren_core::challenges::ChallengeResult;
+use crate::challenges::ChallengeResult;
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "js")]
 use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsValue;
+#[cfg(feature = "js")]
+use js_sys::{Object, Reflect};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum ChallengeEvent {
@@ -13,6 +14,7 @@ pub enum ChallengeEvent {
     Finish(ChallengeResult),
 }
 
+#[cfg(feature = "js")]
 impl From<JsValue> for ChallengeEvent {
     fn from(value: JsValue) -> ChallengeEvent {
         let obj = Object::from(value);
