@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["create_certificate","create_certificate_data_url","keypair_from_static_str"],"struct":["CertificateData"]};

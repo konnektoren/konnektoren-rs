@@ -1,0 +1,1 @@
+searchState.loadedDescShard("konnektoren_tui", 0, "A type alias for the terminal type used in this application\nReturns the argument unchanged.\nInitialize the terminal\nCalls <code>U::from(self)</code>.\nRestore the terminal to its original state")

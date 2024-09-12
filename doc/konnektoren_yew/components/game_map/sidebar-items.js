@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["SCALE"],"struct":["GameMapComponent","GameMapComponentProps"],"type":["ChallengeIndex","Coordinate"]};

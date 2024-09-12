@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["profile_storage"],"struct":["SettingsStorage"],"trait":["Storage"]};
