@@ -94,7 +94,15 @@ mod tests {
         let konnektoren_js = KonnektorenJs::new();
 
         // Set challenge data
-        konnektoren_js.set_challenge_data(r#"{"title": "Test Challenge"}"#);
+        konnektoren_js.set_challenge_data(Custom {
+            id: "".to_string(),
+            name: "".to_string(),
+            description: "".to_string(),
+            html: "".to_string(),
+            css: "".to_string(),
+            js: "".to_string(),
+            data: Default::default(),
+        });
 
         // Access the JavaScript window object to verify if the data is set correctly
         let window = web_sys::window().unwrap();

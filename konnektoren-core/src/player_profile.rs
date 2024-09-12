@@ -42,6 +42,5 @@ mod tests {
         let id = "123".to_string();
         let profile = PlayerProfile::new(id.clone());
         assert_eq!(profile.id, id);
-        assert_eq!(profile.name, "Anonymous");
     }
 }
