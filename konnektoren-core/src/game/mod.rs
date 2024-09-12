@@ -1,3 +1,4 @@
+//! Game module.
 #![allow(clippy::module_inception)]
 pub mod game;
 pub mod game_path;

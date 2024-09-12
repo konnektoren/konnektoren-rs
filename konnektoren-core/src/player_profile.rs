@@ -1,3 +1,5 @@
+//! Player profile module.
+
 use serde::{Deserialize, Serialize};
 
 use crate::Xp;

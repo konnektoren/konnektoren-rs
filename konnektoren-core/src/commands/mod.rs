@@ -1,3 +1,4 @@
+//! This module contains the command pattern implementation for the game.
 use anyhow::Result;
 
 use crate::game::GameState;

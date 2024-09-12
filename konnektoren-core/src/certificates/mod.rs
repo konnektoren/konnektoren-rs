@@ -1,3 +1,4 @@
+//! Module for creating certificates for the Konnektoren.
 use ed25519_dalek::{SigningKey, VerifyingKey};
 use sha2::{Digest, Sha256};
 

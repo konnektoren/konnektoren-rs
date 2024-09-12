@@ -10,6 +10,7 @@ pub mod certificates;
 /// experience points
 pub type Xp = u32;
 
+/// This is a prelude module that re-exports the most important types and traits.
 pub mod prelude {
     pub use crate::challenges::Challenge;
     pub use crate::challenges::ChallengeConfig;

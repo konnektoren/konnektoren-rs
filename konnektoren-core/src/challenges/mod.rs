@@ -1,3 +1,4 @@
+//! This module contains all the challenges that can be solved by the user.
 pub mod challenge;
 pub mod challenge_config;
 pub mod challenge_factory;
