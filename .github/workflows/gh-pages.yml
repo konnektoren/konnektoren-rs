@@ -24,10 +24,22 @@ jobs:
       - run: rustup target add wasm32-unknown-unknown
       - run: cd konnektoren-yew && trunk build --features=yew-preview --release --public-url /konnektoren-rs/
 
+      - name: Build Cargo Docs
+        run: cargo doc --no-deps --all-features
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: ./konnektoren-yew/dist
+          keep_files: true
+
+      - name: Deploy Cargo Docs
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./target/doc
+          destination_dir: doc
           keep_files: true
