@@ -1,3 +1,4 @@
+//! Settings components
 mod music_config;
 mod settings_component;
 mod sound_config;

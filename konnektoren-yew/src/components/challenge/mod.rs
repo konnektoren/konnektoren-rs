@@ -1,3 +1,5 @@
+//! # Challenge Components
+
 use konnektoren_core::challenges::challenge_config::ChallengeVariant;
 use konnektoren_core::prelude::*;
 use yew::prelude::*;

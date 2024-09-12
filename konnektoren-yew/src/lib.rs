@@ -11,6 +11,7 @@ pub mod effects;
 #[cfg(feature = "storage")]
 pub mod storage;
 
+/// This is a prelude module that re-exports the most important types and traits.
 pub mod prelude {
     pub use crate::app::App;
     pub use crate::components::*;

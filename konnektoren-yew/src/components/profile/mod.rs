@@ -1,3 +1,4 @@
+//! Profile components
 #[cfg(feature = "storage")]
 mod profile_config;
 

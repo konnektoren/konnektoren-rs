@@ -1,3 +1,4 @@
+//! This module contains the map component and its subcomponents.
 mod bounds;
 mod coordinates;
 mod map;

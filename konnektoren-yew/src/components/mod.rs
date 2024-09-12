@@ -1,3 +1,5 @@
+//! This module contains all the components that are used in the app.
+
 pub mod challenge;
 pub mod challenge_config;
 pub mod challenge_info;
