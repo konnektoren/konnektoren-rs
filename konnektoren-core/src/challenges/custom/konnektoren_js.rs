@@ -99,6 +99,7 @@ mod tests {
             name: "".to_string(),
             description: "".to_string(),
             html: "".to_string(),
+            results_html: None,
             css: "".to_string(),
             js: "".to_string(),
             data: Default::default(),
