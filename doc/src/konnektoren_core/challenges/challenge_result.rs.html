@@ -92,7 +92,7 @@
 <a href="#92" id="92">92</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::multiple_choice::MultipleChoiceOption;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::sort_table::SortTableRow;
-<span class="kw">use </span><span class="kw">crate</span>::challenges::ChallengeInput;
+<span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeInput, CustomChallengeResult};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -100,7 +100,7 @@
     MultipleChoice(Vec&lt;MultipleChoiceOption&gt;),
     SortTable(Vec&lt;SortTableRow&gt;),
     Informative,
-    Custom,
+    Custom(CustomChallengeResult),
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>ChallengeResult {
@@ -127,7 +127,7 @@
                 <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Invalid challenge input"</span>),
             },
             ChallengeResult::Informative =&gt; <span class="prelude-val">Ok</span>(()),
-            ChallengeResult::Custom =&gt; <span class="prelude-val">Ok</span>(()),
+            ChallengeResult::Custom(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(()),
         }
     }
 
@@ -136,7 +136,7 @@
             ChallengeResult::MultipleChoice(options) =&gt; options.len(),
             ChallengeResult::SortTable(rows) =&gt; rows.len(),
             ChallengeResult::Informative =&gt; <span class="number">0</span>,
-            ChallengeResult::Custom =&gt; <span class="number">0</span>,
+            ChallengeResult::Custom(<span class="kw">_</span>) =&gt; <span class="number">0</span>,
         }
     }
 
@@ -145,7 +145,7 @@
             ChallengeResult::MultipleChoice(options) =&gt; options.is_empty(),
             ChallengeResult::SortTable(rows) =&gt; rows.is_empty(),
             ChallengeResult::Informative =&gt; <span class="bool-val">true</span>,
-            ChallengeResult::Custom =&gt; <span class="bool-val">true</span>,
+            ChallengeResult::Custom(<span class="kw">_</span>) =&gt; <span class="bool-val">true</span>,
         }
     }
 }

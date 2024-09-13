@@ -168,7 +168,62 @@
 <a href="#168" id="168">168</a>
 <a href="#169" id="169">169</a>
 <a href="#170" id="170">170</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::Custom;
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{Custom, CustomChallengeResult};
 <span class="kw">use </span>js_sys::Reflect;
 <span class="kw">use </span>serde_wasm_bindgen::to_value;
 <span class="kw">use </span>std::cell::RefCell;
@@ -201,7 +256,7 @@
         <span class="kw">let </span>window = web_sys::window().unwrap();
         <span class="kw">let </span>global_obj = window.as_ref();
 
-        <span class="comment">// Convert the `Custom` struct to `JsValue` using `serde-wasm-bindgen::to_value`
+        <span class="comment">// Convert the `Custom` struct to `JsValue`
         </span><span class="kw">let </span>js_challenge_data = to_value(<span class="kw-2">&amp;</span>challenge_data).unwrap();
 
         <span class="comment">// Get `window.konnektoren`
@@ -212,6 +267,26 @@
             <span class="kw-2">&amp;</span>konnektoren_obj,
             <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"challenge"</span>),
             <span class="kw-2">&amp;</span>js_challenge_data,
+        )
+        .unwrap();
+    }
+
+    <span class="doccomment">/// Sets the result data in the JavaScript `window.konnektoren.result` as a `JsValue`.
+    </span><span class="kw">pub fn </span>set_result_data(<span class="kw-2">&amp;</span><span class="self">self</span>, result_data: CustomChallengeResult) {
+        <span class="kw">let </span>window = web_sys::window().unwrap();
+        <span class="kw">let </span>global_obj = window.as_ref();
+
+        <span class="comment">// Convert the `Custom` struct to `JsValue`
+        </span><span class="kw">let </span>js_result_data = to_value(<span class="kw-2">&amp;</span>result_data).unwrap();
+
+        <span class="comment">// Get `window.konnektoren`
+        </span><span class="kw">let </span>konnektoren_obj = Reflect::get(global_obj, <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"konnektoren"</span>)).unwrap();
+
+        <span class="comment">// Set the challenge data as a plain object under `window.konnektoren.challenge`
+        </span>Reflect::set(
+            <span class="kw-2">&amp;</span>konnektoren_obj,
+            <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"result"</span>),
+            <span class="kw-2">&amp;</span>js_result_data,
         )
         .unwrap();
     }
@@ -257,37 +332,42 @@
     <span class="kw">use </span>wasm_bindgen::JsValue;
     <span class="kw">use </span>wasm_bindgen_test::<span class="kw-2">*</span>;
 
-    <span class="comment">// Enable `wasm_bindgen_test` for the test environment
-    </span><span class="attr">#[wasm_bindgen_test]
+    <span class="macro">wasm_bindgen_test::wasm_bindgen_test_configure!</span>(run_in_browser);
+
+    <span class="attr">#[wasm_bindgen_test]
     </span><span class="kw">fn </span>test_set_challenge_data() {
         <span class="comment">// Create a new instance of KonnektorenJs
         </span><span class="kw">let </span>konnektoren_js = KonnektorenJs::new();
 
         <span class="comment">// Set challenge data
-        </span>konnektoren_js.set_challenge_data(Custom {
-            id: <span class="string">""</span>.to_string(),
-            name: <span class="string">""</span>.to_string(),
+        </span><span class="kw">let </span>test_custom = Custom {
+            id: <span class="string">"123"</span>.to_string(),
+            name: <span class="string">"Test"</span>.to_string(),
             description: <span class="string">""</span>.to_string(),
             html: <span class="string">""</span>.to_string(),
             results_html: <span class="prelude-val">None</span>,
             css: <span class="string">""</span>.to_string(),
             js: <span class="string">""</span>.to_string(),
-            data: Default::default(),
-        });
+            data: <span class="macro">serde_json::json!</span>({<span class="string">"key"</span>:<span class="string">"value"</span>}),
+        };
+        konnektoren_js.set_challenge_data(test_custom.clone());
 
         <span class="comment">// Access the JavaScript window object to verify if the data is set correctly
         </span><span class="kw">let </span>window = web_sys::window().unwrap();
         <span class="kw">let </span>konnektoren_obj =
             js_sys::Reflect::get(<span class="kw-2">&amp;</span>window, <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"konnektoren"</span>)).unwrap();
+
         <span class="kw">let </span>challenge_data =
             js_sys::Reflect::get(<span class="kw-2">&amp;</span>konnektoren_obj, <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"challenge"</span>)).unwrap();
 
+        <span class="comment">// Convert the JsValue back to Custom
+        </span><span class="kw">let </span>js_challenge_data: Custom = challenge_data.into_serde().unwrap();
+
         <span class="comment">// Assert the challenge data is set correctly
-        </span><span class="macro">assert_eq!</span>(
-            challenge_data.as_string().unwrap(),
-            <span class="string">r#"{"title": "Test Challenge"}"#
-        </span>);
-    }
+        </span><span class="macro">assert_eq!</span>(js_challenge_data.id, test_custom.id);
+        <span class="macro">assert_eq!</span>(js_challenge_data.name, test_custom.name);
+        <span class="comment">// assert_eq!(js_challenge_data.data, test_custom.data);
+    </span>}
 
     <span class="attr">#[wasm_bindgen_test]
     </span><span class="kw">fn </span>test_expose_send_event() {
@@ -324,6 +404,36 @@
         <span class="comment">// Assert that the event was received by the closure
         </span><span class="macro">assert!</span>(<span class="kw-2">*</span>event_received.borrow());
     }
+
+    <span class="attr">#[wasm_bindgen_test]
+    </span><span class="kw">fn </span>test_set_result_data() {
+        <span class="comment">// Create a new instance of KonnektorenJs
+        </span><span class="kw">let </span>konnektoren_js = KonnektorenJs::new();
+
+        <span class="comment">// Set result data
+        </span><span class="kw">let </span>test_result = CustomChallengeResult {
+            id: <span class="string">"123"</span>.to_string(),
+            performance: <span class="number">0.0</span>,
+            data: <span class="macro">serde_json::json!</span>({<span class="string">"key"</span>:<span class="string">"value"</span>}),
+        };
+        konnektoren_js.set_result_data(test_result.clone());
+
+        <span class="comment">// Access the JavaScript window object to verify if the data is set correctly
+        </span><span class="kw">let </span>window = web_sys::window().unwrap();
+        <span class="kw">let </span>konnektoren_obj =
+            js_sys::Reflect::get(<span class="kw-2">&amp;</span>window, <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"konnektoren"</span>)).unwrap();
+
+        <span class="kw">let </span>result_data =
+            js_sys::Reflect::get(<span class="kw-2">&amp;</span>konnektoren_obj, <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"result"</span>)).unwrap();
+
+        <span class="comment">// Convert the JsValue back to CustomChallengeResult
+        </span><span class="kw">let </span>js_result_data: CustomChallengeResult = result_data.into_serde().unwrap();
+
+        <span class="comment">// Assert the result data is set correctly
+        </span><span class="macro">assert_eq!</span>(js_result_data.id, test_result.id);
+        <span class="macro">assert_eq!</span>(js_result_data.performance, test_result.performance);
+        <span class="comment">// assert_eq!(js_result_data, test_result);
+    </span>}
 
     <span class="attr">#[wasm_bindgen_test]
     </span><span class="kw">fn </span>test_execute_js() {

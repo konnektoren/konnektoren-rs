@@ -121,7 +121,7 @@
                     ChallengeResult::MultipleChoice(<span class="kw-2">ref </span>mc) =&gt; mc.get(index),
                     ChallengeResult::SortTable(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
                     ChallengeResult::Informative =&gt; <span class="prelude-val">None</span>,
-                    ChallengeResult::Custom =&gt; <span class="prelude-val">None</span>,
+                    ChallengeResult::Custom(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
                 };
                 <span class="kw">match </span>(question, result) {
                     (<span class="prelude-val">Some</span>(question), <span class="prelude-val">Some</span>(result)) =&gt; <span class="prelude-val">Ok</span>(question.option == result.id),

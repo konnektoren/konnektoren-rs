@@ -148,6 +148,8 @@
 <a href="#148" id="148">148</a>
 <a href="#149" id="149">149</a>
 <a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{ChallengeResult, Custom, Performance};
 <span class="kw">use </span><span class="kw">crate</span>::challenges::informative::Informative;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::multiple_choice::MultipleChoice;
@@ -232,7 +234,9 @@
                 <span class="number">100 </span>* score / dataset.rows.len() <span class="kw">as </span>u32
             }
             (ChallengeType::Informative(<span class="kw">_</span>), ChallengeResult::Informative) =&gt; <span class="number">100</span>,
-            (ChallengeType::Custom(<span class="kw">_</span>), ChallengeResult::Custom) =&gt; <span class="number">100</span>,
+            (ChallengeType::Custom(<span class="kw">_</span>), ChallengeResult::Custom(result)) =&gt; {
+                (<span class="number">100.0 </span>* result.performance) <span class="kw">as </span>u32
+            }
             <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Invalid challenge type"</span>),
         }
     }
