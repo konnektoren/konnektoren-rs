@@ -18,6 +18,13 @@ pub struct Custom {
     pub data: serde_json::Value,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct CustomChallengeResult {
+    pub id: String,
+    pub performance: f64,
+    pub data: serde_json::Value,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
