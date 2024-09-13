@@ -79,14 +79,14 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
     }
 }
 
-async fn fetch_content(path: &str, handle: UseStateHandle<String>) {
+pub async fn fetch_content(path: &str, handle: UseStateHandle<String>) {
     match fetch_file(path).await {
         Ok(content) => handle.set(content),
         Err(err) => log::error!("Failed to fetch the file content of {}: {}", path, err),
     }
 }
 
-async fn fetch_file(path: &str) -> Result<String, String> {
+pub async fn fetch_file(path: &str) -> Result<String, String> {
     let header_value = match path.split('.').last() {
         Some("js") => "application/javascript",
         Some("css") => "text/css",
