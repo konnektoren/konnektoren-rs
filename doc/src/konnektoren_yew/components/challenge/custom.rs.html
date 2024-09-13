@@ -189,14 +189,14 @@
     }
 }
 
-<span class="kw">async fn </span>fetch_content(path: <span class="kw-2">&amp;</span>str, handle: UseStateHandle&lt;String&gt;) {
+<span class="kw">pub async fn </span>fetch_content(path: <span class="kw-2">&amp;</span>str, handle: UseStateHandle&lt;String&gt;) {
     <span class="kw">match </span>fetch_file(path).<span class="kw">await </span>{
         <span class="prelude-val">Ok</span>(content) =&gt; handle.set(content),
         <span class="prelude-val">Err</span>(err) =&gt; <span class="macro">log::error!</span>(<span class="string">"Failed to fetch the file content of {}: {}"</span>, path, err),
     }
 }
 
-<span class="kw">async fn </span>fetch_file(path: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;String, String&gt; {
+<span class="kw">pub async fn </span>fetch_file(path: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;String, String&gt; {
     <span class="kw">let </span>header_value = <span class="kw">match </span>path.split(<span class="string">'.'</span>).last() {
         <span class="prelude-val">Some</span>(<span class="string">"js"</span>) =&gt; <span class="string">"application/javascript"</span>,
         <span class="prelude-val">Some</span>(<span class="string">"css"</span>) =&gt; <span class="string">"text/css"</span>,

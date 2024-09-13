@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["CustomComponent","CustomComponentProps"]};
+window.SIDEBAR_ITEMS = {"fn":["fetch_content","fetch_file"],"struct":["CustomComponent","CustomComponentProps"]};
