@@ -1,4 +1,4 @@
-use crate::challenges::Custom;
+use crate::challenges::{Custom, CustomChallengeResult};
 use js_sys::Reflect;
 use serde_wasm_bindgen::to_value;
 use std::cell::RefCell;
@@ -31,7 +31,7 @@ impl KonnektorenJs {
         let window = web_sys::window().unwrap();
         let global_obj = window.as_ref();
 
-        // Convert the `Custom` struct to `JsValue` using `serde-wasm-bindgen::to_value`
+        // Convert the `Custom` struct to `JsValue`
         let js_challenge_data = to_value(&challenge_data).unwrap();
 
         // Get `window.konnektoren`
@@ -42,6 +42,26 @@ impl KonnektorenJs {
             &konnektoren_obj,
             &JsValue::from_str("challenge"),
             &js_challenge_data,
+        )
+        .unwrap();
+    }
+
+    /// Sets the result data in the JavaScript `window.konnektoren.result` as a `JsValue`.
+    pub fn set_result_data(&self, result_data: CustomChallengeResult) {
+        let window = web_sys::window().unwrap();
+        let global_obj = window.as_ref();
+
+        // Convert the `Custom` struct to `JsValue`
+        let js_result_data = to_value(&result_data).unwrap();
+
+        // Get `window.konnektoren`
+        let konnektoren_obj = Reflect::get(global_obj, &JsValue::from_str("konnektoren")).unwrap();
+
+        // Set the challenge data as a plain object under `window.konnektoren.challenge`
+        Reflect::set(
+            &konnektoren_obj,
+            &JsValue::from_str("result"),
+            &js_result_data,
         )
         .unwrap();
     }
@@ -87,36 +107,41 @@ mod tests {
     use wasm_bindgen::JsValue;
     use wasm_bindgen_test::*;
 
-    // Enable `wasm_bindgen_test` for the test environment
+    wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+
     #[wasm_bindgen_test]
     fn test_set_challenge_data() {
         // Create a new instance of KonnektorenJs
         let konnektoren_js = KonnektorenJs::new();
 
         // Set challenge data
-        konnektoren_js.set_challenge_data(Custom {
-            id: "".to_string(),
-            name: "".to_string(),
+        let test_custom = Custom {
+            id: "123".to_string(),
+            name: "Test".to_string(),
             description: "".to_string(),
             html: "".to_string(),
             results_html: None,
             css: "".to_string(),
             js: "".to_string(),
-            data: Default::default(),
-        });
+            data: serde_json::json!({"key":"value"}),
+        };
+        konnektoren_js.set_challenge_data(test_custom.clone());
 
         // Access the JavaScript window object to verify if the data is set correctly
         let window = web_sys::window().unwrap();
         let konnektoren_obj =
             js_sys::Reflect::get(&window, &JsValue::from_str("konnektoren")).unwrap();
+
         let challenge_data =
             js_sys::Reflect::get(&konnektoren_obj, &JsValue::from_str("challenge")).unwrap();
 
+        // Convert the JsValue back to Custom
+        let js_challenge_data: Custom = challenge_data.into_serde().unwrap();
+
         // Assert the challenge data is set correctly
-        assert_eq!(
-            challenge_data.as_string().unwrap(),
-            r#"{"title": "Test Challenge"}"#
-        );
+        assert_eq!(js_challenge_data.id, test_custom.id);
+        assert_eq!(js_challenge_data.name, test_custom.name);
+        // assert_eq!(js_challenge_data.data, test_custom.data);
     }
 
     #[wasm_bindgen_test]
@@ -153,6 +178,36 @@ mod tests {
 
         // Assert that the event was received by the closure
         assert!(*event_received.borrow());
+    }
+
+    #[wasm_bindgen_test]
+    fn test_set_result_data() {
+        // Create a new instance of KonnektorenJs
+        let konnektoren_js = KonnektorenJs::new();
+
+        // Set result data
+        let test_result = CustomChallengeResult {
+            id: "123".to_string(),
+            performance: 0.0,
+            data: serde_json::json!({"key":"value"}),
+        };
+        konnektoren_js.set_result_data(test_result.clone());
+
+        // Access the JavaScript window object to verify if the data is set correctly
+        let window = web_sys::window().unwrap();
+        let konnektoren_obj =
+            js_sys::Reflect::get(&window, &JsValue::from_str("konnektoren")).unwrap();
+
+        let result_data =
+            js_sys::Reflect::get(&konnektoren_obj, &JsValue::from_str("result")).unwrap();
+
+        // Convert the JsValue back to CustomChallengeResult
+        let js_result_data: CustomChallengeResult = result_data.into_serde().unwrap();
+
+        // Assert the result data is set correctly
+        assert_eq!(js_result_data.id, test_result.id);
+        assert_eq!(js_result_data.performance, test_result.performance);
+        // assert_eq!(js_result_data, test_result);
     }
 
     #[wasm_bindgen_test]

@@ -1,4 +1,4 @@
-use crate::challenges::ChallengeResult;
+use crate::challenges::{ChallengeResult, CustomChallengeResult};
 #[cfg(feature = "js")]
 use js_sys::{Object, Reflect};
 use serde::{Deserialize, Serialize};
@@ -53,8 +53,9 @@ impl From<JsValue> for ChallengeEvent {
                 ChallengeEvent::SolvedIncorrect(index)
             }
             "Finish" => {
-                let result = Reflect::get(&obj, &JsValue::from_str("result")).unwrap();
-                ChallengeEvent::Finish(ChallengeResult::Custom)
+                let result: JsValue = Reflect::get(&obj, &JsValue::from_str("result")).unwrap();
+                let result: CustomChallengeResult = result.into_serde().unwrap();
+                ChallengeEvent::Finish(ChallengeResult::Custom(result))
             }
             _ => panic!("Unknown event type: {}", event_type),
         }
@@ -65,7 +66,6 @@ impl From<JsValue> for ChallengeEvent {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use gloo::utils::format::JsValueSerdeExt;
     use wasm_bindgen_test::wasm_bindgen_test;
 
     #[wasm_bindgen_test]
@@ -109,13 +109,23 @@ mod tests {
         // Test case for Finish (with a simple result)
         let finish_event = JsValue::from_serde(&serde_json::json!({
             "type": "Finish",
-            "result": {} // Minimal structure for result
+            "result": {
+                "id": "123",
+                "performance": 0.0,
+                "data": {},
+            } // Minimal structure for result
         }))
         .unwrap();
         let finish_challenge_event = ChallengeEvent::from(finish_event);
+
+        let result = CustomChallengeResult {
+            id: "".to_string(),
+            performance: 0.0,
+            data: serde_json::json!({}),
+        };
         assert_eq!(
             finish_challenge_event,
-            ChallengeEvent::Finish(ChallengeResult::Custom)
+            ChallengeEvent::Finish(ChallengeResult::Custom(result))
         );
     }
 }

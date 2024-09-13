@@ -1,6 +1,6 @@
 use crate::challenges::multiple_choice::MultipleChoiceOption;
 use crate::challenges::sort_table::SortTableRow;
-use crate::challenges::ChallengeInput;
+use crate::challenges::{ChallengeInput, CustomChallengeResult};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -8,7 +8,7 @@ pub enum ChallengeResult {
     MultipleChoice(Vec<MultipleChoiceOption>),
     SortTable(Vec<SortTableRow>),
     Informative,
-    Custom,
+    Custom(CustomChallengeResult),
 }
 
 impl Default for ChallengeResult {
@@ -35,7 +35,7 @@ impl ChallengeResult {
                 _ => panic!("Invalid challenge input"),
             },
             ChallengeResult::Informative => Ok(()),
-            ChallengeResult::Custom => Ok(()),
+            ChallengeResult::Custom(_) => Ok(()),
         }
     }
 
@@ -44,7 +44,7 @@ impl ChallengeResult {
             ChallengeResult::MultipleChoice(options) => options.len(),
             ChallengeResult::SortTable(rows) => rows.len(),
             ChallengeResult::Informative => 0,
-            ChallengeResult::Custom => 0,
+            ChallengeResult::Custom(_) => 0,
         }
     }
 
@@ -53,7 +53,7 @@ impl ChallengeResult {
             ChallengeResult::MultipleChoice(options) => options.is_empty(),
             ChallengeResult::SortTable(rows) => rows.is_empty(),
             ChallengeResult::Informative => true,
-            ChallengeResult::Custom => true,
+            ChallengeResult::Custom(_) => true,
         }
     }
 }

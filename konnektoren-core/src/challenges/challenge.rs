@@ -37,7 +37,7 @@ impl Solvable for Challenge {
                     ChallengeResult::MultipleChoice(ref mc) => mc.get(index),
                     ChallengeResult::SortTable(_) => None,
                     ChallengeResult::Informative => None,
-                    ChallengeResult::Custom => None,
+                    ChallengeResult::Custom(_) => None,
                 };
                 match (question, result) {
                     (Some(question), Some(result)) => Ok(question.option == result.id),
