@@ -129,8 +129,6 @@
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
 <a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeResult, CustomChallengeResult};
 <span class="attr">#[cfg(feature = <span class="string">"js"</span>)]
 </span><span class="kw">use </span>js_sys::{Object, Reflect};
@@ -187,9 +185,7 @@
             }
             <span class="string">"Finish" </span>=&gt; {
                 <span class="kw">let </span>result: JsValue = Reflect::get(<span class="kw-2">&amp;</span>obj, <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"result"</span>)).unwrap();
-                <span class="comment">//Deprecated: causes dependency cycles, use serde-wasm-bindgen or gloo_utils::format::JsValueSerdeExt instead
-
-                </span><span class="kw">let </span>result: CustomChallengeResult = result.into_serde().unwrap();
+                <span class="kw">let </span>result: CustomChallengeResult = result.into_serde().unwrap();
                 ChallengeEvent::Finish(ChallengeResult::Custom(result))
             }
             <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Unknown event type: {}"</span>, event_type),
