@@ -170,12 +170,8 @@
 <a href="#170" id="170">170</a>
 <a href="#171" id="171">171</a>
 <a href="#172" id="172">172</a>
-<a href="#173" id="173">173</a>
-<a href="#174" id="174">174</a>
-<a href="#175" id="175">175</a>
-<a href="#176" id="176">176</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{
-    challenge::ChallengeComponent, game_map::GameMapComponent, game_path::GamePathComponent,
+    challenge::ChallengeComponent, game_path::GamePathComponent,
     ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent, ProgressBar,
     SettingsComponent, TranslateComponent,
 };
@@ -187,16 +183,11 @@
 <span class="kw">use </span><span class="kw">crate</span>::components::challenge::{
     MultipleChoiceCircleComponent, MultipleChoiceComponent, SortTableComponent,
 };
-<span class="kw">use </span><span class="kw">crate</span>::components::game_map::{ChallengeIndex, Coordinate};
 <span class="attr">#[cfg(feature = <span class="string">"certificates"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::components::CertificateComponent;
 <span class="attr">#[cfg(feature = <span class="string">"effects"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::effects::BlinkAnimation;
-<span class="kw">use </span><span class="kw">crate</span>::prelude::{
-    AdventureMapComponent, ChallengeActionsComponent, InformativeComponent,
-    InformativeMarkdownComponent, MapComponent, OptionsComponent, QuestionComponent, ReadText,
-    SelectLanguage, SelectLevelComp,
-};
+<span class="kw">use </span><span class="kw">crate</span>::prelude::{BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, InformativeComponent, InformativeMarkdownComponent, MapComponent, ModelCoordinate, OptionsComponent, QuestionComponent, ReadText, SelectLanguage, SelectLevelComp};
 
 <span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nConfig, I18nProvider};
 <span class="kw">use </span>konnektoren_core::prelude::<span class="kw-2">*</span>;
@@ -225,8 +216,10 @@
         <span class="kw">let </span>game = game.clone();
         <span class="kw">let </span>challenge = challenge.clone();
         Callback::from(
-            <span class="kw">move </span>|(challenge_index, coords): (<span class="prelude-ty">Option</span>&lt;ChallengeIndex&gt;, Coordinate)| {
-                <span class="kw">let </span>(x, y) = coords;
+            <span class="kw">move </span>|(challenge_index, coords): (<span class="prelude-ty">Option</span>&lt;ChallengeIndex&gt;, BrowserCoordinate)| {
+
+                <span class="kw">let </span>x = coords.<span class="number">0</span>;
+                <span class="kw">let </span>y = coords.<span class="number">1</span>;
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(challenge_index) = challenge_index {
                     <span class="macro">log::info!</span>(<span class="string">"Challenge index: {}, x: {}, y: {}"</span>, challenge_index, x, y);
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(challenge_config) =
@@ -269,7 +262,7 @@
                     <span class="macro">html!</span> {}
                 }
             }
-            &lt;GameMapComponent
+            &lt;MapComponent
                 game_path={game.game_paths[<span class="number">0</span>].clone()}
                 current_challenge={<span class="number">0</span>}
                 on_select_challenge={on_map_challenge_cb}
@@ -324,7 +317,6 @@
         InformativeComponent::preview(),
         InformativeMarkdownComponent::preview(),
         MapComponent::preview(),
-        GameMapComponent::preview(),
         GamePathComponent::preview(),
         MusicComponent::preview(),
         OptionsComponent::preview(),
