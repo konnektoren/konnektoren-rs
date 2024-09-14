@@ -1,5 +1,5 @@
 use crate::components::{
-    challenge::ChallengeComponent, game_map::GameMapComponent, game_path::GamePathComponent,
+    challenge::ChallengeComponent, game_path::GamePathComponent,
     ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent, ProgressBar,
     SettingsComponent, TranslateComponent,
 };
@@ -11,16 +11,11 @@ use crate::components::challenge::multiple_choice::MultipleChoiceComponentProps;
 use crate::components::challenge::{
     MultipleChoiceCircleComponent, MultipleChoiceComponent, SortTableComponent,
 };
-use crate::components::game_map::{ChallengeIndex, Coordinate};
 #[cfg(feature = "certificates")]
 use crate::components::CertificateComponent;
 #[cfg(feature = "effects")]
 use crate::effects::BlinkAnimation;
-use crate::prelude::{
-    AdventureMapComponent, ChallengeActionsComponent, InformativeComponent,
-    InformativeMarkdownComponent, MapComponent, OptionsComponent, QuestionComponent, ReadText,
-    SelectLanguage, SelectLevelComp,
-};
+use crate::prelude::{BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, InformativeComponent, InformativeMarkdownComponent, MapComponent, ModelCoordinate, OptionsComponent, QuestionComponent, ReadText, SelectLanguage, SelectLevelComp};
 
 use crate::i18n::{I18nConfig, I18nProvider};
 use konnektoren_core::prelude::*;
@@ -49,8 +44,10 @@ pub fn Example() -> Html {
         let game = game.clone();
         let challenge = challenge.clone();
         Callback::from(
-            move |(challenge_index, coords): (Option<ChallengeIndex>, Coordinate)| {
-                let (x, y) = coords;
+            move |(challenge_index, coords): (Option<ChallengeIndex>, BrowserCoordinate)| {
+
+                let x = coords.0;
+                let y = coords.1;
                 if let Some(challenge_index) = challenge_index {
                     log::info!("Challenge index: {}, x: {}, y: {}", challenge_index, x, y);
                     if let Some(challenge_config) =
@@ -93,7 +90,7 @@ pub fn Example() -> Html {
                     html! {}
                 }
             }
-            <GameMapComponent
+            <MapComponent
                 game_path={game.game_paths[0].clone()}
                 current_challenge={0}
                 on_select_challenge={on_map_challenge_cb}
@@ -148,7 +145,6 @@ pub fn App() -> Html {
         InformativeComponent::preview(),
         InformativeMarkdownComponent::preview(),
         MapComponent::preview(),
-        GameMapComponent::preview(),
         GamePathComponent::preview(),
         MusicComponent::preview(),
         OptionsComponent::preview(),

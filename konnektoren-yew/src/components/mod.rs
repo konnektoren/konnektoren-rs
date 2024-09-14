@@ -1,28 +1,23 @@
 //! This module contains all the components that are used in the app.
 
+mod certificates;
 pub mod challenge;
 pub mod challenge_config;
 pub mod challenge_info;
-pub mod game_map;
 pub mod game_path;
-pub mod profile;
-pub mod progress_bar;
-pub mod select_language;
-pub mod translate;
-
-mod adventure_map;
-mod certificates;
 mod map;
 #[cfg(feature = "music")]
 pub mod music;
+pub mod profile;
+pub mod progress_bar;
+pub mod select_language;
 mod select_level;
 mod settings;
+pub mod translate;
 
-pub use adventure_map::AdventureMapComponent;
 pub use challenge::*;
 pub use challenge_config::ChallengeConfigComponent;
 pub use challenge_info::ChallengeInfoComponent;
-pub use game_map::GameMapComponent;
 pub use game_path::GamePathComponent;
 pub use map::*;
 pub use progress_bar::ProgressBar;

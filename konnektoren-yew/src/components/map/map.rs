@@ -386,7 +386,6 @@ fn update_view_box(
 #[cfg(feature = "yew-preview")]
 mod preview {
     use super::*;
-    use crate::components::game_map::ChallengeIndex;
     use yew::callback;
     use yew_preview::prelude::*;
 

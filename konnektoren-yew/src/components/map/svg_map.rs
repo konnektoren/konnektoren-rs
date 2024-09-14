@@ -1,4 +1,3 @@
-use crate::components::game_map::ChallengeIndex;
 use crate::components::map::bounds::Bounds;
 use crate::components::map::svg_challenge::SvgChallenge;
 use crate::components::map::svg_path::SvgPath;
@@ -7,6 +6,7 @@ use crate::components::{BrowserCoordinate, ModelCoordinate, SvgCoordinate};
 use konnektoren_core::challenges::ChallengeConfig;
 use konnektoren_core::game::GamePath;
 use yew::prelude::*;
+use crate::prelude::ChallengeIndex;
 
 #[derive(Properties, PartialEq, Default)]
 pub struct SvgMapProps {
