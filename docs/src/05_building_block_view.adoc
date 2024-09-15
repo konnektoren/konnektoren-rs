@@ -81,3 +81,63 @@ The primary interfaces between these building blocks are the function calls and 
 
 Purpose/Responsibility::
 The `konnektoren-core` crate is responsible for implementing the main logic and functionalities of the Konnektoren project, such as handling grammar challenges, tracking user progress, and managing gamification elements.
+
+==== Challenge Rating System
+
+The challenge rating system is a crucial part of the Konnektoren project, allowing users to provide feedback on challenges and view aggregate ratings. The following C4 Container diagram illustrates the main components involved in this functionality:
+
+[plantuml, challenge-rating-system, png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/rust.puml
+!include FONTAWESOME/users.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(user, "User", "A user of the Konnektoren system")
+
+System_Boundary(konnektoren, "Konnektoren System") {
+    Container(frontend, "Frontend", "Rust, Yew", "Provides the user interface for interacting with challenges and submitting ratings", $sprite="rust")
+    Container(backend, "Backend API", "Rust, Axum", "Handles API requests and manages data", $sprite="rust")
+    ContainerDb(database, "Database", "Redis", "Stores challenge data, user ratings, and reviews")
+}
+
+Rel(user, frontend, "Views challenges, submits ratings and reviews")
+Rel(frontend, backend, "Sends ratings/reviews, requests average ratings", "HTTP/JSON")
+Rel_Neighbor(backend, database, "Reads from and writes to")
+Rel_Back(frontend, user, "Displays average ratings")
+
+@enduml
+----
+
+This diagram shows the main components of the challenge rating system:
+
+1. User: Represents the end-user of the Konnektoren system.
+2. Frontend: Built with Rust and Yew, provides the user interface for interacting with challenges, submitting ratings/reviews, and viewing average ratings.
+3. Backend API: Implemented in Rust with Axum, handles API requests, processes ratings/reviews, and manages data flow.
+4. Database: Redis database that stores challenge data, user ratings, and reviews.
+
+The arrows in the diagram indicate the flow of data between these components, demonstrating how ratings are submitted, retrieved, and displayed back to the user.
+
+Motivation::
+This architecture allows for a clear separation of concerns between the user interface, business logic, and data storage. It enables efficient collection and retrieval of user feedback, which can be used to improve the quality of challenges and enhance the user experience. The use of Redis as the database provides fast read and write operations, which is beneficial for real-time rating updates.
+
+Contained Building Blocks::
+
+|===
+| **Name** | **Responsibility**
+| Frontend | Provides the user interface for viewing challenges, submitting ratings/reviews, and displaying average ratings.
+| Backend API | Processes incoming ratings/reviews, retrieves average ratings, and manages communication with the Redis database.
+| Database | Stores all challenge-related data, including user ratings and reviews, using Redis for fast data access.
+|===
+
+Important Interfaces::
+- Frontend to Backend API: HTTP/JSON interface for submitting ratings/reviews and requesting average ratings.
+- Backend API to Database: Redis commands for reading and writing rating data.
+- Frontend to User: Visual interface for displaying average ratings and collecting user input.
+
+This challenge rating system integrates with the overall Konnektoren system, particularly with the `konnektoren-yew` crate for the frontend implementation and the `konnektoren-core` crate for core business logic related to challenges and user interactions. The use of Axum in the backend aligns with the project's use of Rust throughout the stack, providing a consistent development experience and leveraging Rust's performance and safety features.
