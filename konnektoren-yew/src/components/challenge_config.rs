@@ -7,13 +7,15 @@ pub struct ChallengeConfigComponentProps {
     pub challenge_config: ChallengeConfig,
     #[prop_or_default]
     pub on_new: Option<Callback<ChallengeConfig>>,
+    #[prop_or_default]
+    pub api_url: Option<String>,
 }
 
 #[function_component(ChallengeConfigComponent)]
 pub fn challenge_config_component(props: &ChallengeConfigComponentProps) -> Html {
     html! {
         <div class="challenge-config" id={props.challenge_config.id.to_string()}>
-            <ChallengeInfoComponent challenge_config={props.challenge_config.clone()} />
+            <ChallengeInfoComponent api_url={props.api_url.clone()} challenge_config={props.challenge_config.clone()} />
             {render_new_button(&props.on_new, props.challenge_config.clone())}
         </div>
     }
@@ -85,6 +87,7 @@ mod preview {
                 position: None,
             },
             on_new: None,
+            api_url: None,
         },
     );
 }
