@@ -43,9 +43,9 @@
 
 <span class="attr">#[derive(Clone, Debug, Serialize, Deserialize)]
 </span><span class="kw">pub struct </span>Review {
-    challenge_id: String,
-    rating: u8,
-    comment: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>challenge_id: String,
+    <span class="kw">pub </span>rating: u8,
+    <span class="kw">pub </span>comment: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
 <span class="attr">#[cfg(test)]
