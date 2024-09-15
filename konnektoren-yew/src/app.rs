@@ -1,7 +1,6 @@
 use crate::components::{
-    challenge::ChallengeComponent, game_path::GamePathComponent,
-    ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent, ProgressBar,
-    SettingsComponent, TranslateComponent,
+    challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
+    ChallengeInfoComponent, MusicComponent, ProgressBar, SettingsComponent, TranslateComponent,
 };
 
 #[cfg(feature = "storage")]
@@ -15,7 +14,11 @@ use crate::components::challenge::{
 use crate::components::CertificateComponent;
 #[cfg(feature = "effects")]
 use crate::effects::BlinkAnimation;
-use crate::prelude::{BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, InformativeComponent, InformativeMarkdownComponent, MapComponent, ModelCoordinate, OptionsComponent, QuestionComponent, ReadText, SelectLanguage, SelectLevelComp};
+use crate::prelude::{
+    BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, InformativeComponent,
+    InformativeMarkdownComponent, MapComponent, ModelCoordinate, OptionsComponent,
+    QuestionComponent, ReadText, SelectLanguage, SelectLevelComp,
+};
 
 use crate::i18n::{I18nConfig, I18nProvider};
 use konnektoren_core::prelude::*;
@@ -45,7 +48,6 @@ pub fn Example() -> Html {
         let challenge = challenge.clone();
         Callback::from(
             move |(challenge_index, coords): (Option<ChallengeIndex>, BrowserCoordinate)| {
-
                 let x = coords.0;
                 let y = coords.1;
                 if let Some(challenge_index) = challenge_index {

@@ -3,10 +3,10 @@ use crate::components::map::svg_challenge::SvgChallenge;
 use crate::components::map::svg_path::SvgPath;
 use crate::components::map::SCALE;
 use crate::components::{BrowserCoordinate, ModelCoordinate, SvgCoordinate};
+use crate::prelude::ChallengeIndex;
 use konnektoren_core::challenges::ChallengeConfig;
 use konnektoren_core::game::GamePath;
 use yew::prelude::*;
-use crate::prelude::ChallengeIndex;
 
 #[derive(Properties, PartialEq, Default)]
 pub struct SvgMapProps {
@@ -52,6 +52,14 @@ pub fn svg_map(props: &SvgMapProps) -> Html {
     let image_width = bounds.1.to_svg(SCALE).0 - bounds.0.to_svg(SCALE).0 + 2 * SCALE;
     let image_height = bounds.1.to_svg(SCALE).1 - bounds.0.to_svg(SCALE).1 + 2 * SCALE;
 
+    let image_src = props
+        .game_path
+        .map
+        .as_ref()
+        .map(|map| map.background.clone());
+
+    let image_src: Option<String> = props.image_src.as_ref().or(image_src.as_ref()).cloned();
+
     html! {
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -61,7 +69,7 @@ pub fn svg_map(props: &SvgMapProps) -> Html {
             class="game-map-svg"
             onclick={on_map_click}
         >
-            { if let Some(ref image_src) = props.image_src {
+            { if let Some(ref image_src) = image_src {
                 html! {
                     <image
                     href={image_src.clone()}
