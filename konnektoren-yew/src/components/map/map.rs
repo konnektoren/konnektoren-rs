@@ -1,8 +1,10 @@
 use crate::components::map::bounds::Bounds;
 use crate::components::map::svg_map::SvgMap;
+use crate::components::map::utils::Zoom;
 use crate::components::map::SCALE;
 use crate::components::{BrowserCoordinate, ChallengeIndex, SvgCoordinate};
 use konnektoren_core::game::GamePath;
+use konnektoren_core::prelude::ChallengeConfig;
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Properties)]
@@ -36,7 +38,9 @@ impl Default for MapComponentProps {
 }
 
 const MIN_ZOOM: f64 = 0.5;
-const MAX_ZOOM: f64 = 3.0;
+const MAX_ZOOM: f64 = 10.0;
+const DEFAULT_MODEL_WIDTH: u32 = 10;
+const DEFAULT_MODEL_HEIGHT: u32 = 10;
 
 #[function_component(MapComponent)]
 pub fn map_component(props: &MapComponentProps) -> Html {
@@ -44,7 +48,11 @@ pub fn map_component(props: &MapComponentProps) -> Html {
     let svg_bounds = (bounds.0.to_svg(SCALE), bounds.1.to_svg(SCALE));
 
     let view_box_state = use_state(|| svg_bounds.clone());
-    let zoom_level = use_state(|| 1.0);
+    let zoom_level = use_state(|| {
+        props
+            .game_path
+            .get_zoom(DEFAULT_MODEL_WIDTH, DEFAULT_MODEL_HEIGHT)
+    });
     let is_dragging = use_state(|| false);
     let last_touch_pos = use_state(|| (0.0, 0.0));
     let view_box_position = use_state(|| svg_bounds.0.clone());
@@ -129,6 +137,38 @@ pub fn map_component(props: &MapComponentProps) -> Html {
         })
     };
 
+    {
+        let view_box_state = view_box_state.clone();
+        let game_path = props.game_path.clone();
+        use_effect_with(props.game_path.clone(), move |_| {
+            let view_box_state = view_box_state.clone();
+            let bounds = game_path.get_bounds();
+            let svg_bounds = (bounds.0.to_svg(SCALE), bounds.1.to_svg(SCALE));
+
+            if let Some(first_challenge) = game_path.challenges.first() {
+                let (center, new_zoom) = calculate_challenge_focus(first_challenge, svg_bounds);
+
+                zoom_level.set(new_zoom);
+
+                let width = ((svg_bounds.1 .0 - svg_bounds.0 .0) as f64 / new_zoom) as i32;
+                let height = ((svg_bounds.1 .1 - svg_bounds.0 .1) as f64 / new_zoom) as i32;
+
+                let new_min_x = center.0 - width / 2;
+                let new_min_y = center.1 - height / 2;
+
+                let updated_view_box = (
+                    SvgCoordinate(new_min_x, new_min_y),
+                    SvgCoordinate(new_min_x + width, new_min_y + height),
+                );
+
+                view_box_state.set(updated_view_box);
+                view_box_position.set(SvgCoordinate(new_min_x, new_min_y));
+            }
+
+            || ()
+        });
+    }
+
     html! {
         <div class="map"
             onwheel={handle_wheel}
@@ -157,6 +197,22 @@ pub fn map_component(props: &MapComponentProps) -> Html {
             </div>
         </div>
     }
+}
+
+fn calculate_challenge_focus(
+    challenge: &ChallengeConfig,
+    bounds: (SvgCoordinate, SvgCoordinate),
+) -> (SvgCoordinate, f64) {
+    let challenge_pos = challenge.position.unwrap_or((0, 0));
+    let center = SvgCoordinate(challenge_pos.0 * SCALE, challenge_pos.1 * SCALE);
+
+    let width = (bounds.1 .0 - bounds.0 .0) as f64;
+    let height = (bounds.1 .1 - bounds.0 .1) as f64;
+    let zoom = (width.min(height) / (5.0 * SCALE as f64))
+        .max(MIN_ZOOM)
+        .min(MAX_ZOOM);
+
+    (center, zoom)
 }
 
 fn on_touch_move_callback(
