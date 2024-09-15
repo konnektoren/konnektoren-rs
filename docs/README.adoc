@@ -6,9 +6,9 @@
 // configure EN settings for asciidoc
 include::src/config.adoc[]
 
-== image:logo.png[arc42] Template
+== image:logo.png[arc42] Konnektoren
 :revnumber: 8.2 EN
-:revdate: January 2023
+:revdate: Septembre 2024
 :revremark: (based upon AsciiDoc version)
 // toc-title definition MUST follow document title without blank line!
 :toc-title: Table of Contents

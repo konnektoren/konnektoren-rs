@@ -26,7 +26,8 @@ jobs:
       # Convert Asciidoc to PDF with PlantUML support
       - name: Build PDF from Asciidoc
         run: |
-          asciidoctor-pdf -r asciidoctor-diagram -o output/documentation.pdf docs/README.adoc
+          mkdir -p output
+          asciidoctor-pdf -r asciidoctor-diagram -o output/documentation.pdf -a sourcedir=docs/src docs/README.adoc
 
       # Upload the PDF as an artifact
       - name: Upload PDF Artifact
@@ -34,4 +35,47 @@ jobs:
         with:
           name: Documentation PDF
           path: output/documentation.pdf
-          overwrite: 'true'
+          overwrite: "true"
+
+  deploy_pages:
+    name: Deploy GitHub Pages
+    runs-on: ubuntu-22.04
+    needs: build_adoc_pdf
+    steps:
+      # Checkout the repository
+      - uses: actions/checkout@v2
+
+      # Install Asciidoctor (for HTML generation)
+      - name: Install Asciidoctor and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y asciidoctor graphviz default-jre
+          sudo gem install asciidoctor-pdf --pre
+          sudo gem install asciidoctor-diagram
+
+      # Build HTML from Asciidoc
+      - name: Build HTML from Asciidoc
+        run: |
+          mkdir -p output/docs
+          asciidoctor -r asciidoctor-diagram -D output/docs \
+            -a imagesdir=images \
+            -a sourcedir=docs/src \
+            docs/README.adoc
+
+      # Copy images directory to output/docs
+      - name: Copy Images
+        run: |
+          mkdir -p output/docs/images
+          cp -r docs/images/* output/docs/images
+
+      - name: Copy index.html
+        run: |
+          cp output/docs/README.html output/docs/index.html
+
+      # Deploy to GitHub Pages (to docs/ subdir)
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          keep_files: true

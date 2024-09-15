@@ -82,7 +82,7 @@ The primary interfaces between these building blocks are the function calls and 
 Purpose/Responsibility::
 The `konnektoren-core` crate is responsible for implementing the main logic and functionalities of the Konnektoren project, such as handling grammar challenges, tracking user progress, and managing gamification elements.
 
-==== Challenge Rating System
+=== Challenge Rating System
 
 The challenge rating system is a crucial part of the Konnektoren project, allowing users to provide feedback on challenges and view aggregate ratings. The following C4 Container diagram illustrates the main components involved in this functionality:
 
