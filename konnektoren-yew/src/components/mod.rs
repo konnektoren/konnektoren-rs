@@ -4,6 +4,7 @@ mod certificates;
 pub mod challenge;
 pub mod challenge_config;
 pub mod challenge_info;
+pub mod challenge_review;
 pub mod game_path;
 mod map;
 #[cfg(feature = "music")]
@@ -18,6 +19,7 @@ pub mod translate;
 pub use challenge::*;
 pub use challenge_config::ChallengeConfigComponent;
 pub use challenge_info::ChallengeInfoComponent;
+pub use challenge_review::ChallengeReviewComponent;
 pub use game_path::GamePathComponent;
 pub use map::*;
 pub use progress_bar::ProgressBar;
