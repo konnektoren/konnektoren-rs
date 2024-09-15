@@ -152,7 +152,10 @@
 <a href="#152" id="152">152</a>
 <a href="#153" id="153">153</a>
 <a href="#154" id="154">154</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::use_i18n;
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::ChallengeRatingComponent;
+<span class="kw">use </span><span class="kw">crate</span>::i18n::use_i18n;
 <span class="kw">use </span>gloo::net::http::Request;
 <span class="kw">use </span>konnektoren_core::challenges::Review;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
@@ -267,6 +270,7 @@
         &lt;div class=<span class="string">"challenge-review-component"</span>&gt;
             &lt;h3&gt;{i18n.t(<span class="string">"Rate this Challenge"</span>)}&lt;/h3&gt;
             &lt;div class=<span class="string">"stars-rating"</span>&gt;
+            &lt;ChallengeRatingComponent api_url={props.api_url.clone()} challenge_id={props.challenge_id.clone()} /&gt;
                 {render_stars(<span class="number">5</span>, <span class="kw-2">*</span>stars, <span class="kw-2">&amp;</span>on_star_click)}
             &lt;/div&gt;
             &lt;div class=<span class="string">"comment-input"</span>&gt;

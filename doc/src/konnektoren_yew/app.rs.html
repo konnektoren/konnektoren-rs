@@ -173,6 +173,8 @@
 <a href="#173" id="173">173</a>
 <a href="#174" id="174">174</a>
 <a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{
     challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
     ChallengeInfoComponent, MusicComponent, ProgressBar, SettingsComponent, TranslateComponent,
@@ -190,9 +192,10 @@
 <span class="attr">#[cfg(feature = <span class="string">"effects"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::effects::BlinkAnimation;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::{
-    BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, ChallengeReviewComponent,
-    InformativeComponent, InformativeMarkdownComponent, MapComponent, ModelCoordinate,
-    OptionsComponent, QuestionComponent, ReadText, SelectLanguage, SelectLevelComp,
+    BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, ChallengeRatingComponent,
+    ChallengeReviewComponent, InformativeComponent, InformativeMarkdownComponent, MapComponent,
+    ModelCoordinate, OptionsComponent, QuestionComponent, ReadText, SelectLanguage,
+    SelectLevelComp,
 };
 
 <span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nConfig, I18nProvider};
@@ -320,6 +323,7 @@
         ChallengeConfigComponent::preview(),
         ChallengeInfoComponent::preview(),
         ChallengeReviewComponent::preview(),
+        ChallengeRatingComponent::preview(),
         InformativeComponent::preview(),
         InformativeMarkdownComponent::preview(),
         MapComponent::preview(),
