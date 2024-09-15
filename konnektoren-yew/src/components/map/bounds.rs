@@ -7,18 +7,17 @@ pub trait Bounds {
 
 impl Bounds for GamePath {
     fn get_bounds(&self) -> (ModelCoordinate, ModelCoordinate) {
-        if self.map.is_some() {
-            let map = self.map.as_ref().unwrap();
-            return (
-                ModelCoordinate(0, 0),
-                ModelCoordinate(map.width as i32, map.height as i32),
-            );
-        }
-
         let mut x_min = i32::MAX;
         let mut x_max = i32::MIN;
         let mut y_min = i32::MAX;
         let mut y_max = i32::MIN;
+
+        if let Some(map) = &self.map {
+            x_min = 0;
+            y_min = 0;
+            x_max = map.width as i32;
+            y_max = map.height as i32;
+        }
 
         for challenge_config in self.challenges.iter() {
             let (x, y) = challenge_config.position.unwrap_or((0, 0));
