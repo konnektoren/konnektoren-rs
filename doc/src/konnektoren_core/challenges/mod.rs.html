@@ -32,6 +32,8 @@
 <a href="#32" id="32">32</a>
 <a href="#33" id="33">33</a>
 <a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! This module contains all the challenges that can be solved by the user.
 </span><span class="kw">pub mod </span>challenge;
 <span class="kw">pub mod </span>challenge_config;
@@ -40,14 +42,15 @@
 <span class="kw">pub mod </span>challenge_input;
 <span class="kw">pub mod </span>challenge_result;
 <span class="kw">pub mod </span>challenge_type;
-<span class="kw">mod </span>custom;
+<span class="kw">pub mod </span>custom;
 <span class="kw">pub mod </span>events;
-<span class="kw">mod </span>informative;
+<span class="kw">pub mod </span>informative;
 <span class="kw">pub mod </span>multiple_choice;
 <span class="kw">pub mod </span>performance;
-<span class="kw">mod </span>performance_record;
+<span class="kw">pub mod </span>performance_record;
+<span class="kw">pub mod </span>review;
 <span class="kw">pub mod </span>solvable;
-<span class="kw">mod </span>sort_table;
+<span class="kw">pub mod </span>sort_table;
 
 <span class="kw">pub use </span>challenge::Challenge;
 <span class="kw">pub use </span>challenge_config::ChallengeConfig;
@@ -64,6 +67,7 @@
 <span class="kw">pub use </span>multiple_choice::Question;
 <span class="kw">pub use </span>performance::Performance;
 <span class="kw">pub use </span>performance_record::PerformanceRecord;
+<span class="kw">pub use </span>review::Review;
 <span class="kw">pub use </span>solvable::Solvable;
 <span class="kw">pub use </span>sort_table::{SortTable, SortTableRow};
 </code></pre></div></section></main></body></html>
