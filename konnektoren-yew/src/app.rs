@@ -15,9 +15,10 @@ use crate::components::CertificateComponent;
 #[cfg(feature = "effects")]
 use crate::effects::BlinkAnimation;
 use crate::prelude::{
-    BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, ChallengeReviewComponent,
-    InformativeComponent, InformativeMarkdownComponent, MapComponent, ModelCoordinate,
-    OptionsComponent, QuestionComponent, ReadText, SelectLanguage, SelectLevelComp,
+    BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, ChallengeRatingComponent,
+    ChallengeReviewComponent, InformativeComponent, InformativeMarkdownComponent, MapComponent,
+    ModelCoordinate, OptionsComponent, QuestionComponent, ReadText, SelectLanguage,
+    SelectLevelComp,
 };
 
 use crate::i18n::{I18nConfig, I18nProvider};
@@ -145,6 +146,7 @@ pub fn App() -> Html {
         ChallengeConfigComponent::preview(),
         ChallengeInfoComponent::preview(),
         ChallengeReviewComponent::preview(),
+        ChallengeRatingComponent::preview(),
         InformativeComponent::preview(),
         InformativeMarkdownComponent::preview(),
         MapComponent::preview(),

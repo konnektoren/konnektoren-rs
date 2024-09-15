@@ -1,3 +1,4 @@
+use crate::components::ChallengeRatingComponent;
 use crate::i18n::use_i18n;
 use gloo::net::http::Request;
 use konnektoren_core::challenges::Review;
@@ -113,6 +114,7 @@ pub fn challenge_review(props: &ChallengeReviewProps) -> Html {
         <div class="challenge-review-component">
             <h3>{i18n.t("Rate this Challenge")}</h3>
             <div class="stars-rating">
+            <ChallengeRatingComponent api_url={props.api_url.clone()} challenge_id={props.challenge_id.clone()} />
                 {render_stars(5, *stars, &on_star_click)}
             </div>
             <div class="comment-input">
