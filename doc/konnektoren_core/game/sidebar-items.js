@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["game","game_path","game_state"]};
+window.SIDEBAR_ITEMS = {"mod":["game","game_path","game_state","map"]};
