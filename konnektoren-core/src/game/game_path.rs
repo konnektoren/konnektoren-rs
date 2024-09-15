@@ -1,4 +1,5 @@
 use crate::challenges::challenge_config::ChallengeConfig;
+use crate::game::Map;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -6,6 +7,7 @@ pub struct GamePath {
     pub id: String,
     pub name: String,
     pub challenges: Vec<ChallengeConfig>,
+    pub map: Option<Map>,
 }
 
 impl Default for GamePath {
