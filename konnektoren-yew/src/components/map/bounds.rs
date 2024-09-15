@@ -7,6 +7,14 @@ pub trait Bounds {
 
 impl Bounds for GamePath {
     fn get_bounds(&self) -> (ModelCoordinate, ModelCoordinate) {
+        if self.map.is_some() {
+            let map = self.map.as_ref().unwrap();
+            return (
+                ModelCoordinate(0, 0),
+                ModelCoordinate(map.width as i32, map.height as i32),
+            );
+        }
+
         let mut x_min = i32::MAX;
         let mut x_max = i32::MIN;
         let mut y_min = i32::MAX;
@@ -64,5 +72,21 @@ mod tests {
         let (min, max) = game_path.get_bounds();
         assert_eq!(min, ModelCoordinate(0, 0));
         assert_eq!(max, ModelCoordinate(2, 3));
+    }
+
+    #[test]
+    fn test_bounds_with_map() {
+        let game_path = GamePath {
+            map: Some(konnektoren_core::game::Map {
+                background: "background".to_string(),
+                width: 10,
+                height: 10,
+            }),
+            ..Default::default()
+        };
+
+        let (min, max) = game_path.get_bounds();
+        assert_eq!(min, ModelCoordinate(0, 0));
+        assert_eq!(max, ModelCoordinate(10, 10));
     }
 }
