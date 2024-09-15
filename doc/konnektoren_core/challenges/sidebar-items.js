@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["challenge","challenge_config","challenge_factory","challenge_history","challenge_input","challenge_result","challenge_type","custom","events","informative","multiple_choice","performance","performance_record","review","solvable","sort_table"]};

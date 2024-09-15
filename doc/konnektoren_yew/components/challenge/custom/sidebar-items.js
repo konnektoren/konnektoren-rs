@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["fetch_content","fetch_file"],"struct":["CustomComponent","CustomComponentProps"]};
