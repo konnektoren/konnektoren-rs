@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["app","components","effects","i18n","model","prelude","storage"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["create_handle_action","create_handle_option_selection","is_correct"],"struct":["MultipleChoiceComponent","MultipleChoiceComponentProps"]};

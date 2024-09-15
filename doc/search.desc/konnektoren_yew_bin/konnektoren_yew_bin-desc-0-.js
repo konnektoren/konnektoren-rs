@@ -1,1 +1,0 @@
-searchState.loadedDescShard("konnektoren_yew_bin", 0, "")
