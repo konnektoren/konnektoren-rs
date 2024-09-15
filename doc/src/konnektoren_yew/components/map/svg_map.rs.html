@@ -131,15 +131,23 @@
 <a href="#131" id="131">131</a>
 <a href="#132" id="132">132</a>
 <a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::map::bounds::Bounds;
 <span class="kw">use </span><span class="kw">crate</span>::components::map::svg_challenge::SvgChallenge;
 <span class="kw">use </span><span class="kw">crate</span>::components::map::svg_path::SvgPath;
 <span class="kw">use </span><span class="kw">crate</span>::components::map::SCALE;
 <span class="kw">use </span><span class="kw">crate</span>::components::{BrowserCoordinate, ModelCoordinate, SvgCoordinate};
+<span class="kw">use </span><span class="kw">crate</span>::prelude::ChallengeIndex;
 <span class="kw">use </span>konnektoren_core::challenges::ChallengeConfig;
 <span class="kw">use </span>konnektoren_core::game::GamePath;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::prelude::ChallengeIndex;
 
 <span class="attr">#[derive(Properties, PartialEq, Default)]
 </span><span class="kw">pub struct </span>SvgMapProps {
@@ -185,6 +193,14 @@
     <span class="kw">let </span>image_width = bounds.<span class="number">1</span>.to_svg(SCALE).<span class="number">0 </span>- bounds.<span class="number">0</span>.to_svg(SCALE).<span class="number">0 </span>+ <span class="number">2 </span>* SCALE;
     <span class="kw">let </span>image_height = bounds.<span class="number">1</span>.to_svg(SCALE).<span class="number">1 </span>- bounds.<span class="number">0</span>.to_svg(SCALE).<span class="number">1 </span>+ <span class="number">2 </span>* SCALE;
 
+    <span class="kw">let </span>image_src = props
+        .game_path
+        .map
+        .as_ref()
+        .map(|map| map.background.clone());
+
+    <span class="kw">let </span>image_src: <span class="prelude-ty">Option</span>&lt;String&gt; = props.image_src.as_ref().or(image_src.as_ref()).cloned();
+
     <span class="macro">html!</span> {
         &lt;svg
             xmlns=<span class="string">"http://www.w3.org/2000/svg"
@@ -194,7 +210,7 @@
             class=<span class="string">"game-map-svg"
             </span>onclick={on_map_click}
         &gt;
-            { <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>image_src) = props.image_src {
+            { <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>image_src) = image_src {
                 <span class="macro">html!</span> {
                     &lt;image
                     href={image_src.clone()}
