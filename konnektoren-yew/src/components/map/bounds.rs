@@ -20,18 +20,11 @@ impl Bounds for GamePath {
         }
 
         for challenge_config in self.challenges.iter() {
-            let (x, y) = challenge_config.position.unwrap_or((0, 0));
-            if x < x_min {
-                x_min = x;
-            }
-            if x > x_max {
-                x_max = x;
-            }
-            if y < y_min {
-                y_min = y;
-            }
-            if y > y_max {
-                y_max = y;
+            if let Some((x, y)) = challenge_config.position {
+                x_min = x_min.min(x);
+                x_max = x_max.max(x);
+                y_min = y_min.min(y);
+                y_max = y_max.max(y);
             }
         }
 
@@ -81,6 +74,10 @@ mod tests {
                 width: 10,
                 height: 10,
             }),
+            challenges: vec![ChallengeConfig {
+                position: Some((0, 0)),
+                ..Default::default()
+            }],
             ..Default::default()
         };
 
