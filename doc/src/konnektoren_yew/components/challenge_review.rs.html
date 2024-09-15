@@ -135,6 +135,23 @@
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::use_i18n;
 <span class="kw">use </span>gloo::net::http::Request;
 <span class="kw">use </span>konnektoren_core::challenges::Review;
@@ -149,17 +166,21 @@
 <span class="attr">#[function_component(ChallengeReviewComponent)]
 </span><span class="kw">pub fn </span>challenge_review(props: <span class="kw-2">&amp;</span>ChallengeReviewProps) -&gt; Html {
     <span class="kw">let </span>i18n = use_i18n();
-    <span class="kw">let </span>stars = use_state(|| <span class="number">0</span>);
-    <span class="kw">let </span>comment = use_state(|| String::new());
-    <span class="kw">let </span>is_sending = use_state(|| <span class="bool-val">false</span>);
-    <span class="kw">let </span>on_star_click = {
+    <span class="kw">let </span>stars = use_state(|| <span class="number">0</span>); <span class="comment">// Holds the currently selected star rating
+    </span><span class="kw">let </span>comment = use_state(|| String::new()); <span class="comment">// Holds the user's comment
+    </span><span class="kw">let </span>is_sending = use_state(|| <span class="bool-val">false</span>); <span class="comment">// Tracks when the review is being sent
+    </span><span class="kw">let </span>is_sent = use_state(|| <span class="bool-val">false</span>); <span class="comment">// Tracks whether the review has been successfully sent
+
+    // Handles when a user clicks a star to select a rating
+    </span><span class="kw">let </span>on_star_click = {
         <span class="kw">let </span>stars = stars.clone();
         Callback::from(<span class="kw">move </span>|index: usize| {
             stars.set(index + <span class="number">1</span>);
         })
     };
 
-    <span class="kw">let </span>on_comment_change = {
+    <span class="comment">// Handles comment input changes
+    </span><span class="kw">let </span>on_comment_change = {
         <span class="kw">let </span>comment = comment.clone();
         Callback::from(<span class="kw">move </span>|e: InputEvent| {
             <span class="kw">let </span>input = e
@@ -169,26 +190,31 @@
         })
     };
 
-    <span class="kw">let </span>on_submit = {
+    <span class="comment">// Handles the submission of the review
+    </span><span class="kw">let </span>on_submit = {
         <span class="kw">let </span>is_sending = is_sending.clone();
+        <span class="kw">let </span>is_sent = is_sent.clone();
         <span class="kw">let </span>stars = stars.clone();
         <span class="kw">let </span>comment = comment.clone();
         <span class="kw">let </span>challenge_id = props.challenge_id.clone();
         <span class="kw">let </span>api_url = props.api_url.clone();
+
         Callback::from(<span class="kw">move </span>|<span class="kw">_</span>: MouseEvent| {
             <span class="kw">let </span>is_sending = is_sending.clone();
-            <span class="kw">if </span><span class="kw-2">*</span>is_sending {
-                <span class="kw">return</span>;
-            }
+            <span class="kw">let </span>is_sent = is_sent.clone();
 
-            <span class="kw">let </span>stars = <span class="kw-2">*</span>stars;
+            <span class="kw">if </span><span class="kw-2">*</span>is_sending || <span class="kw-2">*</span>is_sent {
+                <span class="kw">return</span>; <span class="comment">// If it's already sending or sent, do nothing
+            </span>}
+
+            is_sending.set(<span class="bool-val">true</span>); <span class="comment">// Set the sending in process flag to true
+
+            </span><span class="kw">let </span>stars = <span class="kw-2">*</span>stars;
             <span class="kw">let </span>comment = (<span class="kw-2">*</span>comment).clone();
             <span class="kw">let </span>challenge_id = challenge_id.clone();
             <span class="kw">let </span>api_url = api_url.clone();
 
             wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
-                is_sending.set(<span class="bool-val">true</span>);
-
                 <span class="kw">let </span>review = Review {
                     challenge_id,
                     rating: stars <span class="kw">as </span>u8,
@@ -204,7 +230,8 @@
                         <span class="kw">let </span>status = response.status();
                         <span class="kw">if </span>(<span class="number">200</span>..<span class="number">300</span>).contains(<span class="kw-2">&amp;</span>status) {
                             <span class="macro">log::info!</span>(<span class="string">"Review submitted successfully"</span>);
-                        } <span class="kw">else </span>{
+                            is_sent.set(<span class="bool-val">true</span>); <span class="comment">// Mark the review as successfully sent
+                        </span>} <span class="kw">else </span>{
                             <span class="macro">log::error!</span>(<span class="string">"Failed to submit review: status code {}"</span>, status);
                         }
                     }
@@ -213,12 +240,13 @@
                     }
                 }
 
-                is_sending.set(<span class="bool-val">false</span>);
-            });
+                is_sending.set(<span class="bool-val">false</span>); <span class="comment">// Release sending lock
+            </span>});
         })
     };
 
-    <span class="kw">fn </span>render_stars(star_count: usize, selected: usize, on_click: <span class="kw-2">&amp;</span>Callback&lt;usize&gt;) -&gt; Html {
+    <span class="comment">// Generates the clickable star elements for rating
+    </span><span class="kw">fn </span>render_stars(star_count: usize, selected: usize, on_click: <span class="kw-2">&amp;</span>Callback&lt;usize&gt;) -&gt; Html {
         (<span class="number">0</span>..star_count)
             .map(|i| {
                 <span class="kw">let </span>star_class = <span class="kw">if </span>i &lt; selected {
@@ -249,12 +277,18 @@
                     oninput={on_comment_change}
                 /&gt;
             &lt;/div&gt;
-            &lt;button
-                onclick={on_submit}
-                disabled={<span class="kw-2">*</span>stars == <span class="number">0 </span>|| <span class="kw-2">*</span>is_sending}
-            &gt;
-                {<span class="kw">if </span><span class="kw-2">*</span>is_sending { i18n.t(<span class="string">"Submitting..."</span>) } <span class="kw">else </span>{ i18n.t(<span class="string">"Submit"</span>) }}
-            &lt;/button&gt;
+
+            <span class="comment">// Conditionally hide the button if review is sent; show only if not sent
+            </span><span class="kw">if </span>!<span class="kw-2">*</span>is_sent {
+                &lt;button
+                    onclick={on_submit}
+                    disabled={<span class="kw-2">*</span>stars == <span class="number">0 </span>|| <span class="kw-2">*</span>is_sending}
+                &gt;
+                    {<span class="kw">if </span><span class="kw-2">*</span>is_sending { i18n.t(<span class="string">"Submitting..."</span>) } <span class="kw">else </span>{ i18n.t(<span class="string">"Submit"</span>) }}
+                &lt;/button&gt;
+            } <span class="kw">else </span>{
+                &lt;p&gt;{i18n.t(<span class="string">"Thank you for your review!"</span>)}&lt;/p&gt;
+            }
         &lt;/div&gt;
     }
 }
