@@ -88,6 +88,9 @@
 <a href="#88" id="88">88</a>
 <a href="#89" id="89">89</a>
 <a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::ChallengeInfoComponent;
 <span class="kw">use </span>konnektoren_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
@@ -97,13 +100,15 @@
     <span class="kw">pub </span>challenge_config: ChallengeConfig,
     <span class="attr">#[prop_or_default]
     </span><span class="kw">pub </span>on_new: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeConfig&gt;&gt;,
+    <span class="attr">#[prop_or_default]
+    </span><span class="kw">pub </span>api_url: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
 <span class="attr">#[function_component(ChallengeConfigComponent)]
 </span><span class="kw">pub fn </span>challenge_config_component(props: <span class="kw-2">&amp;</span>ChallengeConfigComponentProps) -&gt; Html {
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"challenge-config" </span>id={props.challenge_config.id.to_string()}&gt;
-            &lt;ChallengeInfoComponent challenge_config={props.challenge_config.clone()} /&gt;
+            &lt;ChallengeInfoComponent api_url={props.api_url.clone()} challenge_config={props.challenge_config.clone()} /&gt;
             {render_new_button(<span class="kw-2">&amp;</span>props.on_new, props.challenge_config.clone())}
         &lt;/div&gt;
     }
@@ -175,6 +180,7 @@
                 position: <span class="prelude-val">None</span>,
             },
             on_new: <span class="prelude-val">None</span>,
+            api_url: <span class="prelude-val">None</span>,
         },
     );
 }
