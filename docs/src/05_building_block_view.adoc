@@ -3,60 +3,27 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-building-block-view]]
 == Building Block View
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-The building block view shows the static decomposition of the system into building blocks (modules, components, subsystems, classes, interfaces, packages, libraries, frameworks, layers, partitions, tiers, functions, macros, operations, data structures, ...) as well as their dependencies (relationships, associations, ...)
-
-This view is mandatory for every architecture documentation.
-In analogy to a house this is the _floor plan_.
-
-.Motivation
-Maintain an overview of your source code by making its structure understandable through
-abstraction.
-
-This allows you to communicate with your stakeholder on an abstract level without disclosing implementation details.
-
-.Form
-The building block view is a hierarchical collection of black boxes and white boxes
-(see figure below) and their descriptions.
-
-image::05_building_blocks-EN.png["Hierarchy of building blocks"]
-
-*Level 1* is the white box description of the overall system together with black
-box descriptions of all contained building blocks.
-
-*Level 2* zooms into some building blocks of level 1.
-Thus it contains the white box description of selected building blocks of level 1, together with black box descriptions of their internal building blocks.
-
-*Level 3* zooms into selected building blocks of level 2, and so on.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-5/[Building Block View] in the arc42 documentation.
-
-****
-endif::arc42help[]
-
 === Whitebox Overall System
 
 The Konnektoren project is organized into a workspace containing multiple crates, each representing a different part of the system's functionality. The following PlantUML diagram provides an overview of the top-level building blocks and their dependencies.
 
-[plantuml, konnektoren-building-blocks, png]
+[plantuml, konnektoren-building-blocks-c4, png]
 ----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-package "Konnektoren Workspace" {
-    [konnektoren-core] as Core
-    [konnektoren-tests] as Tests
-    [konnektoren-tui] as TUI
-    [konnektoren-yew] as Yew
+System_Boundary(konnektoren_workspace, "Konnektoren Workspace") {
+    Container(core, "konnektoren-core", "Rust Crate", "Contains the core logic and functionalities of the Konnektoren project")
+    Container(tests, "konnektoren-tests", "Rust Crate", "Contains tests for the core functionalities and other crates")
+    Container(tui, "konnektoren-tui", "Rust Crate", "Provides a text user interface for the Konnektoren project")
+    Container(yew, "konnektoren-yew", "Rust Crate", "Provides a web frontend using the Yew framework")
 }
 
-Core --> Tests : used by
-Core --> TUI : used by
-Core --> Yew : used by
+Rel(tests, core, "Uses")
+Rel(tui, core, "Uses")
+Rel(yew, core, "Uses")
+
+@enduml
 ----
 
 Motivation::
@@ -73,36 +40,98 @@ Contained Building Blocks::
 | konnektoren-yew | Provides a web frontend using the Yew framework.
 |===
 
-Important Interfaces::
-
-The primary interfaces between these building blocks are the function calls and API contracts defined in the `konnektoren-core` crate, which are utilized by the TUI and Yew crates to provide user interfaces.
-
 ==== konnektoren-core
 
 Purpose/Responsibility::
 The `konnektoren-core` crate is responsible for implementing the main logic and functionalities of the Konnektoren project, such as handling grammar challenges, tracking user progress, and managing gamification elements.
 
-=== Challenge Rating System
+[plantuml, konnektoren-core-structure-c4, png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-The challenge rating system is a crucial part of the Konnektoren project, allowing users to provide feedback on challenges and view aggregate ratings. The following C4 Container diagram illustrates the main components involved in this functionality:
+System_Boundary(konnektoren_core, "konnektoren-core") {
+    Container(challenges, "Challenges", "Rust Module", "Manages different types of grammar challenges and their evaluation")
+    Container(game, "Game", "Rust Module", "Handles game logic, including paths and states")
+    Container(player_profile, "Player Profile", "Rust Module", "Manages user profiles and progress")
+    Container(session, "Session", "Rust Module", "Handles user sessions and state management")
+    Container(certificates, "Certificates", "Rust Module", "Manages the creation and verification of achievement certificates")
+}
+
+Rel(challenges, game, "Uses")
+Rel(game, player_profile, "Uses")
+Rel(game, session, "Uses")
+Rel(session, player_profile, "Uses")
+Rel(certificates, challenges, "Uses")
+Rel(certificates, player_profile, "Uses")
+
+@enduml
+----
+
+Contained Building Blocks::
+
+|===
+| **Name** | **Responsibility**
+| Challenges | Manages different types of grammar challenges and their evaluation.
+| Game | Handles game logic, including paths and states.
+| Player Profile | Manages user profiles and progress.
+| Session | Handles user sessions and state management.
+| Certificates | Manages the creation and verification of achievement certificates.
+|===
+
+==== konnektoren-yew
+
+Purpose/Responsibility::
+The `konnektoren-yew` crate is responsible for providing a web-based user interface for the Konnektoren project using the Yew framework.
+
+[plantuml, konnektoren-yew-structure-c4, png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(konnektoren_yew, "konnektoren-yew") {
+    Container(app, "App", "Yew Root Component", "Main application component that sets up routing and global state")
+    Container(components, "Components", "Yew UI Components", "Reusable UI components used across different pages")
+    Container(pages, "Pages", "Yew Page Components", "Individual page components for different views in the application")
+    Container(services, "Services", "Rust Modules", "Interfaces with konnektoren-core and handles API calls")
+}
+
+System_Ext(konnektoren_core, "konnektoren-core", "Core library containing business logic")
+
+Rel(app, components, "Uses")
+Rel(app, pages, "Uses")
+Rel(pages, components, "Uses")
+Rel(pages, services, "Uses")
+Rel(components, konnektoren_core, "Uses")
+Rel(services, konnektoren_core, "Uses")
+
+@enduml
+----
+
+Contained Building Blocks::
+
+|===
+| **Name** | **Responsibility**
+| App | Main application component that sets up routing and global state.
+| Components | Reusable UI components used across different pages.
+| Pages | Individual page components for different views in the application.
+| Services | Interfaces with konnektoren-core and handles API calls.
+|===
+
+=== Level 2: Challenge Rating System
+
+The challenge rating system is a crucial part of the Konnektoren project, allowing users to provide feedback on challenges and view aggregate ratings.
 
 [plantuml, challenge-rating-system, png]
 ----
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
-!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
-!include DEVICONS/rust.puml
-!include FONTAWESOME/users.puml
-
-LAYOUT_WITH_LEGEND()
-
 Person(user, "User", "A user of the Konnektoren system")
 
 System_Boundary(konnektoren, "Konnektoren System") {
-    Container(frontend, "Frontend", "Rust, Yew", "Provides the user interface for interacting with challenges and submitting ratings", $sprite="rust")
-    Container(backend, "Backend API", "Rust, Axum", "Handles API requests and manages data", $sprite="rust")
+    Container(frontend, "Frontend", "Rust, Yew", "Provides the user interface for interacting with challenges and submitting ratings")
+    Container(backend, "Backend API", "Rust, Axum", "Handles API requests and manages data")
     ContainerDb(database, "Database", "Redis", "Stores challenge data, user ratings, and reviews")
 }
 
@@ -110,21 +139,11 @@ Rel(user, frontend, "Views challenges, submits ratings and reviews")
 Rel(frontend, backend, "Sends ratings/reviews, requests average ratings", "HTTP/JSON")
 Rel_Neighbor(backend, database, "Reads from and writes to")
 Rel_Back(frontend, user, "Displays average ratings")
-
 @enduml
 ----
 
-This diagram shows the main components of the challenge rating system:
-
-1. User: Represents the end-user of the Konnektoren system.
-2. Frontend: Built with Rust and Yew, provides the user interface for interacting with challenges, submitting ratings/reviews, and viewing average ratings.
-3. Backend API: Implemented in Rust with Axum, handles API requests, processes ratings/reviews, and manages data flow.
-4. Database: Redis database that stores challenge data, user ratings, and reviews.
-
-The arrows in the diagram indicate the flow of data between these components, demonstrating how ratings are submitted, retrieved, and displayed back to the user.
-
 Motivation::
-This architecture allows for a clear separation of concerns between the user interface, business logic, and data storage. It enables efficient collection and retrieval of user feedback, which can be used to improve the quality of challenges and enhance the user experience. The use of Redis as the database provides fast read and write operations, which is beneficial for real-time rating updates.
+This architecture allows for a clear separation of concerns between the user interface, business logic, and data storage. It enables efficient collection and retrieval of user feedback, which can be used to improve the quality of challenges and enhance the user experience.
 
 Contained Building Blocks::
 
@@ -135,9 +154,42 @@ Contained Building Blocks::
 | Database | Stores all challenge-related data, including user ratings and reviews, using Redis for fast data access.
 |===
 
-Important Interfaces::
-- Frontend to Backend API: HTTP/JSON interface for submitting ratings/reviews and requesting average ratings.
-- Backend API to Database: Redis commands for reading and writing rating data.
-- Frontend to User: Visual interface for displaying average ratings and collecting user input.
+=== Level 3: Frontend Components
 
-This challenge rating system integrates with the overall Konnektoren system, particularly with the `konnektoren-yew` crate for the frontend implementation and the `konnektoren-core` crate for core business logic related to challenges and user interactions. The use of Axum in the backend aligns with the project's use of Rust throughout the stack, providing a consistent development experience and leveraging Rust's performance and safety features.
+This level provides a more detailed view of the frontend components in the Konnektoren Yew application.
+
+[plantuml, frontend-components-c4, png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "A user of the Konnektoren system")
+
+System_Boundary(frontend, "Frontend") {
+    Container(cl, "Challenge List", "Yew Component", "Displays available challenges")
+    Container(cd, "Challenge Detail", "Yew Component", "Shows specific challenge information")
+    Container(rf, "Rating Form", "Yew Component", "Allows users to rate challenges")
+    Container(lb, "Leaderboard", "Yew Component", "Displays top-performing users")
+    Container(up, "User Profile", "Yew Component", "Shows user information and progress")
+}
+
+Rel(user, up, "Views profile")
+Rel(user, cl, "Browses challenges")
+Rel(user, lb, "Views leaderboard")
+Rel(cl, cd, "Navigates to")
+Rel(cd, rf, "Includes")
+
+@enduml
+----
+
+Contained Building Blocks::
+
+|===
+| **Name** | **Responsibility**
+| ChallengeList | Displays a list of available challenges to the user.
+| ChallengeDetail | Shows detailed information about a specific challenge and allows users to attempt it.
+| RatingForm | Allows users to submit ratings and reviews for challenges.
+| LeaderBoard | Displays the top-performing users based on their challenge results.
+| UserProfile | Shows user information, progress, and achievements.
+|===
+
