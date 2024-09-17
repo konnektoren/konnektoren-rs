@@ -481,7 +481,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#section-building-block-view">6. Building Block View</a>
 <ul class="sectlevel2">
 <li><a href="#_whitebox_overall_system">6.1. Whitebox Overall System</a></li>
-<li><a href="#_challenge_rating_system">6.2. Challenge Rating System</a></li>
+<li><a href="#_level_2_challenge_rating_system">6.2. Level 2: Challenge Rating System</a></li>
+<li><a href="#_level_3_frontend_components">6.3. Level 3: Frontend Components</a></li>
 </ul>
 </li>
 <li><a href="#section-runtime-view">7. Runtime View</a>
@@ -978,7 +979,7 @@ The project adopts an Agile methodology to allow for flexibility in development 
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="images/konnektoren-building-blocks.png" alt="konnektoren building blocks" width="596" height="232">
+<img src="images/konnektoren-building-blocks-c4.png" alt="konnektoren building blocks c4" width="684" height="438">
 </div>
 </div>
 <div class="dlist">
@@ -1018,14 +1019,6 @@ The project adopts an Agile methodology to allow for flexibility in development 
 </tr>
 </tbody>
 </table>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Important Interfaces</dt>
-<dd>
-<p>The primary interfaces between these building blocks are the function calls and API contracts defined in the <code>konnektoren-core</code> crate, which are utilized by the TUI and Yew crates to provide user interfaces.</p>
-</dd>
-</dl>
-</div>
 <div class="sect3">
 <h4 id="_konnektoren_core">6.1.1. konnektoren-core</h4>
 <div class="dlist">
@@ -1036,45 +1029,114 @@ The project adopts an Agile methodology to allow for flexibility in development 
 </dd>
 </dl>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="images/konnektoren-core-structure-c4.png" alt="konnektoren core structure c4" width="439" height="1008">
 </div>
 </div>
-<div class="sect2">
-<h3 id="_challenge_rating_system">6.2. Challenge Rating System</h3>
-<div class="paragraph">
-<p>The challenge rating system is a crucial part of the Konnektoren project, allowing users to provide feedback on challenges and view aggregate ratings. The following C4 Container diagram illustrates the main components involved in this functionality:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Contained Building Blocks</dt>
+</dl>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Name</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Responsibility</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Challenges</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Manages different types of grammar challenges and their evaluation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Handles game logic, including paths and states.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Player Profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Manages user profiles and progress.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Session</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Handles user sessions and state management.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Certificates</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Manages the creation and verification of achievement certificates.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_konnektoren_yew">6.1.2. konnektoren-yew</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Purpose/Responsibility</dt>
+<dd>
+<p>The <code>konnektoren-yew</code> crate is responsible for providing a web-based user interface for the Konnektoren project using the Yew framework.</p>
+</dd>
+</dl>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="images/challenge-rating-system.png" alt="challenge rating system" width="598" height="925">
+<img src="images/konnektoren-yew-structure-c4.png" alt="konnektoren yew structure c4" width="469" height="807">
 </div>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Contained Building Blocks</dt>
+</dl>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Name</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Responsibility</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">App</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main application component that sets up routing and global state.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Components</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reusable UI components used across different pages.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pages</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Individual page components for different views in the application.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Services</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interfaces with konnektoren-core and handles API calls.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_level_2_challenge_rating_system">6.2. Level 2: Challenge Rating System</h3>
 <div class="paragraph">
-<p>This diagram shows the main components of the challenge rating system:</p>
+<p>The challenge rating system is a crucial part of the Konnektoren project, allowing users to provide feedback on challenges and view aggregate ratings.</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>User: Represents the end-user of the Konnektoren system.</p>
-</li>
-<li>
-<p>Frontend: Built with Rust and Yew, provides the user interface for interacting with challenges, submitting ratings/reviews, and viewing average ratings.</p>
-</li>
-<li>
-<p>Backend API: Implemented in Rust with Axum, handles API requests, processes ratings/reviews, and manages data flow.</p>
-</li>
-<li>
-<p>Database: Redis database that stores challenge data, user ratings, and reviews.</p>
-</li>
-</ol>
+<div class="imageblock">
+<div class="content">
+<img src="images/challenge-rating-system.png" alt="challenge rating system" width="598" height="740">
 </div>
-<div class="paragraph">
-<p>The arrows in the diagram indicate the flow of data between these components, demonstrating how ratings are submitted, retrieved, and displayed back to the user.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Motivation</dt>
 <dd>
-<p>This architecture allows for a clear separation of concerns between the user interface, business logic, and data storage. It enables efficient collection and retrieval of user feedback, which can be used to improve the quality of challenges and enhance the user experience. The use of Redis as the database provides fast read and write operations, which is beneficial for real-time rating updates.</p>
+<p>This architecture allows for a clear separation of concerns between the user interface, business logic, and data storage. It enables efficient collection and retrieval of user feedback, which can be used to improve the quality of challenges and enhance the user experience.</p>
 </dd>
 <dt class="hdlist1">Contained Building Blocks</dt>
 </dl>
@@ -1103,29 +1165,54 @@ The project adopts an Agile methodology to allow for flexibility in development 
 </tr>
 </tbody>
 </table>
+</div>
+<div class="sect2">
+<h3 id="_level_3_frontend_components">6.3. Level 3: Frontend Components</h3>
+<div class="paragraph">
+<p>This level provides a more detailed view of the frontend components in the Konnektoren Yew application.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/frontend-components-c4.png" alt="frontend components c4" width="668" height="804">
+</div>
+</div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Important Interfaces</dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p>Frontend to Backend API: HTTP/JSON interface for submitting ratings/reviews and requesting average ratings.</p>
-</li>
-<li>
-<p>Backend API to Database: Redis commands for reading and writing rating data.</p>
-</li>
-<li>
-<p>Frontend to User: Visual interface for displaying average ratings and collecting user input.</p>
-</li>
-</ul>
-</div>
-</dd>
+<dt class="hdlist1">Contained Building Blocks</dt>
 </dl>
 </div>
-<div class="paragraph">
-<p>This challenge rating system integrates with the overall Konnektoren system, particularly with the <code>konnektoren-yew</code> crate for the frontend implementation and the <code>konnektoren-core</code> crate for core business logic related to challenges and user interactions. The use of Axum in the backend aligns with the project&#8217;s use of Rust throughout the stack, providing a consistent development experience and leveraging Rust&#8217;s performance and safety features.</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Name</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Responsibility</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ChallengeList</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Displays a list of available challenges to the user.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ChallengeDetail</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shows detailed information about a specific challenge and allows users to attempt it.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RatingForm</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allows users to submit ratings and reviews for challenges.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LeaderBoard</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Displays the top-performing users based on their challenge results.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UserProfile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shows user information, progress, and achievements.</p></td>
+</tr>
+</tbody>
+</table>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -1695,7 +1782,7 @@ The project adopts an Agile methodology to allow for flexibility in development 
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-09-15 16:52:06 UTC
+Last updated 2024-09-17 20:04:32 UTC
 </div>
 </div>
 </body>
