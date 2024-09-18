@@ -80,6 +80,10 @@ include::src/07_deployment_view.adoc[]
 include::src/08_concepts.adoc[]
 
 <<<<
+// 9. Testing Strategy
+include::09_testing_strategy.adoc[]
+
+<<<<
 // 10. Quality Requirements
 include::src/10_quality_requirements.adoc[]
 

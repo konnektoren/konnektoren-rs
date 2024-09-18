@@ -1,0 +1,79 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-testing-strategy]]
+== Testing Strategy
+
+=== Overview
+
+The Konnektoren project employs a comprehensive testing strategy to ensure the reliability, correctness, and performance of the system. Our approach includes various levels of testing, from unit tests to end-to-end tests, to cover different aspects of the application.
+
+=== Levels of Testing
+
+==== Unit Tests
+
+* *Purpose*: Verify the correctness of individual functions and methods.
+* *Tools*: Rust's built-in testing framework
+* *Location*: Implemented alongside the code in the same files, typically in a `tests` module at the bottom of each Rust file.
+* *Coverage*: Aim for high coverage (>80%) of all core functionality.
+
+==== Integration Tests
+
+* *Purpose*: Test the interaction between different modules and components.
+* *Tools*: Rust's built-in testing framework, with tests in separate files
+* *Location*: In the `tests` directory of each crate
+* *Coverage*: Focus on key interactions and workflows between modules
+
+==== End-to-End Tests
+
+* *Purpose*: Validate complete user scenarios and workflows
+* *Tools*: Cucumber for Rust (cucumber-rs)
+* *Location*: In the `konnektoren-tests` crate, under `tests/features`
+* *Coverage*: Key user journeys and critical business scenarios
+
+=== Behavior-Driven Development (BDD)
+
+We use Cucumber for Rust to implement BDD tests, which serve as both documentation and functional tests. These tests are written in Gherkin syntax and cover high-level user scenarios.
+
+Example feature file (`konnektoren-tests/tests/features/challenge.feature`):
+
+[source,gherkin]
+----
+Feature: Challenge
+
+  Scenario: Loading a default challenge from YAML
+    Given default challenge is loaded
+    Then it should be a MultipleChoice challenge named "Konnektoren"
+    And it should have exactly 5 options
+    And it should have at least 1 questions
+----
+
+=== Performance Testing
+
+* *Tools*: Custom benchmarking tools built with Rust's `criterion` crate
+* *Focus*: Key operations like challenge loading, solving, and leaderboard updates
+* *Frequency*: Run as part of the CI/CD pipeline for each release
+
+=== Security Testing
+
+* *Static Analysis*: Use of `cargo audit` to check for known vulnerabilities in dependencies
+* *Fuzz Testing*: Employ `cargo fuzz` for critical parsing and data handling functions
+* *Manual Penetration Testing*: Conducted periodically on the deployed application
+
+=== Continuous Integration
+
+* All tests are run as part of our CI/CD pipeline using GitHub Actions
+* The pipeline includes running unit tests, integration tests, and BDD scenarios
+* Code coverage reports are generated and tracked to ensure maintenance of high test coverage
+
+=== Test Data Management
+
+* Test data for challenges is stored in YAML files in the `assets` directory
+* Mocked data for integration and E2E tests is generated programmatically or stored in fixture files
+
+=== Future Improvements
+
+* Implement property-based testing using the `proptest` crate for more robust unit tests
+* Expand end-to-end test coverage to include more complex user scenarios
+* Introduce load testing to verify system performance under high concurrency
+
+By following this comprehensive testing strategy, we aim to maintain high quality and reliability in the Konnektoren system, enabling confident and frequent releases.
