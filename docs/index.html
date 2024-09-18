@@ -484,6 +484,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_whitebox_overall_system">6.1. Whitebox Overall System</a></li>
 <li><a href="#_level_2_challenge_rating_system">6.2. Level 2: Challenge Rating System</a></li>
 <li><a href="#_level_3_frontend_components">6.3. Level 3: Frontend Components</a></li>
+<li><a href="#_level_4_data_model">6.4. Level 4: Data Model</a></li>
 </ul>
 </li>
 <li><a href="#section-runtime-view">7. Runtime View</a>
@@ -512,6 +513,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_quality_tree">10.1. Quality Tree</a></li>
 <li><a href="#_quality_scenarios">10.2. Quality Scenarios</a></li>
+<li><a href="#_detailed_quality_requirements">10.3. Detailed Quality Requirements</a></li>
 </ul>
 </li>
 <li><a href="#section-technical-risks">11. Risks and Technical Debts</a></li>
@@ -1127,6 +1129,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <img src="images/konnektoren-core-structure-c4.png" alt="konnektoren core structure c4" width="439" height="1008">
 </div>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_konnektoren_core_detailed_structure">6.1.2. konnektoren-core Detailed Structure</h4>
+<div class="paragraph">
+<p>The <code>konnektoren-core</code> crate is composed of several modules, each responsible for a specific aspect of the core functionality. Here&#8217;s a more detailed diagram of its internal structure:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/konnektoren-core-detailed-structure.png" alt="konnektoren core detailed structure" width="1495" height="794">
+</div>
+</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Contained Building Blocks</dt>
@@ -1143,30 +1156,37 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Responsibility</strong></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Challenges</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Manages different types of grammar challenges and their evaluation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">challenges</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Contains all challenge-related modules and implementations</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Game</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Handles game logic, including paths and states.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">game</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Manages game logic, paths, and states</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Player Profile</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Manages user profiles and progress.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">certificates</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Handles certificate generation and verification</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Session</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Handles user sessions and state management.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">player_profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Manages user profiles and progress</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Certificates</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Manages the creation and verification of achievement certificates.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">session</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Handles user sessions and state management</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">commands</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implements command pattern for game actions</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>This detailed diagram provides a clearer picture of the internal structure of the <code>konnektoren-core</code> crate, showing the relationships between different modules and packages.</p>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_konnektoren_yew">6.1.2. konnektoren-yew</h4>
+<h4 id="_konnektoren_yew">6.1.3. konnektoren-yew</h4>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Purpose/Responsibility</dt>
@@ -1306,6 +1326,42 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 </tbody>
 </table>
+</div>
+<div class="sect2">
+<h3 id="_level_4_data_model">6.4. Level 4: Data Model</h3>
+<div class="paragraph">
+<p>The data model is a crucial part of the Konnektoren system, defining the structure and relationships of the core entities. Understanding this model is essential for developers working on the system and for maintaining data integrity across different components.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/data-model.png" alt="data model" width="726" height="423">
+</div>
+</div>
+<div class="paragraph">
+<p>Key Entities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>PlayerProfile: Represents a user&#8217;s profile information, including their accumulated experience points (XP).</p>
+</li>
+<li>
+<p>Challenge: Encapsulates a single challenge, including its type, configuration, and result.</p>
+</li>
+<li>
+<p>GamePath: Represents a sequence of challenges that form a learning path.</p>
+</li>
+<li>
+<p>GameState: Tracks the current state of a player&#8217;s game, including their position in a game path and current challenge.</p>
+</li>
+<li>
+<p>Session: Links a player profile to their current game state.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This data model supports the core functionality of the Konnektoren system, allowing for flexible challenge creation, user progress tracking, and game state management. The relationships between entities enable features like personalized learning paths and progress persistence across sessions.</p>
+</div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -1729,6 +1785,95 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tbody>
 </table>
 </div>
+<div class="sect2">
+<h3 id="_detailed_quality_requirements">10.3. Detailed Quality Requirements</h3>
+<div class="sect3">
+<h4 id="_performance">10.3.1. Performance</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>The system uses WebAssembly (WASM) to ensure near-native performance in the browser.</p>
+</li>
+<li>
+<p>Cloudflare&#8217;s CDN is utilized to minimize latency for static assets.</p>
+</li>
+<li>
+<p>The core library is optimized for efficiency, with careful consideration given to algorithmic complexity.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_security">10.3.2. Security</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>All user data is encrypted at rest using industry-standard encryption algorithms.</p>
+</li>
+<li>
+<p>HTTPS is enforced for all communications to ensure data integrity and confidentiality in transit.</p>
+</li>
+<li>
+<p>Certificate verification uses Ed25519 signatures to prevent forgery.</p>
+</li>
+<li>
+<p>The system follows a principle of minimal server-side data storage to reduce potential attack surfaces.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_scalability">10.3.3. Scalability</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>The serverless architecture allows for automatic scaling based on demand.</p>
+</li>
+<li>
+<p>The use of GitHub Pages for static content hosting provides excellent scalability for the front-end.</p>
+</li>
+<li>
+<p>The leaderboard service is containerized, allowing for easy horizontal scaling.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_usability">10.3.4. Usability</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>The UI is designed with responsive web design principles to ensure a consistent experience across devices.</p>
+</li>
+<li>
+<p>Gamification elements are incorporated to increase user engagement and motivation.</p>
+</li>
+<li>
+<p>Regular user testing and feedback loops are part of the development process to continually improve usability.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_maintainability">10.3.5. Maintainability</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>The codebase follows Rust&#8217;s official style guide to ensure consistency.</p>
+</li>
+<li>
+<p>Modular architecture allows for easy updates and feature additions.</p>
+</li>
+<li>
+<p>Comprehensive unit and integration tests are maintained to catch regressions early.</p>
+</li>
+<li>
+<p>Documentation is treated as a first-class citizen, with inline documentation for all public APIs.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1875,7 +2020,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-09-18 17:56:22 UTC
+Last updated 2024-09-18 18:54:10 UTC
 </div>
 </div>
 </body>
