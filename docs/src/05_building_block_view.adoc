@@ -68,16 +68,72 @@ Rel(certificates, player_profile, "Uses")
 @enduml
 ----
 
+==== konnektoren-core Detailed Structure
+
+The `konnektoren-core` crate is composed of several modules, each responsible for a specific aspect of the core functionality. Here's a more detailed diagram of its internal structure:
+
+[plantuml, konnektoren-core-detailed-structure, png]
+----
+@startuml
+package "konnektorencore" {
+    package "challenges" {
+        [challenge]
+        [challenge_config]
+        [challenge_factory]
+        [challenge_history]
+        [challenge_input]
+        [challenge_result]
+        [challenge_type]
+        [custom]
+        [events]
+        [informative]
+        [multiple_choice]
+        [performance]
+        [performance_record]
+        [review]
+        [solvable]
+        [sort_table]
+    }
+
+    package "game_module" {
+        [game_logic]
+        [game_path]
+        [game_state]
+        [map]
+    }
+
+    package "certificates" {
+        [certificate_data]
+        [certificate_image]
+    }
+
+    [player_profile]
+    [session]
+    [commands]
+}
+
+challenges ..> game_module : uses
+game_module ..> player_profile : uses
+game_module ..> session : uses
+certificates ..> challenges : uses
+certificates ..> player_profile : uses
+commands ..> game_module : uses
+@enduml
+----
+
 Contained Building Blocks::
 
 |===
 | **Name** | **Responsibility**
-| Challenges | Manages different types of grammar challenges and their evaluation.
-| Game | Handles game logic, including paths and states.
-| Player Profile | Manages user profiles and progress.
-| Session | Handles user sessions and state management.
-| Certificates | Manages the creation and verification of achievement certificates.
+| challenges | Contains all challenge-related modules and implementations
+| game | Manages game logic, paths, and states
+| certificates | Handles certificate generation and verification
+| player_profile | Manages user profiles and progress
+| session | Handles user sessions and state management
+| commands | Implements command pattern for game actions
 |===
+
+This detailed diagram provides a clearer picture of the internal structure of the `konnektoren-core` crate, showing the relationships between different modules and packages.
 
 ==== konnektoren-yew
 
@@ -193,3 +249,65 @@ Contained Building Blocks::
 | UserProfile | Shows user information, progress, and achievements.
 |===
 
+=== Level 4: Data Model
+
+The data model is a crucial part of the Konnektoren system, defining the structure and relationships of the core entities. Understanding this model is essential for developers working on the system and for maintaining data integrity across different components.
+
+[plantuml, data-model, png]
+----
+@startuml
+!define TABLE(name,desc) class name as "desc" << (T,#FFAAAA) >>
+!define PK(x) <u>x</u>
+!define FK(x) #x
+
+TABLE(PlayerProfile, "PlayerProfile") {
+  PK(id): String
+  name: String
+  xp: Xp
+}
+
+TABLE(Challenge, "Challenge") {
+  PK(id): String
+  challenge_type: ChallengeType
+  challenge_config: ChallengeConfig
+  challenge_result: ChallengeResult
+}
+
+TABLE(GamePath, "GamePath") {
+  PK(id): String
+  name: String
+  challenges: Vec<ChallengeConfig>
+  map: Option<Map>
+}
+
+TABLE(GameState, "GameState") {
+  game: Game
+  challenge: Challenge
+  current_game_path: usize
+  current_challenge_index: usize
+  current_task_index: usize
+}
+
+TABLE(Session, "Session") {
+  PK(id): String
+  FK(player_profile_id): String
+  FK(game_state_id): String
+}
+
+PlayerProfile "1" -- "1" Session
+GameState "1" -- "1" Session
+GamePath "1" *-- "many" Challenge
+Challenge "1" *-- "1" ChallengeConfig
+Challenge "1" *-- "1" ChallengeResult
+@enduml
+----
+
+Key Entities:
+
+* PlayerProfile: Represents a user's profile information, including their accumulated experience points (XP).
+* Challenge: Encapsulates a single challenge, including its type, configuration, and result.
+* GamePath: Represents a sequence of challenges that form a learning path.
+* GameState: Tracks the current state of a player's game, including their position in a game path and current challenge.
+* Session: Links a player profile to their current game state.
+
+This data model supports the core functionality of the Konnektoren system, allowing for flexible challenge creation, user progress tracking, and game state management. The relationships between entities enable features like personalized learning paths and progress persistence across sessions.
