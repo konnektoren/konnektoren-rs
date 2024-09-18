@@ -26,6 +26,36 @@ See https://docs.arc42.org/section-3/[Context and Scope] in the arc42 documentat
 ****
 endif::arc42help[]
 
+=== System Overview
+
+[plantuml, system-overview-c4, png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "User", "A learner using the Konnektoren platform")
+
+System_Boundary(konnektoren, "Konnektoren System") {
+    System(frontend, "Frontend", "Web-based UI built with Yew and WebAssembly")
+    System(core, "Konnektoren Core", "Core business logic and game mechanics")
+    System(leaderboard, "Leaderboard Service", "Manages user rankings and scores (Docker Container)")
+}
+
+System_Ext(github_pages, "GitHub Pages", "Hosts static frontend content")
+System_Ext(cloudflare, "Cloudflare", "CDN and proxy service")
+
+Rel(user, cloudflare, "Interacts with", "HTTPS")
+Rel(cloudflare, github_pages, "Retrieves static content", "HTTPS")
+Rel(cloudflare, leaderboard, "Proxies API requests", "HTTPS")
+Rel(frontend, core, "Uses")
+Rel(frontend, leaderboard, "Queries/Updates", "REST API")
+Rel(core, leaderboard, "Updates scores")
+
+@enduml
+----
+
+This diagram provides a high-level overview of the Konnektoren system, showing the main components and their interactions. The user interacts with the system through Cloudflare, which serves as a CDN and proxy. The frontend, built with Yew and WebAssembly, is hosted on GitHub Pages. The Konnektoren Core contains the business logic and game mechanics. The Leaderboard Service, running in a Docker container, manages user rankings and scores, interacting with both the frontend and core components.
+
 === Business Context
 
 ifdef::arc42help[]
