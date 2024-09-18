@@ -466,8 +466,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#section-context-and-scope">4. Context and Scope</a>
 <ul class="sectlevel2">
-<li><a href="#_business_context">4.1. Business Context</a></li>
-<li><a href="#_technical_context">4.2. Technical Context</a></li>
+<li><a href="#_system_overview">4.1. System Overview</a></li>
+<li><a href="#_business_context">4.2. Business Context</a></li>
+<li><a href="#_technical_context">4.3. Technical Context</a></li>
 </ul>
 </li>
 <li><a href="#section-solution-strategy">5. Solution Strategy</a>
@@ -838,7 +839,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="section-context-and-scope">4. Context and Scope</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_business_context">4.1. Business Context</h3>
+<h3 id="_system_overview">4.1. System Overview</h3>
+<div class="imageblock">
+<div class="content">
+<img src="images/system-overview-c4.png" alt="system overview c4" width="686" height="618">
+</div>
+</div>
+<div class="paragraph">
+<p>This diagram provides a high-level overview of the Konnektoren system, showing the main components and their interactions. The user interacts with the system through Cloudflare, which serves as a CDN and proxy. The frontend, built with Yew and WebAssembly, is hosted on GitHub Pages. The Konnektoren Core contains the business logic and game mechanics. The Leaderboard Service, running in a Docker container, manages user rankings and scores, interacting with both the frontend and core components.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_business_context">4.2. Business Context</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -868,7 +880,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_technical_context">4.2. Technical Context</h3>
+<h3 id="_technical_context">4.3. Technical Context</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1782,7 +1794,7 @@ The project adopts an Agile methodology to allow for flexibility in development 
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-09-17 20:04:32 UTC
+Last updated 2024-09-18 17:39:40 UTC
 </div>
 </div>
 </body>
