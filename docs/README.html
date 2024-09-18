@@ -932,52 +932,133 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_technology_decisions">5.1. Technology Decisions</h3>
+<div class="sect3">
+<h4 id="_web_based_platform">5.1.1. Web-Based Platform</h4>
 <div class="paragraph">
-<p><strong>Web-Based Platform:</strong>
-To ensure accessibility and ease of maintenance, Konnektoren is designed as a web-based platform. This approach allows users to access the system across various devices without the need for native applications.</p>
+<p>Konnektoren is designed as a web-based platform to ensure accessibility and ease of maintenance. This approach allows users to access the system across various devices without the need for native applications, reducing development complexity and improving user reach.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_rust_programming_language">5.1.2. Rust Programming Language</h4>
 <div class="paragraph">
-<p><strong>Rust and Yew Framework:</strong>
-We chose Rust due to its performance, reliability, and robust type system. The Yew framework supports creating interactive UIs with WebAssembly, offering a reactive framework that is ideal for complex user interfaces like those required by Konnektoren.</p>
+<p>We chose Rust as the primary programming language for the Konnektoren project for several key reasons:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Performance</strong>: Rust&#8217;s zero-cost abstractions and lack of a garbage collector enable high-performance code execution, crucial for complex language learning algorithms and responsive user interfaces.</p>
+</li>
+<li>
+<p><strong>Safety</strong>: Rust&#8217;s strict compile-time checks and ownership model eliminate entire classes of bugs, enhancing the overall security and reliability of the application.</p>
+</li>
+<li>
+<p><strong>WebAssembly Compatibility</strong>: Rust&#8217;s excellent support for WebAssembly (Wasm) allows us to run complex logic directly in the browser at near-native speed, improving performance and reducing server load.</p>
+</li>
+<li>
+<p><strong>Minimized Server-side Data</strong>: By leveraging Rust&#8217;s WebAssembly capabilities, we can run most of our application logic in the frontend, minimizing the amount of user data stored on servers. This approach enhances privacy and reduces server costs.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_yew_framework">5.1.3. Yew Framework</h4>
+<div class="paragraph">
+<p>The Yew framework was selected as our front-end solution for the following reasons:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Rust Ecosystem Integration</strong>: Yew, being Rust-based, allows us to maintain a consistent language ecosystem throughout our stack, simplifying development and maintenance.</p>
+</li>
+<li>
+<p><strong>Component-based Architecture</strong>: Yew&#8217;s component-based model aligns with our preference for modular, reusable code, enhancing maintainability and development efficiency.</p>
+</li>
+<li>
+<p><strong>WebAssembly Optimization</strong>: Yew&#8217;s seamless integration with WebAssembly enables us to create high-performance web applications that rival native app performance.</p>
+</li>
+<li>
+<p><strong>Strong Typing</strong>: Leveraging Rust&#8217;s type system, Yew provides strong typing for components and their properties, catching potential errors at compile-time rather than runtime.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_axum_framework">5.1.4. Axum Framework</h4>
+<div class="paragraph">
+<p>For our backend needs, we&#8217;ve chosen the Axum framework:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Performance</strong>: Built on top of Tokio, Axum leverages a high-performance, asynchronous runtime for efficient handling of concurrent operations.</p>
+</li>
+<li>
+<p><strong>Security</strong>: Axum inherits Rust&#8217;s strong security guarantees and provides additional features for building secure web services.</p>
+</li>
+<li>
+<p><strong>Tokio Ecosystem</strong>: Being part of the Tokio ecosystem gives us access to a wide range of well-maintained, high-quality libraries and tools.</p>
+</li>
+<li>
+<p><strong>Cost-effectiveness</strong>: Axum&#8217;s efficiency allows us to handle more requests with fewer resources, leading to a more cost-effective backend infrastructure.</p>
+</li>
+</ol>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_architectural_decisions">5.2. Architectural Decisions</h3>
+<div class="sect3">
+<h4 id="_github_pages_hosting">5.2.1. GitHub Pages Hosting</h4>
 <div class="paragraph">
-<p><strong>GitHub Pages Hosting:</strong>
-The front-end application is hosted on GitHub Pages, providing a cost-effective and scalable solution for serving static content. This choice aligns with our goal of minimizing operational costs while ensuring high availability.</p>
+<p>The front-end application is hosted on GitHub Pages, providing a cost-effective and scalable solution for serving static content. This choice aligns with our goal of minimizing operational costs while ensuring high availability.</p>
 </div>
-<div class="paragraph">
-<p><strong>SPA (Single Page Application):</strong>
-The front end is built as a SPA, which interacts with the back-end services via RESTful APIs. This choice supports a seamless and responsive user experience by reducing page reloads and dynamically updating the user interface.</p>
 </div>
+<div class="sect3">
+<h4 id="_single_page_application_spa">5.2.2. Single Page Application (SPA)</h4>
 <div class="paragraph">
-<p><strong>Serverless Architecture:</strong>
-The system is designed as a serverless architecture to reduce operational overhead and improve scalability. By leveraging cloud services like Cloudflare Workers, we can focus on developing features rather than managing infrastructure.</p>
+<p>The front end is built as a SPA, interacting with back-end services via RESTful APIs. This architecture supports a seamless and responsive user experience by reducing page reloads and enabling dynamic UI updates.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_serverless_architecture">5.2.3. Serverless Architecture</h4>
 <div class="paragraph">
-<p><strong>Cloudflare Proxy:</strong>
-Cloudflare Workers are used as a proxy to secure the communication between the front end and back end, providing an additional layer of security and performance optimization. This decision aligns with our security and performance goals.</p>
+<p>We&#8217;ve adopted a serverless architecture to reduce operational overhead and improve scalability. By leveraging cloud services like Cloudflare Workers, we can focus on developing features rather than managing infrastructure.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cloudflare_proxy">5.2.4. Cloudflare Proxy</h4>
+<div class="paragraph">
+<p>Cloudflare Workers are used as a proxy to secure communication between the front end and back end, providing an additional layer of security and performance optimization.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_achieving_quality_goals">5.3. Achieving Quality Goals</h3>
+<div class="sect3">
+<h4 id="_usability_and_user_engagement">5.3.1. Usability and User Engagement</h4>
 <div class="paragraph">
-<p><strong>Usability and User Engagement:</strong>
-To achieve high usability, the UI/UX is designed to be intuitive and engaging, leveraging gamification techniques to motivate learners. Regular user testing ensures that the interface meets the needs of the target audience.</p>
+<p>To achieve high usability, we&#8217;ve designed an intuitive and engaging UI/UX, leveraging gamification techniques to motivate learners. Regular user testing ensures that the interface meets the needs of our target audience.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_reliability_and_scalability">5.3.2. Reliability and Scalability</h4>
 <div class="paragraph">
-<p><strong>Reliability and Scalability:</strong>
-Using cloud-based services and modern DevOps practices ensures that the system is both reliable and scalable. Automated testing and deployment facilitate continuous improvement and responsiveness to user demands.</p>
+<p>We utilize cloud-based services and modern DevOps practices to ensure system reliability and scalability. Automated testing and deployment facilitate continuous improvement and responsiveness to user demands.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_organizational_decisions">5.4. Organizational Decisions</h3>
+<div class="sect3">
+<h4 id="_agile_development_process">5.4.1. Agile Development Process</h4>
 <div class="paragraph">
-<p><strong>Agile Development Process:</strong>
-The project adopts an Agile methodology to allow for flexibility in development and to incorporate feedback efficiently. This process supports iterative development and continuous improvement, aligning with our quality goals.</p>
+<p>The project adopts an Agile methodology to allow for flexibility in development and to efficiently incorporate feedback. This process supports iterative development and continuous improvement, aligning with our quality goals.</p>
+</div>
+<div class="paragraph">
+<p>By implementing these strategies, we aim to create a robust, performant, and maintainable application that provides a smooth and responsive user experience for language learners while keeping user data private and minimizing server-side costs.</p>
 </div>
 <div style="page-break-after: always;"></div>
+</div>
 </div>
 </div>
 </div>
@@ -1794,7 +1875,7 @@ The project adopts an Agile methodology to allow for flexibility in development 
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-09-18 17:39:40 UTC
+Last updated 2024-09-18 17:56:22 UTC
 </div>
 </div>
 </body>
