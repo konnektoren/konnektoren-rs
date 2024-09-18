@@ -3,63 +3,69 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-A short summary and explanation of the fundamental decisions and solution strategies that shape system architecture. It includes
-
-* technology decisions
-* decisions about the top-level decomposition of the system, e.g., usage of an architectural pattern or design pattern
-* decisions on how to achieve key quality goals
-* relevant organizational decisions, e.g., selecting a development process or delegating certain tasks to third parties.
-
-.Motivation
-These decisions form the cornerstones for your architecture. They are the foundation for many other detailed decisions or implementation rules.
-
-.Form
-Keep the explanations of such key decisions short.
-
-Motivate what was decided and why it was decided that way,
-based upon problem statement, quality goals, and key constraints.
-Refer to details in the following sections.
-
-.Further Information
-See https://docs.arc42.org/section-4/[Solution Strategy] in the arc42 documentation.
-****
-endif::arc42help[]
-
 === Technology Decisions
 
-**Web-Based Platform:**
-To ensure accessibility and ease of maintenance, Konnektoren is designed as a web-based platform. This approach allows users to access the system across various devices without the need for native applications.
+==== Web-Based Platform
+Konnektoren is designed as a web-based platform to ensure accessibility and ease of maintenance. This approach allows users to access the system across various devices without the need for native applications, reducing development complexity and improving user reach.
 
-**Rust and Yew Framework:**
-We chose Rust due to its performance, reliability, and robust type system. The Yew framework supports creating interactive UIs with WebAssembly, offering a reactive framework that is ideal for complex user interfaces like those required by Konnektoren.
+==== Rust Programming Language
+We chose Rust as the primary programming language for the Konnektoren project for several key reasons:
+
+1. **Performance**: Rust's zero-cost abstractions and lack of a garbage collector enable high-performance code execution, crucial for complex language learning algorithms and responsive user interfaces.
+
+2. **Safety**: Rust's strict compile-time checks and ownership model eliminate entire classes of bugs, enhancing the overall security and reliability of the application.
+
+3. **WebAssembly Compatibility**: Rust's excellent support for WebAssembly (Wasm) allows us to run complex logic directly in the browser at near-native speed, improving performance and reducing server load.
+
+4. **Minimized Server-side Data**: By leveraging Rust's WebAssembly capabilities, we can run most of our application logic in the frontend, minimizing the amount of user data stored on servers. This approach enhances privacy and reduces server costs.
+
+==== Yew Framework
+The Yew framework was selected as our front-end solution for the following reasons:
+
+1. **Rust Ecosystem Integration**: Yew, being Rust-based, allows us to maintain a consistent language ecosystem throughout our stack, simplifying development and maintenance.
+
+2. **Component-based Architecture**: Yew's component-based model aligns with our preference for modular, reusable code, enhancing maintainability and development efficiency.
+
+3. **WebAssembly Optimization**: Yew's seamless integration with WebAssembly enables us to create high-performance web applications that rival native app performance.
+
+4. **Strong Typing**: Leveraging Rust's type system, Yew provides strong typing for components and their properties, catching potential errors at compile-time rather than runtime.
+
+==== Axum Framework
+For our backend needs, we've chosen the Axum framework:
+
+1. **Performance**: Built on top of Tokio, Axum leverages a high-performance, asynchronous runtime for efficient handling of concurrent operations.
+
+2. **Security**: Axum inherits Rust's strong security guarantees and provides additional features for building secure web services.
+
+3. **Tokio Ecosystem**: Being part of the Tokio ecosystem gives us access to a wide range of well-maintained, high-quality libraries and tools.
+
+4. **Cost-effectiveness**: Axum's efficiency allows us to handle more requests with fewer resources, leading to a more cost-effective backend infrastructure.
 
 === Architectural Decisions
 
-**GitHub Pages Hosting:**
+==== GitHub Pages Hosting
 The front-end application is hosted on GitHub Pages, providing a cost-effective and scalable solution for serving static content. This choice aligns with our goal of minimizing operational costs while ensuring high availability.
 
-**SPA (Single Page Application):**
-The front end is built as a SPA, which interacts with the back-end services via RESTful APIs. This choice supports a seamless and responsive user experience by reducing page reloads and dynamically updating the user interface.
+==== Single Page Application (SPA)
+The front end is built as a SPA, interacting with back-end services via RESTful APIs. This architecture supports a seamless and responsive user experience by reducing page reloads and enabling dynamic UI updates.
 
-**Serverless Architecture:**
-The system is designed as a serverless architecture to reduce operational overhead and improve scalability. By leveraging cloud services like Cloudflare Workers, we can focus on developing features rather than managing infrastructure.
+==== Serverless Architecture
+We've adopted a serverless architecture to reduce operational overhead and improve scalability. By leveraging cloud services like Cloudflare Workers, we can focus on developing features rather than managing infrastructure.
 
-**Cloudflare Proxy:**
-Cloudflare Workers are used as a proxy to secure the communication between the front end and back end, providing an additional layer of security and performance optimization. This decision aligns with our security and performance goals.
+==== Cloudflare Proxy
+Cloudflare Workers are used as a proxy to secure communication between the front end and back end, providing an additional layer of security and performance optimization.
 
 === Achieving Quality Goals
 
-**Usability and User Engagement:**
-To achieve high usability, the UI/UX is designed to be intuitive and engaging, leveraging gamification techniques to motivate learners. Regular user testing ensures that the interface meets the needs of the target audience.
+==== Usability and User Engagement
+To achieve high usability, we've designed an intuitive and engaging UI/UX, leveraging gamification techniques to motivate learners. Regular user testing ensures that the interface meets the needs of our target audience.
 
-**Reliability and Scalability:**
-Using cloud-based services and modern DevOps practices ensures that the system is both reliable and scalable. Automated testing and deployment facilitate continuous improvement and responsiveness to user demands.
+==== Reliability and Scalability
+We utilize cloud-based services and modern DevOps practices to ensure system reliability and scalability. Automated testing and deployment facilitate continuous improvement and responsiveness to user demands.
 
 === Organizational Decisions
 
-**Agile Development Process:**
-The project adopts an Agile methodology to allow for flexibility in development and to incorporate feedback efficiently. This process supports iterative development and continuous improvement, aligning with our quality goals.
+==== Agile Development Process
+The project adopts an Agile methodology to allow for flexibility in development and to efficiently incorporate feedback. This process supports iterative development and continuous improvement, aligning with our quality goals.
+
+By implementing these strategies, we aim to create a robust, performant, and maintainable application that provides a smooth and responsive user experience for language learners while keeping user data private and minimizing server-side costs.
