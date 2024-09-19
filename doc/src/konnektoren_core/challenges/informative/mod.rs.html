@@ -33,6 +33,13 @@
 <a href="#33" id="33">33</a>
 <a href="#34" id="34">34</a>
 <a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
+<a href="#37" id="37">37</a>
+<a href="#38" id="38">38</a>
+<a href="#39" id="39">39</a>
+<a href="#40" id="40">40</a>
+<a href="#41" id="41">41</a>
+<a href="#42" id="42">42</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -64,6 +71,13 @@
     </span><span class="kw">fn </span>from_yaml() {
         <span class="kw">let </span>yaml_data = <span class="macro">include_str!</span>(<span class="string">"../../assets/personal_pronouns_info.yml"</span>);
         <span class="kw">let </span>dataset: Informative = serde_yaml::from_str(yaml_data).unwrap();
+        <span class="macro">assert_eq!</span>(dataset.id, <span class="string">"personal_pronouns_info"</span>);
+        <span class="macro">assert_eq!</span>(dataset.name, <span class="string">"Personal Pronouns Info"</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>default() {
+        <span class="kw">let </span>dataset = Informative::default();
         <span class="macro">assert_eq!</span>(dataset.id, <span class="string">"personal_pronouns_info"</span>);
         <span class="macro">assert_eq!</span>(dataset.name, <span class="string">"Personal Pronouns Info"</span>);
     }
