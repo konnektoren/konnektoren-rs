@@ -1,0 +1,42 @@
+name: Generate CycloneDX SBOM
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Install cyclonedx-bom
+        run: cargo install cargo-cyclonedx
+
+      - name: Generate SBOM
+        run: cargo cyclonedx
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v3
+        with:
+          name: CycloneDX SBOM
+          path: konnektoren-core/konnektoren-core.cdx.xml
+
+      - name: Release SBOM
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: konnektoren-core/konnektoren-core.cdx.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
