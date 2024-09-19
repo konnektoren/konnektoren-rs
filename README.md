@@ -1,6 +1,8 @@
 # konnektoren-rs
 Rust implementation of Konnektoren
 
+[![codecov](https://codecov.io/gh/konnektoren/konnektoren-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/konnektoren/konnektoren-rs)
+
 ## Build
 ```bash
 cargo build
