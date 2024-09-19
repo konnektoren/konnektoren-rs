@@ -149,6 +149,13 @@ mod tests {
     }
 
     #[test]
+    fn test_base64_error() {
+        let base64_encoded = "invalid_base64";
+        let decoded_certificate_data = CertificateData::from_base64(base64_encoded);
+        assert!(decoded_certificate_data.is_err());
+    }
+
+    #[test]
     fn test_certificate_data_new() {
         let certificate_data = CertificateData::new(
             "Level A1".to_string(),
@@ -211,5 +218,23 @@ mod tests {
 
         let certificate_data_copy = certificate_data.new_data_copy();
         assert_ne!(certificate_data, certificate_data_copy);
+    }
+
+    #[test]
+    fn test_certificate_data_from_performance_record() {
+        let performance_record = PerformanceRecord {
+            game_path_id: "Level A1".to_string(),
+            total_challenges: 12,
+            challenges_performance: vec![],
+            performance_percentage: 0,
+            profile_name: "Player".to_string(),
+            date: Utc::now(),
+        };
+
+        let certificate_data: CertificateData = performance_record.into();
+        assert_eq!(certificate_data.game_path_name, "Level A1");
+        assert_eq!(certificate_data.total_challenges, 12);
+        assert_eq!(certificate_data.solved_challenges, 0);
+        assert_eq!(certificate_data.performance_percentage, 0);
     }
 }
