@@ -45,4 +45,23 @@ mod tests {
         challenge_history.add_challenge(challenge);
         assert_eq!(challenge_history.challenges.len(), 1);
     }
+
+    #[test]
+    fn test_len() {
+        let mut challenge_history = ChallengeHistory::new();
+        let challenge = Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
+        challenge_history.add_challenge(challenge);
+        assert_eq!(challenge_history.len(), 1);
+    }
+
+    #[test]
+    fn test_is_empty() {
+        let challenge_history = ChallengeHistory::new();
+        assert!(challenge_history.is_empty());
+
+        let mut challenge_history = ChallengeHistory::new();
+        let challenge = Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
+        challenge_history.add_challenge(challenge);
+        assert!(!challenge_history.is_empty());
+    }
 }

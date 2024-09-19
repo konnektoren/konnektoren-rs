@@ -32,4 +32,11 @@ mod tests {
         assert_eq!(dataset.id, "personal_pronouns_info");
         assert_eq!(dataset.name, "Personal Pronouns Info");
     }
+
+    #[test]
+    fn default() {
+        let dataset = Informative::default();
+        assert_eq!(dataset.id, "personal_pronouns_info");
+        assert_eq!(dataset.name, "Personal Pronouns Info");
+    }
 }

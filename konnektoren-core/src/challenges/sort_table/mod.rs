@@ -88,4 +88,17 @@ mod tests {
         assert_eq!(dataset.columns.len(), 3);
         assert_eq!(dataset.rows.len(), 6);
     }
+
+    #[test]
+    fn default_dataset() {
+        let dataset = SortTable::default();
+        assert_eq!(dataset.id, "personal_pronouns");
+        assert_eq!(dataset.name, "Personal Pronouns");
+        assert_eq!(
+            dataset.description,
+            "Match the personal pronouns in their correct case (Nominativ, Akkusativ, Dativ)"
+        );
+        assert_eq!(dataset.columns.len(), 3);
+        assert_eq!(dataset.rows.len(), 6);
+    }
 }
