@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn serialize_dataset() {
-        let json_str = r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","data":{"key":"value"}}"#;
+        let json_str = r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","i18n":null,"data":{"key":"value"}}"#;
         let dataset = Custom {
             id: "123".to_string(),
             name: "Test".to_string(),

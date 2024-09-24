@@ -2,12 +2,15 @@ use crate::challenges::{Custom, CustomChallengeResult};
 use js_sys::Reflect;
 use serde_wasm_bindgen::to_value;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::{JsCast, JsValue};
 
 pub struct KonnektorenJs {
     js_event_callback: Rc<RefCell<Option<Closure<dyn FnMut(JsValue)>>>>,
+    tr_callback: Rc<RefCell<Option<Closure<dyn FnMut(JsValue) -> JsValue>>>>,
+    translations: Rc<RefCell<HashMap<String, String>>>,
 }
 
 impl KonnektorenJs {
@@ -16,13 +19,15 @@ impl KonnektorenJs {
         let global_obj = window.as_ref();
 
         // Ensure that `window.konnektoren` exists, or create it if it doesn't.
-        if js_sys::Reflect::has(global_obj, &JsValue::from_str("konnektoren")).unwrap() == false {
+        if Reflect::has(global_obj, &JsValue::from_str("konnektoren")).unwrap() == false {
             let obj = js_sys::Object::new();
-            js_sys::Reflect::set(global_obj, &JsValue::from_str("konnektoren"), &obj).unwrap();
+            Reflect::set(global_obj, &JsValue::from_str("konnektoren"), &obj).unwrap();
         }
 
         Self {
             js_event_callback: Rc::new(RefCell::new(None)),
+            tr_callback: Rc::new(RefCell::new(None)),
+            translations: Rc::new(RefCell::new(HashMap::new())),
         }
     }
 
@@ -99,6 +104,43 @@ impl KonnektorenJs {
             log::error!("JavaScript execution failed: {:?}", err);
         }
     }
+
+    /// Sets the i18n data and exposes the `tr` function to JavaScript.
+    pub fn set_i18n_data(&self, i18n_data: serde_json::Value) {
+        let window = web_sys::window().unwrap();
+        let global_obj = window.as_ref();
+
+        let translations_map: HashMap<String, String> =
+            serde_json::from_value(i18n_data.clone()).unwrap();
+        *self.translations.borrow_mut() = translations_map;
+
+        let konnektoren_obj = Reflect::get(global_obj, &JsValue::from_str("konnektoren")).unwrap();
+
+        js_sys::Reflect::set(
+            &konnektoren_obj,
+            &JsValue::from_str("i18n"),
+            &wasm_bindgen::JsValue::from_serde(&i18n_data).unwrap(),
+        )
+        .unwrap();
+
+        let translations = self.translations.clone();
+        let tr_closure = Closure::wrap(Box::new(move |text: JsValue| {
+            let text_str = text.as_string().unwrap_or_default();
+            let translated = translations
+                .borrow()
+                .get(&text_str)
+                .cloned()
+                .unwrap_or_else(|| text_str.clone());
+            JsValue::from_str(&translated)
+        }) as Box<dyn FnMut(JsValue) -> JsValue>);
+
+        *self.tr_callback.borrow_mut() = Some(tr_closure);
+
+        let binding = self.js_event_callback.borrow();
+        let callback_ref = binding.as_ref().unwrap().as_ref().unchecked_ref();
+
+        Reflect::set(&konnektoren_obj, &JsValue::from_str("tr"), callback_ref).unwrap();
+    }
 }
 
 #[cfg(test)]
@@ -123,6 +165,7 @@ mod tests {
             results_html: None,
             css: "".to_string(),
             js: "".to_string(),
+            i18n: None,
             data: serde_json::json!({"key":"value"}),
         };
         konnektoren_js.set_challenge_data(test_custom.clone());
