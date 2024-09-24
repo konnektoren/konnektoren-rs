@@ -1,3 +1,5 @@
+use crate::i18n::i18n_json_loader::I18nJsonLoader;
+use crate::i18n::i18n_loader::I18nLoader;
 use crate::i18n::LANGUAGES;
 use std::collections::HashMap;
 
@@ -15,8 +17,12 @@ impl Default for I18nConfig {
         let supported_languages = LANGUAGES.to_vec();
         let mut translations = HashMap::new();
 
-        let en = serde_json::from_str(include_str!("../assets/i18n/en.json")).unwrap();
-        let de = serde_json::from_str(include_str!("../assets/i18n/de.json")).unwrap();
+        let en = I18nJsonLoader::new(include_str!("../assets/i18n/en.json"))
+            .get_all()
+            .unwrap();
+        let de = I18nJsonLoader::new(include_str!("../assets/i18n/de.json"))
+            .get_all()
+            .unwrap();
 
         translations.insert("en".to_string(), en);
         translations.insert("de".to_string(), de);

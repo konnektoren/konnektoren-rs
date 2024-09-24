@@ -6,6 +6,9 @@ mod config;
 /// The `provider` module defines the components and hooks for managing i18n within the application.
 mod provider;
 
+mod i18n_json_loader;
+mod i18n_loader;
+mod i18n_yml_loader;
 /// The `selected_language` module manages the state of the currently selected language.
 mod selected_language;
 
