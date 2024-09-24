@@ -125,6 +125,9 @@
 <a href="#125" id="125">125</a>
 <a href="#126" id="126">126</a>
 <a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! The `i18n` module contains the internationalization (i18n) functionality for the application.
 
 /// The `config` module contains the configuration for internationalization (i18n).
@@ -133,6 +136,9 @@
 <span class="doccomment">/// The `provider` module defines the components and hooks for managing i18n within the application.
 </span><span class="kw">mod </span>provider;
 
+<span class="kw">mod </span>i18n_json_loader;
+<span class="kw">mod </span>i18n_loader;
+<span class="kw">mod </span>i18n_yml_loader;
 <span class="doccomment">/// The `selected_language` module manages the state of the currently selected language.
 </span><span class="kw">mod </span>selected_language;
 
