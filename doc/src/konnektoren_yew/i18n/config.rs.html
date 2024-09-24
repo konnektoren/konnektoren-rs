@@ -184,7 +184,15 @@
 <a href="#184" id="184">184</a>
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::LANGUAGES;
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::i18n_json_loader::I18nJsonLoader;
+<span class="kw">use </span><span class="kw">crate</span>::i18n::i18n_loader::I18nLoader;
+<span class="kw">use </span><span class="kw">crate</span>::i18n::LANGUAGES;
 <span class="kw">use </span>std::collections::HashMap;
 
 <span class="attr">#[derive(Debug, Clone, PartialEq)]
@@ -201,8 +209,12 @@
         <span class="kw">let </span>supported_languages = LANGUAGES.to_vec();
         <span class="kw">let </span><span class="kw-2">mut </span>translations = HashMap::new();
 
-        <span class="kw">let </span>en = serde_json::from_str(<span class="macro">include_str!</span>(<span class="string">"../assets/i18n/en.json"</span>)).unwrap();
-        <span class="kw">let </span>de = serde_json::from_str(<span class="macro">include_str!</span>(<span class="string">"../assets/i18n/de.json"</span>)).unwrap();
+        <span class="kw">let </span>en = I18nJsonLoader::new(<span class="macro">include_str!</span>(<span class="string">"../assets/i18n/en.json"</span>))
+            .get_all()
+            .unwrap();
+        <span class="kw">let </span>de = I18nJsonLoader::new(<span class="macro">include_str!</span>(<span class="string">"../assets/i18n/de.json"</span>))
+            .get_all()
+            .unwrap();
 
         translations.insert(<span class="string">"en"</span>.to_string(), en);
         translations.insert(<span class="string">"de"</span>.to_string(), de);
