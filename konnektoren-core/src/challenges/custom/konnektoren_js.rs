@@ -116,12 +116,14 @@ impl KonnektorenJs {
 
         let konnektoren_obj = Reflect::get(global_obj, &JsValue::from_str("konnektoren")).unwrap();
 
-        js_sys::Reflect::set(
+        let i18n_data = to_value(&i18n_data).unwrap();
+
+        Reflect::set(
             &konnektoren_obj,
             &JsValue::from_str("i18n"),
-            &wasm_bindgen::JsValue::from_serde(&i18n_data).unwrap(),
+            &i18n_data,
         )
-        .unwrap();
+            .unwrap();
 
         let translations = self.translations.clone();
         let tr_closure = Closure::wrap(Box::new(move |text: JsValue| {
@@ -136,7 +138,7 @@ impl KonnektorenJs {
 
         *self.tr_callback.borrow_mut() = Some(tr_closure);
 
-        let binding = self.js_event_callback.borrow();
+        let binding = self.tr_callback.borrow();
         let callback_ref = binding.as_ref().unwrap().as_ref().unchecked_ref();
 
         Reflect::set(&konnektoren_obj, &JsValue::from_str("tr"), callback_ref).unwrap();
