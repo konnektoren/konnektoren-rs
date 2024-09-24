@@ -3,6 +3,7 @@ use gloo::net::http::Request;
 use konnektoren_core::challenges::{ChallengeResult, Custom, KonnektorenJs};
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
+use crate::i18n::{use_i18n, I18nLoader, I18nYmlLoader, SelectedLanguage};
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct CustomComponentProps {
@@ -18,6 +19,7 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
     let html_content = use_state(|| "".to_string());
     let css_content = use_state(|| "".to_string());
     let js_content = use_state(|| "".to_string());
+    let i18n_content = use_state(|| "".to_string());
     let loading = use_state(|| true);
 
     let konnektoren_js = use_state(|| KonnektorenJs::new());
@@ -26,6 +28,7 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
         let html_content = html_content.clone();
         let css_content = css_content.clone();
         let js_content = js_content.clone();
+        let i18n_content = i18n_content.clone();
         let challenge = props.challenge.clone();
         let loading = loading.clone();
 
@@ -34,11 +37,15 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
                 let html_content = html_content.clone();
                 let css_content = css_content.clone();
                 let js_content = js_content.clone();
+                let i18n_content = i18n_content.clone();
                 let challenge = challenge.clone();
                 async move {
                     fetch_content(&challenge.html, html_content).await;
                     fetch_content(&challenge.css, css_content).await;
                     fetch_content(&challenge.js, js_content).await;
+                    if let Some(challenge_i18n) = &challenge.i18n {
+                        fetch_content(challenge_i18n, i18n_content).await;
+                    }
                     loading.set(false);
                 }
             });
@@ -51,6 +58,7 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
         let js_code = (*js_content).clone();
         let on_event = props.on_event.clone();
         let konnektoren_js = konnektoren_js.clone();
+        let i18n_content = (*i18n_content).clone();
 
         use_effect_with((challenge.clone(), js_code.clone()), move |_| {
             konnektoren_js.set_challenge_data(challenge);
@@ -62,6 +70,15 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
                 }
             });
             konnektoren_js.execute_js(&js_code);
+
+            if !i18n_content.is_empty() {
+                let language = SelectedLanguage::default().get();
+
+                let loader = I18nYmlLoader::new(&i18n_content);
+                let translations = loader.get(&language).unwrap_or_default();
+
+                konnektoren_js.set_i18n_data(translations);
+            }
 
             || ()
         });
@@ -91,6 +108,7 @@ pub async fn fetch_file(path: &str) -> Result<String, String> {
         Some("js") => "application/javascript",
         Some("css") => "text/css",
         Some("html") => "text/html",
+        Some("yml") => "text/yaml",
         _ => "text/plain",
     };
 
