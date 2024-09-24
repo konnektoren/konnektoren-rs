@@ -69,7 +69,7 @@
     <span class="kw">fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, language: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;Value&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>map = HashMap::new();
         <span class="kw">for </span>(key, value) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.i18n {
-            map.insert(key.clone(), value.get(language).unwrap().clone());
+            map.insert(key.clone(), value.get(language).unwrap_or(key).clone());
         }
         <span class="prelude-val">Some</span>(serde_json::to_value(map).unwrap())
     }
