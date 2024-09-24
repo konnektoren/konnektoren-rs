@@ -59,6 +59,9 @@
 <a href="#59" id="59">59</a>
 <a href="#60" id="60">60</a>
 <a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -70,6 +73,7 @@
     <span class="kw">pub </span>results_html: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>css: String,
     <span class="kw">pub </span>js: String,
+    <span class="kw">pub </span>i18n: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>data: serde_json::Value,
 }
 
@@ -92,6 +96,7 @@
             results_html: <span class="prelude-val">None</span>,
             css: <span class="string">""</span>.to_string(),
             js: <span class="string">""</span>.to_string(),
+            i18n: <span class="prelude-val">None</span>,
             data: data.clone(),
         };
 
@@ -102,7 +107,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>serialize_dataset() {
-        <span class="kw">let </span>json_str = <span class="string">r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","data":{"key":"value"}}"#</span>;
+        <span class="kw">let </span>json_str = <span class="string">r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","i18n":null,"data":{"key":"value"}}"#</span>;
         <span class="kw">let </span>dataset = Custom {
             id: <span class="string">"123"</span>.to_string(),
             name: <span class="string">"Test"</span>.to_string(),
@@ -111,6 +116,7 @@
             results_html: <span class="prelude-val">None</span>,
             css: <span class="string">""</span>.to_string(),
             js: <span class="string">""</span>.to_string(),
+            i18n: <span class="prelude-val">None</span>,
             data: <span class="macro">serde_json::json!</span>({
                 <span class="string">"key"</span>: <span class="string">"value"
             </span>}),
