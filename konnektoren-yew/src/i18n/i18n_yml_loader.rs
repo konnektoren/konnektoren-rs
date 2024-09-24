@@ -23,7 +23,7 @@ impl I18nLoader for I18nYmlLoader {
     fn get(&self, language: &str) -> Option<Value> {
         let mut map = HashMap::new();
         for (key, value) in &self.i18n {
-            map.insert(key.clone(), value.get(language).unwrap().clone());
+            map.insert(key.clone(), value.get(language).unwrap_or(key).clone());
         }
         Some(serde_json::to_value(map).unwrap())
     }

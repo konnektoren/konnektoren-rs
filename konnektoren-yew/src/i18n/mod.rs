@@ -12,6 +12,10 @@ mod i18n_yml_loader;
 /// The `selected_language` module manages the state of the currently selected language.
 mod selected_language;
 
+pub use i18n_json_loader::I18nJsonLoader;
+pub use i18n_loader::I18nLoader;
+pub use i18n_yml_loader::I18nYmlLoader;
+
 /// A constant key used to store the selected language in storage.
 pub const LANGUAGE_KEY: &str = "selected_language";
 
