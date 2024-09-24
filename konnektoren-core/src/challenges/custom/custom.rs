@@ -9,6 +9,7 @@ pub struct Custom {
     pub results_html: Option<String>,
     pub css: String,
     pub js: String,
+    pub i18n: Option<String>,
     pub data: serde_json::Value,
 }
 
@@ -31,6 +32,7 @@ mod tests {
             results_html: None,
             css: "".to_string(),
             js: "".to_string(),
+            i18n: None,
             data: data.clone(),
         };
 
@@ -50,6 +52,7 @@ mod tests {
             results_html: None,
             css: "".to_string(),
             js: "".to_string(),
+            i18n: None,
             data: serde_json::json!({
                 "key": "value"
             }),
