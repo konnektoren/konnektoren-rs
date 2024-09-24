@@ -63,7 +63,6 @@
 <a href="#63" id="63">63</a>
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
-<a href="#66" id="66">66</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">use </span>konnektoren_core::challenges::MultipleChoiceOption;
@@ -97,10 +96,9 @@
     });
 
     <span class="macro">html!</span> {
-        &lt;div class=<span class="string">"multiple-choice-option"</span>&gt;
-            &lt;input <span class="kw">type</span>=<span class="string">"radio" </span>name=<span class="string">"multiple-choice-option" </span>id={option.id.to_string()} onclick={on_select} /&gt;
-            &lt;label <span class="kw">for</span>={option.id.to_string()}&gt;{<span class="kw-2">&amp;</span>option.name}&lt;/label&gt;
-        &lt;/div&gt;
+        &lt;button class=<span class="string">"multiple-choice-option" </span>id={option.id.to_string()} onclick={on_select}&gt;
+            {<span class="kw-2">&amp;</span>option.name}
+        &lt;/button&gt;
     }
 }
 
