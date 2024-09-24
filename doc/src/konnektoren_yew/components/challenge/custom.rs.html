@@ -132,12 +132,25 @@
 <a href="#132" id="132">132</a>
 <a href="#133" id="133">133</a>
 <a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::ChallengeEvent;
+<span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
 <span class="kw">use </span>gloo::net::http::Request;
 <span class="kw">use </span>konnektoren_core::challenges::{ChallengeResult, Custom, KonnektorenJs};
 <span class="kw">use </span>wasm_bindgen::JsValue;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::i18n::{use_i18n, I18nLoader, I18nYmlLoader, SelectedLanguage};
 
 <span class="attr">#[derive(Properties, Clone, PartialEq)]
 </span><span class="kw">pub struct </span>CustomComponentProps {
@@ -150,15 +163,18 @@
 
 <span class="attr">#[function_component(CustomComponent)]
 </span><span class="kw">pub fn </span>custom_component(props: <span class="kw-2">&amp;</span>CustomComponentProps) -&gt; Html {
-    <span class="kw">let </span>html_content = use_state(|| <span class="string">""</span>.to_string());
+    <span class="comment">// State hooks for storing content and loading status
+    </span><span class="kw">let </span>html_content = use_state(|| <span class="string">""</span>.to_string());
     <span class="kw">let </span>css_content = use_state(|| <span class="string">""</span>.to_string());
     <span class="kw">let </span>js_content = use_state(|| <span class="string">""</span>.to_string());
     <span class="kw">let </span>i18n_content = use_state(|| <span class="string">""</span>.to_string());
     <span class="kw">let </span>loading = use_state(|| <span class="bool-val">true</span>);
 
-    <span class="kw">let </span>konnektoren_js = use_state(|| KonnektorenJs::new());
+    <span class="comment">// Initialize KonnektorenJs instance
+    </span><span class="kw">let </span>konnektoren_js = use_state(|| KonnektorenJs::new());
 
-    {
+    <span class="comment">// Effect to fetch content when the challenge changes
+    </span>{
         <span class="kw">let </span>html_content = html_content.clone();
         <span class="kw">let </span>css_content = css_content.clone();
         <span class="kw">let </span>js_content = js_content.clone();
@@ -167,64 +183,72 @@
         <span class="kw">let </span>loading = loading.clone();
 
         use_effect_with(challenge.clone(), <span class="kw">move </span>|<span class="kw">_</span>| {
-            wasm_bindgen_futures::spawn_local({
-                <span class="kw">let </span>html_content = html_content.clone();
-                <span class="kw">let </span>css_content = css_content.clone();
-                <span class="kw">let </span>js_content = js_content.clone();
-                <span class="kw">let </span>i18n_content = i18n_content.clone();
-                <span class="kw">let </span>challenge = challenge.clone();
-                <span class="kw">async move </span>{
-                    fetch_content(<span class="kw-2">&amp;</span>challenge.html, html_content).<span class="kw">await</span>;
-                    fetch_content(<span class="kw-2">&amp;</span>challenge.css, css_content).<span class="kw">await</span>;
-                    fetch_content(<span class="kw-2">&amp;</span>challenge.js, js_content).<span class="kw">await</span>;
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(challenge_i18n) = <span class="kw-2">&amp;</span>challenge.i18n {
-                        <span class="macro">log::debug!</span>(<span class="string">"Fetching i18n content: {}"</span>, challenge_i18n);
-                        fetch_content(challenge_i18n, i18n_content).<span class="kw">await</span>;
-                    }
-                    loading.set(<span class="bool-val">false</span>);
+            wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
+                fetch_content(<span class="kw-2">&amp;</span>challenge.html, html_content).<span class="kw">await</span>;
+                fetch_content(<span class="kw-2">&amp;</span>challenge.css, css_content).<span class="kw">await</span>;
+                fetch_content(<span class="kw-2">&amp;</span>challenge.js, js_content).<span class="kw">await</span>;
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(challenge_i18n) = <span class="kw-2">&amp;</span>challenge.i18n {
+                    <span class="macro">log::debug!</span>(<span class="string">"Fetching i18n content: {}"</span>, challenge_i18n);
+                    fetch_content(challenge_i18n, i18n_content).<span class="kw">await</span>;
                 }
+                loading.set(<span class="bool-val">false</span>);
             });
             || ()
         });
     }
 
-    {
-        <span class="kw">let </span>challenge = props.challenge.clone();
-        <span class="kw">let </span>js_code = (<span class="kw-2">*</span>js_content).clone();
-        <span class="kw">let </span>on_event = props.on_event.clone();
+    <span class="comment">// Effect to set up the sendEvent callback once on mount
+    </span>{
         <span class="kw">let </span>konnektoren_js = konnektoren_js.clone();
-        <span class="kw">let </span>i18n_content = (<span class="kw-2">*</span>i18n_content).clone();
+        <span class="kw">let </span>on_event = props.on_event.clone();
 
-        use_effect_with((challenge.clone(), js_code.clone()), <span class="kw">move </span>|<span class="kw">_</span>| {
-            konnektoren_js.set_challenge_data(challenge);
-
+        use_effect(<span class="kw">move </span>|| {
+            <span class="kw">let </span>on_event = on_event.clone();
             konnektoren_js.expose_send_event(<span class="kw">move </span>|event: JsValue| {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event_callback) = <span class="kw-2">&amp;</span>on_event {
                     <span class="kw">let </span>challenge_event: ChallengeEvent = event.into();
                     on_event_callback.emit(challenge_event);
                 }
             });
-            konnektoren_js.execute_js(<span class="kw-2">&amp;</span>js_code);
-
-            <span class="macro">log::debug!</span>(<span class="string">"JS code executed"</span>);
-
-            <span class="macro">log::debug!</span>(<span class="string">"Setting i18n data {}"</span>, i18n_content);
-
-            <span class="kw">if </span>!i18n_content.is_empty() {
-                <span class="kw">let </span>language = SelectedLanguage::default().get();
-
-                <span class="kw">let </span>loader = I18nYmlLoader::new(<span class="kw-2">&amp;</span>i18n_content);
-                <span class="kw">let </span>translations = loader.get(<span class="kw-2">&amp;</span>language).unwrap_or_default();
-
-                konnektoren_js.set_i18n_data(translations);
-                <span class="macro">log::debug!</span>(<span class="string">"I18n data set"</span>);
-            }
-
             || ()
         });
     }
 
-    <span class="kw">let </span>parsed_html = Html::from_html_unchecked(AttrValue::from((<span class="kw-2">*</span>html_content).clone()));
+    <span class="comment">// Effect to process the loaded content after loading is complete
+    </span>{
+        <span class="kw">let </span>konnektoren_js = konnektoren_js.clone();
+        <span class="kw">let </span>challenge = props.challenge.clone();
+        <span class="kw">let </span>js_code = (<span class="kw-2">*</span>js_content).clone();
+        <span class="kw">let </span>i18n_content = (<span class="kw-2">*</span>i18n_content).clone();
+        <span class="kw">let </span>loading = <span class="kw-2">*</span>loading;
+
+        use_effect_with(
+            (loading, challenge, js_code, i18n_content),
+            <span class="kw">move </span>|(loading, challenge, js_code, i18n_content)| {
+                <span class="kw">if </span>!<span class="kw-2">*</span>loading {
+                    <span class="comment">// Set challenge data
+                    </span>konnektoren_js.set_challenge_data(challenge.clone());
+
+                    <span class="comment">// Execute JS code
+                    </span>konnektoren_js.execute_js(<span class="kw-2">&amp;</span>js_code);
+
+                    <span class="comment">// Set i18n data if available
+                    </span><span class="kw">if </span>!(i18n_content).is_empty() {
+                        <span class="kw">let </span>language = SelectedLanguage::default().get();
+                        <span class="kw">let </span>loader = I18nYmlLoader::new(<span class="kw-2">&amp;</span>i18n_content);
+                        <span class="kw">let </span>translations = loader.get(<span class="kw-2">&amp;</span>language).unwrap_or_default();
+                        konnektoren_js.set_i18n_data(translations);
+                        <span class="macro">log::debug!</span>(<span class="string">"I18n data set"</span>);
+                    }
+
+                    <span class="macro">log::debug!</span>(<span class="string">"JS code executed"</span>);
+                }
+            },
+        );
+    }
+
+    <span class="comment">// Render the HTML content
+    </span><span class="kw">let </span>parsed_html = Html::from_html_unchecked(AttrValue::from((<span class="kw-2">*</span>html_content).clone()));
 
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"custom-challenge"</span>&gt;
@@ -236,14 +260,16 @@
     }
 }
 
-<span class="kw">pub async fn </span>fetch_content(path: <span class="kw-2">&amp;</span>str, handle: UseStateHandle&lt;String&gt;) {
+<span class="comment">// Function to fetch content and update the corresponding state
+</span><span class="kw">pub async fn </span>fetch_content(path: <span class="kw-2">&amp;</span>str, handle: UseStateHandle&lt;String&gt;) {
     <span class="kw">match </span>fetch_file(path).<span class="kw">await </span>{
         <span class="prelude-val">Ok</span>(content) =&gt; handle.set(content),
         <span class="prelude-val">Err</span>(err) =&gt; <span class="macro">log::error!</span>(<span class="string">"Failed to fetch the file content of {}: {}"</span>, path, err),
     }
 }
 
-<span class="kw">pub async fn </span>fetch_file(path: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;String, String&gt; {
+<span class="comment">// Function to fetch a file's content
+</span><span class="kw">pub async fn </span>fetch_file(path: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;String, String&gt; {
     <span class="kw">let </span>header_value = <span class="kw">match </span>path.split(<span class="string">'.'</span>).last() {
         <span class="prelude-val">Some</span>(<span class="string">"js"</span>) =&gt; <span class="string">"application/javascript"</span>,
         <span class="prelude-val">Some</span>(<span class="string">"css"</span>) =&gt; <span class="string">"text/css"</span>,
