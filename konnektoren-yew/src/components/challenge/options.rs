@@ -32,8 +32,9 @@ fn render_option(
 
     html! {
         <div class="multiple-choice-option">
-            <input type="radio" name="multiple-choice-option" id={option.id.to_string()} onclick={on_select} />
-            <label for={option.id.to_string()}>{&option.name}</label>
+            <span id={option.id.to_string()} onclick={on_select} >
+                {&option.name}
+            </span>
         </div>
     }
 }
