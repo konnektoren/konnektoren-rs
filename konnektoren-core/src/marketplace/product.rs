@@ -5,7 +5,7 @@ pub struct Product {
     pub id: Option<String>,
     pub name: String,
     pub description: String,
-    pub price: f64,
+    pub price: Option<f64>,
     pub image: Option<String>,
     pub tags: Vec<String>,
     pub data_path: Option<String>,
@@ -17,7 +17,7 @@ impl Product {
             id: None,
             name,
             description,
-            price: 0.0,
+            price: Option::from(0.0),
             image: None,
             tags: vec![],
             data_path: None,
@@ -34,7 +34,7 @@ mod tests {
         let product = Product::new("Test".to_string(), "Test".to_string());
         assert_eq!(product.name, "Test");
         assert_eq!(product.description, "Test");
-        assert_eq!(product.price, 0.0);
+        assert_eq!(product.price, None);
         assert_eq!(product.tags.len(), 0);
     }
 }

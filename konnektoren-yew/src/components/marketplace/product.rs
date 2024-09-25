@@ -8,6 +8,12 @@ pub struct ProductComponentProps {
 
 #[function_component(ProductComponent)]
 pub fn product_component(props: &ProductComponentProps) -> Html {
+    let price = match props.product.price {
+        Some(price) => html! {
+            <span>{format!("Price: {}", price)}</span>
+        },
+        None => html!(),
+    };
     html! {
         <div class="product">
             <div class="product-header">
@@ -18,8 +24,8 @@ pub fn product_component(props: &ProductComponentProps) -> Html {
                 <img src={props.product.image.clone()} alt={props.product.name.clone()} />
             </div>
             <div class="product-footer">
-                <span>{format!("Price: {}", &props.product.price)}</span>
-                <button>{"Buy"}</button>
+                {price}
+                <button>{"Get"}</button>
             </div>
         </div>
     }
@@ -34,13 +40,27 @@ mod preview {
         ProductComponent,
         ProductComponentProps::default(),
         (
-            "test",
+            "no price",
             ProductComponentProps {
                 product: Product {
                     id: None,
                     name: "Test Product".to_string(),
                     description: "This is a Test Product".to_string(),
-                    price: 0.0,
+                    price: None,
+                    image: None,
+                    tags: vec![],
+                    data_path: None
+                }
+            }
+        ),
+        (
+            "with price",
+            ProductComponentProps {
+                product: Product {
+                    id: None,
+                    name: "Test Product".to_string(),
+                    description: "This is a Test Product".to_string(),
+                    price: Some(1.0),
                     image: None,
                     tags: vec![],
                     data_path: None
