@@ -14,6 +14,20 @@ pub fn product_component(props: &ProductComponentProps) -> Html {
         },
         None => html!(),
     };
+    let image = match &props.product.image {
+        Some(image) => {
+            if image.starts_with("fa-") {
+                html! {
+                    <i class={format!("fas {}", image)}></i>
+                }
+            } else {
+                html! {
+                    <img src={image.to_string()} alt={props.product.name.clone()} class="product-image" />
+                }
+            }
+        }
+        None => html!(),
+    };
     html! {
         <div class="product">
             <div class="product-header">
@@ -21,7 +35,7 @@ pub fn product_component(props: &ProductComponentProps) -> Html {
             </div>
             <div class="product-body">
                 <p>{props.product.description.clone()}</p>
-                <img src={props.product.image.clone()} alt={props.product.name.clone()} />
+                {image}
             </div>
             <div class="product-footer">
                 {price}
