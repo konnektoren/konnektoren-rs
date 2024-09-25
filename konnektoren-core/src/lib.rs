@@ -7,6 +7,9 @@ pub mod session;
 #[cfg(feature = "certificates")]
 pub mod certificates;
 
+#[cfg(feature = "marketplace")]
+pub mod marketplace;
+
 /// experience points
 pub type Xp = u32;
 
@@ -27,6 +30,9 @@ pub mod prelude {
     pub use crate::player_profile::PlayerProfile;
     pub use crate::session::Session;
     pub use crate::Xp;
+
+    #[cfg(feature = "marketplace")]
+    pub use crate::marketplace::*;
 }
 
 #[cfg(feature = "js")]
