@@ -13,8 +13,9 @@ keywords = ["konnektoren", "core", "library"]
 crate-type = ["rlib"]
 
 [features]
-default = ["certificates", "js"]
+default = ["certificates", "marketplace", "js"]
 certificates = ["base64", "sha2", "serde_cbor", "ed25519-dalek", "rmp-serde", "image", "imageproc", "ab_glyph", "plot_icon", "qrcode"]
+marketplace = []
 js = ["serde-wasm-bindgen", "wasm-bindgen", "wasm-bindgen-futures", "web-sys", "js-sys", "gloo"]
 
 [dependencies]

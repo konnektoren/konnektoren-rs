@@ -17,6 +17,9 @@ mod select_level;
 mod settings;
 pub mod translate;
 
+#[cfg(feature = "marketplace")]
+pub mod marketplace;
+
 pub use challenge::*;
 pub use challenge_config::ChallengeConfigComponent;
 pub use challenge_info::ChallengeInfoComponent;
@@ -39,5 +42,8 @@ pub use profile::ProfilePointsComponent;
 
 #[cfg(feature = "music")]
 pub use music::MusicComponent;
+
+#[cfg(feature = "marketplace")]
+pub use marketplace::*;
 
 pub use settings::*;

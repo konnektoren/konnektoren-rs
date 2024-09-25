@@ -118,12 +118,7 @@ impl KonnektorenJs {
 
         let i18n_data = to_value(&i18n_data).unwrap();
 
-        Reflect::set(
-            &konnektoren_obj,
-            &JsValue::from_str("i18n"),
-            &i18n_data,
-        )
-            .unwrap();
+        Reflect::set(&konnektoren_obj, &JsValue::from_str("i18n"), &i18n_data).unwrap();
 
         let translations = self.translations.clone();
         let tr_closure = Closure::wrap(Box::new(move |text: JsValue| {
