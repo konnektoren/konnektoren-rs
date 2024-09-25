@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["certificates","challenges","commands","game","player_profile","prelude","session"],"type":["Xp"]};
+window.SIDEBAR_ITEMS = {"mod":["certificates","challenges","commands","game","marketplace","player_profile","prelude","session"],"type":["Xp"]};

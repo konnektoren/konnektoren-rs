@@ -175,9 +175,13 @@
 <a href="#175" id="175">175</a>
 <a href="#176" id="176">176</a>
 <a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{
     challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
-    ChallengeInfoComponent, MusicComponent, ProgressBar, SettingsComponent, TranslateComponent,
+    ChallengeInfoComponent, MusicComponent, ProductCatalogComponent, ProductComponent, ProgressBar,
+    SettingsComponent, TranslateComponent,
 };
 
 <span class="attr">#[cfg(feature = <span class="string">"storage"</span>)]
@@ -338,6 +342,8 @@
         SelectLanguage::preview(),
         SelectLevelComp::preview(),
         SettingsComponent::preview(),
+        ProductComponent::preview(),
+        ProductCatalogComponent::preview(),
         <span class="macro">create_component_item!</span>(<span class="string">"Example"</span>, Example, <span class="macro">vec!</span>[(<span class="string">"default"</span>, ())]),
     ];
 

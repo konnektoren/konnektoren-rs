@@ -263,11 +263,6 @@
 <a href="#263" id="263">263</a>
 <a href="#264" id="264">264</a>
 <a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{Custom, CustomChallengeResult};
 <span class="kw">use </span>js_sys::Reflect;
 <span class="kw">use </span>serde_wasm_bindgen::to_value;
@@ -388,12 +383,7 @@
 
         <span class="kw">let </span>i18n_data = to_value(<span class="kw-2">&amp;</span>i18n_data).unwrap();
 
-        Reflect::set(
-            <span class="kw-2">&amp;</span>konnektoren_obj,
-            <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"i18n"</span>),
-            <span class="kw-2">&amp;</span>i18n_data,
-        )
-            .unwrap();
+        Reflect::set(<span class="kw-2">&amp;</span>konnektoren_obj, <span class="kw-2">&amp;</span>JsValue::from_str(<span class="string">"i18n"</span>), <span class="kw-2">&amp;</span>i18n_data).unwrap();
 
         <span class="kw">let </span>translations = <span class="self">self</span>.translations.clone();
         <span class="kw">let </span>tr_closure = Closure::wrap(Box::new(<span class="kw">move </span>|text: JsValue| {
