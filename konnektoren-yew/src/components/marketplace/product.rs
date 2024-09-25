@@ -28,6 +28,16 @@ pub fn product_component(props: &ProductComponentProps) -> Html {
         }
         None => html!(),
     };
+    let tags = props
+        .product
+        .tags
+        .iter()
+        .map(|tag| {
+            html! {
+                <span>{tag}</span>
+            }
+        })
+        .collect::<Html>();
     html! {
         <div class="product">
             <div class="product-header">
@@ -36,6 +46,9 @@ pub fn product_component(props: &ProductComponentProps) -> Html {
             <div class="product-body">
                 <p>{props.product.description.clone()}</p>
                 {image}
+                <div class="product-tags">
+                    {tags}
+                </div>
             </div>
             <div class="product-footer">
                 {price}
@@ -76,7 +89,7 @@ mod preview {
                     description: "This is a Test Product".to_string(),
                     price: Some(1.0),
                     image: None,
-                    tags: vec![],
+                    tags: vec!["tag1".to_string(), "tag2".to_string()],
                     data_path: None
                 }
             }
