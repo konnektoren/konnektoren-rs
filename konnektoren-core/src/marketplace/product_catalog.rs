@@ -1,7 +1,7 @@
 use super::Product;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 pub struct ProductCatalog {
     pub id: String,
     pub products: Vec<Product>,

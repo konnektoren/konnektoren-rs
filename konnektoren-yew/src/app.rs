@@ -1,7 +1,7 @@
 use crate::components::{
     challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
-    ChallengeInfoComponent, MusicComponent, ProductComponent, ProgressBar, SettingsComponent,
-    TranslateComponent,
+    ChallengeInfoComponent, MusicComponent, ProductCatalogComponent, ProductComponent, ProgressBar,
+    SettingsComponent, TranslateComponent,
 };
 
 #[cfg(feature = "storage")]
@@ -163,6 +163,7 @@ pub fn App() -> Html {
         SelectLevelComp::preview(),
         SettingsComponent::preview(),
         ProductComponent::preview(),
+        ProductCatalogComponent::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];
 
