@@ -4,6 +4,8 @@ use yew::prelude::*;
 #[derive(Properties, PartialEq, Default)]
 pub struct ProductComponentProps {
     pub product: Product,
+    #[prop_or_default]
+    pub on_select: Option<Callback<Product>>,
 }
 
 #[function_component(ProductComponent)]
@@ -38,6 +40,19 @@ pub fn product_component(props: &ProductComponentProps) -> Html {
             }
         })
         .collect::<Html>();
+    let get_button = if let Some(on_select) = &props.on_select {
+        let on_select = on_select.clone();
+        let product = props.product.clone();
+        html! {
+            <button class="product-button" onclick={
+                Callback::from(move |_| on_select.emit(product.clone()))
+            }>
+                {"Get"}
+            </button>
+        }
+    } else {
+        html! {}
+    };
     html! {
         <div class="product">
             <div class="product-header">
@@ -52,7 +67,7 @@ pub fn product_component(props: &ProductComponentProps) -> Html {
             </div>
             <div class="product-footer">
                 {price}
-                <button>{"Get"}</button>
+                {get_button}
             </div>
         </div>
     }
@@ -77,7 +92,8 @@ mod preview {
                     image: None,
                     tags: vec![],
                     data_path: None
-                }
+                },
+                on_select: None,
             }
         ),
         (
@@ -91,7 +107,8 @@ mod preview {
                     image: None,
                     tags: vec!["tag1".to_string(), "tag2".to_string()],
                     data_path: None
-                }
+                },
+                on_select: Some(Callback::noop()),
             }
         )
     );

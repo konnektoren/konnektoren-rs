@@ -1,21 +1,24 @@
 use crate::components::ProductComponent;
-use konnektoren_core::marketplace::ProductCatalog;
+use konnektoren_core::marketplace::{Product, ProductCatalog};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Default)]
 pub struct ProductCatalogCompProps {
     pub product_catalog: ProductCatalog,
+    #[prop_or_default]
+    pub on_select: Option<Callback<Product>>,
 }
 
 #[function_component(ProductCatalogComponent)]
 pub fn product_catalog_component(props: &ProductCatalogCompProps) -> Html {
+    let on_select = props.on_select.clone();
     let products = props
         .product_catalog
         .products
         .iter()
         .map(|product| {
             html! {
-                <ProductComponent product={product.clone()} />
+                <ProductComponent product={product.clone()} on_select={on_select.clone()} />
             }
         })
         .collect::<Html>();
@@ -42,7 +45,8 @@ mod preview {
                 product_catalog: ProductCatalog {
                     id: "".to_string(),
                     products: vec![],
-                }
+                },
+                on_select: None,
             }
         ),
         (
@@ -70,7 +74,8 @@ mod preview {
                             data_path: None
                         },
                     ],
-                }
+                },
+                on_select: Some(Callback::noop()),
             }
         )
     );
