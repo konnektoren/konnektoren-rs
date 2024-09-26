@@ -37,7 +37,7 @@ pub fn create_certificate(
     let cert_width = 1200;
     let cert_height = 900;
     let border_thickness = 30u32;
-    let qr_code_size = 150;
+    let qr_code_size = 250;
 
     // Create QR code
     let qr_code = QrCode::with_error_correction_level(url, EcLevel::H).unwrap();
@@ -170,7 +170,7 @@ pub fn create_certificate(
         &mut cert_image,
         &resized_qr_code_image,
         (cert_width - qr_code_size) as i64 / 2,
-        (cert_height - qr_code_size - 50) as i64, // Moved up slightly
+        (cert_height - qr_code_size - 80) as i64, // Moved up slightly
     );
 
     Ok(DynamicImage::ImageRgba8(cert_image))
