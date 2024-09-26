@@ -34,7 +34,7 @@ mod tests {
         let product = Product::new("Test".to_string(), "Test".to_string());
         assert_eq!(product.name, "Test");
         assert_eq!(product.description, "Test");
-        assert_eq!(product.price, None);
+        assert_eq!(product.price, Some(0.0));
         assert_eq!(product.tags.len(), 0);
     }
 }
