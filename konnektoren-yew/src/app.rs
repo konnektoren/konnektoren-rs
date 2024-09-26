@@ -1,7 +1,7 @@
 use crate::components::{
-    challenge::ChallengeComponent, game_path::GamePathComponent, CertificateImageComponent,
-    ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent, ProductCatalogComponent,
-    ProductComponent, ProgressBar, SettingsComponent, TranslateComponent,
+    challenge::ChallengeComponent, game_path::GamePathComponent, AchievementsComponent,
+    CertificateImageComponent, ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent,
+    ProductCatalogComponent, ProductComponent, ProgressBar, SettingsComponent, TranslateComponent,
 };
 
 #[cfg(feature = "storage")]
@@ -156,6 +156,7 @@ pub fn App() -> Html {
         ProgressBar::preview(),
         QuestionComponent::preview(),
         TranslateComponent::preview(),
+        AchievementsComponent::preview(),
         CertificateComponent::preview(),
         CertificateImageComponent::preview(),
         ReadText::preview(),
