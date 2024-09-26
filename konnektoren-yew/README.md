@@ -24,3 +24,9 @@ then visit http://localhost:8080
 cargo test
 wasm-pack test --firefox --headless
 ```
+
+To test the components in isolation, run the following command:
+
+```bash
+trunk serve --features=yew-preview
+```
