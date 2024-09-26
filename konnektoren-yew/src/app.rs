@@ -1,7 +1,7 @@
 use crate::components::{
-    challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
-    ChallengeInfoComponent, MusicComponent, ProductCatalogComponent, ProductComponent, ProgressBar,
-    SettingsComponent, TranslateComponent,
+    challenge::ChallengeComponent, game_path::GamePathComponent, CertificateImageComponent,
+    ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent, ProductCatalogComponent,
+    ProductComponent, ProgressBar, SettingsComponent, TranslateComponent,
 };
 
 #[cfg(feature = "storage")]
@@ -18,8 +18,7 @@ use crate::effects::BlinkAnimation;
 use crate::prelude::{
     BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, ChallengeRatingComponent,
     ChallengeReviewComponent, InformativeComponent, InformativeMarkdownComponent, MapComponent,
-    ModelCoordinate, OptionsComponent, QuestionComponent, ReadText, SelectLanguage,
-    SelectLevelComp,
+    OptionsComponent, QuestionComponent, ReadText, SelectLanguage, SelectLevelComp,
 };
 
 use crate::i18n::{I18nConfig, I18nProvider};
@@ -158,6 +157,7 @@ pub fn App() -> Html {
         QuestionComponent::preview(),
         TranslateComponent::preview(),
         CertificateComponent::preview(),
+        CertificateImageComponent::preview(),
         ReadText::preview(),
         SelectLanguage::preview(),
         SelectLevelComp::preview(),

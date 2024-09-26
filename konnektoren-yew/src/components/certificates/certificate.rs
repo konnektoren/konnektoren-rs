@@ -1,3 +1,4 @@
+use crate::components::CertificateImageComponent;
 use gloo::timers::callback::Timeout;
 use konnektoren_core::certificates::{create_certificate_data_url, CertificateData};
 use urlencoding::encode;
@@ -57,6 +58,10 @@ pub fn certificate(props: &CertificateProps) -> Html {
         })
     };
 
+    let certificate_data = props.certificate_data.clone();
+    let hostname = props.hostname.clone();
+    let protocol = props.protocol.clone();
+
     html! {
         <div class="certificate-container">
             <h2>{ "Certificate of Achievement" }</h2>
@@ -75,15 +80,7 @@ pub fn certificate(props: &CertificateProps) -> Html {
                     <p class="copied-message">{"Link copied to clipboard!"}</p>
                 }
             </div>
-            <div class="certificate-image">
-                {
-                    if let Some(img_src) = img_src {
-                        html! { <img src={img_src}/> }
-                    } else {
-                        html! { <p>{ "Error creating certificate image" }</p> }
-                    }
-                }
-            </div>
+            <CertificateImageComponent {certificate_data} {hostname} {protocol} />
         </div>
     }
 }
