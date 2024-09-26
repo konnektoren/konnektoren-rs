@@ -45,6 +45,8 @@ pub fn certificate(props: &CertificateProps) -> Html {
     let hostname = props.hostname.clone();
     let protocol = props.protocol.clone();
 
+    let verified = certificate_data.verify();
+
     html! {
         <div class="certificate-container">
             <h2>{ "Certificate of Achievement" }</h2>
@@ -55,6 +57,7 @@ pub fn certificate(props: &CertificateProps) -> Html {
                 <p><strong>{ "Solved Challenges: " }</strong>{ &props.certificate_data.solved_challenges }</p>
                 <p><strong>{ "Performance Percentage: " }</strong>{ format!("{}%", &props.certificate_data.performance_percentage) }</p>
                 <p><strong>{ "Date: " }</strong>{ &props.certificate_data.date.to_string() }</p>
+                { render_verification_status(verified) }
             </div>
             <div class="share-section">
                 <input type="text" class="share-url-input" readonly=true value={share_url.clone()} />
@@ -68,10 +71,41 @@ pub fn certificate(props: &CertificateProps) -> Html {
     }
 }
 
+fn render_verification_status(verified: bool) -> Html {
+    let (icon, text, class) = if verified {
+        ("fas fa-check-circle", "Certificate Verified", "verified")
+    } else {
+        (
+            "fas fa-exclamation-triangle",
+            "Certificate Not Verified",
+            "not-verified",
+        )
+    };
+
+    html! {
+        <div class={classes!("verification-status", class)}>
+            <i class={icon}></i>
+            <span>{ text }</span>
+        </div>
+    }
+}
+
 #[cfg(feature = "yew-preview")]
 mod preview {
     use super::*;
     use yew_preview::prelude::*;
+
+    fn get_certificate_data() -> CertificateData {
+        let mut certificate = CertificateData::new(
+            "Level A1".to_string(),
+            12,
+            10,
+            "Player".to_string(),
+            Default::default(),
+        );
+        certificate.create_signature();
+        certificate
+    }
 
     yew_preview::create_preview!(
         CertificateComponent,
@@ -86,6 +120,14 @@ mod preview {
                     "Player".to_string(),
                     Default::default(),
                 ),
+                hostname: Some("localhost".to_string()),
+                protocol: Some("http:".to_string()),
+            }
+        ),
+        (
+            "signed",
+            CertificateProps {
+                certificate_data: get_certificate_data(),
                 hostname: Some("localhost".to_string()),
                 protocol: Some("http:".to_string()),
             }
