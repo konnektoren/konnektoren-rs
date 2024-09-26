@@ -92,26 +92,9 @@
 <a href="#92" id="92">92</a>
 <a href="#93" id="93">93</a>
 <a href="#94" id="94">94</a>
-<a href="#95" id="95">95</a>
-<a href="#96" id="96">96</a>
-<a href="#97" id="97">97</a>
-<a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a>
-<a href="#101" id="101">101</a>
-<a href="#102" id="102">102</a>
-<a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
-<a href="#105" id="105">105</a>
-<a href="#106" id="106">106</a>
-<a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::CertificateImageComponent;
 <span class="kw">use </span>gloo::timers::callback::Timeout;
-<span class="kw">use </span>konnektoren_core::certificates::{create_certificate_data_url, CertificateData};
+<span class="kw">use </span>konnektoren_core::certificates::CertificateData;
 <span class="kw">use </span>urlencoding::encode;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>yew_hooks::{use_clipboard, UseClipboardHandle};
@@ -129,23 +112,6 @@
 </span><span class="kw">pub fn </span>certificate(props: <span class="kw-2">&amp;</span>CertificateProps) -&gt; Html {
     <span class="kw">let </span>clipboard_handle: UseClipboardHandle = use_clipboard();
     <span class="kw">let </span>show_copied_message = use_state(|| <span class="bool-val">false</span>);
-
-    <span class="kw">let </span>share_url = <span class="macro">format!</span>(
-        <span class="string">"{}://{}/?page=results&amp;code={}"</span>,
-        props.protocol.clone().unwrap_or_default(),
-        props.hostname.clone().unwrap_or_default(),
-        <span class="kw-2">&amp;</span>props.certificate_data.to_base64()
-    );
-
-    <span class="kw">let </span>img_src = {
-        create_certificate_data_url(
-            <span class="kw-2">&amp;</span>props.certificate_data,
-            <span class="kw-2">&amp;</span>share_url,
-            <span class="kw-2">&amp;</span>props.hostname.clone().unwrap_or_default(),
-        )
-        .map_err(|err| <span class="macro">html!</span> { &lt;p&gt;{ <span class="string">"Error creating certificate image: " </span>}{ err }&lt;/p&gt; })
-        .ok()
-    };
 
     <span class="kw">let </span>share_url = <span class="macro">format!</span>(
         <span class="string">"{}//{}/?page=results&amp;code={}"</span>,
@@ -215,7 +181,7 @@
                     Default::default(),
                 ),
                 hostname: <span class="prelude-val">Some</span>(<span class="string">"localhost"</span>.to_string()),
-                protocol: <span class="prelude-val">Some</span>(<span class="string">"http"</span>.to_string()),
+                protocol: <span class="prelude-val">Some</span>(<span class="string">"http:"</span>.to_string()),
             }
         )
     );

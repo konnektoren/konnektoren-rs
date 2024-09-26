@@ -246,6 +246,12 @@
 <a href="#246" id="246">246</a>
 <a href="#247" id="247">247</a>
 <a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::CertificateData;
 <span class="kw">use </span>ab_glyph::{Font, FontRef, PxScale, ScaleFont};
 <span class="kw">use </span>anyhow::Result;
@@ -254,28 +260,42 @@
 <span class="kw">use </span>image::{imageops, DynamicImage, ImageBuffer, ImageFormat, ImageReader, Luma, Rgba, RgbaImage};
 <span class="kw">use </span>imageproc::drawing::draw_text_mut;
 <span class="kw">use </span>imageproc::rect::Rect;
+<span class="kw">use </span>lazy_static::lazy_static;
 <span class="kw">use </span>plot_icon::generate_png;
 <span class="kw">use </span>qrcode::{EcLevel, QrCode};
-<span class="kw">use </span>std::cmp;
 <span class="kw">use </span>std::io::Cursor;
+
+<span class="comment">// Define color constants
+</span><span class="kw">const </span>BORDER_COLOR: Rgba&lt;u8&gt; = Rgba([<span class="number">0</span>, <span class="number">82</span>, <span class="number">165</span>, <span class="number">255</span>]); <span class="comment">// Deep Blue
+</span><span class="kw">const </span>BACKGROUND_COLOR: Rgba&lt;u8&gt; = Rgba([<span class="number">255</span>, <span class="number">253</span>, <span class="number">245</span>, <span class="number">255</span>]); <span class="comment">// Soft Cream
+</span><span class="kw">const </span>TEXT_COLOR: Rgba&lt;u8&gt; = Rgba([<span class="number">51</span>, <span class="number">51</span>, <span class="number">51</span>, <span class="number">255</span>]); <span class="comment">// Dark Gray
+</span><span class="kw">const </span>HIGHLIGHT_COLOR: Rgba&lt;u8&gt; = Rgba([<span class="number">0</span>, <span class="number">121</span>, <span class="number">193</span>, <span class="number">255</span>]); <span class="comment">// Bright Blue
+
+// Define font constants
+</span><span class="kw">const </span>TITLE_FONT_SIZE: f32 = <span class="number">48.0</span>;
+<span class="kw">const </span>BODY_FONT_SIZE: f32 = <span class="number">24.0</span>;
+<span class="kw">const </span>SMALL_FONT_SIZE: f32 = <span class="number">18.0</span>;
+
+<span class="macro">lazy_static!</span> {
+    <span class="kw">static </span><span class="kw-2">ref </span>TITLE_FONT: FontRef&lt;<span class="lifetime">'static</span>&gt; =
+        FontRef::try_from_slice(<span class="macro">include_bytes!</span>(<span class="string">"../assets/Montserrat-Bold.ttf"</span>)).unwrap();
+    <span class="kw">static </span><span class="kw-2">ref </span>BODY_FONT: FontRef&lt;<span class="lifetime">'static</span>&gt; =
+        FontRef::try_from_slice(<span class="macro">include_bytes!</span>(<span class="string">"../assets/Lora-Regular.ttf"</span>)).unwrap();
+}
 
 <span class="kw">pub fn </span>create_certificate(
     certificate_data: <span class="kw-2">&amp;</span>CertificateData,
     url: <span class="kw-2">&amp;</span>str,
     issuer: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;DynamicImage&gt; {
-    <span class="kw">let </span>cert_width = <span class="number">1000</span>;
-    <span class="kw">let </span>cert_height = <span class="number">800</span>;
-    <span class="kw">let </span>border_color = Rgba([<span class="number">0</span>, <span class="number">123</span>, <span class="number">255</span>, <span class="number">255</span>]);
-    <span class="kw">let </span>border_thickness = <span class="number">20u32</span>;
-    <span class="kw">let </span>highlight_color = Rgba([<span class="number">0</span>, <span class="number">123</span>, <span class="number">255</span>, <span class="number">255</span>]);
-    <span class="kw">let </span>text_color = Rgba([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">255</span>]);
-    <span class="kw">let </span>background_color = Rgba([<span class="number">249</span>, <span class="number">249</span>, <span class="number">249</span>, <span class="number">255</span>]);
+    <span class="kw">let </span>cert_width = <span class="number">1200</span>;
+    <span class="kw">let </span>cert_height = <span class="number">900</span>;
+    <span class="kw">let </span>border_thickness = <span class="number">30u32</span>;
     <span class="kw">let </span>qr_code_size = <span class="number">150</span>;
 
-    <span class="kw">let </span>qr_code = QrCode::with_error_correction_level(url, EcLevel::H).unwrap();
+    <span class="comment">// Create QR code
+    </span><span class="kw">let </span>qr_code = QrCode::with_error_correction_level(url, EcLevel::H).unwrap();
     <span class="kw">let </span>qr_code_image = qr_code.render::&lt;Luma&lt;u8&gt;&gt;().quiet_zone(<span class="bool-val">false</span>).build();
-
     <span class="kw">let </span>qr_code_image_rgba =
         ImageBuffer::from_fn(qr_code_image.width(), qr_code_image.height(), |x, y| {
             <span class="kw">let </span>pixel = qr_code_image.get_pixel(x, y);
@@ -285,7 +305,6 @@
                 Rgba([<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>])
             }
         });
-
     <span class="kw">let </span>resized_qr_code_image = imageops::resize(
         <span class="kw-2">&amp;</span>qr_code_image_rgba,
         qr_code_size,
@@ -293,146 +312,125 @@
         imageops::FilterType::Nearest,
     );
 
-    <span class="kw">let </span><span class="kw-2">mut </span>cert_image = RgbaImage::new(cert_width, cert_height);
+    <span class="comment">// Create base image
+    </span><span class="kw">let </span><span class="kw-2">mut </span>cert_image = RgbaImage::new(cert_width, cert_height);
 
-    <span class="kw">let </span>logo_bytes = <span class="macro">include_bytes!</span>(<span class="string">"../assets/favicon.png"</span>);
-    <span class="kw">let </span>logo_image = ImageReader::new(Cursor::new(logo_bytes))
-        .with_guessed_format()
-        .expect(<span class="string">"Failed to guess image format"</span>)
-        .decode()
-        .expect(<span class="string">"Failed to decode image"</span>);
-
-    <span class="kw">let </span>identicon_image = {
-        <span class="kw">let </span>data: Vec&lt;u8&gt; = generate_png(certificate_data.to_base64().as_bytes(), <span class="number">75</span>)
-            .expect(<span class="string">"Failed to generate identicon"</span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>image = ImageReader::new(Cursor::new(data));
-        image.set_format(image::ImageFormat::Png);
-        image.decode().expect(<span class="string">"Failed to decode image"</span>)
-    };
-
-    <span class="kw">let </span>scaled_logo_image = imageops::resize(<span class="kw-2">&amp;</span>logo_image, <span class="number">100</span>, <span class="number">100</span>, imageops::FilterType::Nearest);
-
-    imageproc::drawing::draw_filled_rect_mut(
+    <span class="comment">// Draw border and background
+    </span>imageproc::drawing::draw_filled_rect_mut(
         <span class="kw-2">&amp;mut </span>cert_image,
         Rect::at(<span class="number">0</span>, <span class="number">0</span>).of_size(cert_width, cert_height),
-        border_color,
+        BORDER_COLOR,
     );
-
     imageproc::drawing::draw_filled_rect_mut(
         <span class="kw-2">&amp;mut </span>cert_image,
         Rect::at(border_thickness <span class="kw">as </span>i32, border_thickness <span class="kw">as </span>i32).of_size(
             cert_width - <span class="number">2 </span>* border_thickness,
             cert_height - <span class="number">2 </span>* border_thickness,
         ),
-        background_color,
+        BACKGROUND_COLOR,
     );
 
-    <span class="kw">let </span>font_data: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../assets/Lora-Regular.ttf"</span>);
-    <span class="kw">let </span>font = FontRef::try_from_slice(font_data).unwrap();
+    <span class="comment">// Load and draw logo
+    </span><span class="kw">let </span>logo_bytes = <span class="macro">include_bytes!</span>(<span class="string">"../assets/favicon.png"</span>);
+    <span class="kw">let </span>logo_image = ImageReader::new(Cursor::new(logo_bytes))
+        .with_guessed_format()
+        .expect(<span class="string">"Failed to guess image format"</span>)
+        .decode()
+        .expect(<span class="string">"Failed to decode image"</span>);
+    <span class="kw">let </span>scaled_logo_image = imageops::resize(<span class="kw-2">&amp;</span>logo_image, <span class="number">120</span>, <span class="number">120</span>, imageops::FilterType::Lanczos3);
+    image::imageops::overlay(<span class="kw-2">&amp;mut </span>cert_image, <span class="kw-2">&amp;</span>scaled_logo_image, <span class="number">50</span>, <span class="number">50</span>);
 
-    image::imageops::overlay(<span class="kw-2">&amp;mut </span>cert_image, <span class="kw-2">&amp;</span>scaled_logo_image, <span class="number">40</span>, <span class="number">40</span>);
-    <span class="kw">let </span>cert_width = cert_image.width();
+    <span class="comment">// Generate and draw identicon
+    </span><span class="kw">let </span>identicon_image = {
+        <span class="kw">let </span>data: Vec&lt;u8&gt; = generate_png(certificate_data.to_base64().as_bytes(), <span class="number">90</span>)
+            .expect(<span class="string">"Failed to generate identicon"</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>image = ImageReader::new(Cursor::new(data));
+        image.set_format(image::ImageFormat::Png);
+        image.decode().expect(<span class="string">"Failed to decode image"</span>)
+    };
     image::imageops::overlay(
         <span class="kw-2">&amp;mut </span>cert_image,
         <span class="kw-2">&amp;</span>identicon_image,
-        cert_width <span class="kw">as </span>i64 - <span class="number">40 </span>- <span class="number">75</span>,
-        <span class="number">40</span>,
+        cert_width <span class="kw">as </span>i64 - <span class="number">140</span>,
+        <span class="number">50</span>,
     );
 
-    <span class="kw">let </span>title = <span class="string">"Certificate of Achievement"</span>;
-    <span class="kw">let </span>scale_title = PxScale::from(<span class="number">40.0</span>);
-    <span class="kw">let </span>title_width = calculate_text_width(<span class="kw-2">&amp;</span>font, scale_title, title);
-    draw_text_mut(
+    <span class="comment">// Draw title
+    </span><span class="kw">let </span>title = <span class="string">"Certificate of Achievement"</span>;
+    draw_text_centered(
         <span class="kw-2">&amp;mut </span>cert_image,
-        highlight_color,
-        cmp::max(<span class="number">0</span>, (cert_width <span class="kw">as </span>i32 - title_width <span class="kw">as </span>i32) / <span class="number">2</span>) <span class="kw">as </span>i32,
-        <span class="number">80</span>,
-        scale_title,
-        <span class="kw-2">&amp;</span>font,
-        title,
+        <span class="kw-2">&amp;</span>TITLE_FONT,
+        TITLE_FONT_SIZE,
+        <span class="kw-2">&amp;</span>title,
+        <span class="number">120</span>,
+        HIGHLIGHT_COLOR,
     );
 
-    <span class="kw">let </span>name = <span class="kw-2">&amp;</span>certificate_data.profile_name;
-    <span class="kw">let </span>scale_name = PxScale::from(<span class="number">30.0</span>);
-    <span class="kw">let </span>name_width = calculate_text_width(<span class="kw-2">&amp;</span>font, scale_name, name);
-    draw_text_mut(
-        <span class="kw-2">&amp;mut </span>cert_image,
-        text_color,
-        cmp::max(<span class="number">0</span>, (cert_width <span class="kw">as </span>i32 - name_width <span class="kw">as </span>i32) / <span class="number">2</span>) <span class="kw">as </span>i32,
-        <span class="number">150</span>,
-        scale_name,
-        <span class="kw-2">&amp;</span>font,
-        name,
+    <span class="comment">// Draw achievement message
+    </span><span class="kw">let </span>achievement = <span class="macro">format!</span>(
+        <span class="string">"Successfully completed the {} path"</span>,
+        certificate_data.game_path_name
     );
-
-    <span class="kw">let </span>message = <span class="macro">format!</span>(
-        <span class="string">"has completed the {} game path with {} challenges solved out of {} total challenges."</span>,
-        certificate_data.game_path_name,
-        certificate_data.solved_challenges,
-        certificate_data.total_challenges
-    );
-    <span class="kw">let </span>scale_message = PxScale::from(<span class="number">20.0</span>);
-    <span class="kw">let </span>message_width = calculate_text_width(<span class="kw-2">&amp;</span>font, scale_message, <span class="kw-2">&amp;</span>message);
-    draw_text_mut(
+    draw_text_centered(
         <span class="kw-2">&amp;mut </span>cert_image,
-        text_color,
-        cmp::max(<span class="number">0</span>, (cert_width <span class="kw">as </span>i32 - message_width <span class="kw">as </span>i32) / <span class="number">2</span>) <span class="kw">as </span>i32,
-        <span class="number">200</span>,
-        scale_message,
-        <span class="kw-2">&amp;</span>font,
-        <span class="kw-2">&amp;</span>message,
-    );
-
-    <span class="kw">let </span>performance_message = <span class="macro">format!</span>(<span class="string">"Performance: {}%"</span>, certificate_data.performance_percentage);
-    <span class="kw">let </span>scale_performance = PxScale::from(<span class="number">20.0</span>);
-    <span class="kw">let </span>performance_width = calculate_text_width(<span class="kw-2">&amp;</span>font, scale_performance, <span class="kw-2">&amp;</span>performance_message);
-    draw_text_mut(
-        <span class="kw-2">&amp;mut </span>cert_image,
-        Rgba([<span class="number">0u8</span>, <span class="number">0u8</span>, <span class="number">0u8</span>, <span class="number">255u8</span>]),
-        cmp::max(<span class="number">0</span>, (cert_width <span class="kw">as </span>i32 - performance_width <span class="kw">as </span>i32) / <span class="number">2</span>) <span class="kw">as </span>i32,
-        <span class="number">250</span>,
-        scale_performance,
-        <span class="kw-2">&amp;</span>font,
-        <span class="kw-2">&amp;</span>performance_message,
-    );
-
-    <span class="kw">let </span>date_str = <span class="macro">format!</span>(<span class="string">"{}"</span>, certificate_data.date.format(<span class="string">"%d %B %Y"</span>));
-    <span class="kw">let </span>scale_date = PxScale::from(<span class="number">20.0</span>);
-    <span class="kw">let </span>date_width = calculate_text_width(<span class="kw-2">&amp;</span>font, scale_date, <span class="kw-2">&amp;</span>date_str);
-    draw_text_mut(
-        <span class="kw-2">&amp;mut </span>cert_image,
-        text_color,
-        cmp::max(<span class="number">0</span>, (cert_width <span class="kw">as </span>i32 - date_width <span class="kw">as </span>i32) / <span class="number">2</span>) <span class="kw">as </span>i32,
+        <span class="kw-2">&amp;</span>BODY_FONT,
+        BODY_FONT_SIZE,
+        <span class="kw-2">&amp;</span>achievement,
         <span class="number">300</span>,
-        scale_date,
-        <span class="kw-2">&amp;</span>font,
-        <span class="kw-2">&amp;</span>date_str,
+        TEXT_COLOR,
     );
 
-    <span class="kw">let </span>issued_by_message = <span class="macro">format!</span>(<span class="string">"Issued by {}"</span>, issuer);
-    <span class="kw">let </span>scale_issued_by = PxScale::from(<span class="number">20.0</span>);
-    <span class="kw">let </span>issued_by_width = calculate_text_width(<span class="kw-2">&amp;</span>font, scale_issued_by, <span class="kw-2">&amp;</span>issued_by_message);
-    draw_text_mut(
+    <span class="comment">// Draw performance summary
+    </span><span class="kw">let </span>performance = <span class="macro">format!</span>(
+        <span class="string">"Completed {} out of {} challenges with {}% performance"</span>,
+        certificate_data.solved_challenges,
+        certificate_data.total_challenges,
+        certificate_data.performance_percentage
+    );
+    draw_text_centered(
         <span class="kw-2">&amp;mut </span>cert_image,
-        highlight_color,
-        cmp::max(<span class="number">0</span>, (cert_width <span class="kw">as </span>i32 - issued_by_width <span class="kw">as </span>i32) / <span class="number">2</span>) <span class="kw">as </span>i32,
+        <span class="kw-2">&amp;</span>BODY_FONT,
+        BODY_FONT_SIZE,
+        <span class="kw-2">&amp;</span>performance,
         <span class="number">350</span>,
-        scale_issued_by,
-        <span class="kw-2">&amp;</span>font,
-        <span class="kw-2">&amp;</span>issued_by_message,
+        TEXT_COLOR,
     );
 
-    <span class="kw">let </span>qr_code_size = resized_qr_code_image.width() <span class="kw">as </span>u32;
+    <span class="comment">// Draw date
+    </span><span class="kw">let </span>date_str = <span class="macro">format!</span>(<span class="string">"Issued on {}"</span>, certificate_data.date.format(<span class="string">"%d %B %Y"</span>));
+    draw_text_centered(
+        <span class="kw-2">&amp;mut </span>cert_image,
+        <span class="kw-2">&amp;</span>BODY_FONT,
+        SMALL_FONT_SIZE,
+        <span class="kw-2">&amp;</span>date_str,
+        <span class="number">460</span>,
+        TEXT_COLOR,
+    );
+
+    <span class="comment">// Draw issuer
+    </span><span class="kw">let </span>issued_by_message = <span class="macro">format!</span>(<span class="string">"Issued by {}"</span>, issuer);
+    draw_text_centered(
+        <span class="kw-2">&amp;mut </span>cert_image,
+        <span class="kw-2">&amp;</span>BODY_FONT,
+        SMALL_FONT_SIZE,
+        <span class="kw-2">&amp;</span>issued_by_message,
+        <span class="number">510</span>,
+        HIGHLIGHT_COLOR,
+    );
+
+    <span class="comment">// Draw QR code
+    </span><span class="kw">let </span>qr_code_size = resized_qr_code_image.width() <span class="kw">as </span>u32;
     imageops::overlay(
         <span class="kw-2">&amp;mut </span>cert_image,
         <span class="kw-2">&amp;</span>resized_qr_code_image,
-        cmp::max(<span class="number">0</span>, (cert_width <span class="kw">as </span>i32 - qr_code_size <span class="kw">as </span>i32) / <span class="number">2</span>) <span class="kw">as </span>i64,
-        (cert_height - qr_code_size - <span class="number">50</span>) <span class="kw">as </span>i64,
-    );
+        (cert_width - qr_code_size) <span class="kw">as </span>i64 / <span class="number">2</span>,
+        (cert_height - qr_code_size - <span class="number">50</span>) <span class="kw">as </span>i64, <span class="comment">// Moved up slightly
+    </span>);
+
     <span class="prelude-val">Ok</span>(DynamicImage::ImageRgba8(cert_image))
 }
 
-<span class="kw">fn </span>calculate_text_width(font: <span class="kw-2">&amp;</span>FontRef, scale: PxScale, text: <span class="kw-2">&amp;</span>str) -&gt; u32 {
+<span class="kw">pub fn </span>calculate_text_width(font: <span class="kw-2">&amp;</span>FontRef, scale: PxScale, text: <span class="kw-2">&amp;</span>str) -&gt; u32 {
     <span class="kw">let </span>scaled_font = font.as_scaled(scale);
     text.chars().fold(<span class="number">0.0</span>, |acc, c| {
         acc + scaled_font.h_advance(scaled_font.scaled_glyph(c).id)
@@ -443,7 +441,7 @@
     certificate_data: <span class="kw-2">&amp;</span>CertificateData,
     url: <span class="kw-2">&amp;</span>str,
     issuer: <span class="kw-2">&amp;</span>str,
-) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+) -&gt; std::result::Result&lt;String, Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; {
     <span class="kw">let </span>image = create_certificate(certificate_data, url, issuer)<span class="question-mark">?</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>image_data: Vec&lt;u8&gt; = Vec::new();
@@ -452,6 +450,20 @@
         .unwrap();
     <span class="kw">let </span>res_base64 = general_purpose::STANDARD.encode(image_data);
     <span class="prelude-val">Ok</span>(<span class="macro">format!</span>(<span class="string">"data:image/png;base64,{}"</span>, res_base64))
+}
+
+<span class="kw">pub fn </span>draw_text_centered(
+    image: <span class="kw-2">&amp;mut </span>RgbaImage,
+    font: <span class="kw-2">&amp;</span>FontRef,
+    font_size: f32,
+    text: <span class="kw-2">&amp;</span>str,
+    y: u32,
+    color: Rgba&lt;u8&gt;,
+) {
+    <span class="kw">let </span>scale = PxScale::from(font_size);
+    <span class="kw">let </span>text_width = calculate_text_width(font, scale, text);
+    <span class="kw">let </span>x = (image.width() <span class="kw">as </span>i32 - text_width <span class="kw">as </span>i32) / <span class="number">2</span>;
+    draw_text_mut(image, color, x, y <span class="kw">as </span>i32, scale, font, text);
 }
 
 <span class="attr">#[cfg(test)]
@@ -468,10 +480,10 @@
             <span class="string">"Test Player"</span>.to_string(),
             Utc::now(),
         );
-        <span class="kw">let </span>url = <span class="string">"https://example.com"</span>;
+        <span class="kw">let </span>url = <span class="string">"https://example.com"</span>.to_string();
         <span class="kw">let </span>issuer = <span class="string">"Test Issuer"</span>;
 
-        <span class="kw">let </span>image = create_certificate(<span class="kw-2">&amp;</span>certificate_data, url, issuer).unwrap();
+        <span class="kw">let </span>image = create_certificate(<span class="kw-2">&amp;</span>certificate_data, <span class="kw-2">&amp;</span>url, issuer).unwrap();
 
         <span class="macro">assert!</span>(image.width() &gt; <span class="number">100</span>);
         <span class="macro">assert!</span>(image.height() &gt; <span class="number">100</span>);
