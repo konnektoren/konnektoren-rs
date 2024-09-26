@@ -74,7 +74,7 @@
         <span class="kw">let </span>product = Product::new(<span class="string">"Test"</span>.to_string(), <span class="string">"Test"</span>.to_string());
         <span class="macro">assert_eq!</span>(product.name, <span class="string">"Test"</span>);
         <span class="macro">assert_eq!</span>(product.description, <span class="string">"Test"</span>);
-        <span class="macro">assert_eq!</span>(product.price, <span class="prelude-val">None</span>);
+        <span class="macro">assert_eq!</span>(product.price, <span class="prelude-val">Some</span>(<span class="number">0.0</span>));
         <span class="macro">assert_eq!</span>(product.tags.len(), <span class="number">0</span>);
     }
 }
