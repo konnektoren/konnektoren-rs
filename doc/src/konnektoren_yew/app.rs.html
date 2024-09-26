@@ -178,10 +178,11 @@
 <a href="#178" id="178">178</a>
 <a href="#179" id="179">179</a>
 <a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{
-    challenge::ChallengeComponent, game_path::GamePathComponent, CertificateImageComponent,
-    ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent, ProductCatalogComponent,
-    ProductComponent, ProgressBar, SettingsComponent, TranslateComponent,
+    challenge::ChallengeComponent, game_path::GamePathComponent, AchievementsComponent,
+    CertificateImageComponent, ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent,
+    ProductCatalogComponent, ProductComponent, ProgressBar, SettingsComponent, TranslateComponent,
 };
 
 <span class="attr">#[cfg(feature = <span class="string">"storage"</span>)]
@@ -336,6 +337,7 @@
         ProgressBar::preview(),
         QuestionComponent::preview(),
         TranslateComponent::preview(),
+        AchievementsComponent::preview(),
         CertificateComponent::preview(),
         CertificateImageComponent::preview(),
         ReadText::preview(),
