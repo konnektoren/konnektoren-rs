@@ -6,28 +6,42 @@ use base64::Engine as _;
 use image::{imageops, DynamicImage, ImageBuffer, ImageFormat, ImageReader, Luma, Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use imageproc::rect::Rect;
+use lazy_static::lazy_static;
 use plot_icon::generate_png;
 use qrcode::{EcLevel, QrCode};
-use std::cmp;
 use std::io::Cursor;
+
+// Define color constants
+const BORDER_COLOR: Rgba<u8> = Rgba([0, 82, 165, 255]); // Deep Blue
+const BACKGROUND_COLOR: Rgba<u8> = Rgba([255, 253, 245, 255]); // Soft Cream
+const TEXT_COLOR: Rgba<u8> = Rgba([51, 51, 51, 255]); // Dark Gray
+const HIGHLIGHT_COLOR: Rgba<u8> = Rgba([0, 121, 193, 255]); // Bright Blue
+
+// Define font constants
+const TITLE_FONT_SIZE: f32 = 48.0;
+const BODY_FONT_SIZE: f32 = 24.0;
+const SMALL_FONT_SIZE: f32 = 18.0;
+
+lazy_static! {
+    static ref TITLE_FONT: FontRef<'static> =
+        FontRef::try_from_slice(include_bytes!("../assets/Montserrat-Bold.ttf")).unwrap();
+    static ref BODY_FONT: FontRef<'static> =
+        FontRef::try_from_slice(include_bytes!("../assets/Lora-Regular.ttf")).unwrap();
+}
 
 pub fn create_certificate(
     certificate_data: &CertificateData,
     url: &str,
     issuer: &str,
 ) -> Result<DynamicImage> {
-    let cert_width = 1000;
-    let cert_height = 800;
-    let border_color = Rgba([0, 123, 255, 255]);
-    let border_thickness = 20u32;
-    let highlight_color = Rgba([0, 123, 255, 255]);
-    let text_color = Rgba([0, 0, 0, 255]);
-    let background_color = Rgba([249, 249, 249, 255]);
+    let cert_width = 1200;
+    let cert_height = 900;
+    let border_thickness = 30u32;
     let qr_code_size = 150;
 
+    // Create QR code
     let qr_code = QrCode::with_error_correction_level(url, EcLevel::H).unwrap();
     let qr_code_image = qr_code.render::<Luma<u8>>().quiet_zone(false).build();
-
     let qr_code_image_rgba =
         ImageBuffer::from_fn(qr_code_image.width(), qr_code_image.height(), |x, y| {
             let pixel = qr_code_image.get_pixel(x, y);
@@ -37,7 +51,6 @@ pub fn create_certificate(
                 Rgba([255, 255, 255, 255])
             }
         });
-
     let resized_qr_code_image = imageops::resize(
         &qr_code_image_rgba,
         qr_code_size,
@@ -45,146 +58,125 @@ pub fn create_certificate(
         imageops::FilterType::Nearest,
     );
 
+    // Create base image
     let mut cert_image = RgbaImage::new(cert_width, cert_height);
 
-    let logo_bytes = include_bytes!("../assets/favicon.png");
-    let logo_image = ImageReader::new(Cursor::new(logo_bytes))
-        .with_guessed_format()
-        .expect("Failed to guess image format")
-        .decode()
-        .expect("Failed to decode image");
-
-    let identicon_image = {
-        let data: Vec<u8> = generate_png(certificate_data.to_base64().as_bytes(), 75)
-            .expect("Failed to generate identicon");
-        let mut image = ImageReader::new(Cursor::new(data));
-        image.set_format(image::ImageFormat::Png);
-        image.decode().expect("Failed to decode image")
-    };
-
-    let scaled_logo_image = imageops::resize(&logo_image, 100, 100, imageops::FilterType::Nearest);
-
+    // Draw border and background
     imageproc::drawing::draw_filled_rect_mut(
         &mut cert_image,
         Rect::at(0, 0).of_size(cert_width, cert_height),
-        border_color,
+        BORDER_COLOR,
     );
-
     imageproc::drawing::draw_filled_rect_mut(
         &mut cert_image,
         Rect::at(border_thickness as i32, border_thickness as i32).of_size(
             cert_width - 2 * border_thickness,
             cert_height - 2 * border_thickness,
         ),
-        background_color,
+        BACKGROUND_COLOR,
     );
 
-    let font_data: &[u8] = include_bytes!("../assets/Lora-Regular.ttf");
-    let font = FontRef::try_from_slice(font_data).unwrap();
+    // Load and draw logo
+    let logo_bytes = include_bytes!("../assets/favicon.png");
+    let logo_image = ImageReader::new(Cursor::new(logo_bytes))
+        .with_guessed_format()
+        .expect("Failed to guess image format")
+        .decode()
+        .expect("Failed to decode image");
+    let scaled_logo_image = imageops::resize(&logo_image, 120, 120, imageops::FilterType::Lanczos3);
+    image::imageops::overlay(&mut cert_image, &scaled_logo_image, 50, 50);
 
-    image::imageops::overlay(&mut cert_image, &scaled_logo_image, 40, 40);
-    let cert_width = cert_image.width();
+    // Generate and draw identicon
+    let identicon_image = {
+        let data: Vec<u8> = generate_png(certificate_data.to_base64().as_bytes(), 90)
+            .expect("Failed to generate identicon");
+        let mut image = ImageReader::new(Cursor::new(data));
+        image.set_format(image::ImageFormat::Png);
+        image.decode().expect("Failed to decode image")
+    };
     image::imageops::overlay(
         &mut cert_image,
         &identicon_image,
-        cert_width as i64 - 40 - 75,
-        40,
+        cert_width as i64 - 140,
+        50,
     );
 
+    // Draw title
     let title = "Certificate of Achievement";
-    let scale_title = PxScale::from(40.0);
-    let title_width = calculate_text_width(&font, scale_title, title);
-    draw_text_mut(
+    draw_text_centered(
         &mut cert_image,
-        highlight_color,
-        cmp::max(0, (cert_width as i32 - title_width as i32) / 2) as i32,
-        80,
-        scale_title,
-        &font,
-        title,
+        &TITLE_FONT,
+        TITLE_FONT_SIZE,
+        &title,
+        120,
+        HIGHLIGHT_COLOR,
     );
 
-    let name = &certificate_data.profile_name;
-    let scale_name = PxScale::from(30.0);
-    let name_width = calculate_text_width(&font, scale_name, name);
-    draw_text_mut(
-        &mut cert_image,
-        text_color,
-        cmp::max(0, (cert_width as i32 - name_width as i32) / 2) as i32,
-        150,
-        scale_name,
-        &font,
-        name,
+    // Draw achievement message
+    let achievement = format!(
+        "Successfully completed the {} path",
+        certificate_data.game_path_name
     );
-
-    let message = format!(
-        "has completed the {} game path with {} challenges solved out of {} total challenges.",
-        certificate_data.game_path_name,
-        certificate_data.solved_challenges,
-        certificate_data.total_challenges
-    );
-    let scale_message = PxScale::from(20.0);
-    let message_width = calculate_text_width(&font, scale_message, &message);
-    draw_text_mut(
+    draw_text_centered(
         &mut cert_image,
-        text_color,
-        cmp::max(0, (cert_width as i32 - message_width as i32) / 2) as i32,
-        200,
-        scale_message,
-        &font,
-        &message,
-    );
-
-    let performance_message = format!("Performance: {}%", certificate_data.performance_percentage);
-    let scale_performance = PxScale::from(20.0);
-    let performance_width = calculate_text_width(&font, scale_performance, &performance_message);
-    draw_text_mut(
-        &mut cert_image,
-        Rgba([0u8, 0u8, 0u8, 255u8]),
-        cmp::max(0, (cert_width as i32 - performance_width as i32) / 2) as i32,
-        250,
-        scale_performance,
-        &font,
-        &performance_message,
-    );
-
-    let date_str = format!("{}", certificate_data.date.format("%d %B %Y"));
-    let scale_date = PxScale::from(20.0);
-    let date_width = calculate_text_width(&font, scale_date, &date_str);
-    draw_text_mut(
-        &mut cert_image,
-        text_color,
-        cmp::max(0, (cert_width as i32 - date_width as i32) / 2) as i32,
+        &BODY_FONT,
+        BODY_FONT_SIZE,
+        &achievement,
         300,
-        scale_date,
-        &font,
-        &date_str,
+        TEXT_COLOR,
     );
 
-    let issued_by_message = format!("Issued by {}", issuer);
-    let scale_issued_by = PxScale::from(20.0);
-    let issued_by_width = calculate_text_width(&font, scale_issued_by, &issued_by_message);
-    draw_text_mut(
+    // Draw performance summary
+    let performance = format!(
+        "Completed {} out of {} challenges with {}% performance",
+        certificate_data.solved_challenges,
+        certificate_data.total_challenges,
+        certificate_data.performance_percentage
+    );
+    draw_text_centered(
         &mut cert_image,
-        highlight_color,
-        cmp::max(0, (cert_width as i32 - issued_by_width as i32) / 2) as i32,
+        &BODY_FONT,
+        BODY_FONT_SIZE,
+        &performance,
         350,
-        scale_issued_by,
-        &font,
-        &issued_by_message,
+        TEXT_COLOR,
     );
 
+    // Draw date
+    let date_str = format!("Issued on {}", certificate_data.date.format("%d %B %Y"));
+    draw_text_centered(
+        &mut cert_image,
+        &BODY_FONT,
+        SMALL_FONT_SIZE,
+        &date_str,
+        460,
+        TEXT_COLOR,
+    );
+
+    // Draw issuer
+    let issued_by_message = format!("Issued by {}", issuer);
+    draw_text_centered(
+        &mut cert_image,
+        &BODY_FONT,
+        SMALL_FONT_SIZE,
+        &issued_by_message,
+        510,
+        HIGHLIGHT_COLOR,
+    );
+
+    // Draw QR code
     let qr_code_size = resized_qr_code_image.width() as u32;
     imageops::overlay(
         &mut cert_image,
         &resized_qr_code_image,
-        cmp::max(0, (cert_width as i32 - qr_code_size as i32) / 2) as i64,
-        (cert_height - qr_code_size - 50) as i64,
+        (cert_width - qr_code_size) as i64 / 2,
+        (cert_height - qr_code_size - 50) as i64, // Moved up slightly
     );
+
     Ok(DynamicImage::ImageRgba8(cert_image))
 }
 
-fn calculate_text_width(font: &FontRef, scale: PxScale, text: &str) -> u32 {
+pub fn calculate_text_width(font: &FontRef, scale: PxScale, text: &str) -> u32 {
     let scaled_font = font.as_scaled(scale);
     text.chars().fold(0.0, |acc, c| {
         acc + scaled_font.h_advance(scaled_font.scaled_glyph(c).id)
@@ -195,7 +187,7 @@ pub fn create_certificate_data_url(
     certificate_data: &CertificateData,
     url: &str,
     issuer: &str,
-) -> Result<String> {
+) -> std::result::Result<String, Box<dyn std::error::Error>> {
     let image = create_certificate(certificate_data, url, issuer)?;
 
     let mut image_data: Vec<u8> = Vec::new();
@@ -204,6 +196,20 @@ pub fn create_certificate_data_url(
         .unwrap();
     let res_base64 = general_purpose::STANDARD.encode(image_data);
     Ok(format!("data:image/png;base64,{}", res_base64))
+}
+
+pub fn draw_text_centered(
+    image: &mut RgbaImage,
+    font: &FontRef,
+    font_size: f32,
+    text: &str,
+    y: u32,
+    color: Rgba<u8>,
+) {
+    let scale = PxScale::from(font_size);
+    let text_width = calculate_text_width(font, scale, text);
+    let x = (image.width() as i32 - text_width as i32) / 2;
+    draw_text_mut(image, color, x, y as i32, scale, font, text);
 }
 
 #[cfg(test)]
@@ -220,10 +226,10 @@ mod tests {
             "Test Player".to_string(),
             Utc::now(),
         );
-        let url = "https://example.com";
+        let url = "https://example.com".to_string();
         let issuer = "Test Issuer";
 
-        let image = create_certificate(&certificate_data, url, issuer).unwrap();
+        let image = create_certificate(&certificate_data, &url, issuer).unwrap();
 
         assert!(image.width() > 100);
         assert!(image.height() > 100);

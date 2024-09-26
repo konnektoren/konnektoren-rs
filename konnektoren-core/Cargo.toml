@@ -14,15 +14,34 @@ crate-type = ["rlib"]
 
 [features]
 default = ["certificates", "marketplace", "js"]
-certificates = ["base64", "sha2", "serde_cbor", "ed25519-dalek", "rmp-serde", "image", "imageproc", "ab_glyph", "plot_icon", "qrcode"]
+certificates = [
+    "base64",
+    "sha2",
+    "serde_cbor",
+    "ed25519-dalek",
+    "rmp-serde",
+    "image",
+    "imageproc",
+    "ab_glyph",
+    "plot_icon",
+    "qrcode",
+    "lazy_static",
+]
 marketplace = []
-js = ["serde-wasm-bindgen", "wasm-bindgen", "wasm-bindgen-futures", "web-sys", "js-sys", "gloo"]
+js = [
+    "serde-wasm-bindgen",
+    "wasm-bindgen",
+    "wasm-bindgen-futures",
+    "web-sys",
+    "js-sys",
+    "gloo",
+]
 
 [dependencies]
 anyhow = "1.0"
 chrono = { version = "0.4.38", features = ["serde"] }
 log = { version = "0.4" }
-names = { version = "0.15.0-dev", git="https://github.com/jakswa/names", default-features = false }
+names = { version = "0.15.0-dev", git = "https://github.com/jakswa/names", default-features = false }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.9.33"
@@ -37,11 +56,14 @@ imageproc = { version = "0.25", optional = true }
 ab_glyph = { version = "0.2.28", optional = true }
 plot_icon = { version = "0.3.0", optional = true }
 qrcode = { version = "0.14.1", optional = true }
+lazy_static = { version = "1.4", optional = true }
 # js features
 gloo = { version = "0.11.0", optional = true }
 js-sys = { version = "0.3.70", optional = true }
 serde-wasm-bindgen = { version = "0.6.5", optional = true }
-wasm-bindgen = { version = "0.2.93", optional = true, features = ["serde-serialize"] }
+wasm-bindgen = { version = "0.2.93", optional = true, features = [
+    "serde-serialize",
+] }
 wasm-bindgen-futures = { version = "0.4.43", optional = true }
 web-sys = { version = "0.3.70", optional = true, features = ["Window"] }
 

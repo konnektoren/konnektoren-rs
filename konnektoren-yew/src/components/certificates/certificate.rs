@@ -1,6 +1,6 @@
 use crate::components::CertificateImageComponent;
 use gloo::timers::callback::Timeout;
-use konnektoren_core::certificates::{create_certificate_data_url, CertificateData};
+use konnektoren_core::certificates::CertificateData;
 use urlencoding::encode;
 use yew::prelude::*;
 use yew_hooks::{use_clipboard, UseClipboardHandle};
@@ -18,23 +18,6 @@ pub struct CertificateProps {
 pub fn certificate(props: &CertificateProps) -> Html {
     let clipboard_handle: UseClipboardHandle = use_clipboard();
     let show_copied_message = use_state(|| false);
-
-    let share_url = format!(
-        "{}://{}/?page=results&code={}",
-        props.protocol.clone().unwrap_or_default(),
-        props.hostname.clone().unwrap_or_default(),
-        &props.certificate_data.to_base64()
-    );
-
-    let img_src = {
-        create_certificate_data_url(
-            &props.certificate_data,
-            &share_url,
-            &props.hostname.clone().unwrap_or_default(),
-        )
-        .map_err(|err| html! { <p>{ "Error creating certificate image: " }{ err }</p> })
-        .ok()
-    };
 
     let share_url = format!(
         "{}//{}/?page=results&code={}",
@@ -104,7 +87,7 @@ mod preview {
                     Default::default(),
                 ),
                 hostname: Some("localhost".to_string()),
-                protocol: Some("http".to_string()),
+                protocol: Some("http:".to_string()),
             }
         )
     );
