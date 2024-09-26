@@ -291,7 +291,7 @@
     <span class="kw">let </span>cert_width = <span class="number">1200</span>;
     <span class="kw">let </span>cert_height = <span class="number">900</span>;
     <span class="kw">let </span>border_thickness = <span class="number">30u32</span>;
-    <span class="kw">let </span>qr_code_size = <span class="number">150</span>;
+    <span class="kw">let </span>qr_code_size = <span class="number">250</span>;
 
     <span class="comment">// Create QR code
     </span><span class="kw">let </span>qr_code = QrCode::with_error_correction_level(url, EcLevel::H).unwrap();
@@ -424,7 +424,7 @@
         <span class="kw-2">&amp;mut </span>cert_image,
         <span class="kw-2">&amp;</span>resized_qr_code_image,
         (cert_width - qr_code_size) <span class="kw">as </span>i64 / <span class="number">2</span>,
-        (cert_height - qr_code_size - <span class="number">50</span>) <span class="kw">as </span>i64, <span class="comment">// Moved up slightly
+        (cert_height - qr_code_size - <span class="number">80</span>) <span class="kw">as </span>i64, <span class="comment">// Moved up slightly
     </span>);
 
     <span class="prelude-val">Ok</span>(DynamicImage::ImageRgba8(cert_image))
