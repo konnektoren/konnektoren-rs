@@ -17,15 +17,21 @@ impl Default for I18nConfig {
         let supported_languages = LANGUAGES.to_vec();
         let mut translations = HashMap::new();
 
-        let en = I18nJsonLoader::new(include_str!("../assets/i18n/en.json"))
-            .get_all()
-            .unwrap();
-        let de = I18nJsonLoader::new(include_str!("../assets/i18n/de.json"))
-            .get_all()
-            .unwrap();
-
-        translations.insert("en".to_string(), en);
-        translations.insert("de".to_string(), de);
+        let i18n_data = [
+            ("ar", include_str!("../assets/i18n/ar.json")),
+            ("cn", include_str!("../assets/i18n/cn.json")),
+            ("en", include_str!("../assets/i18n/en.json")),
+            ("de", include_str!("../assets/i18n/de.json")),
+            ("es", include_str!("../assets/i18n/es.json")),
+            ("pl", include_str!("../assets/i18n/pl.json")),
+            ("tr", include_str!("../assets/i18n/tr.json")),
+            ("ua", include_str!("../assets/i18n/ua.json")),
+        ];
+        for (lang, data) in i18n_data.iter() {
+            let loader = I18nJsonLoader::new(data);
+            let json_data = loader.get_all().unwrap();
+            translations.insert(lang.to_string(), json_data);
+        }
 
         Self {
             supported_languages,
@@ -88,7 +94,7 @@ mod tests {
         let config = I18nConfig::default();
 
         assert_eq!(config.supported_languages.len(), 8);
-        assert_eq!(config.translations.len(), 2);
+        assert_eq!(config.translations.len(), 8);
         assert_eq!(config.default_language, "en");
     }
 
