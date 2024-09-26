@@ -109,10 +109,8 @@
 <a href="#109" id="109">109</a>
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
-<a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a>
-<a href="#114" id="114">114</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>gloo::timers::callback::Timeout;
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::CertificateImageComponent;
+<span class="kw">use </span>gloo::timers::callback::Timeout;
 <span class="kw">use </span>konnektoren_core::certificates::{create_certificate_data_url, CertificateData};
 <span class="kw">use </span>urlencoding::encode;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
@@ -171,6 +169,10 @@
         })
     };
 
+    <span class="kw">let </span>certificate_data = props.certificate_data.clone();
+    <span class="kw">let </span>hostname = props.hostname.clone();
+    <span class="kw">let </span>protocol = props.protocol.clone();
+
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"certificate-container"</span>&gt;
             &lt;h2&gt;{ <span class="string">"Certificate of Achievement" </span>}&lt;/h2&gt;
@@ -189,15 +191,7 @@
                     &lt;p class=<span class="string">"copied-message"</span>&gt;{<span class="string">"Link copied to clipboard!"</span>}&lt;/p&gt;
                 }
             &lt;/div&gt;
-            &lt;div class=<span class="string">"certificate-image"</span>&gt;
-                {
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(img_src) = img_src {
-                        <span class="macro">html!</span> { &lt;img src={img_src}/&gt; }
-                    } <span class="kw">else </span>{
-                        <span class="macro">html!</span> { &lt;p&gt;{ <span class="string">"Error creating certificate image" </span>}&lt;/p&gt; }
-                    }
-                }
-            &lt;/div&gt;
+            &lt;CertificateImageComponent {certificate_data} {hostname} {protocol} /&gt;
         &lt;/div&gt;
     }
 }
