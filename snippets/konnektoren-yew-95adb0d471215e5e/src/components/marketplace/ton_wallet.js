@@ -52,6 +52,8 @@ async function getWalletBalance(address) {
 }
 
 export async function payTonWallet(address, amount) {
+  console.log("payTonWallet", address, amount);
+
   if (!tonConnectUI) {
     throw new Error("TonConnect UI is not initialized");
   }
