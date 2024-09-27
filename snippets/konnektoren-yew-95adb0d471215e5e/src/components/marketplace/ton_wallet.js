@@ -73,15 +73,13 @@ export async function payTonWallet(address, amount) {
     // 0.01 TON = 10,000,000
     //
     const nanoTonAmount = amount.toString();
-    const userFriendlyAddress = toUserFriendlyAddress(address, {
-      isUserFriendly: true,
-      isUrlSafe: true,
-      testOnly: USE_TEST_NETWORK,
-    });
+    const userFriendlyAddress = toUserFriendlyAddress(
+      address,
+      USE_TEST_NETWORK,
+    );
 
     const transaction = {
-      //validUntil: Math.floor(Date.now() / 1000) + 360,
-      network: USE_TEST_NETWORK ? "testnet" : "mainnet",
+      validUntil: Math.floor(new Date() / 1000) + 360,
       messages: [
         {
           address: userFriendlyAddress,
