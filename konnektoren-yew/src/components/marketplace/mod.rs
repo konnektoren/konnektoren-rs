@@ -8,4 +8,4 @@ pub use cart_badge::CartBadgeComponent;
 pub use product::ProductComponent;
 pub use product_catalog::ProductCatalogComponent;
 pub use shopping_cart::ShoppingCartComponent;
-pub use ton_wallet::TonWalletComponent;
+pub use ton_wallet::{payTonWallet, TonWalletComponent};

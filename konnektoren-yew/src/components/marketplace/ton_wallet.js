@@ -11,7 +11,6 @@ export async function initTonWallet(
   onConnectCallback,
   onDisconnectCallback,
 ) {
-  console.log("initTonWallet ", manifestUrl);
   try {
     if (!tonConnectUI) {
       tonConnectUI = new TonConnectUI({
@@ -49,4 +48,53 @@ async function getWalletBalance(address) {
   // You might need to use a TON API or SDK for this
   // For now, we'll return a placeholder value
   return 1000000000; // 1 TON
+}
+
+export async function payTonWallet(address, amount) {
+  if (!tonConnectUI) {
+    console.error("TonConnect UI is not initialized");
+    throw new Error("TonConnect UI is not initialized");
+  }
+
+  if (!tonConnectUI.account) {
+    console.error("No account connected");
+    throw new Error("No account connected");
+  }
+
+  try {
+    // In TON, 1 TON = 1,000,000,000 nanoTONs
+    // The amount should be provided in nanoTONs
+    // For example:
+    // 1 TON = 1,000,000,000
+    // 0.1 TON = 100,000,000
+    // 0.01 TON = 10,000,000
+    //
+    const nanoTonAmount = amount.toString();
+    const userFriendlyAddress = toUserFriendlyAddress(
+      address,
+      USE_TEST_NETWORK,
+    );
+
+    const transaction = {
+      validUntil: Math.floor(new Date() / 1000) + 360,
+      messages: [
+        {
+          address: userFriendlyAddress,
+          amount: nanoTonAmount,
+        },
+      ],
+    };
+
+    return await tonConnectUI.sendTransaction(transaction);
+  } catch (error) {
+    console.error("Error sending transaction:", error);
+    if (error instanceof Error) {
+      console.error("Error details:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      });
+    }
+    throw error;
+  }
 }

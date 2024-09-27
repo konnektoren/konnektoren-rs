@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-use std::cell::RefCell;
 use std::rc::Rc;
 use wasm_bindgen::prelude::{wasm_bindgen, Closure};
 use wasm_bindgen::JsValue;
@@ -13,11 +11,15 @@ extern "C" {
         on_connect: &WalletConnectCallback,
         on_disconnect: &WalletDisconnectCallback,
     ) -> Result<JsValue, JsValue>;
+
+    #[wasm_bindgen(catch)]
+    pub async fn payTonWallet(address: Address, amount: NanoTon) -> Result<JsValue, JsValue>;
 }
 
-type WalletConnectCallback = Closure<dyn Fn(Address, String)>;
-type WalletDisconnectCallback = Closure<dyn Fn(Address)>;
-type Address = String;
+pub type WalletConnectCallback = Closure<dyn Fn(Address, String)>;
+pub type WalletDisconnectCallback = Closure<dyn Fn(Address)>;
+pub type Address = String;
+pub type NanoTon = u64;
 
 #[derive(Clone, PartialEq, Properties, Default)]
 pub struct TonWalletProps {
