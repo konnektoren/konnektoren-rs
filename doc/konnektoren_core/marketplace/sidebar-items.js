@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Product","ProductCatalog"]};
+window.SIDEBAR_ITEMS = {"enum":["CheckoutState"],"struct":["Cart","Payment","Product","ProductCatalog"]};

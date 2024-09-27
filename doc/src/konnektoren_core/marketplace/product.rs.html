@@ -38,9 +38,11 @@
 <a href="#38" id="38">38</a>
 <a href="#39" id="39">39</a>
 <a href="#40" id="40">40</a>
+<a href="#41" id="41">41</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="attr">#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
+<span class="doccomment">/// A product that can be added to a cart.
+</span><span class="attr">#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 </span><span class="kw">pub struct </span>Product {
     <span class="kw">pub </span>id: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>name: String,
@@ -54,7 +56,7 @@
 <span class="kw">impl </span>Product {
     <span class="kw">pub fn </span>new(name: String, description: String) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            id: <span class="prelude-val">None</span>,
+            id: <span class="prelude-val">Some</span>(uuid::Uuid::new_v4().to_string()),
             name,
             description,
             price: Option::from(<span class="number">0.0</span>),
