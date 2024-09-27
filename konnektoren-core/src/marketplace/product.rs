@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+/// A product that can be added to a cart.
 #[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 pub struct Product {
     pub id: Option<String>,
@@ -14,7 +15,7 @@ pub struct Product {
 impl Product {
     pub fn new(name: String, description: String) -> Self {
         Self {
-            id: None,
+            id: Some(uuid::Uuid::new_v4().to_string()),
             name,
             description,
             price: Option::from(0.0),
