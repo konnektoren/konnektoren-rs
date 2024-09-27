@@ -1,8 +1,11 @@
 use crate::components::{
-    challenge::ChallengeComponent, game_path::GamePathComponent, AchievementsComponent,
-    CartBadgeComponent, CertificateImageComponent, ChallengeConfigComponent,
-    ChallengeInfoComponent, MusicComponent, ProductCatalogComponent, ProductComponent, ProgressBar,
-    SettingsComponent, ShoppingCartComponent, TranslateComponent,
+    challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
+    ChallengeInfoComponent, MusicComponent, ProgressBar, SettingsComponent, TranslateComponent,
+};
+
+#[cfg(feature = "marketplace")]
+use crate::components::marketplace::{
+    CartBadgeComponent, ProductCatalogComponent, ProductComponent, ShoppingCartComponent,
 };
 
 #[cfg(feature = "storage")]
@@ -13,7 +16,7 @@ use crate::components::challenge::{
     MultipleChoiceCircleComponent, MultipleChoiceComponent, SortTableComponent,
 };
 #[cfg(feature = "certificates")]
-use crate::components::CertificateComponent;
+use crate::components::{AchievementsComponent, CertificateComponent, CertificateImageComponent};
 #[cfg(feature = "effects")]
 use crate::effects::BlinkAnimation;
 use crate::prelude::{

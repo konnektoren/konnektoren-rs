@@ -1,4 +1,4 @@
-use crate::components::CertificateComponent;
+use crate::prelude::CertificateComponent;
 use konnektoren_core::certificates::CertificateData;
 use std::rc::Rc;
 use yew::prelude::*;

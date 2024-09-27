@@ -1,4 +1,4 @@
-use crate::components::CertificateImageComponent;
+use crate::prelude::CertificateImageComponent;
 use gloo::timers::callback::Timeout;
 use konnektoren_core::certificates::CertificateData;
 use urlencoding::encode;
