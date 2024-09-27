@@ -1,5 +1,6 @@
 import { toUserFriendlyAddress } from "https://esm.run/@tonconnect/sdk";
 import { TonConnectUI } from "https://esm.run/@tonconnect/ui";
+import { toNano } from "https://esm.run/@ton/ton";
 
 const USE_TEST_NETWORK = true;
 const TON_API_URL = "https://testnet.tonapi.io/v2";
@@ -71,13 +72,16 @@ export async function payTonWallet(address, amount) {
     // 1 TON = 1,000,000,000
     // 0.1 TON = 100,000,000
     // 0.01 TON = 10,000,000
+    //
+    let nanoTonAmount = toNano("1").toString();
+
     const transaction = {
       //validUntil: Math.floor(Date.now() / 1000) + 360,
       //network: USE_TEST_NETWORK ? 1 : 0,
       messages: [
         {
           address: address,
-          amount: amount.toString(),
+          amount: nanoTonAmount,
         },
       ],
     };
