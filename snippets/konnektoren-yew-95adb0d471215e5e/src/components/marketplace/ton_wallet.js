@@ -55,7 +55,13 @@ export async function payTonWallet(address, amount) {
   console.log("payTonWallet", address, amount);
 
   if (!tonConnectUI) {
+    console.error("TonConnect UI is not initialized");
     throw new Error("TonConnect UI is not initialized");
+  }
+
+  if (!tonConnectUI.account) {
+    console.error("No account connected");
+    throw new Error("No account connected");
   }
 
   try {
@@ -66,19 +72,25 @@ export async function payTonWallet(address, amount) {
     // 0.1 TON = 100,000,000
     // 0.01 TON = 10,000,000
     const transaction = {
-      validUntil: Math.floor(Date.now() / 1000) + 60 * 20, // Valid for 20 minutes
-      network: USE_TEST_NETWORK ? 1 : 0, // 1 for testnet, 0 for mainnet
+      validUntil: Math.floor(Date.now() / 1000) + 60 * 20,
+      network: USE_TEST_NETWORK ? 1 : 0,
       from: tonConnectUI.account.address,
       to: address,
-      amount: amount.toString(), // Amount in nanoTONs
-      // You can add more fields like stateInit, payload, etc. if needed
+      amount: amount.toString(),
     };
+
+    console.log("Sending transaction:", transaction);
 
     const result = await tonConnectUI.sendTransaction(transaction);
     console.log("Transaction sent:", result);
     return result;
   } catch (error) {
     console.error("Error sending transaction:", error);
+    if (error instanceof Error) {
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
     throw error;
   }
 }
