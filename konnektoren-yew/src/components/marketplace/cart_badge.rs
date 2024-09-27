@@ -1,7 +1,7 @@
 use konnektoren_core::marketplace::Cart;
 use yew::prelude::*;
 
-#[derive(Clone, PartialEq, Properties)]
+#[derive(Clone, PartialEq, Properties, Default)]
 pub struct CartBadgeProps {
     cart: Cart,
     on_click: Callback<()>,
@@ -49,7 +49,8 @@ mod preview {
                         ..Default::default()
                     }
                 ]
-            }
+            },
+            ..Default::default()
         },
     );
 }
