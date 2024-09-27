@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["CartBadgeComponent","ProductCatalogComponent","ProductComponent","ShoppingCartComponent"]};
+window.SIDEBAR_ITEMS = {"struct":["CartBadgeComponent","ProductCatalogComponent","ProductComponent","ShoppingCartComponent","TonWalletComponent"]};

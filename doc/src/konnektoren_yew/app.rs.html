@@ -185,6 +185,8 @@
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{
     challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
     ChallengeInfoComponent, MusicComponent, ProgressBar, SettingsComponent, TranslateComponent,
@@ -193,6 +195,7 @@
 <span class="attr">#[cfg(feature = <span class="string">"marketplace"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::components::marketplace::{
     CartBadgeComponent, ProductCatalogComponent, ProductComponent, ShoppingCartComponent,
+    TonWalletComponent,
 };
 
 <span class="attr">#[cfg(feature = <span class="string">"storage"</span>)]
@@ -358,6 +361,7 @@
         ProductCatalogComponent::preview(),
         ShoppingCartComponent::preview(),
         CartBadgeComponent::preview(),
+        TonWalletComponent::preview(),
         <span class="macro">create_component_item!</span>(<span class="string">"Example"</span>, Example, <span class="macro">vec!</span>[(<span class="string">"default"</span>, ())]),
     ];
 
