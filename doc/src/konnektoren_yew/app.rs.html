@@ -185,11 +185,9 @@
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
-<a href="#188" id="188">188</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{
-    challenge::ChallengeComponent, game_path::GamePathComponent, AchievementsComponent,
-    ChallengeConfigComponent, ChallengeInfoComponent, MusicComponent, ProgressBar,
-    SettingsComponent, TranslateComponent,
+    challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
+    ChallengeInfoComponent, MusicComponent, ProgressBar, SettingsComponent, TranslateComponent,
 };
 
 <span class="attr">#[cfg(feature = <span class="string">"marketplace"</span>)]
@@ -205,7 +203,7 @@
     MultipleChoiceCircleComponent, MultipleChoiceComponent, SortTableComponent,
 };
 <span class="attr">#[cfg(feature = <span class="string">"certificates"</span>)]
-</span><span class="kw">use </span><span class="kw">crate</span>::components::{CertificateComponent, CertificateImageComponent};
+</span><span class="kw">use </span><span class="kw">crate</span>::components::{AchievementsComponent, CertificateComponent, CertificateImageComponent};
 <span class="attr">#[cfg(feature = <span class="string">"effects"</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::effects::BlinkAnimation;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::{
