@@ -6,6 +6,8 @@ pub struct ProductComponentProps {
     pub product: Product,
     #[prop_or_default]
     pub on_select: Option<Callback<Product>>,
+    #[prop_or("Get".to_string())]
+    pub button_text: String,
 }
 
 #[function_component(ProductComponent)]
@@ -40,6 +42,7 @@ pub fn product_component(props: &ProductComponentProps) -> Html {
             }
         })
         .collect::<Html>();
+    let button_text = props.button_text.clone();
     let get_button = if let Some(on_select) = &props.on_select {
         let on_select = on_select.clone();
         let product = props.product.clone();
@@ -47,7 +50,7 @@ pub fn product_component(props: &ProductComponentProps) -> Html {
             <button class="product-button" onclick={
                 Callback::from(move |_| on_select.emit(product.clone()))
             }>
-                {"Get"}
+                {button_text}
             </button>
         }
     } else {
@@ -94,6 +97,7 @@ mod preview {
                     data_path: None
                 },
                 on_select: None,
+                ..Default::default()
             }
         ),
         (
@@ -109,6 +113,7 @@ mod preview {
                     data_path: None
                 },
                 on_select: Some(Callback::noop()),
+                ..Default::default()
             }
         )
     );
