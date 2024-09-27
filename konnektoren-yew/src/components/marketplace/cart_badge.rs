@@ -3,8 +3,8 @@ use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Properties, Default)]
 pub struct CartBadgeProps {
-    cart: Cart,
-    on_click: Callback<()>,
+    pub cart: Cart,
+    pub on_click: Callback<()>,
 }
 
 #[function_component(CartBadgeComponent)]

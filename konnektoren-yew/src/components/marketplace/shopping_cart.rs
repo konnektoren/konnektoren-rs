@@ -4,7 +4,7 @@ use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct ShoppingCartProps {
-    cart: Cart,
+    pub cart: Cart,
     #[prop_or_default]
     pub on_select: Option<Callback<Product>>,
 }
