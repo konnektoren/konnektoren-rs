@@ -72,11 +72,11 @@ export async function payTonWallet(address, amount) {
     // 0.1 TON = 100,000,000
     // 0.01 TON = 10,000,000
     //
-    let nanoTonAmount = "1.0";
+    let nanoTonAmount = amount.toString();
 
     const transaction = {
       //validUntil: Math.floor(Date.now() / 1000) + 360,
-      //network: USE_TEST_NETWORK ? 1 : 0,
+      network: USE_TEST_NETWORK ? 1 : 0,
       messages: [
         {
           address: address,
@@ -93,9 +93,11 @@ export async function payTonWallet(address, amount) {
   } catch (error) {
     console.error("Error sending transaction:", error);
     if (error instanceof Error) {
-      console.error("Error name:", error.name);
-      console.error("Error message:", error.message);
-      console.error("Error stack:", error.stack);
+      console.error("Error details:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      });
     }
     throw error;
   }
