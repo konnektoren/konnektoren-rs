@@ -6,6 +6,7 @@ use crate::components::{
 #[cfg(feature = "marketplace")]
 use crate::components::marketplace::{
     CartBadgeComponent, ProductCatalogComponent, ProductComponent, ShoppingCartComponent,
+    TonWalletComponent,
 };
 
 #[cfg(feature = "storage")]
@@ -171,6 +172,7 @@ pub fn App() -> Html {
         ProductCatalogComponent::preview(),
         ShoppingCartComponent::preview(),
         CartBadgeComponent::preview(),
+        TonWalletComponent::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];
 
