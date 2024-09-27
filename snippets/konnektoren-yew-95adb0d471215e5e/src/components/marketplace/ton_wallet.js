@@ -77,7 +77,7 @@ export async function payTonWallet(address, amount) {
 
     const transaction = {
       //validUntil: Math.floor(Date.now() / 1000) + 360,
-      network: USE_TEST_NETWORK ? 1 : 0,
+      network: USE_TEST_NETWORK ? "testnet" : "mainnet",
       messages: [
         {
           address: userFriendlyAddress,
