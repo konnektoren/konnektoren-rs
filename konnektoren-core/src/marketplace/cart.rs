@@ -82,6 +82,8 @@ mod tests {
         };
         cart.add_product(product1);
         cart.add_product(product2);
+        // Product with price 0
+        cart.add_product(Product::default());
         assert_eq!(cart.total_price(), 30.0);
     }
 }
