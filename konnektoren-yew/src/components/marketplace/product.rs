@@ -94,7 +94,7 @@ mod preview {
                     price: None,
                     image: None,
                     tags: vec![],
-                    data_path: None
+                    path: None
                 },
                 on_select: None,
                 ..Default::default()
@@ -110,7 +110,7 @@ mod preview {
                     price: Some(1.0),
                     image: None,
                     tags: vec!["tag1".to_string(), "tag2".to_string()],
-                    data_path: None
+                    path: None
                 },
                 on_select: Some(Callback::noop()),
                 ..Default::default()

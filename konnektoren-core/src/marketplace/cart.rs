@@ -69,7 +69,7 @@ mod tests {
             price: Some(10.0),
             image: None,
             tags: vec![],
-            data_path: None,
+            path: None,
         };
         let product2 = Product {
             id: Some("2".to_string()),
@@ -78,7 +78,7 @@ mod tests {
             price: Some(20.0),
             image: None,
             tags: vec![],
-            data_path: None,
+            path: None,
         };
         cart.add_product(product1);
         cart.add_product(product2);

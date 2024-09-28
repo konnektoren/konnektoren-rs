@@ -62,7 +62,7 @@ mod preview {
                             price: None,
                             image: None,
                             tags: vec![],
-                            data_path: None
+                            path: None
                         },
                         Product {
                             id: None,
@@ -71,7 +71,7 @@ mod preview {
                             price: Some(10.0),
                             image: None,
                             tags: vec![],
-                            data_path: None
+                            path: None
                         },
                     ],
                 },

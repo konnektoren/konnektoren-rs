@@ -9,7 +9,7 @@ pub struct Product {
     pub price: Option<f64>,
     pub image: Option<String>,
     pub tags: Vec<String>,
-    pub data_path: Option<String>,
+    pub path: Option<String>,
 }
 
 impl Product {
@@ -21,7 +21,7 @@ impl Product {
             price: Option::from(0.0),
             image: None,
             tags: vec![],
-            data_path: None,
+            path: None,
         }
     }
 }
