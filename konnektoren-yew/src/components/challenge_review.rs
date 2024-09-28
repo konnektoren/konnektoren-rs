@@ -1,4 +1,4 @@
-use crate::components::ChallengeRatingComponent;
+use crate::components::{ChallengeRatingComponent, RatingStarsComponent};
 use crate::i18n::use_i18n;
 use gloo::net::http::Request;
 use konnektoren_core::challenges::Review;
@@ -92,30 +92,12 @@ pub fn challenge_review(props: &ChallengeReviewProps) -> Html {
         })
     };
 
-    // Generates the clickable star elements for rating
-    fn render_stars(star_count: usize, selected: usize, on_click: &Callback<usize>) -> Html {
-        (0..star_count)
-            .map(|i| {
-                let star_class = if i < selected {
-                    "selected-star"
-                } else {
-                    "empty-star"
-                };
-                let on_star_click = on_click.clone();
-                let on_click = Callback::from(move |_| on_star_click.emit(i));
-                html! {
-                    <span class={star_class} onclick={on_click}>{"★"}</span>
-                }
-            })
-            .collect::<Html>()
-    }
-
     html! {
         <div class="challenge-review-component">
             <h3>{i18n.t("Rate this Challenge")}</h3>
             <div class="stars-rating">
             <ChallengeRatingComponent api_url={props.api_url.clone()} challenge_id={props.challenge_id.clone()} />
-                {render_stars(5, *stars, &on_star_click)}
+                <RatingStarsComponent max_stars={5} rating={*stars as f64} on_click={Some(on_star_click)} />
             </div>
             <div class="comment-input">
                 <input

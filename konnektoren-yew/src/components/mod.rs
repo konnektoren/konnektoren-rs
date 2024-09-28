@@ -20,6 +20,7 @@ pub mod translate;
 
 #[cfg(feature = "marketplace")]
 pub mod marketplace;
+mod rating_stars;
 
 pub use challenge::*;
 pub use challenge_config::ChallengeConfigComponent;
@@ -47,4 +48,5 @@ pub use music::MusicComponent;
 #[cfg(feature = "marketplace")]
 pub use marketplace::*;
 
+pub use rating_stars::RatingStarsComponent;
 pub use settings::*;
