@@ -136,25 +136,7 @@
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
 <a href="#138" id="138">138</a>
-<a href="#139" id="139">139</a>
-<a href="#140" id="140">140</a>
-<a href="#141" id="141">141</a>
-<a href="#142" id="142">142</a>
-<a href="#143" id="143">143</a>
-<a href="#144" id="144">144</a>
-<a href="#145" id="145">145</a>
-<a href="#146" id="146">146</a>
-<a href="#147" id="147">147</a>
-<a href="#148" id="148">148</a>
-<a href="#149" id="149">149</a>
-<a href="#150" id="150">150</a>
-<a href="#151" id="151">151</a>
-<a href="#152" id="152">152</a>
-<a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
-<a href="#156" id="156">156</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::ChallengeRatingComponent;
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{ChallengeRatingComponent, RatingStarsComponent};
 <span class="kw">use </span><span class="kw">crate</span>::i18n::use_i18n;
 <span class="kw">use </span>gloo::net::http::Request;
 <span class="kw">use </span>konnektoren_core::challenges::Review;
@@ -248,30 +230,12 @@
         })
     };
 
-    <span class="comment">// Generates the clickable star elements for rating
-    </span><span class="kw">fn </span>render_stars(star_count: usize, selected: usize, on_click: <span class="kw-2">&amp;</span>Callback&lt;usize&gt;) -&gt; Html {
-        (<span class="number">0</span>..star_count)
-            .map(|i| {
-                <span class="kw">let </span>star_class = <span class="kw">if </span>i &lt; selected {
-                    <span class="string">"selected-star"
-                </span>} <span class="kw">else </span>{
-                    <span class="string">"empty-star"
-                </span>};
-                <span class="kw">let </span>on_star_click = on_click.clone();
-                <span class="kw">let </span>on_click = Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| on_star_click.emit(i));
-                <span class="macro">html!</span> {
-                    &lt;span class={star_class} onclick={on_click}&gt;{<span class="string">"★"</span>}&lt;/span&gt;
-                }
-            })
-            .collect::&lt;Html&gt;()
-    }
-
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"challenge-review-component"</span>&gt;
             &lt;h3&gt;{i18n.t(<span class="string">"Rate this Challenge"</span>)}&lt;/h3&gt;
             &lt;div class=<span class="string">"stars-rating"</span>&gt;
             &lt;ChallengeRatingComponent api_url={props.api_url.clone()} challenge_id={props.challenge_id.clone()} /&gt;
-                {render_stars(<span class="number">5</span>, <span class="kw-2">*</span>stars, <span class="kw-2">&amp;</span>on_star_click)}
+                &lt;RatingStarsComponent max_stars={<span class="number">5</span>} rating={<span class="kw-2">*</span>stars <span class="kw">as </span>f64} on_click={<span class="prelude-val">Some</span>(on_star_click)} /&gt;
             &lt;/div&gt;
             &lt;div class=<span class="string">"comment-input"</span>&gt;
                 &lt;input
