@@ -179,6 +179,8 @@
 <a href="#179" id="179">179</a>
 <a href="#180" id="180">180</a>
 <a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeConfig, ChallengeHistory, Performance};
 
 <span class="kw">pub trait </span>ChallengeStats {
@@ -277,10 +279,12 @@
     }
 
     <span class="kw">fn </span>solved(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.<span class="number">1</span>.challenges.iter().any(|c| {
-            c.challenge_config.id == <span class="self">self</span>.<span class="number">0</span>.id
-                &amp;&amp; c.challenge_result.len() == c.challenge_config.tasks
-        })
+        <span class="kw">let </span>challenge_id = <span class="self">self</span>.<span class="number">0</span>.id.clone();
+        <span class="self">self</span>.<span class="number">1
+            </span>.challenges
+            .iter()
+            .filter(|c| c.challenge_config.id == challenge_id)
+            .all(|c| c.solved())
     }
 }
 
