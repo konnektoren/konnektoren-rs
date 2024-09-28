@@ -71,7 +71,7 @@
             <span class="prelude-val">Some</span>(on_click) =&gt; {
                 <span class="kw">let </span>on_click = on_click.reform(<span class="kw">move </span>|<span class="kw">_</span>: MouseEvent| i);
                 <span class="macro">html!</span> {
-                    &lt;span class={star_class} onclick={on_click.clone()}&gt;{<span class="string">"★"</span>}&lt;/span&gt;
+                    &lt;span id={<span class="macro">format!</span>(<span class="string">"star-{}"</span>, i)} class={star_class} onclick={on_click.clone()}&gt;{<span class="string">"★"</span>}&lt;/span&gt;
                 }
             }
             <span class="prelude-val">None </span>=&gt; <span class="macro">html!</span> {
