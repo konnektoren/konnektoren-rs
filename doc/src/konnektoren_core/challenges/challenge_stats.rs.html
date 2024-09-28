@@ -229,7 +229,7 @@
     }
 }
 
-<span class="kw">impl </span>ChallengeStats <span class="kw">for </span>(ChallengeConfig, ChallengeHistory) {
+<span class="kw">impl </span>ChallengeStats <span class="kw">for </span>(<span class="kw-2">&amp;</span>ChallengeConfig, <span class="kw-2">&amp;</span>ChallengeHistory) {
     <span class="kw">fn </span>challenges(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.<span class="number">1
             </span>.challenges
