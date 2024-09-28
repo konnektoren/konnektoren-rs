@@ -153,6 +153,8 @@
 <a href="#153" id="153">153</a>
 <a href="#154" id="154">154</a>
 <a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! # Challenge Components
 
 </span><span class="kw">use </span>konnektoren_core::challenges::challenge_config::ChallengeVariant;
@@ -162,6 +164,7 @@
 <span class="kw">mod </span>actions;
 <span class="kw">mod </span>challenge_history_summary;
 <span class="kw">pub mod </span>custom;
+<span class="kw">pub mod </span>custom_package;
 <span class="kw">mod </span>custom_result;
 <span class="kw">mod </span>informative;
 <span class="kw">mod </span>informative_markdown;
@@ -179,6 +182,7 @@
 <span class="kw">pub use </span>actions::{ChallengeActions, ChallengeActionsComponent};
 <span class="kw">pub use </span>challenge_history_summary::ChallengeHistorySummaryComponent;
 <span class="kw">pub use </span>custom::CustomComponent;
+<span class="kw">pub use </span>custom_package::CustomPackageComponent;
 <span class="kw">pub use </span>custom_result::CustomResultComponent;
 <span class="kw">pub use </span>informative::InformativeComponent;
 <span class="kw">pub use </span>informative_markdown::InformativeMarkdownComponent;
