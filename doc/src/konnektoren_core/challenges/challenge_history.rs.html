@@ -110,8 +110,8 @@
         <span class="self">self</span>.challenges.is_empty()
     }
 
-    <span class="kw">pub fn </span>extend(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;mut </span>ChallengeHistory) {
-        <span class="self">self</span>.challenges.extend(other.challenges.drain(..));
+    <span class="kw">pub fn </span>extend(<span class="kw-2">&amp;mut </span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>ChallengeHistory) {
+        <span class="self">self</span>.challenges.extend(other.challenges.iter().cloned());
     }
 }
 
