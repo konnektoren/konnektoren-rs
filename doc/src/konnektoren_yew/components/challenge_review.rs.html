@@ -136,6 +136,7 @@
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
 <a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{ChallengeRatingComponent, RatingStarsComponent};
 <span class="kw">use </span><span class="kw">crate</span>::i18n::use_i18n;
 <span class="kw">use </span>gloo::net::http::Request;
@@ -160,6 +161,7 @@
     </span><span class="kw">let </span>on_star_click = {
         <span class="kw">let </span>stars = stars.clone();
         Callback::from(<span class="kw">move </span>|index: usize| {
+            <span class="macro">log::info!</span>(<span class="string">"Star clicked: {}"</span>, index + <span class="number">1</span>);
             stars.set(index + <span class="number">1</span>);
         })
     };
