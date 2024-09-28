@@ -42,7 +42,6 @@
 <a href="#42" id="42">42</a>
 <a href="#43" id="43">43</a>
 <a href="#44" id="44">44</a>
-<a href="#45" id="45">45</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Properties, Clone, PartialEq)]
@@ -53,17 +52,16 @@
     <span class="attr">#[prop_or_default]
     </span><span class="kw">pub </span>on_click: <span class="prelude-ty">Option</span>&lt;Callback&lt;usize&gt;&gt;,
 }
-
 <span class="attr">#[function_component(RatingStarsComponent)]
 </span><span class="kw">pub fn </span>rating_stars(props: <span class="kw-2">&amp;</span>RatingStarsProps) -&gt; Html {
     <span class="kw">let </span>max_stars = props.max_stars.unwrap_or(<span class="number">5</span>);
     <span class="kw">let </span>rating = props.rating;
     <span class="kw">let </span>on_click = props.on_click.clone();
 
-    <span class="kw">let </span>stars = (<span class="number">0</span>..max_stars).map(|i| {
-        <span class="kw">let </span>star_class = <span class="kw">if </span>i <span class="kw">as </span>f64 &gt; rating {
+    <span class="kw">let </span>stars = (<span class="number">1</span>..=max_stars).map(|i| {
+        <span class="kw">let </span>star_class = <span class="kw">if </span>i <span class="kw">as </span>f64 &lt;= rating {
             <span class="string">"star full"
-        </span>} <span class="kw">else if </span>i <span class="kw">as </span>f64 + <span class="number">0.5 </span>&gt; rating {
+        </span>} <span class="kw">else if </span>i <span class="kw">as </span>f64 - <span class="number">0.5 </span>&lt;= rating {
             <span class="string">"star half"
         </span>} <span class="kw">else </span>{
             <span class="string">"star empty"
