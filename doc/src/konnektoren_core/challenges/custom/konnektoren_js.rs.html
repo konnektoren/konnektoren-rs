@@ -263,6 +263,7 @@
 <a href="#263" id="263">263</a>
 <a href="#264" id="264">264</a>
 <a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{Custom, CustomChallengeResult};
 <span class="kw">use </span>js_sys::Reflect;
 <span class="kw">use </span>serde_wasm_bindgen::to_value;
@@ -429,6 +430,7 @@
             js: <span class="string">""</span>.to_string(),
             i18n: <span class="prelude-val">None</span>,
             data: <span class="macro">serde_json::json!</span>({<span class="string">"key"</span>:<span class="string">"value"</span>}),
+            package_url: <span class="prelude-val">None</span>,
         };
         konnektoren_js.set_challenge_data(test_custom.clone());
 
