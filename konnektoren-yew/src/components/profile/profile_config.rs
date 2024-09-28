@@ -33,16 +33,22 @@ pub fn profile_config_component() -> Html {
         move || *name != initial_name
     };
 
+    let save_button = match has_changes() {
+        true => html! {
+            <button onclick={on_save}>{ "Save" }</button>
+        },
+        false => html! {},
+    };
+
     html! {
-        <div class="profile-config">
-            <h2>{ "Player Profile" }</h2>
+            <div class="profile-config">
+                <h2>{ "Player Profile" }</h2>
 
-            <label for="name">{ "Name" }</label>
-            <input id="name" type="text" value={(*name).clone()} oninput={on_name_change} />
-
-            <button onclick={on_save} disabled={!has_changes()}>{ "Save" }</button>
-        </div>
-    }
+                <label for="name">{ "Name" }</label>
+                <input id="name" type="text" value={(*name).clone()} oninput={on_name_change} />
+                { save_button }
+            </div>
+        }
 }
 
 #[cfg(feature = "yew-preview")]
