@@ -58,7 +58,7 @@
     <span class="kw">let </span>rating = props.rating;
     <span class="kw">let </span>on_click = props.on_click.clone();
 
-    <span class="kw">let </span>stars = (<span class="number">1</span>..=max_stars).map(|i| {
+    <span class="kw">let </span>stars = (<span class="number">0</span>..max_stars).map(|i| {
         <span class="kw">let </span>star_class = <span class="kw">if </span>i <span class="kw">as </span>f64 &lt;= rating {
             <span class="string">"star full"
         </span>} <span class="kw">else if </span>i <span class="kw">as </span>f64 - <span class="number">0.5 </span>&lt;= rating {
