@@ -64,6 +64,31 @@
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeConfig, Custom, Package, PackageMetadata};
 <span class="kw">use </span>gloo::net::http::Request;
 <span class="kw">use </span>std::collections::HashMap;
@@ -96,7 +121,8 @@
             ZipArchive::new(reader).map_err(|e| <span class="macro">format!</span>(<span class="string">"Failed to create ZIP archive: {}"</span>, e))<span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>files = HashMap::new();
-        <span class="kw">let </span><span class="kw-2">mut </span>metadata = <span class="prelude-val">None</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>config = <span class="prelude-val">None</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>custom = <span class="prelude-val">None</span>;
 
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..archive.len() {
             <span class="kw">let </span><span class="kw-2">mut </span>file = archive
@@ -108,26 +134,50 @@
             file.read_to_end(<span class="kw-2">&amp;mut </span>contents)
                 .map_err(|e| <span class="macro">format!</span>(<span class="string">"Failed to read file contents: {}"</span>, e))<span class="question-mark">?</span>;
 
-            <span class="kw">if </span>file_name == <span class="string">"config.yml" </span>{
-                <span class="kw">let </span>config: ChallengeConfig = serde_yaml::from_slice(<span class="kw-2">&amp;</span>contents)
-                    .map_err(|e| <span class="macro">format!</span>(<span class="string">"Failed to parse config.yml: {}"</span>, e))<span class="question-mark">?</span>;
-                metadata.get_or_insert(PackageMetadata {
-                    config,
-                    custom: Custom::default(),
-                });
-            } <span class="kw">else if </span>file_name == <span class="string">"challenge.yml" </span>{
-                <span class="kw">let </span>custom: Custom = serde_yaml::from_slice(<span class="kw-2">&amp;</span>contents)
-                    .map_err(|e| <span class="macro">format!</span>(<span class="string">"Failed to parse challenge.yml: {}"</span>, e))<span class="question-mark">?</span>;
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(meta) = <span class="kw-2">&amp;mut </span>metadata {
-                    meta.custom = custom;
+            <span class="kw">match </span>file_name.as_str() {
+                <span class="string">"config.yml" </span>=&gt; {
+                    config = <span class="prelude-val">Some</span>(
+                        serde_yaml::from_slice(<span class="kw-2">&amp;</span>contents)
+                            .map_err(|e| <span class="macro">format!</span>(<span class="string">"Failed to parse config.yml: {}"</span>, e))<span class="question-mark">?</span>,
+                    );
                 }
-            } <span class="kw">else </span>{
-                files.insert(file_name, contents);
+                <span class="string">"challenge.yml" </span>=&gt; {
+                    custom = <span class="prelude-val">Some</span>(
+                        serde_yaml::from_slice(<span class="kw-2">&amp;</span>contents)
+                            .map_err(|e| <span class="macro">format!</span>(<span class="string">"Failed to parse challenge.yml: {}"</span>, e))<span class="question-mark">?</span>,
+                    );
+                }
+                <span class="kw">_ </span>=&gt; {
+                    files.insert(file_name, contents);
+                }
             }
         }
 
-        <span class="kw">let </span>metadata = metadata.ok_or_else(|| <span class="string">"Missing metadata files in package"</span>.to_string())<span class="question-mark">?</span>;
+        <span class="kw">let </span>config = config.ok_or_else(|| <span class="string">"Missing config.yml in package"</span>.to_string())<span class="question-mark">?</span>;
+        <span class="kw">let </span>custom = custom.unwrap_or_default();
+        <span class="kw">let </span>metadata = PackageMetadata { config, custom };
+
         <span class="prelude-val">Ok</span>(Package { metadata, files })
+    }
+}
+
+<span class="attr">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span>env_logger;
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_package_reader() {
+        env_logger::init();
+        <span class="kw">let </span>package_data = <span class="macro">include_bytes!</span>(<span class="string">"../../assets/articles-pkg.zip"</span>);
+        <span class="kw">let </span>package = PackageReader::read(package_data).unwrap();
+
+        <span class="macro">assert_eq!</span>(package.files.len(), <span class="number">5</span>);
+        <span class="macro">log::debug!</span>(<span class="string">"files {:?}"</span>, package.files.keys());
+        <span class="macro">assert!</span>(package.get_html_file().is_some());
+        <span class="macro">assert!</span>(package.get_css_file().is_some());
+        <span class="macro">assert!</span>(package.get_js_file().is_some());
+        <span class="macro">assert!</span>(package.get_results_file().is_some());
     }
 }
 </code></pre></div></section></main></body></html>

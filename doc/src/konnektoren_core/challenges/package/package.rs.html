@@ -226,6 +226,10 @@
 <a href="#226" id="226">226</a>
 <a href="#227" id="227">227</a>
 <a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{challenges::Custom, prelude::ChallengeConfig};
 
 <span class="kw">use </span><span class="kw">super</span>::package_metadata::PackageMetadata;
@@ -260,13 +264,11 @@
 
     <span class="doccomment">/// Get the challenge configuration config.yml from the package
     </span><span class="kw">pub fn </span>get_challenge_config(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ChallengeConfig&gt; {
-        <span class="self">self</span>.get_file(<span class="string">"config.yml"</span>)
-            .map(|v| serde_yaml::from_slice(v).unwrap())
+        <span class="prelude-val">Some</span>(<span class="self">self</span>.metadata.config.clone())
     }
 
     <span class="kw">pub fn </span>get_custom_challenge(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Custom&gt; {
-        <span class="self">self</span>.get_file(<span class="string">"challenge.yml"</span>)
-            .map(|v| serde_yaml::from_slice(v).unwrap())
+        <span class="prelude-val">Some</span>(<span class="self">self</span>.metadata.custom.clone())
     }
 
     <span class="kw">pub fn </span>get_html_file(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;String&gt; {
@@ -316,12 +318,13 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_challenge_config() {
-        <span class="kw">let </span>metadata = PackageMetadata::default();
-        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
+        <span class="kw">let </span><span class="kw-2">mut </span>metadata = PackageMetadata::default();
         <span class="kw">let </span>config = ChallengeConfig {
             tasks: <span class="number">3</span>,
             ..Default::default()
         };
+        metadata.config = config.clone();
+        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
 
         package.add_file(
             <span class="string">"config.yml"</span>.to_string(),
@@ -338,14 +341,15 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_custom_challenge() {
-        <span class="kw">let </span>metadata = PackageMetadata::default();
-        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
+        <span class="kw">let </span><span class="kw-2">mut </span>metadata = PackageMetadata::default();
         <span class="kw">let </span>custom = Custom {
             id: <span class="string">"custom_challenge"</span>.to_string(),
             name: <span class="string">"Custom Challenge"</span>.to_string(),
             description: <span class="string">"This is a custom challenge"</span>.to_string(),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
 
         package.add_file(
             <span class="string">"challenge.yml"</span>.to_string(),
@@ -364,8 +368,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_html_file() {
-        <span class="kw">let </span>metadata = PackageMetadata::default();
-        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
+        <span class="kw">let </span><span class="kw-2">mut </span>metadata = PackageMetadata::default();
         <span class="kw">let </span>custom = Custom {
             id: <span class="string">"custom_challenge"</span>.to_string(),
             name: <span class="string">"Custom Challenge"</span>.to_string(),
@@ -373,6 +376,8 @@
             html: <span class="string">"index.html"</span>.to_string(),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
 
         package.add_file(
             <span class="string">"challenge.yml"</span>.to_string(),
@@ -384,8 +389,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_css_file() {
-        <span class="kw">let </span>metadata = PackageMetadata::default();
-        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
+        <span class="kw">let </span><span class="kw-2">mut </span>metadata = PackageMetadata::default();
         <span class="kw">let </span>custom = Custom {
             id: <span class="string">"custom_challenge"</span>.to_string(),
             name: <span class="string">"Custom Challenge"</span>.to_string(),
@@ -393,6 +397,8 @@
             css: <span class="string">"style.css"</span>.to_string(),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
 
         package.add_file(
             <span class="string">"challenge.yml"</span>.to_string(),
@@ -407,8 +413,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_js_file() {
-        <span class="kw">let </span>metadata = PackageMetadata::default();
-        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
+        <span class="kw">let </span><span class="kw-2">mut </span>metadata = PackageMetadata::default();
         <span class="kw">let </span>custom = Custom {
             id: <span class="string">"custom_challenge"</span>.to_string(),
             name: <span class="string">"Custom Challenge"</span>.to_string(),
@@ -416,6 +421,8 @@
             js: <span class="string">"script.js"</span>.to_string(),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
 
         package.add_file(
             <span class="string">"challenge.yml"</span>.to_string(),
@@ -433,8 +440,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_results_file() {
-        <span class="kw">let </span>metadata = PackageMetadata::default();
-        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
+        <span class="kw">let </span><span class="kw-2">mut </span>metadata = PackageMetadata::default();
         <span class="kw">let </span>custom = Custom {
             id: <span class="string">"custom_challenge"</span>.to_string(),
             name: <span class="string">"Custom Challenge"</span>.to_string(),
@@ -442,6 +448,8 @@
             results_html: <span class="prelude-val">Some</span>(<span class="string">"results.html"</span>.to_string()),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        <span class="kw">let </span><span class="kw-2">mut </span>package = Package::new(metadata);
 
         package.add_file(
             <span class="string">"challenge.yml"</span>.to_string(),
