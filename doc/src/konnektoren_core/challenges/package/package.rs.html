@@ -230,12 +230,14 @@
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{challenges::Custom, prelude::ChallengeConfig};
 
 <span class="kw">use </span><span class="kw">super</span>::package_metadata::PackageMetadata;
 <span class="kw">use </span>std::collections::HashMap;
 
-<span class="kw">pub struct </span>Package {
+<span class="attr">#[derive(Debug, PartialEq, Clone)]
+</span><span class="kw">pub struct </span>Package {
     <span class="kw">pub </span>metadata: PackageMetadata,
     <span class="kw">pub </span>files: HashMap&lt;String, Vec&lt;u8&gt;&gt;,
 }

@@ -9,7 +9,7 @@
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeConfig, Custom};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="attr">#[derive(Debug, Serialize, Deserialize, Default, PartialEq)]
+<span class="attr">#[derive(Debug, Serialize, Deserialize, Default, PartialEq, Clone)]
 </span><span class="kw">pub struct </span>PackageMetadata {
     <span class="kw">pub </span>config: ChallengeConfig,
     <span class="kw">pub </span>custom: Custom,
