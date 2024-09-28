@@ -110,8 +110,8 @@
     }
 
     <span class="kw">pub fn </span>solved(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.challenge_result.len() == <span class="self">self</span>.challenge_config.tasks
-    }
+        <span class="self">self</span>.challenge_result.len() &gt; <span class="number">0
+    </span>}
 }
 
 <span class="kw">impl </span>Solvable <span class="kw">for </span>Challenge {
