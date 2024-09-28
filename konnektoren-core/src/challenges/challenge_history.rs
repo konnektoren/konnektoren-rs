@@ -12,8 +12,15 @@ impl ChallengeHistory {
         ChallengeHistory { challenges: vec![] }
     }
 
+    /// Add a challenge to the history if it is different from the last one.
     pub fn add_challenge(&mut self, challenge: Challenge) {
-        self.challenges.push(challenge);
+        if let Some(last) = self.challenges.last() {
+            if last != &challenge {
+                self.challenges.push(challenge);
+            }
+        } else {
+            self.challenges.push(challenge);
+        }
     }
 
     pub fn len(&self) -> usize {
