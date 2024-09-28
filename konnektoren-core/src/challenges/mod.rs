@@ -11,6 +11,8 @@ pub mod custom;
 pub mod events;
 pub mod informative;
 pub mod multiple_choice;
+#[cfg(feature = "js")]
+pub mod package;
 pub mod performance;
 pub mod performance_record;
 pub mod review;
@@ -31,6 +33,8 @@ pub use informative::{Informative, InformativeText};
 pub use multiple_choice::MultipleChoice;
 pub use multiple_choice::MultipleChoiceOption;
 pub use multiple_choice::Question;
+#[cfg(feature = "js")]
+pub use package::*;
 pub use performance::Performance;
 pub use performance_record::PerformanceRecord;
 pub use review::Review;

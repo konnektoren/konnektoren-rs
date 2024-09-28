@@ -35,6 +35,7 @@ js = [
     "web-sys",
     "js-sys",
     "gloo",
+    "zip"
 ]
 
 [dependencies]
@@ -67,6 +68,7 @@ wasm-bindgen = { version = "0.2.93", optional = true, features = [
 wasm-bindgen-futures = { version = "0.4.43", optional = true }
 web-sys = { version = "0.3.70", optional = true, features = ["Window"] }
 uuid = { version = "1.10.0", features = ["serde", "v4"] }
+zip = {  version = "2.2.0", optional = true }
 
 [dev-dependencies]
 wasm-bindgen-test = { version = "0.3.43" }
