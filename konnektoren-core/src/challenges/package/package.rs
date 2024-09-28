@@ -3,6 +3,7 @@ use crate::{challenges::Custom, prelude::ChallengeConfig};
 use super::package_metadata::PackageMetadata;
 use std::collections::HashMap;
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct Package {
     pub metadata: PackageMetadata,
     pub files: HashMap<String, Vec<u8>>,

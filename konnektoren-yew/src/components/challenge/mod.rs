@@ -7,6 +7,7 @@ use yew::prelude::*;
 mod actions;
 mod challenge_history_summary;
 pub mod custom;
+pub mod custom_package;
 mod custom_result;
 mod informative;
 mod informative_markdown;
@@ -24,6 +25,7 @@ use crate::components::ChallengeInfoComponent;
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use challenge_history_summary::ChallengeHistorySummaryComponent;
 pub use custom::CustomComponent;
+pub use custom_package::CustomPackageComponent;
 pub use custom_result::CustomResultComponent;
 pub use informative::InformativeComponent;
 pub use informative_markdown::InformativeMarkdownComponent;
@@ -111,6 +113,9 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
         }
         (None, ChallengeType::Custom(challenge), ChallengeVariant::Custom) => html! {
             <CustomComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+        },
+        (None, ChallengeType::Custom(challenge), ChallengeVariant::CustomPackage) => html! {
+            <CustomPackageComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
         },
         _ => html! {},
     };

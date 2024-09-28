@@ -41,14 +41,14 @@ pub fn profile_config_component() -> Html {
     };
 
     html! {
-            <div class="profile-config">
-                <h2>{ "Player Profile" }</h2>
+        <div class="profile-config">
+            <h2>{ "Player Profile" }</h2>
 
-                <label for="name">{ "Name" }</label>
-                <input id="name" type="text" value={(*name).clone()} oninput={on_name_change} />
-                { save_button }
-            </div>
-        }
+            <label for="name">{ "Name" }</label>
+            <input id="name" type="text" value={(*name).clone()} oninput={on_name_change} />
+            { save_button }
+        </div>
+    }
 }
 
 #[cfg(feature = "yew-preview")]
