@@ -150,6 +150,14 @@
 <a href="#150" id="150">150</a>
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{ChallengeResult, Custom, Performance};
 <span class="kw">use </span><span class="kw">crate</span>::challenges::informative::Informative;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::multiple_choice::MultipleChoice;
@@ -166,6 +174,8 @@
     </span>Informative(Informative),
     <span class="attr">#[serde(rename = <span class="string">"custom"</span>)]
     </span>Custom(Custom),
+    <span class="attr">#[serde(rename = <span class="string">"custom-package"</span>)]
+    </span>CustomPackage(Custom),
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>ChallengeType {
@@ -190,6 +200,7 @@
             }
             ChallengeType::Informative(dataset) =&gt; ChallengeType::Informative(dataset.clone()),
             ChallengeType::Custom(dataset) =&gt; ChallengeType::Custom(dataset.clone()),
+            ChallengeType::CustomPackage(dataset) =&gt; ChallengeType::CustomPackage(dataset.clone()),
         }
     }
 
@@ -199,6 +210,7 @@
             ChallengeType::SortTable(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
             ChallengeType::Informative(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
             ChallengeType::Custom(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
+            ChallengeType::CustomPackage(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
         }
     }
 
@@ -208,6 +220,7 @@
             ChallengeType::SortTable(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
             ChallengeType::Informative(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
             ChallengeType::Custom(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
+            ChallengeType::CustomPackage(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
         }
     }
 }
@@ -235,6 +248,9 @@
             }
             (ChallengeType::Informative(<span class="kw">_</span>), ChallengeResult::Informative) =&gt; <span class="number">100</span>,
             (ChallengeType::Custom(<span class="kw">_</span>), ChallengeResult::Custom(result)) =&gt; {
+                (<span class="number">100.0 </span>* result.performance) <span class="kw">as </span>u32
+            }
+            (ChallengeType::CustomPackage(<span class="kw">_</span>), ChallengeResult::CustomPackage(result)) =&gt; {
                 (<span class="number">100.0 </span>* result.performance) <span class="kw">as </span>u32
             }
             <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Invalid challenge type"</span>),
