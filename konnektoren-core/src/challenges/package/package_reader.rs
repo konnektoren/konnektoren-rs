@@ -30,7 +30,8 @@ impl PackageReader {
             ZipArchive::new(reader).map_err(|e| format!("Failed to create ZIP archive: {}", e))?;
 
         let mut files = HashMap::new();
-        let mut metadata = None;
+        let mut config = None;
+        let mut custom = None;
 
         for i in 0..archive.len() {
             let mut file = archive
@@ -42,25 +43,49 @@ impl PackageReader {
             file.read_to_end(&mut contents)
                 .map_err(|e| format!("Failed to read file contents: {}", e))?;
 
-            if file_name == "config.yml" {
-                let config: ChallengeConfig = serde_yaml::from_slice(&contents)
-                    .map_err(|e| format!("Failed to parse config.yml: {}", e))?;
-                metadata.get_or_insert(PackageMetadata {
-                    config,
-                    custom: Custom::default(),
-                });
-            } else if file_name == "challenge.yml" {
-                let custom: Custom = serde_yaml::from_slice(&contents)
-                    .map_err(|e| format!("Failed to parse challenge.yml: {}", e))?;
-                if let Some(meta) = &mut metadata {
-                    meta.custom = custom;
+            match file_name.as_str() {
+                "config.yml" => {
+                    config = Some(
+                        serde_yaml::from_slice(&contents)
+                            .map_err(|e| format!("Failed to parse config.yml: {}", e))?,
+                    );
                 }
-            } else {
-                files.insert(file_name, contents);
+                "challenge.yml" => {
+                    custom = Some(
+                        serde_yaml::from_slice(&contents)
+                            .map_err(|e| format!("Failed to parse challenge.yml: {}", e))?,
+                    );
+                }
+                _ => {
+                    files.insert(file_name, contents);
+                }
             }
         }
 
-        let metadata = metadata.ok_or_else(|| "Missing metadata files in package".to_string())?;
+        let config = config.ok_or_else(|| "Missing config.yml in package".to_string())?;
+        let custom = custom.unwrap_or_default();
+        let metadata = PackageMetadata { config, custom };
+
         Ok(Package { metadata, files })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use env_logger;
+
+    #[test]
+    fn test_package_reader() {
+        env_logger::init();
+        let package_data = include_bytes!("../../assets/articles-pkg.zip");
+        let package = PackageReader::read(package_data).unwrap();
+
+        assert_eq!(package.files.len(), 5);
+        log::debug!("files {:?}", package.files.keys());
+        assert!(package.get_html_file().is_some());
+        assert!(package.get_css_file().is_some());
+        assert!(package.get_js_file().is_some());
+        assert!(package.get_results_file().is_some());
     }
 }

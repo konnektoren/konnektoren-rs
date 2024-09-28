@@ -32,13 +32,11 @@ impl Package {
 
     /// Get the challenge configuration config.yml from the package
     pub fn get_challenge_config(&self) -> Option<ChallengeConfig> {
-        self.get_file("config.yml")
-            .map(|v| serde_yaml::from_slice(v).unwrap())
+        Some(self.metadata.config.clone())
     }
 
     pub fn get_custom_challenge(&self) -> Option<Custom> {
-        self.get_file("challenge.yml")
-            .map(|v| serde_yaml::from_slice(v).unwrap())
+        Some(self.metadata.custom.clone())
     }
 
     pub fn get_html_file(&self) -> Option<String> {
@@ -88,12 +86,13 @@ mod tests {
 
     #[test]
     fn test_challenge_config() {
-        let metadata = PackageMetadata::default();
-        let mut package = Package::new(metadata);
+        let mut metadata = PackageMetadata::default();
         let config = ChallengeConfig {
             tasks: 3,
             ..Default::default()
         };
+        metadata.config = config.clone();
+        let mut package = Package::new(metadata);
 
         package.add_file(
             "config.yml".to_string(),
@@ -110,14 +109,15 @@ mod tests {
 
     #[test]
     fn test_custom_challenge() {
-        let metadata = PackageMetadata::default();
-        let mut package = Package::new(metadata);
+        let mut metadata = PackageMetadata::default();
         let custom = Custom {
             id: "custom_challenge".to_string(),
             name: "Custom Challenge".to_string(),
             description: "This is a custom challenge".to_string(),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        let mut package = Package::new(metadata);
 
         package.add_file(
             "challenge.yml".to_string(),
@@ -136,8 +136,7 @@ mod tests {
 
     #[test]
     fn test_html_file() {
-        let metadata = PackageMetadata::default();
-        let mut package = Package::new(metadata);
+        let mut metadata = PackageMetadata::default();
         let custom = Custom {
             id: "custom_challenge".to_string(),
             name: "Custom Challenge".to_string(),
@@ -145,6 +144,8 @@ mod tests {
             html: "index.html".to_string(),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        let mut package = Package::new(metadata);
 
         package.add_file(
             "challenge.yml".to_string(),
@@ -156,8 +157,7 @@ mod tests {
 
     #[test]
     fn test_css_file() {
-        let metadata = PackageMetadata::default();
-        let mut package = Package::new(metadata);
+        let mut metadata = PackageMetadata::default();
         let custom = Custom {
             id: "custom_challenge".to_string(),
             name: "Custom Challenge".to_string(),
@@ -165,6 +165,8 @@ mod tests {
             css: "style.css".to_string(),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        let mut package = Package::new(metadata);
 
         package.add_file(
             "challenge.yml".to_string(),
@@ -179,8 +181,7 @@ mod tests {
 
     #[test]
     fn test_js_file() {
-        let metadata = PackageMetadata::default();
-        let mut package = Package::new(metadata);
+        let mut metadata = PackageMetadata::default();
         let custom = Custom {
             id: "custom_challenge".to_string(),
             name: "Custom Challenge".to_string(),
@@ -188,6 +189,8 @@ mod tests {
             js: "script.js".to_string(),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        let mut package = Package::new(metadata);
 
         package.add_file(
             "challenge.yml".to_string(),
@@ -205,8 +208,7 @@ mod tests {
 
     #[test]
     fn test_results_file() {
-        let metadata = PackageMetadata::default();
-        let mut package = Package::new(metadata);
+        let mut metadata = PackageMetadata::default();
         let custom = Custom {
             id: "custom_challenge".to_string(),
             name: "Custom Challenge".to_string(),
@@ -214,6 +216,8 @@ mod tests {
             results_html: Some("results.html".to_string()),
             ..Default::default()
         };
+        metadata.custom = custom.clone();
+        let mut package = Package::new(metadata);
 
         package.add_file(
             "challenge.yml".to_string(),
