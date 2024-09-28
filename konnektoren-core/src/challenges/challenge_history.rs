@@ -23,6 +23,10 @@ impl ChallengeHistory {
     pub fn is_empty(&self) -> bool {
         self.challenges.is_empty()
     }
+
+    pub fn extend(&mut self, other: &ChallengeHistory) {
+        self.challenges.extend(other.challenges.iter().cloned());
+    }
 }
 
 #[cfg(test)]
@@ -63,5 +67,20 @@ mod tests {
         let challenge = Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
         challenge_history.add_challenge(challenge);
         assert!(!challenge_history.is_empty());
+    }
+
+    #[test]
+    fn test_extend() {
+        let mut challenge_history = ChallengeHistory::new();
+        let challenge = Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
+        challenge_history.add_challenge(challenge);
+
+        let mut other_challenge_history = ChallengeHistory::new();
+        let other_challenge =
+            Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
+        other_challenge_history.add_challenge(other_challenge);
+
+        challenge_history.extend(&mut other_challenge_history);
+        assert_eq!(challenge_history.len(), 2);
     }
 }
