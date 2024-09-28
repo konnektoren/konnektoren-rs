@@ -11,6 +11,7 @@ pub struct Custom {
     pub js: String,
     pub i18n: Option<String>,
     pub data: serde_json::Value,
+    pub package_url: Option<String>,
 }
 
 #[cfg(test)]
@@ -34,6 +35,7 @@ mod tests {
             js: "".to_string(),
             i18n: None,
             data: data.clone(),
+            package_url: None,
         };
 
         assert_eq!(dataset.id, id);
@@ -43,7 +45,7 @@ mod tests {
 
     #[test]
     fn serialize_dataset() {
-        let json_str = r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","i18n":null,"data":{"key":"value"}}"#;
+        let json_str = r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","i18n":null,"data":{"key":"value"},"package_url":null}"#;
         let dataset = Custom {
             id: "123".to_string(),
             name: "Test".to_string(),
@@ -56,6 +58,7 @@ mod tests {
             data: serde_json::json!({
                 "key": "value"
             }),
+            package_url: None,
         };
 
         let serialized = serde_json::to_string(&dataset).unwrap();

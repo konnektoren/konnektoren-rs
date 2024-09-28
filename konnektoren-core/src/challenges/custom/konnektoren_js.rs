@@ -164,6 +164,7 @@ mod tests {
             js: "".to_string(),
             i18n: None,
             data: serde_json::json!({"key":"value"}),
+            package_url: None,
         };
         konnektoren_js.set_challenge_data(test_custom.clone());
 
