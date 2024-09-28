@@ -82,6 +82,10 @@
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_config::ChallengeConfig;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_result::ChallengeResult;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_type::ChallengeType;
@@ -103,6 +107,10 @@
             challenge_config: challenge_config.clone(),
             challenge_result: ChallengeResult::default(),
         }
+    }
+
+    <span class="kw">pub fn </span>solved(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.challenge_result.len() == <span class="self">self</span>.challenge_config.tasks
     }
 }
 
