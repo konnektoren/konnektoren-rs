@@ -67,7 +67,7 @@
 <a href="#67" id="67">67</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 </span><span class="kw">pub struct </span>Custom {
     <span class="kw">pub </span>id: String,
     <span class="kw">pub </span>name: String,

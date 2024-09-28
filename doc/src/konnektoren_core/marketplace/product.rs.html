@@ -50,7 +50,7 @@
     <span class="kw">pub </span>price: <span class="prelude-ty">Option</span>&lt;f64&gt;,
     <span class="kw">pub </span>image: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>tags: Vec&lt;String&gt;,
-    <span class="kw">pub </span>data_path: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>path: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
 <span class="kw">impl </span>Product {
@@ -62,7 +62,7 @@
             price: Option::from(<span class="number">0.0</span>),
             image: <span class="prelude-val">None</span>,
             tags: <span class="macro">vec!</span>[],
-            data_path: <span class="prelude-val">None</span>,
+            path: <span class="prelude-val">None</span>,
         }
     }
 }
