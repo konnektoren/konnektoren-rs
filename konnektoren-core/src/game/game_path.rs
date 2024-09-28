@@ -30,6 +30,16 @@ impl GamePath {
             .map(|challenge| challenge.id.clone())
             .collect()
     }
+
+    pub fn next_challenge_id(&self, challenge_id: &str) -> Option<String> {
+        let mut iter = self.challenges.iter();
+        while let Some(challenge) = iter.next() {
+            if challenge.id == challenge_id {
+                return iter.next().map(|c| c.id.clone());
+            }
+        }
+        None
+    }
 }
 
 #[cfg(test)]
@@ -57,5 +67,12 @@ mod tests {
         let game_path = GamePath::default();
         let challenge_ids = game_path.challenge_ids();
         assert_eq!(challenge_ids.len(), game_path.challenges.len());
+    }
+
+    #[test]
+    fn test_next_challenge_id() {
+        let game_path = GamePath::default();
+        let next_challenge_id = game_path.next_challenge_id("konnektoren-1");
+        assert_eq!(next_challenge_id, Some("konnektoren-2".to_string()));
     }
 }
