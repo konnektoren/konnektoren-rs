@@ -15,6 +15,8 @@ pub enum ChallengeVariant {
     InformativeMarkdown,
     #[serde(rename = "custom")]
     Custom,
+    #[serde(rename = "custom-package")]
+    CustomPackage,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -60,5 +62,17 @@ mod tests {
         assert_eq!(challenge_config.challenge, "konnektoren");
         assert_eq!(challenge_config.tasks, 10);
         assert_eq!(challenge_config.unlock_points, 0);
+    }
+
+    #[test]
+    fn default_challenge_variant() {
+        let challenge_variant = ChallengeVariant::default();
+        assert_eq!(challenge_variant, ChallengeVariant::MultipleChoice);
+    }
+
+    #[test]
+    fn default_challenge_variant_with_default_attribute() {
+        let challenge_variant = ChallengeVariant::default();
+        assert_eq!(challenge_variant, ChallengeVariant::MultipleChoice);
     }
 }
