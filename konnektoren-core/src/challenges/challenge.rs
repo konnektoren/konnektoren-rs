@@ -20,6 +20,10 @@ impl Challenge {
             challenge_result: ChallengeResult::default(),
         }
     }
+
+    pub fn solved(&self) -> bool {
+        self.challenge_result.len() > 0
+    }
 }
 
 impl Solvable for Challenge {
