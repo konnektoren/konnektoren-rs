@@ -51,5 +51,13 @@ ifndef::imagesdir[:imagesdir: ../images]
 |While reusing UI components across different applications (web app and Telegram app) is efficient, it might lead to technical debt if changes in the core components lead to compatibility issues between apps.
 
 *Mitigation*: Ensure thorough version control of UI components and maintain backward compatibility or well-documented upgrade paths.
-|===
 
+|**Limited SSI Wallet Support**
+|The adoption of SSI for badges relies on the availability and quality of SSI wallets. Currently, there are limited options for SSI wallets that fully support our implementation, and the quality of existing libraries for SSI integration is not optimal.
+
+*Mitigation*:
+- Continuously monitor the SSI ecosystem for improvements in wallet support and library quality.
+- Implement a fallback system that allows users to view and share their achievements even without an SSI wallet.
+- Contribute to open-source SSI projects to help improve the overall ecosystem.
+
+|===

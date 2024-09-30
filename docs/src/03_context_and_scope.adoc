@@ -43,6 +43,7 @@ System_Boundary(konnektoren, "Konnektoren System") {
 
 System_Ext(github_pages, "GitHub Pages", "Hosts static frontend content")
 System_Ext(cloudflare, "Cloudflare", "CDN and proxy service")
+System_Ext(vc_issuer, "vc.konnektoren.help", "Verifiable Credential Issuer")
 
 Rel(user, cloudflare, "Interacts with", "HTTPS")
 Rel(cloudflare, github_pages, "Retrieves static content", "HTTPS")
@@ -50,6 +51,8 @@ Rel(cloudflare, leaderboard, "Proxies API requests", "HTTPS")
 Rel(frontend, core, "Uses")
 Rel(frontend, leaderboard, "Queries/Updates", "REST API")
 Rel(core, leaderboard, "Updates scores")
+Rel(frontend, vc_issuer, "Requests credential issuance", "HTTPS")
+Rel(vc_issuer, user, "Issues verifiable credentials", "OpenID4VC")
 
 @enduml
 ----

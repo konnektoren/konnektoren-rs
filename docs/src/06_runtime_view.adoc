@@ -219,3 +219,40 @@ WebApp -> User : Display Leaderboard
 * **Step 16:** The BackendAPI returns the top 10 performances to the Core.
 * **Step 17:** The Core sends the leaderboard data to the Yew frontend.
 * **Step 18:** The Yew frontend displays the leaderboard to the User.
+
+=== Verifiable Credential Issuance Scenario
+
+This scenario describes the process of a user obtaining a verifiable credential (badge) after completing challenges.
+
+[plantuml, vc-issuance-c4, png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "A learner who completed challenges")
+
+System_Boundary(konnektoren, "Konnektoren System") {
+    Container(frontend, "Frontend", "Yew/WebAssembly", "Web interface")
+    Container(core, "Core", "Rust", "Business logic")
+}
+
+System_Ext(vc_issuer, "vc.konnektoren.help", "Verifiable Credential Issuer")
+
+Rel(user, frontend, "1. Completes challenges")
+Rel(frontend, core, "2. Verifies completion")
+Rel(core, frontend, "3. Confirms achievement")
+Rel(frontend, vc_issuer, "4. Requests credential", "HTTPS")
+Rel(vc_issuer, frontend, "5. Issues OpenBadgeCredential", "OpenID4VC")
+Rel(frontend, user, "6. Displays QR code for credential")
+
+@enduml
+----
+
+* **Step 1:** The User completes a set of challenges on the Konnektoren platform.
+* **Step 2:** The Frontend communicates with the Core to verify the completion of challenges.
+* **Step 3:** The Core confirms the achievement back to the Frontend.
+* **Step 4:** The Frontend requests a credential from the vc.konnektoren.help issuer.
+* **Step 5:** The vc.konnektoren.help issuer creates and issues an OpenBadgeCredential using the OpenID4VC protocol.
+* **Step 6:** The Frontend displays a QR code to the User, which can be scanned with a self-sovereign identity wallet to receive the badge.
+
+This simplified diagram illustrates the key steps in the verifiable credential issuance process, highlighting the interaction between the user, the Konnektoren system, and the external credential issuer.

@@ -92,3 +92,32 @@ To preserve privacy, the *konnektoren.help* system does not employ any backend l
 '''
 
 This documentation provides a clear description of the concepts that cross-cut multiple areas of the *konnektoren.help* project. By adhering to web3 principles, employing encryption, and focusing on a modular, reusable core, the system ensures security and flexibility in its design.
+
+=== Self-Sovereign Identity (SSI) for Badges
+
+The Konnektoren project incorporates Self-Sovereign Identity (SSI) principles for issuing achievement badges. This approach aligns with our commitment to user empowerment and data privacy.
+
+[plantuml, ssi-badge-concept, svg]
+....
+@startuml
+actor User
+component "Konnektoren Platform" as KP
+component "vc.konnektoren.help" as VCI
+component "SSI Wallet" as Wallet
+
+User --> KP : Completes challenges
+KP --> VCI : Requests badge issuance
+VCI --> User : Issues Verifiable Credential
+User --> Wallet : Stores badge
+@enduml
+....
+
+We've implemented SSI for badges for several key reasons:
+
+1. **User Control**: Users have full ownership and control over their achievement credentials, deciding when and with whom to share them.
+2. **Portability**: Badges can be stored in any compatible SSI wallet, allowing users to carry their achievements across different platforms and contexts.
+3. **Privacy**: The SSI approach minimizes the need for centralized storage of user achievements, enhancing privacy.
+4. **Verifiability**: Third parties can easily verify the authenticity of badges without needing to contact Konnektoren directly.
+5. **Interoperability**: By using standard formats like Verifiable Credentials and OpenBadges, we ensure our badges can be recognized and utilized in a broader ecosystem.
+
+This feature represents a step towards a more decentralized, user-centric approach to managing educational and achievement credentials, aligning with broader trends in digital identity and credentialing.
