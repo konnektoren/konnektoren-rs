@@ -493,6 +493,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_user_selects_challenge_on_map_scenario">7.2. User Selects Challenge on Map Scenario</a></li>
 <li><a href="#_challenge_participation_scenario">7.3. Challenge Participation Scenario</a></li>
 <li><a href="#_leaderboard_and_certificate_scenario">7.4. Leaderboard and Certificate Scenario</a></li>
+<li><a href="#_verifiable_credential_issuance_scenario">7.5. Verifiable Credential Issuance Scenario</a></li>
 </ul>
 </li>
 <li><a href="#section-deployment-view">8. Deployment View</a>
@@ -507,6 +508,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_web3_oriented_architecture">9.2. Web3-Oriented Architecture</a></li>
 <li><a href="#_encryption_and_signatures_for_verification">9.3. Encryption and Signatures for Verification</a></li>
 <li><a href="#_no_backend_logging_and_analytics">9.4. No Backend Logging and Analytics</a></li>
+<li><a href="#_self_sovereign_identity_ssi_for_badges">9.5. Self-Sovereign Identity (SSI) for Badges</a></li>
 </ul>
 </li>
 <li><a href="#section-quality-scenarios">10. Quality Requirements</a>
@@ -844,7 +846,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_system_overview">4.1. System Overview</h3>
 <div class="imageblock">
 <div class="content">
-<img src="images/system-overview-c4.png" alt="system overview c4" width="686" height="618">
+<img src="images/system-overview-c4.png" alt="system overview c4" width="648" height="1018">
 </div>
 </div>
 <div class="paragraph">
@@ -1584,6 +1586,42 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_verifiable_credential_issuance_scenario">7.5. Verifiable Credential Issuance Scenario</h3>
+<div class="paragraph">
+<p>This scenario describes the process of a user obtaining a verifiable credential (badge) after completing challenges.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/vc-issuance-c4.png" alt="vc issuance c4" width="573" height="624">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Step 1:</strong> The User completes a set of challenges on the Konnektoren platform.</p>
+</li>
+<li>
+<p><strong>Step 2:</strong> The Frontend communicates with the Core to verify the completion of challenges.</p>
+</li>
+<li>
+<p><strong>Step 3:</strong> The Core confirms the achievement back to the Frontend.</p>
+</li>
+<li>
+<p><strong>Step 4:</strong> The Frontend requests a credential from the vc.konnektoren.help issuer.</p>
+</li>
+<li>
+<p><strong>Step 5:</strong> The vc.konnektoren.help issuer creates and issues an OpenBadgeCredential using the OpenID4VC protocol.</p>
+</li>
+<li>
+<p><strong>Step 6:</strong> The Frontend displays a QR code to the User, which can be scanned with a self-sovereign identity wallet to receive the badge.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This simplified diagram illustrates the key steps in the verifiable credential issuance process, highlighting the interaction between the user, the Konnektoren system, and the external credential issuer.</p>
+</div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -1729,6 +1767,42 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <hr>
 <div class="paragraph">
 <p>This documentation provides a clear description of the concepts that cross-cut multiple areas of the <strong>konnektoren.help</strong> project. By adhering to web3 principles, employing encryption, and focusing on a modular, reusable core, the system ensures security and flexibility in its design.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_self_sovereign_identity_ssi_for_badges">9.5. Self-Sovereign Identity (SSI) for Badges</h3>
+<div class="paragraph">
+<p>The Konnektoren project incorporates Self-Sovereign Identity (SSI) principles for issuing achievement badges. This approach aligns with our commitment to user empowerment and data privacy.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/ssi-badge-concept.svg" alt="ssi badge concept" width="574" height="333">
+</div>
+</div>
+<div class="paragraph">
+<p>We&#8217;ve implemented SSI for badges for several key reasons:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>User Control</strong>: Users have full ownership and control over their achievement credentials, deciding when and with whom to share them.</p>
+</li>
+<li>
+<p><strong>Portability</strong>: Badges can be stored in any compatible SSI wallet, allowing users to carry their achievements across different platforms and contexts.</p>
+</li>
+<li>
+<p><strong>Privacy</strong>: The SSI approach minimizes the need for centralized storage of user achievements, enhancing privacy.</p>
+</li>
+<li>
+<p><strong>Verifiability</strong>: Third parties can easily verify the authenticity of badges without needing to contact Konnektoren directly.</p>
+</li>
+<li>
+<p><strong>Interoperability</strong>: By using standard formats like Verifiable Credentials and OpenBadges, we ensure our badges can be recognized and utilized in a broader ecosystem.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This feature represents a step towards a more decentralized, user-centric approach to managing educational and achievement credentials, aligning with broader trends in digital identity and credentialing.</p>
 </div>
 <div style="page-break-after: always;"></div>
 <div class="paragraph">
@@ -1940,6 +2014,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">While reusing UI components across different applications (web app and Telegram app) is efficient, it might lead to technical debt if changes in the core components lead to compatibility issues between apps.</p>
 <p class="tableblock"><strong>Mitigation</strong>: Ensure thorough version control of UI components and maintain backward compatibility or well-documented upgrade paths.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Limited SSI Wallet Support</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The adoption of SSI for badges relies on the availability and quality of SSI wallets. Currently, there are limited options for SSI wallets that fully support our implementation, and the quality of existing libraries for SSI integration is not optimal.</p>
+<p class="tableblock"><strong>Mitigation</strong>:
+- Continuously monitor the SSI ecosystem for improvements in wallet support and library quality.
+- Implement a fallback system that allows users to view and share their achievements even without an SSI wallet.
+- Contribute to open-source SSI projects to help improve the overall ecosystem.</p></td>
+</tr>
 </tbody>
 </table>
 <div style="page-break-after: always;"></div>
@@ -2024,7 +2106,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-09-28 17:43:58 UTC
+Last updated 2024-09-30 13:26:15 UTC
 </div>
 </div>
 </body>
