@@ -28,6 +28,13 @@
 <a href="#28" id="28">28</a>
 <a href="#29" id="29">29</a>
 <a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
+<a href="#37" id="37">37</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::challenge::ChallengeResult;
 <span class="kw">use </span>konnektoren_core::challenges::{Challenge, Performance};
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
@@ -42,20 +49,27 @@
 </span><span class="kw">pub fn </span>result_summary_component(props: <span class="kw-2">&amp;</span>ResultSummaryComponentProps) -&gt; Html {
     <span class="kw">let </span>performance = props.challenge.performance(<span class="kw-2">&amp;</span>props.challenge_result);
 
-    <span class="kw">let </span>congratulation = <span class="kw">if </span>performance &gt; <span class="number">50 </span>{
-        <span class="macro">html!</span> {
-            &lt;p&gt;{<span class="string">"Congratulations! You have completed the challenge perfectly."</span>}&lt;/p&gt;
-        }
-    } <span class="kw">else </span>{
-        <span class="macro">html!</span> {}
+    <span class="kw">let </span>(performance_class, performance_text) = <span class="kw">match </span>performance {
+        p <span class="kw">if </span>p &gt;= <span class="number">90 </span>=&gt; (<span class="string">"performance-excellent"</span>, <span class="string">"Excellent!"</span>),
+        p <span class="kw">if </span>p &gt;= <span class="number">70 </span>=&gt; (<span class="string">"performance-good"</span>, <span class="string">"Good job!"</span>),
+        p <span class="kw">if </span>p &gt;= <span class="number">50 </span>=&gt; (<span class="string">"performance-fair"</span>, <span class="string">"Fair attempt."</span>),
+        <span class="kw">_ </span>=&gt; (<span class="string">"performance-needs-improvement"</span>, <span class="string">"Keep practicing!"</span>),
     };
 
     <span class="macro">html!</span> {
-        &lt;div class=<span class="string">"result-summary"</span>&gt;
-            &lt;h2&gt;{<span class="string">"Challenge Result"</span>}&lt;/h2&gt;
-            {congratulation}
-            &lt;p&gt;{<span class="macro">format!</span>(<span class="string">"Performance: {}"</span>, performance)}&lt;/p&gt;
-        &lt;/div&gt;
+        &lt;section class=<span class="string">"result-summary material-card"</span>&gt;
+            &lt;h2 class=<span class="string">"material-text--h4"</span>&gt;{<span class="string">"Challenge Result"</span>}&lt;/h2&gt;
+            &lt;div class=<span class="string">"result-content"</span>&gt;
+                <span class="kw">if </span>performance &gt; <span class="number">50 </span>{
+                    &lt;p class=<span class="string">"congratulation material-text--body1"</span>&gt;{<span class="string">"Congratulations! You've completed the challenge successfully."</span>}&lt;/p&gt;
+                }
+                &lt;div class={<span class="macro">classes!</span>(<span class="string">"performance"</span>, performance_class)}&gt;
+                    &lt;span class=<span class="string">"performance-score material-text--h5"</span>&gt;{<span class="macro">format!</span>(<span class="string">"{}%"</span>, performance)}&lt;/span&gt;
+                    &lt;span class=<span class="string">"performance-text material-text--body2"</span>&gt;{performance_text}&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;p class=<span class="string">"material-text--body2"</span>&gt;{<span class="string">"Your performance shows your current understanding. Keep practicing to improve!"</span>}&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/section&gt;
     }
 }
 </code></pre></div></section></main></body></html>

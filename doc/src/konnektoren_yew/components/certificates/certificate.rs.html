@@ -134,6 +134,12 @@
 <a href="#134" id="134">134</a>
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::CertificateImageComponent;
 <span class="kw">use </span>gloo::timers::callback::Timeout;
 <span class="kw">use </span>konnektoren_core::certificates::CertificateData;
@@ -184,43 +190,49 @@
     <span class="kw">let </span>verified = certificate_data.verify();
 
     <span class="macro">html!</span> {
-        &lt;div class=<span class="string">"certificate-container"</span>&gt;
-            &lt;h2&gt;{ <span class="string">"Certificate of Achievement" </span>}&lt;/h2&gt;
-            &lt;div class=<span class="string">"certificate-details"</span>&gt;
-                &lt;p&gt;&lt;strong&gt;{ <span class="string">"Profile Name: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.profile_name }&lt;/p&gt;
-                &lt;p&gt;&lt;strong&gt;{ <span class="string">"Game Path: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.game_path_name }&lt;/p&gt;
-                &lt;p&gt;&lt;strong&gt;{ <span class="string">"Total Challenges: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.total_challenges }&lt;/p&gt;
-                &lt;p&gt;&lt;strong&gt;{ <span class="string">"Solved Challenges: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.solved_challenges }&lt;/p&gt;
-                &lt;p&gt;&lt;strong&gt;{ <span class="string">"Performance Percentage: " </span>}&lt;/strong&gt;{ <span class="macro">format!</span>(<span class="string">"{}%"</span>, <span class="kw-2">&amp;</span>props.certificate_data.performance_percentage) }&lt;/p&gt;
-                &lt;p&gt;&lt;strong&gt;{ <span class="string">"Date: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.date.to_string() }&lt;/p&gt;
+        &lt;div class=<span class="string">"certificate"</span>&gt;
+            &lt;h2 class=<span class="string">"certificate__title"</span>&gt;{ <span class="string">"Certificate of Achievement" </span>}&lt;/h2&gt;
+            &lt;div class=<span class="string">"certificate__details"</span>&gt;
+                &lt;p class=<span class="string">"certificate__info"</span>&gt;&lt;strong&gt;{ <span class="string">"Profile Name: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.profile_name }&lt;/p&gt;
+                &lt;p class=<span class="string">"certificate__info"</span>&gt;&lt;strong&gt;{ <span class="string">"Game Path: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.game_path_name }&lt;/p&gt;
+                &lt;p class=<span class="string">"certificate__info"</span>&gt;&lt;strong&gt;{ <span class="string">"Total Challenges: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.total_challenges }&lt;/p&gt;
+                &lt;p class=<span class="string">"certificate__info"</span>&gt;&lt;strong&gt;{ <span class="string">"Solved Challenges: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.solved_challenges }&lt;/p&gt;
+                &lt;p class=<span class="string">"certificate__info"</span>&gt;&lt;strong&gt;{ <span class="string">"Performance Percentage: " </span>}&lt;/strong&gt;{ <span class="macro">format!</span>(<span class="string">"{}%"</span>, <span class="kw-2">&amp;</span>props.certificate_data.performance_percentage) }&lt;/p&gt;
+                &lt;p class=<span class="string">"certificate__info"</span>&gt;&lt;strong&gt;{ <span class="string">"Date: " </span>}&lt;/strong&gt;{ <span class="kw-2">&amp;</span>props.certificate_data.date.to_string() }&lt;/p&gt;
                 { render_verification_status(verified) }
             &lt;/div&gt;
-            &lt;div class=<span class="string">"share-section"</span>&gt;
-                &lt;input <span class="kw">type</span>=<span class="string">"text" </span>class=<span class="string">"share-url-input" </span>readonly=<span class="bool-val">true </span>value={share_url.clone()} /&gt;
-                &lt;button onclick={on_share_click}&gt;{ <span class="string">"Share This Achievement" </span>}&lt;/button&gt;
+            &lt;div class=<span class="string">"certificate__share"</span>&gt;
+                &lt;input <span class="kw">type</span>=<span class="string">"text" </span>class=<span class="string">"certificate__share-input" </span>readonly=<span class="bool-val">true </span>value={share_url.clone()} /&gt;
+                &lt;button onclick={on_share_click} class=<span class="string">"btn btn--primary"</span>&gt;{ <span class="string">"Share This Achievement" </span>}&lt;/button&gt;
                 <span class="kw">if </span><span class="kw-2">*</span>show_copied_message {
-                    &lt;p class=<span class="string">"copied-message"</span>&gt;{<span class="string">"Link copied to clipboard!"</span>}&lt;/p&gt;
+                    &lt;p class=<span class="string">"certificate__share-message"</span>&gt;{<span class="string">"Link copied to clipboard!"</span>}&lt;/p&gt;
                 }
             &lt;/div&gt;
-            &lt;CertificateImageComponent {certificate_data} {hostname} {protocol} /&gt;
+            &lt;div class=<span class="string">"certificate__image"</span>&gt;
+                &lt;CertificateImageComponent {certificate_data} {hostname} {protocol} /&gt;
+            &lt;/div&gt;
         &lt;/div&gt;
     }
 }
 
 <span class="kw">fn </span>render_verification_status(verified: bool) -&gt; Html {
     <span class="kw">let </span>(icon, text, class) = <span class="kw">if </span>verified {
-        (<span class="string">"fas fa-check-circle"</span>, <span class="string">"Certificate Verified"</span>, <span class="string">"verified"</span>)
+        (
+            <span class="string">"fas fa-check-circle"</span>,
+            <span class="string">"Certificate Verified"</span>,
+            <span class="string">"certificate__verification--verified"</span>,
+        )
     } <span class="kw">else </span>{
         (
             <span class="string">"fas fa-exclamation-triangle"</span>,
             <span class="string">"Certificate Not Verified"</span>,
-            <span class="string">"not-verified"</span>,
+            <span class="string">"certificate__verification--not-verified"</span>,
         )
     };
 
     <span class="macro">html!</span> {
-        &lt;div class={<span class="macro">classes!</span>(<span class="string">"verification-status"</span>, class)}&gt;
-            &lt;i class={icon}&gt;&lt;/i&gt;
+        &lt;div class={<span class="macro">classes!</span>(<span class="string">"certificate__verification"</span>, class)}&gt;
+            &lt;i class={<span class="macro">classes!</span>(icon, <span class="string">"certificate__verification-icon"</span>)}&gt;&lt;/i&gt;
             &lt;span&gt;{ text }&lt;/span&gt;
         &lt;/div&gt;
     }

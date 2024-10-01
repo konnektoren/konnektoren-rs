@@ -63,7 +63,6 @@
 <a href="#63" id="63">63</a>
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
-<a href="#66" id="66">66</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>konnektoren_core::certificates::{create_certificate_data_url, CertificateData};
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
@@ -85,23 +84,22 @@
         <span class="kw-2">&amp;</span>props.certificate_data.to_base64()
     );
 
-    <span class="kw">let </span>img_src = {
-        create_certificate_data_url(
-            <span class="kw-2">&amp;</span>props.certificate_data,
-            <span class="kw-2">&amp;</span>share_url,
-            <span class="kw-2">&amp;</span>props.hostname.clone().unwrap_or_default(),
-        )
-        .map_err(|err| <span class="macro">html!</span> { &lt;p&gt;{ <span class="string">"Error creating certificate image: " </span>}{ err }&lt;/p&gt; })
-        .ok()
-    };
+    <span class="kw">let </span>img_src = create_certificate_data_url(
+        <span class="kw-2">&amp;</span>props.certificate_data,
+        <span class="kw-2">&amp;</span>share_url,
+        <span class="kw-2">&amp;</span>props.hostname.clone().unwrap_or_default(),
+    );
 
     <span class="macro">html!</span> {
-        &lt;div class=<span class="string">"certificate-image"</span>&gt;
+        &lt;div class=<span class="string">"certificate__image-container"</span>&gt;
             {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(img_src) = img_src {
-                    <span class="macro">html!</span> { &lt;img src={img_src}/&gt; }
-                } <span class="kw">else </span>{
-                    <span class="macro">html!</span> { &lt;p&gt;{ <span class="string">"Error creating certificate image" </span>}&lt;/p&gt; }
+                <span class="kw">match </span>img_src {
+                    <span class="prelude-val">Ok</span>(src) =&gt; <span class="macro">html!</span> {
+                        &lt;img class=<span class="string">"certificate__image" </span>src={src} alt=<span class="string">"Certificate of Achievement" </span>/&gt;
+                    },
+                    <span class="prelude-val">Err</span>(err) =&gt; <span class="macro">html!</span> {
+                        &lt;p class=<span class="string">"certificate__image-error"</span>&gt;{ <span class="string">"Error creating certificate image: " </span>}{ err }&lt;/p&gt;
+                    }
                 }
             }
         &lt;/div&gt;

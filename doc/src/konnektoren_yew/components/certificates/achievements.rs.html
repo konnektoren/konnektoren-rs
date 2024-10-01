@@ -129,6 +129,8 @@
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
 <a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::CertificateComponent;
 <span class="kw">use </span>konnektoren_core::certificates::CertificateData;
 <span class="kw">use </span>std::rc::Rc;
@@ -146,15 +148,14 @@
 <span class="attr">#[function_component(AchievementsComponent)]
 </span><span class="kw">pub fn </span>achievements_component(props: <span class="kw-2">&amp;</span>AchievementsProps) -&gt; Html {
     <span class="kw">let </span>selected_certificate = use_state(|| <span class="prelude-val">None</span>);
-
     <span class="kw">let </span>sorted_certificates = sort_certificates(<span class="kw-2">&amp;</span>props.certificates);
-
     <span class="kw">let </span>on_certificate_click = create_certificate_click_handler(selected_certificate.clone());
 
     <span class="macro">html!</span> {
-        &lt;div class=<span class="string">"achievements-container"</span>&gt;
-            &lt;h1&gt;{ <span class="string">"Achievements" </span>}&lt;/h1&gt;
-            &lt;ul class=<span class="string">"achievements-list"</span>&gt;
+        &lt;div class=<span class="string">"achievements"</span>&gt;
+            &lt;h2 class=<span class="string">"achievements__title"</span>&gt;{ <span class="string">"Achievements" </span>}&lt;/h2&gt;
+            &lt;p class=<span class="string">"achievements__description"</span>&gt;{ <span class="string">"Your learning progress and achievements" </span>}&lt;/p&gt;
+            &lt;ul class=<span class="string">"achievements__list"</span>&gt;
                 { render_achievements(<span class="kw-2">&amp;</span>sorted_certificates, <span class="kw-2">&amp;</span>selected_certificate, on_certificate_click, props) }
             &lt;/ul&gt;
         &lt;/div&gt;
@@ -200,12 +201,15 @@
     <span class="kw">let </span>onclick = Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| on_click(cert_clone.clone()));
 
     <span class="macro">html!</span> {
-        &lt;li key={cert.date.timestamp()} class={<span class="macro">classes!</span>(<span class="string">"achievement-item"</span>, is_selected.then(|| <span class="string">"selected"</span>))}&gt;
-            &lt;div {onclick} class=<span class="string">"achievement-summary"</span>&gt;
+        &lt;li class={<span class="macro">classes!</span>(
+            <span class="string">"achievements__item"</span>,
+            is_selected.then(|| <span class="string">"achievements__item--selected"</span>)
+        )}&gt;
+            &lt;div class=<span class="string">"achievements__summary" </span>{onclick}&gt;
                 { render_achievement_summary(cert) }
             &lt;/div&gt;
             <span class="kw">if </span>is_selected {
-                &lt;div class=<span class="string">"certificate-details"</span>&gt;
+                &lt;div class=<span class="string">"achievements__details"</span>&gt;
                     &lt;CertificateComponent
                         certificate_data={cert.clone()}
                         hostname={props.hostname.clone()}
@@ -220,9 +224,9 @@
 <span class="kw">fn </span>render_achievement_summary(cert: <span class="kw-2">&amp;</span>CertificateData) -&gt; Html {
     <span class="macro">html!</span> {
         &lt;&gt;
-            &lt;span class=<span class="string">"achievement-date"</span>&gt;{ cert.date.format(<span class="string">"%Y-%m-%d"</span>).to_string() }&lt;/span&gt;
-            &lt;span class=<span class="string">"achievement-name"</span>&gt;{ <span class="kw-2">&amp;</span>cert.game_path_name }&lt;/span&gt;
-            &lt;span class=<span class="string">"achievement-performance"</span>&gt;{ <span class="macro">format!</span>(<span class="string">"{}%"</span>, cert.performance_percentage) }&lt;/span&gt;
+            &lt;span class=<span class="string">"achievements__date"</span>&gt;{ cert.date.format(<span class="string">"%Y-%m-%d"</span>).to_string() }&lt;/span&gt;
+            &lt;span class=<span class="string">"achievements__name"</span>&gt;{ <span class="kw-2">&amp;</span>cert.game_path_name }&lt;/span&gt;
+            &lt;span class=<span class="string">"achievements__performance"</span>&gt;{ <span class="macro">format!</span>(<span class="string">"{}%"</span>, cert.performance_percentage) }&lt;/span&gt;
         &lt;/&gt;
     }
 }
