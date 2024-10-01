@@ -48,43 +48,49 @@ pub fn certificate(props: &CertificateProps) -> Html {
     let verified = certificate_data.verify();
 
     html! {
-        <div class="certificate-container">
-            <h2>{ "Certificate of Achievement" }</h2>
-            <div class="certificate-details">
-                <p><strong>{ "Profile Name: " }</strong>{ &props.certificate_data.profile_name }</p>
-                <p><strong>{ "Game Path: " }</strong>{ &props.certificate_data.game_path_name }</p>
-                <p><strong>{ "Total Challenges: " }</strong>{ &props.certificate_data.total_challenges }</p>
-                <p><strong>{ "Solved Challenges: " }</strong>{ &props.certificate_data.solved_challenges }</p>
-                <p><strong>{ "Performance Percentage: " }</strong>{ format!("{}%", &props.certificate_data.performance_percentage) }</p>
-                <p><strong>{ "Date: " }</strong>{ &props.certificate_data.date.to_string() }</p>
+        <div class="certificate">
+            <h2 class="certificate__title">{ "Certificate of Achievement" }</h2>
+            <div class="certificate__details">
+                <p class="certificate__info"><strong>{ "Profile Name: " }</strong>{ &props.certificate_data.profile_name }</p>
+                <p class="certificate__info"><strong>{ "Game Path: " }</strong>{ &props.certificate_data.game_path_name }</p>
+                <p class="certificate__info"><strong>{ "Total Challenges: " }</strong>{ &props.certificate_data.total_challenges }</p>
+                <p class="certificate__info"><strong>{ "Solved Challenges: " }</strong>{ &props.certificate_data.solved_challenges }</p>
+                <p class="certificate__info"><strong>{ "Performance Percentage: " }</strong>{ format!("{}%", &props.certificate_data.performance_percentage) }</p>
+                <p class="certificate__info"><strong>{ "Date: " }</strong>{ &props.certificate_data.date.to_string() }</p>
                 { render_verification_status(verified) }
             </div>
-            <div class="share-section">
-                <input type="text" class="share-url-input" readonly=true value={share_url.clone()} />
-                <button onclick={on_share_click}>{ "Share This Achievement" }</button>
+            <div class="certificate__share">
+                <input type="text" class="certificate__share-input" readonly=true value={share_url.clone()} />
+                <button onclick={on_share_click} class="btn btn--primary">{ "Share This Achievement" }</button>
                 if *show_copied_message {
-                    <p class="copied-message">{"Link copied to clipboard!"}</p>
+                    <p class="certificate__share-message">{"Link copied to clipboard!"}</p>
                 }
             </div>
-            <CertificateImageComponent {certificate_data} {hostname} {protocol} />
+            <div class="certificate__image">
+                <CertificateImageComponent {certificate_data} {hostname} {protocol} />
+            </div>
         </div>
     }
 }
 
 fn render_verification_status(verified: bool) -> Html {
     let (icon, text, class) = if verified {
-        ("fas fa-check-circle", "Certificate Verified", "verified")
+        (
+            "fas fa-check-circle",
+            "Certificate Verified",
+            "certificate__verification--verified",
+        )
     } else {
         (
             "fas fa-exclamation-triangle",
             "Certificate Not Verified",
-            "not-verified",
+            "certificate__verification--not-verified",
         )
     };
 
     html! {
-        <div class={classes!("verification-status", class)}>
-            <i class={icon}></i>
+        <div class={classes!("certificate__verification", class)}>
+            <i class={classes!(icon, "certificate__verification-icon")}></i>
             <span>{ text }</span>
         </div>
     }

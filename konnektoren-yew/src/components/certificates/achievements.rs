@@ -15,15 +15,14 @@ pub struct AchievementsProps {
 #[function_component(AchievementsComponent)]
 pub fn achievements_component(props: &AchievementsProps) -> Html {
     let selected_certificate = use_state(|| None);
-
     let sorted_certificates = sort_certificates(&props.certificates);
-
     let on_certificate_click = create_certificate_click_handler(selected_certificate.clone());
 
     html! {
-        <div class="achievements-container">
-            <h1>{ "Achievements" }</h1>
-            <ul class="achievements-list">
+        <div class="achievements">
+            <h2 class="achievements__title">{ "Achievements" }</h2>
+            <p class="achievements__description">{ "Your learning progress and achievements" }</p>
+            <ul class="achievements__list">
                 { render_achievements(&sorted_certificates, &selected_certificate, on_certificate_click, props) }
             </ul>
         </div>
@@ -69,12 +68,15 @@ fn render_achievement_item(
     let onclick = Callback::from(move |_| on_click(cert_clone.clone()));
 
     html! {
-        <li key={cert.date.timestamp()} class={classes!("achievement-item", is_selected.then(|| "selected"))}>
-            <div {onclick} class="achievement-summary">
+        <li class={classes!(
+            "achievements__item",
+            is_selected.then(|| "achievements__item--selected")
+        )}>
+            <div class="achievements__summary" {onclick}>
                 { render_achievement_summary(cert) }
             </div>
             if is_selected {
-                <div class="certificate-details">
+                <div class="achievements__details">
                     <CertificateComponent
                         certificate_data={cert.clone()}
                         hostname={props.hostname.clone()}
@@ -89,9 +91,9 @@ fn render_achievement_item(
 fn render_achievement_summary(cert: &CertificateData) -> Html {
     html! {
         <>
-            <span class="achievement-date">{ cert.date.format("%Y-%m-%d").to_string() }</span>
-            <span class="achievement-name">{ &cert.game_path_name }</span>
-            <span class="achievement-performance">{ format!("{}%", cert.performance_percentage) }</span>
+            <span class="achievements__date">{ cert.date.format("%Y-%m-%d").to_string() }</span>
+            <span class="achievements__name">{ &cert.game_path_name }</span>
+            <span class="achievements__performance">{ format!("{}%", cert.performance_percentage) }</span>
         </>
     }
 }

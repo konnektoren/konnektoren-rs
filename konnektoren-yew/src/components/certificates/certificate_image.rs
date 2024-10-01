@@ -19,23 +19,22 @@ pub fn certificate_image_component(props: &CertificateImageProps) -> Html {
         &props.certificate_data.to_base64()
     );
 
-    let img_src = {
-        create_certificate_data_url(
-            &props.certificate_data,
-            &share_url,
-            &props.hostname.clone().unwrap_or_default(),
-        )
-        .map_err(|err| html! { <p>{ "Error creating certificate image: " }{ err }</p> })
-        .ok()
-    };
+    let img_src = create_certificate_data_url(
+        &props.certificate_data,
+        &share_url,
+        &props.hostname.clone().unwrap_or_default(),
+    );
 
     html! {
-        <div class="certificate-image">
+        <div class="certificate__image-container">
             {
-                if let Some(img_src) = img_src {
-                    html! { <img src={img_src}/> }
-                } else {
-                    html! { <p>{ "Error creating certificate image" }</p> }
+                match img_src {
+                    Ok(src) => html! {
+                        <img class="certificate__image" src={src} alt="Certificate of Achievement" />
+                    },
+                    Err(err) => html! {
+                        <p class="certificate__image-error">{ "Error creating certificate image: " }{ err }</p>
+                    }
                 }
             }
         </div>
