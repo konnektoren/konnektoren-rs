@@ -5,6 +5,8 @@ pub enum ChallengeVariant {
     #[serde(rename = "multiple-choice")]
     #[default]
     MultipleChoice,
+    #[serde(rename = "contextual-choice")]
+    ContextualChoice,
     #[serde(rename = "multiple-choice-circle")]
     MultipleChoiceCircle,
     #[serde(rename = "sort-table")]

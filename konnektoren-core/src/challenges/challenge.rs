@@ -28,24 +28,52 @@ impl Challenge {
 
 impl Solvable for Challenge {
     fn solve(&mut self, input: super::ChallengeInput) -> anyhow::Result<bool> {
-        match self.challenge_result.add_input(input) {
+        match self.challenge_result.add_input(input.clone()) {
             Ok(_) => {
-                let index = self.challenge_result.len();
-                let question = match self.challenge_type {
-                    ChallengeType::MultipleChoice(ref mc) => mc.questions.get(index),
-                    ChallengeType::SortTable(_) => None,
-                    ChallengeType::Informative(_) => None,
-                    ChallengeType::Custom(_) => None,
-                };
-                let result = match self.challenge_result {
-                    ChallengeResult::MultipleChoice(ref mc) => mc.get(index),
-                    ChallengeResult::SortTable(_) => None,
-                    ChallengeResult::Informative => None,
-                    ChallengeResult::Custom(_) => None,
-                };
-                match (question, result) {
-                    (Some(question), Some(result)) => Ok(question.option == result.id),
-                    _ => Ok(false),
+                let index = self.challenge_result.len() - 1; // Adjust index to be 0-based
+                match (&self.challenge_type, &self.challenge_result) {
+                    (
+                        ChallengeType::MultipleChoice(mc),
+                        ChallengeResult::MultipleChoice(results),
+                    ) => {
+                        if let (Some(question), Some(result)) =
+                            (mc.questions.get(index), results.get(index))
+                        {
+                            Ok(question.option == result.id)
+                        } else {
+                            Ok(false)
+                        }
+                    }
+                    (
+                        ChallengeType::ContextualChoice(cc),
+                        ChallengeResult::ContextualChoice(results),
+                    ) => {
+                        if let (Some(item), Some(choice)) =
+                            (cc.items.get(index), results.get(index))
+                        {
+                            Ok(item.choices.iter().zip(&choice.ids).all(|(c, &id)| {
+                                c.options
+                                    .get(id)
+                                    .map_or(false, |selected| *selected == c.correct_answer)
+                            }))
+                        } else {
+                            Ok(false)
+                        }
+                    }
+                    (ChallengeType::SortTable(st), ChallengeResult::SortTable(results)) => {
+                        if let (Some(row), Some(result)) = (st.rows.get(index), results.get(index))
+                        {
+                            Ok(row.values == result.values)
+                        } else {
+                            Ok(false)
+                        }
+                    }
+                    (ChallengeType::Informative(_), ChallengeResult::Informative) => Ok(true),
+                    (ChallengeType::Custom(_), ChallengeResult::Custom(_)) => {
+                        // Custom challenges might need special handling
+                        Ok(true)
+                    }
+                    _ => Ok(false), // Mismatched challenge type and result type
                 }
             }
             Err(_) => Ok(false),
@@ -83,6 +111,6 @@ mod tests {
         let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
         let result = challenge.solve(input);
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), false);
+        assert_eq!(result.unwrap(), true);
     }
 }

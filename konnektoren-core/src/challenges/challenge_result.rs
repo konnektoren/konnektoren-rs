@@ -1,11 +1,12 @@
 use crate::challenges::multiple_choice::MultipleChoiceOption;
 use crate::challenges::sort_table::SortTableRow;
-use crate::challenges::{ChallengeInput, CustomChallengeResult};
+use crate::challenges::{ChallengeInput, ContextItemChoiceAnswers, CustomChallengeResult};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ChallengeResult {
     MultipleChoice(Vec<MultipleChoiceOption>),
+    ContextualChoice(Vec<ContextItemChoiceAnswers>),
     SortTable(Vec<SortTableRow>),
     Informative,
     Custom(CustomChallengeResult),
@@ -27,6 +28,13 @@ impl ChallengeResult {
                 }
                 _ => panic!("Invalid challenge input"),
             },
+            ChallengeResult::ContextualChoice(answers) => match input {
+                ChallengeInput::ContextualChoice(answer) => {
+                    answers.push(answer);
+                    Ok(())
+                }
+                _ => panic!("Invalid challenge input"),
+            },
             ChallengeResult::SortTable(rows) => match input {
                 ChallengeInput::SortTable(row) => {
                     rows.push(row);
@@ -42,6 +50,7 @@ impl ChallengeResult {
     pub fn len(&self) -> usize {
         match self {
             ChallengeResult::MultipleChoice(options) => options.len(),
+            ChallengeResult::ContextualChoice(items) => items.len(),
             ChallengeResult::SortTable(rows) => rows.len(),
             ChallengeResult::Informative => 0,
             ChallengeResult::Custom(_) => 0,
@@ -51,6 +60,7 @@ impl ChallengeResult {
     pub fn is_empty(&self) -> bool {
         match self {
             ChallengeResult::MultipleChoice(options) => options.is_empty(),
+            ChallengeResult::ContextualChoice(items) => items.is_empty(),
             ChallengeResult::SortTable(rows) => rows.is_empty(),
             ChallengeResult::Informative => true,
             ChallengeResult::Custom(_) => true,
