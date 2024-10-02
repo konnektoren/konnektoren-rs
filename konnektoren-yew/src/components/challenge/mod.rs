@@ -1,11 +1,12 @@
 //! # Challenge Components
 
-use konnektoren_core::challenges::challenge_config::ChallengeVariant;
 use konnektoren_core::prelude::*;
 use yew::prelude::*;
 
 mod actions;
 mod challenge_history_summary;
+pub mod contextual_choice;
+mod contextual_choice_result;
 pub mod custom;
 pub mod custom_package;
 mod custom_result;
@@ -24,6 +25,8 @@ pub mod sort_table_result;
 use crate::components::ChallengeInfoComponent;
 pub use actions::{ChallengeActions, ChallengeActionsComponent};
 pub use challenge_history_summary::ChallengeHistorySummaryComponent;
+pub use contextual_choice::ContextualChoiceComponent;
+pub use contextual_choice_result::ContextualChoiceResultComponent;
 pub use custom::CustomComponent;
 pub use custom_package::CustomPackageComponent;
 pub use custom_result::CustomResultComponent;
@@ -31,6 +34,7 @@ pub use informative::InformativeComponent;
 pub use informative_markdown::InformativeMarkdownComponent;
 pub use informative_result::InformativeResultComponent;
 pub use konnektoren_core::challenges::events::ChallengeEvent;
+use konnektoren_core::challenges::ChallengeVariant;
 pub use multiple_choice::MultipleChoiceComponent;
 pub use multiple_choice_circle::MultipleChoiceCircleComponent;
 pub use multiple_choice_result::MultipleChoiceResultComponent;
@@ -100,6 +104,11 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
         ) => html! {
             <MultipleChoiceCircleComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
         },
+        (None, ChallengeType::ContextualChoice(challenge), ChallengeVariant::ContextualChoice) => {
+            html! {
+                <ContextualChoiceComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+            }
+        }
         (None, ChallengeType::SortTable(challenge), ChallengeVariant::SortTable) => html! {
             <SortTableComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
         },
@@ -123,6 +132,9 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
     let challenge_result_component = match (&*challenge_result, &props.challenge.challenge_type) {
         (Some(result), ChallengeType::MultipleChoice(challenge)) => html! {
             <MultipleChoiceResultComponent challenge={challenge.clone()} challenge_result={result.clone()} />
+        },
+        (Some(result), ChallengeType::ContextualChoice(challenge)) => html! {
+            <ContextualChoiceResultComponent challenge={challenge.clone()} challenge_result={result.clone()} />
         },
         _ => html! {},
     };

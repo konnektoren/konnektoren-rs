@@ -36,23 +36,20 @@ pub fn custom_result(props: &CustomResultComponentProps) -> Html {
         let challenge = props.challenge.clone();
         let loading = loading.clone();
 
-        use_effect_with(
-            props.challenge.id.clone(),
-            move |_| {
-                wasm_bindgen_futures::spawn_local(async move {
-                    if let Some(results_html) = &challenge.results_html {
-                        fetch_content(results_html, html_content).await;
-                    }
-                    fetch_content(&challenge.css, css_content).await;
-                    fetch_content(&challenge.js, js_content).await;
-                    if let Some(challenge_i18n) = &challenge.i18n {
-                        fetch_content(challenge_i18n, i18n_content).await;
-                    }
-                    loading.set(false);
-                });
-                || ()
-            }
-        );
+        use_effect_with(props.challenge.id.clone(), move |_| {
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Some(results_html) = &challenge.results_html {
+                    fetch_content(results_html, html_content).await;
+                }
+                fetch_content(&challenge.css, css_content).await;
+                fetch_content(&challenge.js, js_content).await;
+                if let Some(challenge_i18n) = &challenge.i18n {
+                    fetch_content(challenge_i18n, i18n_content).await;
+                }
+                loading.set(false);
+            });
+            || ()
+        });
     }
 
     // Effect to set up i18n data
@@ -60,18 +57,15 @@ pub fn custom_result(props: &CustomResultComponentProps) -> Html {
         let konnektoren_js = konnektoren_js.clone();
         let i18n_content = i18n_content.clone();
 
-        use_effect_with(
-            (*i18n_content).clone(),
-            move |content| {
-                if !content.is_empty() {
-                    let language = SelectedLanguage::default().get();
-                    let loader = I18nYmlLoader::new(content);
-                    let translations = loader.get(&language).unwrap_or_default();
-                    konnektoren_js.borrow_mut().set_i18n_data(translations);
-                }
-                || ()
-            },
-        );
+        use_effect_with((*i18n_content).clone(), move |content| {
+            if !content.is_empty() {
+                let language = SelectedLanguage::default().get();
+                let loader = I18nYmlLoader::new(content);
+                let translations = loader.get(&language).unwrap_or_default();
+                konnektoren_js.borrow_mut().set_i18n_data(translations);
+            }
+            || ()
+        });
     }
 
     // Effect to set challenge data, result data, and execute JS
@@ -82,18 +76,15 @@ pub fn custom_result(props: &CustomResultComponentProps) -> Html {
         let js_code = (*js_content).clone();
         let loading = loading.clone();
 
-        use_effect_with(
-            ((*loading).clone(), js_code.clone()),
-            move |_| {
-                if !*loading {
-                    let js = konnektoren_js.borrow_mut();
-                    js.set_challenge_data(challenge);
-                    js.set_result_data(result);
-                    js.execute_js(&js_code);
-                }
-                || ()
-            },
-        );
+        use_effect_with(((*loading).clone(), js_code.clone()), move |_| {
+            if !*loading {
+                let js = konnektoren_js.borrow_mut();
+                js.set_challenge_data(challenge);
+                js.set_result_data(result);
+                js.execute_js(&js_code);
+            }
+            || ()
+        });
     }
 
     let parsed_html = Html::from_html_unchecked(AttrValue::from((*html_content).clone()));
