@@ -1,23 +1,5 @@
+use super::challenge_variant::ChallengeVariant;
 use serde::{Deserialize, Serialize};
-
-#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub enum ChallengeVariant {
-    #[serde(rename = "multiple-choice")]
-    #[default]
-    MultipleChoice,
-    #[serde(rename = "multiple-choice-circle")]
-    MultipleChoiceCircle,
-    #[serde(rename = "sort-table")]
-    SortTable,
-    #[serde(rename = "informative-text")]
-    InformativeText,
-    #[serde(rename = "informative-markdown")]
-    InformativeMarkdown,
-    #[serde(rename = "custom")]
-    Custom,
-    #[serde(rename = "custom-package")]
-    CustomPackage,
-}
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct ChallengeConfig {
@@ -62,17 +44,5 @@ mod tests {
         assert_eq!(challenge_config.challenge, "konnektoren");
         assert_eq!(challenge_config.tasks, 10);
         assert_eq!(challenge_config.unlock_points, 0);
-    }
-
-    #[test]
-    fn default_challenge_variant() {
-        let challenge_variant = ChallengeVariant::default();
-        assert_eq!(challenge_variant, ChallengeVariant::MultipleChoice);
-    }
-
-    #[test]
-    fn default_challenge_variant_with_default_attribute() {
-        let challenge_variant = ChallengeVariant::default();
-        assert_eq!(challenge_variant, ChallengeVariant::MultipleChoice);
     }
 }
