@@ -150,7 +150,59 @@
 <a href="#150" id="150">150</a>
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
-</pre></div><pre class="rust"><code><span class="kw">use super</span>::{ChallengeResult, Custom, Performance};
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+</pre></div><pre class="rust"><code><span class="kw">use super</span>::{ChallengeResult, ContextualChoice, Custom, Performance};
 <span class="kw">use </span><span class="kw">crate</span>::challenges::informative::Informative;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::multiple_choice::MultipleChoice;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::sort_table::SortTable;
@@ -160,6 +212,8 @@
 </span><span class="kw">pub enum </span>ChallengeType {
     <span class="attr">#[serde(rename = <span class="string">"multiple-choice"</span>)]
     </span>MultipleChoice(MultipleChoice),
+    <span class="attr">#[serde(rename = <span class="string">"contextual-choice"</span>)]
+    </span>ContextualChoice(ContextualChoice),
     <span class="attr">#[serde(rename = <span class="string">"sort-table"</span>)]
     </span>SortTable(SortTable),
     <span class="attr">#[serde(rename = <span class="string">"informative"</span>)]
@@ -183,6 +237,11 @@
                 new_dataset.questions = dataset.questions.iter().take(tasks).cloned().collect();
                 ChallengeType::MultipleChoice(new_dataset)
             }
+            ChallengeType::ContextualChoice(dataset) =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>new_dataset = dataset.clone();
+                new_dataset.items = dataset.items.iter().take(tasks).cloned().collect();
+                ChallengeType::ContextualChoice(new_dataset)
+            }
             ChallengeType::SortTable(dataset) =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>new_dataset = dataset.clone();
                 new_dataset.rows = dataset.rows.iter().take(tasks).cloned().collect();
@@ -196,6 +255,7 @@
     <span class="kw">pub fn </span>name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
         <span class="kw">match </span><span class="self">self </span>{
             ChallengeType::MultipleChoice(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
+            ChallengeType::ContextualChoice(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
             ChallengeType::SortTable(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
             ChallengeType::Informative(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
             ChallengeType::Custom(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
@@ -205,6 +265,7 @@
     <span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
         <span class="kw">match </span><span class="self">self </span>{
             ChallengeType::MultipleChoice(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
+            ChallengeType::ContextualChoice(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
             ChallengeType::SortTable(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
             ChallengeType::Informative(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
             ChallengeType::Custom(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
@@ -223,6 +284,22 @@
                     }
                 }
                 <span class="number">100 </span>* score / dataset.questions.len() <span class="kw">as </span>u32
+            }
+            (
+                ChallengeType::ContextualChoice(dataset),
+                ChallengeResult::ContextualChoice(choices),
+            ) =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>score = <span class="number">0</span>;
+                <span class="kw">for </span>(item, choice) <span class="kw">in </span>dataset.items.iter().zip(choices.iter()) {
+                    <span class="kw">if </span>item.choices.iter().zip(<span class="kw-2">&amp;</span>choice.ids).all(|(c, <span class="kw-2">&amp;</span>id)| {
+                        c.options
+                            .get(id)
+                            .map_or(<span class="bool-val">false</span>, |selected| <span class="kw-2">*</span>selected == c.correct_answer)
+                    }) {
+                        score += <span class="number">1</span>;
+                    }
+                }
+                <span class="number">100 </span>* score / dataset.items.len() <span class="kw">as </span>u32
             }
             (ChallengeType::SortTable(dataset), ChallengeResult::SortTable(rows)) =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>score = <span class="number">0</span>;
@@ -246,7 +323,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::challenges::multiple_choice::MultipleChoiceOption;
-    <span class="kw">use </span><span class="kw">crate</span>::challenges::ChallengeResult;
+    <span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeResult, ContextItemChoiceAnswers};
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>default_challenge() {
@@ -300,6 +377,33 @@
         ]);
         <span class="kw">let </span>performance = challenge.performance(<span class="kw-2">&amp;</span>result);
         <span class="macro">assert_eq!</span>(performance, <span class="number">0</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>challenge_name() {
+        <span class="kw">let </span>challenge = ChallengeType::default();
+        <span class="kw">let </span>name = challenge.name();
+        <span class="macro">assert_eq!</span>(name, <span class="string">"Konnektoren"</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>challenge_id() {
+        <span class="kw">let </span>challenge = ChallengeType::default();
+        <span class="kw">let </span>id = challenge.id();
+        <span class="macro">assert_eq!</span>(id, <span class="string">"konnektoren"</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>contextual_choice_performance() {
+        <span class="kw">let </span>challenge: ContextualChoice =
+            serde_yaml::from_str(<span class="macro">include_str!</span>(<span class="string">"../assets/konjunktiv-2.yml"</span>)).unwrap();
+        <span class="kw">let </span>result = ChallengeResult::ContextualChoice(<span class="macro">vec!</span>[
+            ContextItemChoiceAnswers { ids: <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">0</span>] },
+            ContextItemChoiceAnswers { ids: <span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">0</span>] },
+        ]);
+
+        <span class="kw">let </span>performance = ChallengeType::ContextualChoice(challenge).performance(<span class="kw-2">&amp;</span>result);
+        <span class="macro">assert_eq!</span>(performance, <span class="number">100</span>);
     }
 }
 </code></pre></div></section></main></body></html>

@@ -86,6 +86,34 @@
 <a href="#86" id="86">86</a>
 <a href="#87" id="87">87</a>
 <a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_config::ChallengeConfig;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_result::ChallengeResult;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_type::ChallengeType;
@@ -116,25 +144,53 @@
 
 <span class="kw">impl </span>Solvable <span class="kw">for </span>Challenge {
     <span class="kw">fn </span>solve(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw">super</span>::ChallengeInput) -&gt; anyhow::Result&lt;bool&gt; {
-        <span class="kw">match </span><span class="self">self</span>.challenge_result.add_input(input) {
+        <span class="kw">match </span><span class="self">self</span>.challenge_result.add_input(input.clone()) {
             <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
-                <span class="kw">let </span>index = <span class="self">self</span>.challenge_result.len();
-                <span class="kw">let </span>question = <span class="kw">match </span><span class="self">self</span>.challenge_type {
-                    ChallengeType::MultipleChoice(<span class="kw-2">ref </span>mc) =&gt; mc.questions.get(index),
-                    ChallengeType::SortTable(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
-                    ChallengeType::Informative(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
-                    ChallengeType::Custom(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
-                };
-                <span class="kw">let </span>result = <span class="kw">match </span><span class="self">self</span>.challenge_result {
-                    ChallengeResult::MultipleChoice(<span class="kw-2">ref </span>mc) =&gt; mc.get(index),
-                    ChallengeResult::SortTable(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
-                    ChallengeResult::Informative =&gt; <span class="prelude-val">None</span>,
-                    ChallengeResult::Custom(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
-                };
-                <span class="kw">match </span>(question, result) {
-                    (<span class="prelude-val">Some</span>(question), <span class="prelude-val">Some</span>(result)) =&gt; <span class="prelude-val">Ok</span>(question.option == result.id),
-                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>),
-                }
+                <span class="kw">let </span>index = <span class="self">self</span>.challenge_result.len() - <span class="number">1</span>; <span class="comment">// Adjust index to be 0-based
+                </span><span class="kw">match </span>(<span class="kw-2">&amp;</span><span class="self">self</span>.challenge_type, <span class="kw-2">&amp;</span><span class="self">self</span>.challenge_result) {
+                    (
+                        ChallengeType::MultipleChoice(mc),
+                        ChallengeResult::MultipleChoice(results),
+                    ) =&gt; {
+                        <span class="kw">if let </span>(<span class="prelude-val">Some</span>(question), <span class="prelude-val">Some</span>(result)) =
+                            (mc.questions.get(index), results.get(index))
+                        {
+                            <span class="prelude-val">Ok</span>(question.option == result.id)
+                        } <span class="kw">else </span>{
+                            <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>)
+                        }
+                    }
+                    (
+                        ChallengeType::ContextualChoice(cc),
+                        ChallengeResult::ContextualChoice(results),
+                    ) =&gt; {
+                        <span class="kw">if let </span>(<span class="prelude-val">Some</span>(item), <span class="prelude-val">Some</span>(choice)) =
+                            (cc.items.get(index), results.get(index))
+                        {
+                            <span class="prelude-val">Ok</span>(item.choices.iter().zip(<span class="kw-2">&amp;</span>choice.ids).all(|(c, <span class="kw-2">&amp;</span>id)| {
+                                c.options
+                                    .get(id)
+                                    .map_or(<span class="bool-val">false</span>, |selected| <span class="kw-2">*</span>selected == c.correct_answer)
+                            }))
+                        } <span class="kw">else </span>{
+                            <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>)
+                        }
+                    }
+                    (ChallengeType::SortTable(st), ChallengeResult::SortTable(results)) =&gt; {
+                        <span class="kw">if let </span>(<span class="prelude-val">Some</span>(row), <span class="prelude-val">Some</span>(result)) = (st.rows.get(index), results.get(index))
+                        {
+                            <span class="prelude-val">Ok</span>(row.values == result.values)
+                        } <span class="kw">else </span>{
+                            <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>)
+                        }
+                    }
+                    (ChallengeType::Informative(<span class="kw">_</span>), ChallengeResult::Informative) =&gt; <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>),
+                    (ChallengeType::Custom(<span class="kw">_</span>), ChallengeResult::Custom(<span class="kw">_</span>)) =&gt; {
+                        <span class="comment">// Custom challenges might need special handling
+                        </span><span class="prelude-val">Ok</span>(<span class="bool-val">true</span>)
+                    }
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>), <span class="comment">// Mismatched challenge type and result type
+                </span>}
             }
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>),
         }
@@ -171,7 +227,7 @@
         <span class="kw">let </span>input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
         <span class="kw">let </span>result = challenge.solve(input);
         <span class="macro">assert!</span>(result.is_ok());
-        <span class="macro">assert_eq!</span>(result.unwrap(), <span class="bool-val">false</span>);
+        <span class="macro">assert_eq!</span>(result.unwrap(), <span class="bool-val">true</span>);
     }
 }
 </code></pre></div></section></main></body></html>

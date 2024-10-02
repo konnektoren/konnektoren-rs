@@ -158,14 +158,27 @@
 <a href="#158" id="158">158</a>
 <a href="#159" id="159">159</a>
 <a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! # Challenge Components
 
-</span><span class="kw">use </span>konnektoren_core::challenges::challenge_config::ChallengeVariant;
-<span class="kw">use </span>konnektoren_core::prelude::<span class="kw-2">*</span>;
+</span><span class="kw">use </span>konnektoren_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">mod </span>actions;
 <span class="kw">mod </span>challenge_history_summary;
+<span class="kw">pub mod </span>contextual_choice;
+<span class="kw">mod </span>contextual_choice_result;
 <span class="kw">pub mod </span>custom;
 <span class="kw">pub mod </span>custom_package;
 <span class="kw">mod </span>custom_result;
@@ -184,6 +197,8 @@
 <span class="kw">use </span><span class="kw">crate</span>::components::ChallengeInfoComponent;
 <span class="kw">pub use </span>actions::{ChallengeActions, ChallengeActionsComponent};
 <span class="kw">pub use </span>challenge_history_summary::ChallengeHistorySummaryComponent;
+<span class="kw">pub use </span>contextual_choice::ContextualChoiceComponent;
+<span class="kw">pub use </span>contextual_choice_result::ContextualChoiceResultComponent;
 <span class="kw">pub use </span>custom::CustomComponent;
 <span class="kw">pub use </span>custom_package::CustomPackageComponent;
 <span class="kw">pub use </span>custom_result::CustomResultComponent;
@@ -191,6 +206,7 @@
 <span class="kw">pub use </span>informative_markdown::InformativeMarkdownComponent;
 <span class="kw">pub use </span>informative_result::InformativeResultComponent;
 <span class="kw">pub use </span>konnektoren_core::challenges::events::ChallengeEvent;
+<span class="kw">use </span>konnektoren_core::challenges::ChallengeVariant;
 <span class="kw">pub use </span>multiple_choice::MultipleChoiceComponent;
 <span class="kw">pub use </span>multiple_choice_circle::MultipleChoiceCircleComponent;
 <span class="kw">pub use </span>multiple_choice_result::MultipleChoiceResultComponent;
@@ -260,6 +276,11 @@
         ) =&gt; <span class="macro">html!</span> {
             &lt;MultipleChoiceCircleComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} /&gt;
         },
+        (<span class="prelude-val">None</span>, ChallengeType::ContextualChoice(challenge), ChallengeVariant::ContextualChoice) =&gt; {
+            <span class="macro">html!</span> {
+                &lt;ContextualChoiceComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} /&gt;
+            }
+        }
         (<span class="prelude-val">None</span>, ChallengeType::SortTable(challenge), ChallengeVariant::SortTable) =&gt; <span class="macro">html!</span> {
             &lt;SortTableComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} /&gt;
         },
@@ -283,6 +304,9 @@
     <span class="kw">let </span>challenge_result_component = <span class="kw">match </span>(<span class="kw-2">&amp;*</span>challenge_result, <span class="kw-2">&amp;</span>props.challenge.challenge_type) {
         (<span class="prelude-val">Some</span>(result), ChallengeType::MultipleChoice(challenge)) =&gt; <span class="macro">html!</span> {
             &lt;MultipleChoiceResultComponent challenge={challenge.clone()} challenge_result={result.clone()} /&gt;
+        },
+        (<span class="prelude-val">Some</span>(result), ChallengeType::ContextualChoice(challenge)) =&gt; <span class="macro">html!</span> {
+            &lt;ContextualChoiceResultComponent challenge={challenge.clone()} challenge_result={result.clone()} /&gt;
         },
         <span class="kw">_ </span>=&gt; <span class="macro">html!</span> {},
     };
