@@ -29,7 +29,7 @@ fn render_new_button(
         let on_new = on_new.clone();
         html! {
             <button onclick={Callback::from(move |_| on_new.emit(challenge_config.clone()))}>
-                {"New"}
+                {"Start"}
             </button>
         }
     } else {
