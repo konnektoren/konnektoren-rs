@@ -79,11 +79,11 @@ pub fn informative_markdown_component(props: &InformativeComponentProps) -> Html
             html! {
                 <div class="informative-markdown">
                     <h2>{&props.challenge.description}</h2>
-                    <a href="#finish-button"><button>{"Scroll to finish"}</button></a>
+                    <a href="#finish-button"><button>{"Scroll down"}</button></a>
                     <div class="markdown-content">
                         {content}
                     </div>
-                    <button id="finish-button" onclick={on_finish}>{"Finish"}</button>
+                    <button id="finish-button" onclick={on_finish}>{"Next"}</button>
                 </div>
             }
         }
