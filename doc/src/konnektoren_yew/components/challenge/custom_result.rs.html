@@ -74,7 +74,41 @@
 <a href="#74" id="74">74</a>
 <a href="#75" id="75">75</a>
 <a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::custom::fetch_content;
+<span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
 <span class="kw">use </span>konnektoren_core::challenges::{Custom, CustomChallengeResult, KonnektorenJs};
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
@@ -89,6 +123,7 @@
     <span class="kw">if </span>props.challenge.results_html.is_none() {
         <span class="kw">return </span><span class="macro">html!</span> {
             &lt;div class=<span class="string">"custom-result"</span>&gt;
+                &lt;p&gt;{<span class="string">"No results page available for this challenge."</span>}&lt;/p&gt;
             &lt;/div&gt;
         };
     }
@@ -96,47 +131,78 @@
     <span class="kw">let </span>html_content = use_state(|| <span class="string">""</span>.to_string());
     <span class="kw">let </span>css_content = use_state(|| <span class="string">""</span>.to_string());
     <span class="kw">let </span>js_content = use_state(|| <span class="string">""</span>.to_string());
+    <span class="kw">let </span>i18n_content = use_state(|| <span class="string">""</span>.to_string());
     <span class="kw">let </span>loading = use_state(|| <span class="bool-val">true</span>);
 
-    <span class="kw">let </span>konnektoren_js = use_state(|| KonnektorenJs::new());
+    <span class="kw">let </span>konnektoren_js = use_mut_ref(|| KonnektorenJs::new());
 
-    {
+    <span class="comment">// Effect to fetch content when the challenge changes
+    </span>{
         <span class="kw">let </span>html_content = html_content.clone();
         <span class="kw">let </span>css_content = css_content.clone();
         <span class="kw">let </span>js_content = js_content.clone();
+        <span class="kw">let </span>i18n_content = i18n_content.clone();
         <span class="kw">let </span>challenge = props.challenge.clone();
         <span class="kw">let </span>loading = loading.clone();
 
-        use_effect_with(challenge.clone(), <span class="kw">move </span>|<span class="kw">_</span>| {
-            wasm_bindgen_futures::spawn_local({
-                <span class="kw">let </span>html_content = html_content.clone();
-                <span class="kw">let </span>css_content = css_content.clone();
-                <span class="kw">let </span>js_content = js_content.clone();
-                <span class="kw">let </span>challenge = challenge.clone();
-                <span class="kw">async move </span>{
-                    fetch_content(<span class="kw-2">&amp;</span>challenge.results_html.as_ref().unwrap(), html_content).<span class="kw">await</span>;
+        use_effect_with(
+            props.challenge.id.clone(),
+            <span class="kw">move </span>|<span class="kw">_</span>| {
+                wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(results_html) = <span class="kw-2">&amp;</span>challenge.results_html {
+                        fetch_content(results_html, html_content).<span class="kw">await</span>;
+                    }
                     fetch_content(<span class="kw-2">&amp;</span>challenge.css, css_content).<span class="kw">await</span>;
                     fetch_content(<span class="kw-2">&amp;</span>challenge.js, js_content).<span class="kw">await</span>;
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(challenge_i18n) = <span class="kw-2">&amp;</span>challenge.i18n {
+                        fetch_content(challenge_i18n, i18n_content).<span class="kw">await</span>;
+                    }
                     loading.set(<span class="bool-val">false</span>);
-                }
-            });
-            || ()
-        });
+                });
+                || ()
+            }
+        );
     }
 
-    {
+    <span class="comment">// Effect to set up i18n data
+    </span>{
+        <span class="kw">let </span>konnektoren_js = konnektoren_js.clone();
+        <span class="kw">let </span>i18n_content = i18n_content.clone();
+
+        use_effect_with(
+            (<span class="kw-2">*</span>i18n_content).clone(),
+            <span class="kw">move </span>|content| {
+                <span class="kw">if </span>!content.is_empty() {
+                    <span class="kw">let </span>language = SelectedLanguage::default().get();
+                    <span class="kw">let </span>loader = I18nYmlLoader::new(content);
+                    <span class="kw">let </span>translations = loader.get(<span class="kw-2">&amp;</span>language).unwrap_or_default();
+                    konnektoren_js.borrow_mut().set_i18n_data(translations);
+                }
+                || ()
+            },
+        );
+    }
+
+    <span class="comment">// Effect to set challenge data, result data, and execute JS
+    </span>{
+        <span class="kw">let </span>konnektoren_js = konnektoren_js.clone();
         <span class="kw">let </span>challenge = props.challenge.clone();
         <span class="kw">let </span>result = props.result.clone();
         <span class="kw">let </span>js_code = (<span class="kw-2">*</span>js_content).clone();
-        <span class="kw">let </span>konnektoren_js = konnektoren_js.clone();
+        <span class="kw">let </span>loading = loading.clone();
 
-        use_effect_with((challenge.clone(), js_code.clone()), <span class="kw">move </span>|<span class="kw">_</span>| {
-            konnektoren_js.set_challenge_data(challenge);
-            konnektoren_js.set_result_data(result.clone());
-            konnektoren_js.execute_js(<span class="kw-2">&amp;</span>js_code);
-
-            || ()
-        });
+        use_effect_with(
+            ((<span class="kw-2">*</span>loading).clone(), js_code.clone()),
+            <span class="kw">move </span>|<span class="kw">_</span>| {
+                <span class="kw">if </span>!<span class="kw-2">*</span>loading {
+                    <span class="kw">let </span>js = konnektoren_js.borrow_mut();
+                    js.set_challenge_data(challenge);
+                    js.set_result_data(result);
+                    js.execute_js(<span class="kw-2">&amp;</span>js_code);
+                }
+                || ()
+            },
+        );
     }
 
     <span class="kw">let </span>parsed_html = Html::from_html_unchecked(AttrValue::from((<span class="kw-2">*</span>html_content).clone()));
