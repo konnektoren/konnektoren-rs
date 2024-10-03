@@ -2,6 +2,9 @@ use super::{ChallengeResult, ContextualChoice, Custom, Performance};
 use crate::challenges::informative::Informative;
 use crate::challenges::multiple_choice::MultipleChoice;
 use crate::challenges::sort_table::SortTable;
+use crate::challenges::task_pattern::TaskPattern;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -26,21 +29,24 @@ impl Default for ChallengeType {
 }
 
 impl ChallengeType {
-    pub fn of_tasks(&self, tasks: usize) -> Self {
+    pub fn of_tasks(&self, task_pattern: &TaskPattern) -> Self {
         match self {
             ChallengeType::MultipleChoice(dataset) => {
+                let selected_questions = task_pattern.select_items(&dataset.questions);
                 let mut new_dataset = dataset.clone();
-                new_dataset.questions = dataset.questions.iter().take(tasks).cloned().collect();
+                new_dataset.questions = selected_questions;
                 ChallengeType::MultipleChoice(new_dataset)
             }
             ChallengeType::ContextualChoice(dataset) => {
+                let selected_items = task_pattern.select_items(&dataset.items);
                 let mut new_dataset = dataset.clone();
-                new_dataset.items = dataset.items.iter().take(tasks).cloned().collect();
+                new_dataset.items = selected_items;
                 ChallengeType::ContextualChoice(new_dataset)
             }
             ChallengeType::SortTable(dataset) => {
+                let selected_rows = task_pattern.select_items(&dataset.rows);
                 let mut new_dataset = dataset.clone();
-                new_dataset.rows = dataset.rows.iter().take(tasks).cloned().collect();
+                new_dataset.rows = selected_rows;
                 ChallengeType::SortTable(new_dataset)
             }
             ChallengeType::Informative(dataset) => ChallengeType::Informative(dataset.clone()),
@@ -137,7 +143,7 @@ mod tests {
     #[test]
     fn new_challenge() {
         let challenge = ChallengeType::default();
-        let new_challenge = challenge.of_tasks(2);
+        let new_challenge = challenge.of_tasks(&TaskPattern::Exact(2));
         match new_challenge {
             ChallengeType::MultipleChoice(dataset) => {
                 assert_eq!(dataset.questions.len(), 2);

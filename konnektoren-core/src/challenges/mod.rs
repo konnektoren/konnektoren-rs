@@ -20,6 +20,7 @@ pub mod performance_record;
 pub mod review;
 pub mod solvable;
 pub mod sort_table;
+pub mod task_pattern;
 
 pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;

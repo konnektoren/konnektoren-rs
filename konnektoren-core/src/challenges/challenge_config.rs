@@ -1,5 +1,6 @@
 use super::challenge_variant::ChallengeVariant;
 use serde::{Deserialize, Serialize};
+use crate::challenges::task_pattern::TaskPattern;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct ChallengeConfig {
@@ -8,7 +9,7 @@ pub struct ChallengeConfig {
     pub description: String,
     pub challenge: String,
     pub variant: Option<ChallengeVariant>,
-    pub tasks: usize,
+    pub tasks: TaskPattern,
     pub unlock_points: usize,
     pub position: Option<(i32, i32)>,
 }
@@ -21,7 +22,7 @@ impl Default for ChallengeConfig {
             description: "Your first Konnektoren challenge!".to_string(),
             challenge: "konnektoren".to_string(),
             variant: None,
-            tasks: 10,
+            tasks: 10.into(),
             unlock_points: 0,
             position: Some((0, 0)),
         }
@@ -42,7 +43,7 @@ mod tests {
             "Your first Konnektoren challenge!"
         );
         assert_eq!(challenge_config.challenge, "konnektoren");
-        assert_eq!(challenge_config.tasks, 10);
+        assert_eq!(challenge_config.tasks, 10.into());
         assert_eq!(challenge_config.unlock_points, 0);
     }
 }

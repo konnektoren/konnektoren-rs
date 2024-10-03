@@ -89,7 +89,7 @@ mod tests {
     fn test_challenge_config() {
         let mut metadata = PackageMetadata::default();
         let config = ChallengeConfig {
-            tasks: 3,
+            tasks: 3.into(),
             ..Default::default()
         };
         metadata.config = config.clone();
@@ -102,7 +102,7 @@ mod tests {
         assert_eq!(
             package.get_challenge_config(),
             Some(ChallengeConfig {
-                tasks: 3,
+                tasks: 3.into(),
                 ..Default::default()
             })
         );

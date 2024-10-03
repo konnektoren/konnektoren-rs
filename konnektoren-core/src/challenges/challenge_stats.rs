@@ -1,4 +1,5 @@
 use crate::challenges::{ChallengeConfig, ChallengeHistory, Performance};
+use crate::challenges::task_pattern::TaskPattern;
 
 pub trait ChallengeStats {
     fn challenges(&self) -> usize;
@@ -63,7 +64,7 @@ impl ChallengeStats for (&ChallengeConfig, &ChallengeHistory) {
             .iter()
             .filter(|c| {
                 c.challenge_config.id == self.0.id
-                    && c.challenge_result.len() == c.challenge_config.tasks
+                    && c.challenge_result.len() == c.challenge_config.tasks.len()
             })
             .count()
     }
@@ -130,7 +131,7 @@ mod tests {
         assert_eq!(challenge_history.completed_challenges(), 0);
 
         let mut config = ChallengeConfig::default();
-        config.tasks = 3;
+        config.tasks = 3.into();
         let challenge = Challenge::new(&ChallengeType::default(), &config);
         challenge_history.add_challenge(challenge);
         assert_eq!(challenge_history.completed_challenges(), 0);
@@ -160,7 +161,7 @@ mod tests {
         assert_eq!(challenge_history.stars(), 0);
 
         let mut config = ChallengeConfig::default();
-        config.tasks = 3;
+        config.tasks = 3.into();
 
         let mut challenge = Challenge::new(&ChallengeType::default(), &config);
         challenge.challenge_result = ChallengeResult::MultipleChoice(vec![

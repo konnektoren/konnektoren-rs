@@ -69,7 +69,7 @@ impl GameCommand for NextTaskCommand {
             .get(state.current_game_path)
             .expect("Invalid game path index");
         let challenge_config = &current_game_path.challenges[state.current_challenge_index];
-        let max_questions = challenge_config.tasks;
+        let max_questions = challenge_config.tasks.len();
         if state.current_task_index >= max_questions - 1 {
             return Err(anyhow!("No more tasks"));
         }
