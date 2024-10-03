@@ -31,7 +31,7 @@ pub fn challenge_info(props: &Props) -> Html {
                 <p>{&props.challenge_config.description}</p>
             </div>
             <div class="challenge-info__meta">
-                <p class="challenge-info__tasks">{format!("{}: {}", i18n.t("Tasks"), props.challenge_config.tasks)}</p>
+                <p class="challenge-info__tasks">{format!("{}: {}", i18n.t("Tasks"), props.challenge_config.tasks.len())}</p>
                 <p class="challenge-info__unlock-points">{format!("{}: {}", i18n.t("Unlock Points"), props.challenge_config.unlock_points)}</p>
             </div>
         </div>

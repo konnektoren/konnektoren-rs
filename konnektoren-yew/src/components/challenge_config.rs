@@ -47,7 +47,7 @@ mod tests {
             id: "konnektoren".to_string(),
             name: "Konnektoren".to_string(),
             description: "Konnektoren".to_string(),
-            tasks: 2,
+            tasks: 2.into(),
             unlock_points: 10,
             challenge: "konnektoren".to_string(),
             variant: None,
@@ -61,7 +61,7 @@ mod tests {
             assert!(vtag
                 .children()
                 .into_iter()
-                .any(|child| matches!(child, Html::VText(vtext) if vtext.text.contains("New"))));
+                .any(|child| matches!(child, Html::VText(vtext) if vtext.text.contains("Start"))));
         } else {
             panic!("Expected VTag");
         }
@@ -82,7 +82,7 @@ mod preview {
                 description: "Challenge Description".to_string(),
                 challenge: "".to_string(),
                 variant: None,
-                tasks: 5,
+                tasks: 5.into(),
                 unlock_points: 10,
                 position: None,
             },
