@@ -14,7 +14,7 @@ pub struct MultipleChoiceOption {
     pub name: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 pub struct Question {
     pub question: String,
     pub help: String,

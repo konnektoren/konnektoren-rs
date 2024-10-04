@@ -4,6 +4,9 @@ pub mod game;
 pub mod player_profile;
 pub mod session;
 
+#[cfg(feature = "achievements")]
+pub mod achievements;
+
 #[cfg(feature = "certificates")]
 pub mod certificates;
 
@@ -30,6 +33,9 @@ pub mod prelude {
     pub use crate::player_profile::PlayerProfile;
     pub use crate::session::Session;
     pub use crate::Xp;
+
+    #[cfg(feature = "achievements")]
+    pub use crate::achievements::*;
 
     #[cfg(feature = "marketplace")]
     pub use crate::marketplace::*;

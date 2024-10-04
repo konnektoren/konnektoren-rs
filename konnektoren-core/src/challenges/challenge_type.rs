@@ -77,6 +77,9 @@ impl Performance for ChallengeType {
     fn performance(&self, result: &ChallengeResult) -> u32 {
         match (self, result) {
             (ChallengeType::MultipleChoice(dataset), ChallengeResult::MultipleChoice(options)) => {
+                if dataset.questions.is_empty() {
+                    return 0;
+                }
                 let mut score = 0;
                 for (question, option) in dataset.questions.iter().zip(options.iter()) {
                     if question.option == option.id {
@@ -89,6 +92,9 @@ impl Performance for ChallengeType {
                 ChallengeType::ContextualChoice(dataset),
                 ChallengeResult::ContextualChoice(choices),
             ) => {
+                if dataset.items.is_empty() {
+                    return 0;
+                }
                 let mut score = 0;
                 for (item, choice) in dataset.items.iter().zip(choices.iter()) {
                     if item.choices.iter().zip(&choice.ids).all(|(c, &id)| {
@@ -102,6 +108,9 @@ impl Performance for ChallengeType {
                 100 * score / dataset.items.len() as u32
             }
             (ChallengeType::SortTable(dataset), ChallengeResult::SortTable(rows)) => {
+                if dataset.rows.is_empty() {
+                    return 0;
+                }
                 let mut score = 0;
                 for (row, option) in dataset.rows.iter().zip(rows.iter()) {
                     if row.values.eq(option.values.as_slice()) {

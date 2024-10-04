@@ -23,7 +23,7 @@ pub struct SortTableColumn {
     pub description: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 pub struct SortTableRow {
     pub id: usize,
     pub values: Vec<String>,

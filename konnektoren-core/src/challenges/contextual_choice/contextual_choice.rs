@@ -8,20 +8,20 @@ pub struct ContextualChoice {
     pub items: Vec<ContextItem>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 pub struct ContextItem {
     pub template: String,
     pub choices: Vec<Choice>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 pub struct Choice {
     pub id: usize,
     pub options: Vec<String>,
     pub correct_answer: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 pub struct ContextItemChoiceAnswers {
     pub ids: Vec<usize>,
 }

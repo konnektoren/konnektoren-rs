@@ -13,7 +13,8 @@ keywords = ["konnektoren", "core", "library"]
 crate-type = ["rlib"]
 
 [features]
-default = ["certificates", "marketplace", "js"]
+default = ["achievements", "certificates", "marketplace", "js"]
+achievements = []
 certificates = [
     "base64",
     "sha2",
