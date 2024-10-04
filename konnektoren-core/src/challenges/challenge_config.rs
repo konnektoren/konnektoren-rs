@@ -1,6 +1,6 @@
 use super::challenge_variant::ChallengeVariant;
-use serde::{Deserialize, Serialize};
 use crate::challenges::task_pattern::TaskPattern;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct ChallengeConfig {

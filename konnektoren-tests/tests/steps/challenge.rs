@@ -60,7 +60,7 @@ async fn a_challenge_of_is_created_with_questions(
 ) {
     let challenge_config = ChallengeConfig {
         challenge: challenge.replace("\"", ""),
-        tasks,
+        tasks: tasks.into(),
         ..Default::default()
     };
     let factory = world.factory.as_ref().unwrap();

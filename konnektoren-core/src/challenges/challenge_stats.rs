@@ -1,5 +1,5 @@
-use crate::challenges::{ChallengeConfig, ChallengeHistory, Performance};
 use crate::challenges::task_pattern::TaskPattern;
+use crate::challenges::{ChallengeConfig, ChallengeHistory, Performance};
 
 pub trait ChallengeStats {
     fn challenges(&self) -> usize;

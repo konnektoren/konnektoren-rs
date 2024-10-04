@@ -1,6 +1,7 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 use std::ops::RangeInclusive;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -91,6 +92,33 @@ impl TaskPattern {
                 end.saturating_sub(start) + 1
             }
             TaskPattern::Random(n, _) => *n,
+        }
+    }
+}
+
+impl fmt::Display for TaskPattern {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TaskPattern::Exact(n) => write!(f, "{}", n),
+            TaskPattern::Range(range) => {
+                if *range.start() == i32::MIN {
+                    write!(f, "..={}", range.end())
+                } else if *range.end() == i32::MAX {
+                    write!(f, "{}..=", range.start())
+                } else {
+                    write!(f, "{}..={}", range.start(), range.end())
+                }
+            }
+            TaskPattern::Random(n, Some(range)) => {
+                if *range.start() == i32::MIN {
+                    write!(f, "{}:..={}", n, range.end())
+                } else if *range.end() == i32::MAX {
+                    write!(f, "{}:{}..=", n, range.start())
+                } else {
+                    write!(f, "{}:{}..={}", n, range.start(), range.end())
+                }
+            }
+            TaskPattern::Random(n, None) => write!(f, "{}:random", n),
         }
     }
 }
