@@ -1,10 +1,11 @@
-use crate::prelude::CertificateComponent;
-use konnektoren_core::certificates::CertificateData;
+use crate::prelude::{AchievementComponent, CertificateComponent};
+use konnektoren_core::{certificates::CertificateData, prelude::AchievementDefinition};
 use std::rc::Rc;
 use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct AchievementsProps {
+    pub achievements: Vec<AchievementDefinition>,
     pub certificates: Vec<CertificateData>,
     #[prop_or_default]
     pub hostname: Option<String>,
@@ -20,11 +21,31 @@ pub fn achievements_component(props: &AchievementsProps) -> Html {
 
     html! {
         <div class="achievements">
-            <h2 class="achievements__title">{ "Achievements" }</h2>
-            <p class="achievements__description">{ "Your learning progress and achievements" }</p>
-            <ul class="achievements__list">
-                { render_achievements(&sorted_certificates, &selected_certificate, on_certificate_click, props) }
-            </ul>
+            <h2 class="achievements__title">{ "Achievements and Certificates" }</h2>
+            <div class="achievements__container">
+                <div class="achievements__achievements-list">
+                    <h3 class="achievements__subtitle">{ "Achievements" }</h3>
+                    { render_achievements(&props.achievements) }
+                </div>
+                <div class="achievements__certificates-list">
+                    <h3 class="achievements__subtitle">{ "Certificates" }</h3>
+                    <ul class="achievements__list">
+                        { render_certificates(&sorted_certificates, &selected_certificate, on_certificate_click, props) }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+fn render_achievements(achievements: &[AchievementDefinition]) -> Html {
+    html! {
+        <div class="achievements__achievement-grid">
+            { for achievements.iter().map(|achievement| {
+                html! {
+                    <AchievementComponent achievement={achievement.clone()} />
+                }
+            })}
         </div>
     }
 }
@@ -43,7 +64,7 @@ fn create_certificate_click_handler(
     })
 }
 
-fn render_achievements(
+fn render_certificates(
     certificates: &[CertificateData],
     selected_certificate: &UseStateHandle<Option<CertificateData>>,
     on_click: Rc<dyn Fn(CertificateData)>,
@@ -53,12 +74,12 @@ fn render_achievements(
         .iter()
         .map(|cert| {
             let is_selected = selected_certificate.as_ref() == Some(cert);
-            render_achievement_item(cert, is_selected, on_click.clone(), props)
+            render_certificate_item(cert, is_selected, on_click.clone(), props)
         })
         .collect()
 }
 
-fn render_achievement_item(
+fn render_certificate_item(
     cert: &CertificateData,
     is_selected: bool,
     on_click: Rc<dyn Fn(CertificateData)>,
@@ -69,14 +90,14 @@ fn render_achievement_item(
 
     html! {
         <li class={classes!(
-            "achievements__item",
-            is_selected.then(|| "achievements__item--selected")
+            "achievements__certificate-item",
+            is_selected.then(|| "achievements__certificate-item--selected")
         )}>
-            <div class="achievements__summary" {onclick}>
-                { render_achievement_summary(cert) }
+            <div class="achievements__certificate-summary" {onclick}>
+                { render_certificate_summary(cert) }
             </div>
             if is_selected {
-                <div class="achievements__details">
+                <div class="achievements__certificate-details">
                     <CertificateComponent
                         certificate_data={cert.clone()}
                         hostname={props.hostname.clone()}
@@ -88,7 +109,7 @@ fn render_achievement_item(
     }
 }
 
-fn render_achievement_summary(cert: &CertificateData) -> Html {
+fn render_certificate_summary(cert: &CertificateData) -> Html {
     html! {
         <>
             <span class="achievements__date">{ cert.date.format("%Y-%m-%d").to_string() }</span>
@@ -106,6 +127,13 @@ mod preview {
     yew_preview::create_preview!(
         AchievementsComponent,
         AchievementsProps {
+            achievements: vec![AchievementDefinition {
+                id: "".to_string(),
+                name: "Achievement 1".to_string(),
+                description: "Description 1".to_string(),
+                icon: "https://example.com/icon1.png".to_string(),
+                condition: "".to_string(),
+            },],
             certificates: vec![
                 CertificateData {
                     game_path_name: "Level 1".to_string(),
