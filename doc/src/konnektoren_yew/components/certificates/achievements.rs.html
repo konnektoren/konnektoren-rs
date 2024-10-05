@@ -131,13 +131,42 @@
 <a href="#131" id="131">131</a>
 <a href="#132" id="132">132</a>
 <a href="#133" id="133">133</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::CertificateComponent;
-<span class="kw">use </span>konnektoren_core::certificates::CertificateData;
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::prelude::{AchievementComponent, CertificateComponent};
+<span class="kw">use </span>konnektoren_core::{certificates::CertificateData, prelude::AchievementDefinition};
 <span class="kw">use </span>std::rc::Rc;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Properties, Clone, PartialEq)]
 </span><span class="kw">pub struct </span>AchievementsProps {
+    <span class="kw">pub </span>achievements: Vec&lt;AchievementDefinition&gt;,
     <span class="kw">pub </span>certificates: Vec&lt;CertificateData&gt;,
     <span class="attr">#[prop_or_default]
     </span><span class="kw">pub </span>hostname: <span class="prelude-ty">Option</span>&lt;String&gt;,
@@ -153,11 +182,31 @@
 
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"achievements"</span>&gt;
-            &lt;h2 class=<span class="string">"achievements__title"</span>&gt;{ <span class="string">"Achievements" </span>}&lt;/h2&gt;
-            &lt;p class=<span class="string">"achievements__description"</span>&gt;{ <span class="string">"Your learning progress and achievements" </span>}&lt;/p&gt;
-            &lt;ul class=<span class="string">"achievements__list"</span>&gt;
-                { render_achievements(<span class="kw-2">&amp;</span>sorted_certificates, <span class="kw-2">&amp;</span>selected_certificate, on_certificate_click, props) }
-            &lt;/ul&gt;
+            &lt;h2 class=<span class="string">"achievements__title"</span>&gt;{ <span class="string">"Achievements and Certificates" </span>}&lt;/h2&gt;
+            &lt;div class=<span class="string">"achievements__container"</span>&gt;
+                &lt;div class=<span class="string">"achievements__achievements-list"</span>&gt;
+                    &lt;h3 class=<span class="string">"achievements__subtitle"</span>&gt;{ <span class="string">"Achievements" </span>}&lt;/h3&gt;
+                    { render_achievements(<span class="kw-2">&amp;</span>props.achievements) }
+                &lt;/div&gt;
+                &lt;div class=<span class="string">"achievements__certificates-list"</span>&gt;
+                    &lt;h3 class=<span class="string">"achievements__subtitle"</span>&gt;{ <span class="string">"Certificates" </span>}&lt;/h3&gt;
+                    &lt;ul class=<span class="string">"achievements__list"</span>&gt;
+                        { render_certificates(<span class="kw-2">&amp;</span>sorted_certificates, <span class="kw-2">&amp;</span>selected_certificate, on_certificate_click, props) }
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    }
+}
+
+<span class="kw">fn </span>render_achievements(achievements: <span class="kw-2">&amp;</span>[AchievementDefinition]) -&gt; Html {
+    <span class="macro">html!</span> {
+        &lt;div class=<span class="string">"achievements__achievement-grid"</span>&gt;
+            { <span class="kw">for </span>achievements.iter().map(|achievement| {
+                <span class="macro">html!</span> {
+                    &lt;AchievementComponent achievement={achievement.clone()} /&gt;
+                }
+            })}
         &lt;/div&gt;
     }
 }
@@ -176,7 +225,7 @@
     })
 }
 
-<span class="kw">fn </span>render_achievements(
+<span class="kw">fn </span>render_certificates(
     certificates: <span class="kw-2">&amp;</span>[CertificateData],
     selected_certificate: <span class="kw-2">&amp;</span>UseStateHandle&lt;<span class="prelude-ty">Option</span>&lt;CertificateData&gt;&gt;,
     on_click: Rc&lt;<span class="kw">dyn </span>Fn(CertificateData)&gt;,
@@ -186,12 +235,12 @@
         .iter()
         .map(|cert| {
             <span class="kw">let </span>is_selected = selected_certificate.as_ref() == <span class="prelude-val">Some</span>(cert);
-            render_achievement_item(cert, is_selected, on_click.clone(), props)
+            render_certificate_item(cert, is_selected, on_click.clone(), props)
         })
         .collect()
 }
 
-<span class="kw">fn </span>render_achievement_item(
+<span class="kw">fn </span>render_certificate_item(
     cert: <span class="kw-2">&amp;</span>CertificateData,
     is_selected: bool,
     on_click: Rc&lt;<span class="kw">dyn </span>Fn(CertificateData)&gt;,
@@ -202,14 +251,14 @@
 
     <span class="macro">html!</span> {
         &lt;li class={<span class="macro">classes!</span>(
-            <span class="string">"achievements__item"</span>,
-            is_selected.then(|| <span class="string">"achievements__item--selected"</span>)
+            <span class="string">"achievements__certificate-item"</span>,
+            is_selected.then(|| <span class="string">"achievements__certificate-item--selected"</span>)
         )}&gt;
-            &lt;div class=<span class="string">"achievements__summary" </span>{onclick}&gt;
-                { render_achievement_summary(cert) }
+            &lt;div class=<span class="string">"achievements__certificate-summary" </span>{onclick}&gt;
+                { render_certificate_summary(cert) }
             &lt;/div&gt;
             <span class="kw">if </span>is_selected {
-                &lt;div class=<span class="string">"achievements__details"</span>&gt;
+                &lt;div class=<span class="string">"achievements__certificate-details"</span>&gt;
                     &lt;CertificateComponent
                         certificate_data={cert.clone()}
                         hostname={props.hostname.clone()}
@@ -221,7 +270,7 @@
     }
 }
 
-<span class="kw">fn </span>render_achievement_summary(cert: <span class="kw-2">&amp;</span>CertificateData) -&gt; Html {
+<span class="kw">fn </span>render_certificate_summary(cert: <span class="kw-2">&amp;</span>CertificateData) -&gt; Html {
     <span class="macro">html!</span> {
         &lt;&gt;
             &lt;span class=<span class="string">"achievements__date"</span>&gt;{ cert.date.format(<span class="string">"%Y-%m-%d"</span>).to_string() }&lt;/span&gt;
@@ -239,6 +288,13 @@
     <span class="macro">yew_preview::create_preview!</span>(
         AchievementsComponent,
         AchievementsProps {
+            achievements: <span class="macro">vec!</span>[AchievementDefinition {
+                id: <span class="string">""</span>.to_string(),
+                name: <span class="string">"Achievement 1"</span>.to_string(),
+                description: <span class="string">"Description 1"</span>.to_string(),
+                icon: <span class="string">"https://example.com/icon1.png"</span>.to_string(),
+                condition: <span class="string">""</span>.to_string(),
+            },],
             certificates: <span class="macro">vec!</span>[
                 CertificateData {
                     game_path_name: <span class="string">"Level 1"</span>.to_string(),

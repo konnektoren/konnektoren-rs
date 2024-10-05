@@ -128,20 +128,20 @@
     <span class="kw">pub </span>items: Vec&lt;ContextItem&gt;,
 }
 
-<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 </span><span class="kw">pub struct </span>ContextItem {
     <span class="kw">pub </span>template: String,
     <span class="kw">pub </span>choices: Vec&lt;Choice&gt;,
 }
 
-<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 </span><span class="kw">pub struct </span>Choice {
     <span class="kw">pub </span>id: usize,
     <span class="kw">pub </span>options: Vec&lt;String&gt;,
     <span class="kw">pub </span>correct_answer: String,
 }
 
-<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 </span><span class="kw">pub struct </span>ContextItemChoiceAnswers {
     <span class="kw">pub </span>ids: Vec&lt;usize&gt;,
 }

@@ -59,42 +59,41 @@
 <a href="#59" id="59">59</a>
 <a href="#60" id="60">60</a>
 <a href="#61" id="61">61</a>
-<a href="#62" id="62">62</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::ChallengeRatingComponent;
 <span class="kw">use </span><span class="kw">crate</span>::i18n::use_i18n;
 <span class="kw">use </span>konnektoren_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Properties, PartialEq, Clone)]
-</span><span class="kw">pub struct </span>Props {
+</span><span class="kw">pub struct </span>ChallengeInfoProps {
     <span class="kw">pub </span>challenge_config: ChallengeConfig,
     <span class="attr">#[prop_or_default]
     </span><span class="kw">pub </span>api_url: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
 <span class="attr">#[function_component(ChallengeInfoComponent)]
-</span><span class="kw">pub fn </span>challenge_info(props: <span class="kw-2">&amp;</span>Props) -&gt; Html {
+</span><span class="kw">pub fn </span>challenge_info(props: <span class="kw-2">&amp;</span>ChallengeInfoProps) -&gt; Html {
     <span class="kw">let </span>i18n = use_i18n();
 
     <span class="kw">let </span>rating_component = <span class="kw">match </span>props.api_url {
         <span class="prelude-val">Some</span>(<span class="kw-2">ref </span>api_url) =&gt; <span class="macro">html!</span> {
-            &lt;ChallengeRatingComponent api_url={api_url.clone()} challenge_id={props.challenge_config.id.clone()} /&gt;
+            &lt;div class=<span class="string">"challenge-info__rating"</span>&gt;
+                &lt;ChallengeRatingComponent api_url={api_url.clone()} challenge_id={props.challenge_config.id.clone()} /&gt;
+            &lt;/div&gt;
         },
         <span class="prelude-val">None </span>=&gt; <span class="macro">html!</span> {},
     };
 
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"challenge-info"</span>&gt;
-            &lt;h2&gt;{<span class="kw-2">&amp;</span>props.challenge_config.name}&lt;/h2&gt;
+            &lt;h2 class=<span class="string">"challenge-info__title"</span>&gt;{<span class="kw-2">&amp;</span>props.challenge_config.name}&lt;/h2&gt;
             {rating_component}
-            &lt;div class=<span class="string">"challenge-description"</span>&gt;
+            &lt;div class=<span class="string">"challenge-info__description"</span>&gt;
                 &lt;p&gt;{<span class="kw-2">&amp;</span>props.challenge_config.description}&lt;/p&gt;
             &lt;/div&gt;
-            &lt;div class=<span class="string">"tasks-info"</span>&gt;
-                &lt;p&gt;{<span class="macro">format!</span>(<span class="string">"{}: {}"</span>, i18n.t(<span class="string">"Tasks"</span>), props.challenge_config.tasks)}&lt;/p&gt;
-            &lt;/div&gt;
-            &lt;div class=<span class="string">"unlock-points-info"</span>&gt;
-                &lt;p&gt;{<span class="macro">format!</span>(<span class="string">"{}: {}"</span>, i18n.t(<span class="string">"Unlock Points"</span>), props.challenge_config.unlock_points)}&lt;/p&gt;
+            &lt;div class=<span class="string">"challenge-info__meta"</span>&gt;
+                &lt;p class=<span class="string">"challenge-info__tasks"</span>&gt;{<span class="macro">format!</span>(<span class="string">"{}: {}"</span>, i18n.t(<span class="string">"Tasks"</span>), props.challenge_config.tasks.len())}&lt;/p&gt;
+                &lt;p class=<span class="string">"challenge-info__unlock-points"</span>&gt;{<span class="macro">format!</span>(<span class="string">"{}: {}"</span>, i18n.t(<span class="string">"Unlock Points"</span>), props.challenge_config.unlock_points)}&lt;/p&gt;
             &lt;/div&gt;
         &lt;/div&gt;
     }
@@ -104,17 +103,16 @@
 </span><span class="kw">mod </span>preview {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>yew_preview::prelude::<span class="kw-2">*</span>;
-
     <span class="macro">yew_preview::create_preview!</span>(
         ChallengeInfoComponent,
-        Props {
+        ChallengeInfoProps {
             challenge_config: ChallengeConfig {
                 id: <span class="string">""</span>.to_string(),
                 name: <span class="string">"Challenge Name"</span>.to_string(),
                 description: <span class="string">"Challenge Description"</span>.to_string(),
                 challenge: <span class="string">""</span>.to_string(),
                 variant: <span class="prelude-val">None</span>,
-                tasks: <span class="number">5</span>,
+                tasks: <span class="number">5</span>.into(),
                 unlock_points: <span class="number">10</span>,
                 position: <span class="prelude-val">None</span>,
             },

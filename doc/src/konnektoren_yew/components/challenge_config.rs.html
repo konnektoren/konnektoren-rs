@@ -122,7 +122,7 @@
         <span class="kw">let </span>on_new = on_new.clone();
         <span class="macro">html!</span> {
             &lt;button onclick={Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| on_new.emit(challenge_config.clone()))}&gt;
-                {<span class="string">"New"</span>}
+                {<span class="string">"Start"</span>}
             &lt;/button&gt;
         }
     } <span class="kw">else </span>{
@@ -140,7 +140,7 @@
             id: <span class="string">"konnektoren"</span>.to_string(),
             name: <span class="string">"Konnektoren"</span>.to_string(),
             description: <span class="string">"Konnektoren"</span>.to_string(),
-            tasks: <span class="number">2</span>,
+            tasks: <span class="number">2</span>.into(),
             unlock_points: <span class="number">10</span>,
             challenge: <span class="string">"konnektoren"</span>.to_string(),
             variant: <span class="prelude-val">None</span>,
@@ -154,7 +154,7 @@
             <span class="macro">assert!</span>(vtag
                 .children()
                 .into_iter()
-                .any(|child| <span class="macro">matches!</span>(child, Html::VText(vtext) <span class="kw">if </span>vtext.text.contains(<span class="string">"New"</span>))));
+                .any(|child| <span class="macro">matches!</span>(child, Html::VText(vtext) <span class="kw">if </span>vtext.text.contains(<span class="string">"Start"</span>))));
         } <span class="kw">else </span>{
             <span class="macro">panic!</span>(<span class="string">"Expected VTag"</span>);
         }
@@ -175,7 +175,7 @@
                 description: <span class="string">"Challenge Description"</span>.to_string(),
                 challenge: <span class="string">""</span>.to_string(),
                 variant: <span class="prelude-val">None</span>,
-                tasks: <span class="number">5</span>,
+                tasks: <span class="number">5</span>.into(),
                 unlock_points: <span class="number">10</span>,
                 position: <span class="prelude-val">None</span>,
             },

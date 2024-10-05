@@ -261,7 +261,7 @@
             .get(state.current_game_path)
             .expect(<span class="string">"Invalid game path index"</span>);
         <span class="kw">let </span>challenge_config = <span class="kw-2">&amp;</span>current_game_path.challenges[state.current_challenge_index];
-        <span class="kw">let </span>max_questions = challenge_config.tasks;
+        <span class="kw">let </span>max_questions = challenge_config.tasks.len();
         <span class="kw">if </span>state.current_task_index &gt;= max_questions - <span class="number">1 </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">"No more tasks"</span>));
         }

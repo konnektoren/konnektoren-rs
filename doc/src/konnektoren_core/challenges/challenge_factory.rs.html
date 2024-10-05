@@ -94,7 +94,7 @@
             .find(|challenge_type| challenge_type.id() == challenge_config.challenge)
             .ok_or_else(|| <span class="macro">anyhow::anyhow!</span>(<span class="string">"Challenge type not found"</span>))<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(Challenge::new(
-            <span class="kw-2">&amp;</span>challenge_type.of_tasks(challenge_config.tasks),
+            <span class="kw-2">&amp;</span>challenge_type.of_tasks(<span class="kw-2">&amp;</span>challenge_config.tasks),
             challenge_config,
         ))
     }
@@ -111,7 +111,7 @@
         challenge_factory.challenge_types.push(challenge_type);
         <span class="kw">let </span>challenge_config = ChallengeConfig {
             challenge: <span class="string">"konnektoren"</span>.to_string(),
-            tasks: <span class="number">2</span>,
+            tasks: <span class="number">2</span>.into(),
             ..Default::default()
         };
 

@@ -202,10 +202,24 @@
 <a href="#202" id="202">202</a>
 <a href="#203" id="203">203</a>
 <a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{ChallengeResult, ContextualChoice, Custom, Performance};
 <span class="kw">use </span><span class="kw">crate</span>::challenges::informative::Informative;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::multiple_choice::MultipleChoice;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::sort_table::SortTable;
+<span class="kw">use </span><span class="kw">crate</span>::challenges::task_pattern::TaskPattern;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -230,21 +244,24 @@
 }
 
 <span class="kw">impl </span>ChallengeType {
-    <span class="kw">pub fn </span>of_tasks(<span class="kw-2">&amp;</span><span class="self">self</span>, tasks: usize) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>of_tasks(<span class="kw-2">&amp;</span><span class="self">self</span>, task_pattern: <span class="kw-2">&amp;</span>TaskPattern) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span><span class="self">self </span>{
             ChallengeType::MultipleChoice(dataset) =&gt; {
+                <span class="kw">let </span>selected_questions = task_pattern.select_items(<span class="kw-2">&amp;</span>dataset.questions);
                 <span class="kw">let </span><span class="kw-2">mut </span>new_dataset = dataset.clone();
-                new_dataset.questions = dataset.questions.iter().take(tasks).cloned().collect();
+                new_dataset.questions = selected_questions;
                 ChallengeType::MultipleChoice(new_dataset)
             }
             ChallengeType::ContextualChoice(dataset) =&gt; {
+                <span class="kw">let </span>selected_items = task_pattern.select_items(<span class="kw-2">&amp;</span>dataset.items);
                 <span class="kw">let </span><span class="kw-2">mut </span>new_dataset = dataset.clone();
-                new_dataset.items = dataset.items.iter().take(tasks).cloned().collect();
+                new_dataset.items = selected_items;
                 ChallengeType::ContextualChoice(new_dataset)
             }
             ChallengeType::SortTable(dataset) =&gt; {
+                <span class="kw">let </span>selected_rows = task_pattern.select_items(<span class="kw-2">&amp;</span>dataset.rows);
                 <span class="kw">let </span><span class="kw-2">mut </span>new_dataset = dataset.clone();
-                new_dataset.rows = dataset.rows.iter().take(tasks).cloned().collect();
+                new_dataset.rows = selected_rows;
                 ChallengeType::SortTable(new_dataset)
             }
             ChallengeType::Informative(dataset) =&gt; ChallengeType::Informative(dataset.clone()),
@@ -277,6 +294,9 @@
     <span class="kw">fn </span>performance(<span class="kw-2">&amp;</span><span class="self">self</span>, result: <span class="kw-2">&amp;</span>ChallengeResult) -&gt; u32 {
         <span class="kw">match </span>(<span class="self">self</span>, result) {
             (ChallengeType::MultipleChoice(dataset), ChallengeResult::MultipleChoice(options)) =&gt; {
+                <span class="kw">if </span>dataset.questions.is_empty() {
+                    <span class="kw">return </span><span class="number">0</span>;
+                }
                 <span class="kw">let </span><span class="kw-2">mut </span>score = <span class="number">0</span>;
                 <span class="kw">for </span>(question, option) <span class="kw">in </span>dataset.questions.iter().zip(options.iter()) {
                     <span class="kw">if </span>question.option == option.id {
@@ -289,6 +309,9 @@
                 ChallengeType::ContextualChoice(dataset),
                 ChallengeResult::ContextualChoice(choices),
             ) =&gt; {
+                <span class="kw">if </span>dataset.items.is_empty() {
+                    <span class="kw">return </span><span class="number">0</span>;
+                }
                 <span class="kw">let </span><span class="kw-2">mut </span>score = <span class="number">0</span>;
                 <span class="kw">for </span>(item, choice) <span class="kw">in </span>dataset.items.iter().zip(choices.iter()) {
                     <span class="kw">if </span>item.choices.iter().zip(<span class="kw-2">&amp;</span>choice.ids).all(|(c, <span class="kw-2">&amp;</span>id)| {
@@ -302,6 +325,9 @@
                 <span class="number">100 </span>* score / dataset.items.len() <span class="kw">as </span>u32
             }
             (ChallengeType::SortTable(dataset), ChallengeResult::SortTable(rows)) =&gt; {
+                <span class="kw">if </span>dataset.rows.is_empty() {
+                    <span class="kw">return </span><span class="number">0</span>;
+                }
                 <span class="kw">let </span><span class="kw-2">mut </span>score = <span class="number">0</span>;
                 <span class="kw">for </span>(row, option) <span class="kw">in </span>dataset.rows.iter().zip(rows.iter()) {
                     <span class="kw">if </span>row.values.eq(option.values.as_slice()) {
@@ -341,7 +367,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>new_challenge() {
         <span class="kw">let </span>challenge = ChallengeType::default();
-        <span class="kw">let </span>new_challenge = challenge.of_tasks(<span class="number">2</span>);
+        <span class="kw">let </span>new_challenge = challenge.of_tasks(<span class="kw-2">&amp;</span>TaskPattern::Exact(<span class="number">2</span>));
         <span class="kw">match </span>new_challenge {
             ChallengeType::MultipleChoice(dataset) =&gt; {
                 <span class="macro">assert_eq!</span>(dataset.questions.len(), <span class="number">2</span>);

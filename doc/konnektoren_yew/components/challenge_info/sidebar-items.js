@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["ChallengeInfoComponent","Props"]};
+window.SIDEBAR_ITEMS = {"struct":["ChallengeInfoComponent","ChallengeInfoProps"]};

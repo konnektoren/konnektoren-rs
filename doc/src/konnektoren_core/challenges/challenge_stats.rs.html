@@ -247,7 +247,7 @@
             .iter()
             .filter(|c| {
                 c.challenge_config.id == <span class="self">self</span>.<span class="number">0</span>.id
-                    &amp;&amp; c.challenge_result.len() == c.challenge_config.tasks
+                    &amp;&amp; c.challenge_result.len() == c.challenge_config.tasks.len()
             })
             .count()
     }
@@ -314,7 +314,7 @@
         <span class="macro">assert_eq!</span>(challenge_history.completed_challenges(), <span class="number">0</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>config = ChallengeConfig::default();
-        config.tasks = <span class="number">3</span>;
+        config.tasks = <span class="number">3</span>.into();
         <span class="kw">let </span>challenge = Challenge::new(<span class="kw-2">&amp;</span>ChallengeType::default(), <span class="kw-2">&amp;</span>config);
         challenge_history.add_challenge(challenge);
         <span class="macro">assert_eq!</span>(challenge_history.completed_challenges(), <span class="number">0</span>);
@@ -344,7 +344,7 @@
         <span class="macro">assert_eq!</span>(challenge_history.stars(), <span class="number">0</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>config = ChallengeConfig::default();
-        config.tasks = <span class="number">3</span>;
+        config.tasks = <span class="number">3</span>.into();
 
         <span class="kw">let </span><span class="kw-2">mut </span>challenge = Challenge::new(<span class="kw-2">&amp;</span>ChallengeType::default(), <span class="kw-2">&amp;</span>config);
         challenge.challenge_result = ChallengeResult::MultipleChoice(<span class="macro">vec!</span>[
