@@ -34,6 +34,14 @@ impl ChallengeHistory {
     pub fn extend(&mut self, other: &ChallengeHistory) {
         self.challenges.extend(other.challenges.iter().cloned());
     }
+
+    pub fn merge(&mut self, other: &ChallengeHistory) {
+        for challenge in &other.challenges {
+            if !self.challenges.contains(challenge) {
+                self.challenges.push(challenge.clone());
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -89,5 +97,28 @@ mod tests {
 
         challenge_history.extend(&mut other_challenge_history);
         assert_eq!(challenge_history.len(), 2);
+    }
+
+    #[test]
+    fn test_merge() {
+        let mut challenge_history1 = ChallengeHistory::new();
+        let challenge1 = Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
+        challenge_history1.add_challenge(challenge1.clone());
+
+        let mut challenge_history2 = ChallengeHistory::new();
+        challenge_history2.add_challenge(challenge1.clone());
+        let challenge2 = Challenge::new(
+            &ChallengeType::default(),
+            &ChallengeConfig {
+                id: "456".to_string(),
+                ..ChallengeConfig::default()
+            },
+        );
+        challenge_history2.add_challenge(challenge2.clone());
+
+        challenge_history1.merge(&challenge_history2);
+        assert_eq!(challenge_history1.len(), 2);
+        assert!(challenge_history1.challenges.contains(&challenge1));
+        assert!(challenge_history1.challenges.contains(&challenge2));
     }
 }
