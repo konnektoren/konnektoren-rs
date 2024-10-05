@@ -293,3 +293,49 @@ fn render_select(
         </select>
     }
 }
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use konnektoren_core::challenges::{Choice, ContextItem, ContextualChoice};
+    use yew_preview::prelude::*;
+
+    yew_preview::create_preview!(
+        ContextualChoiceComponent,
+        ContextualChoiceComponentProps {
+            challenge: ContextualChoice {
+                items: vec![
+                    ContextItem {
+                        template: "What is the capital of {}?".to_string(),
+                        choices: vec![Choice {
+                            id: 0,
+                            correct_answer: "Berlin".to_string(),
+                            options: vec![
+                                "Berlin".to_string(),
+                                "Munich".to_string(),
+                                "Hamburg".to_string(),
+                                "Frankfurt".to_string()
+                            ]
+                        }]
+                    },
+                    ContextItem {
+                        template: "What is the capital of {}?".to_string(),
+                        choices: vec![Choice {
+                            id: 1,
+                            correct_answer: "Paris".to_string(),
+                            options: vec![
+                                "Paris".to_string(),
+                                "Marseille".to_string(),
+                                "Lyon".to_string(),
+                                "Toulouse".to_string()
+                            ]
+                        }]
+                    }
+                ],
+                ..Default::default()
+            },
+            on_finish: None,
+            on_event: None,
+        },
+    );
+}

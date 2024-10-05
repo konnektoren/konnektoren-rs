@@ -1,4 +1,3 @@
-use konnektoren_core::challenges::{ChallengeResult, SortTable};
 use yew::prelude::*;
 
 #[function_component(InformativeResultComponent)]

@@ -4,14 +4,14 @@ use konnektoren_core::prelude::*;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Clone)]
-pub struct Props {
+pub struct ChallengeInfoProps {
     pub challenge_config: ChallengeConfig,
     #[prop_or_default]
     pub api_url: Option<String>,
 }
 
 #[function_component(ChallengeInfoComponent)]
-pub fn challenge_info(props: &Props) -> Html {
+pub fn challenge_info(props: &ChallengeInfoProps) -> Html {
     let i18n = use_i18n();
 
     let rating_component = match props.api_url {
@@ -36,4 +36,26 @@ pub fn challenge_info(props: &Props) -> Html {
             </div>
         </div>
     }
+}
+
+#[cfg(feature = "yew-preview")]
+mod preview {
+    use super::*;
+    use yew_preview::prelude::*;
+    yew_preview::create_preview!(
+        ChallengeInfoComponent,
+        ChallengeInfoProps {
+            challenge_config: ChallengeConfig {
+                id: "".to_string(),
+                name: "Challenge Name".to_string(),
+                description: "Challenge Description".to_string(),
+                challenge: "".to_string(),
+                variant: None,
+                tasks: 5.into(),
+                unlock_points: 10,
+                position: None,
+            },
+            api_url: Some("https://api.example.com/reviews".to_string()),
+        },
+    );
 }
