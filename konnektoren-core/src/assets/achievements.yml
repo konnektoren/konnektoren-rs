@@ -1,0 +1,11 @@
+achievements:
+  - id: xp_master
+    name: XP Master
+    description: Earn 1000 XP
+    icon: 🏆
+    condition: "total_xp > 1000"
+  - id: challenge_champion
+    name: Challenge Champion
+    description: Complete 50 challenges
+    icon: 🏅
+    condition: "total_challenges >= 50"

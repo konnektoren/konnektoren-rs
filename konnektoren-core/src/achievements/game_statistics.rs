@@ -3,23 +3,23 @@ use crate::challenges::performance::Performance;
 use crate::game::{Game, GamePath};
 use std::collections::HashSet;
 
-pub struct GameStatistics {
-    game: Game,
+pub struct GameStatistics<'a> {
+    game: &'a Game,
 }
 
-impl GameStatistics {
-    pub fn new(game: Game) -> Self {
+impl<'a> GameStatistics<'a> {
+    pub fn new(game: &'a Game) -> Self {
         GameStatistics { game }
     }
 }
 
-impl TotalChallenges for GameStatistics {
+impl<'a> TotalChallenges for GameStatistics<'a> {
     fn total_challenges(&self) -> u32 {
         self.game.challenge_history.len() as u32
     }
 }
 
-impl AveragePerformance for GameStatistics {
+impl<'a> AveragePerformance for GameStatistics<'a> {
     fn average_performance(&self) -> f64 {
         if self.game.challenge_history.is_empty() {
             return 0.0;
@@ -35,7 +35,7 @@ impl AveragePerformance for GameStatistics {
     }
 }
 
-impl TotalXp for GameStatistics {
+impl<'a> TotalXp for GameStatistics<'a> {
     fn total_xp(&self) -> u32 {
         self.game
             .challenge_history
@@ -46,7 +46,7 @@ impl TotalXp for GameStatistics {
     }
 }
 
-impl CompletedGamePaths for GameStatistics {
+impl<'a> CompletedGamePaths for GameStatistics<'a> {
     fn completed_game_paths(&self) -> u32 {
         fn is_game_path_completed(game: &Game, path: &GamePath) -> bool {
             path.challenges.iter().all(|challenge_config| {
@@ -62,12 +62,12 @@ impl CompletedGamePaths for GameStatistics {
         self.game
             .game_paths
             .iter()
-            .filter(|path| is_game_path_completed(&self.game, path))
+            .filter(|path| is_game_path_completed(self.game, path))
             .count() as u32
     }
 }
 
-impl PerfectChallenges for GameStatistics {
+impl<'a> PerfectChallenges for GameStatistics<'a> {
     fn perfect_challenges(&self) -> u32 {
         self.game
             .challenge_history
@@ -78,7 +78,7 @@ impl PerfectChallenges for GameStatistics {
     }
 }
 
-impl DifferentChallengeTypesCompleted for GameStatistics {
+impl<'a> DifferentChallengeTypesCompleted for GameStatistics<'a> {
     fn different_challenge_types_completed(&self) -> u32 {
         let unique_types: HashSet<_> = self
             .game
@@ -92,7 +92,7 @@ impl DifferentChallengeTypesCompleted for GameStatistics {
 }
 
 // Implement AchievementStatistic for GameStatistics
-impl AchievementStatistic for GameStatistics {
+impl<'a> AchievementStatistic for GameStatistics<'a> {
     fn name(&self) -> &str {
         "game_statistics"
     }
@@ -194,28 +194,28 @@ mod tests {
     #[test]
     fn test_total_challenges() {
         let game = create_mock_game(5, 80);
-        let stats = GameStatistics::new(game);
+        let stats = GameStatistics::new(&game);
         assert_eq!(stats.total_challenges(), 5);
     }
 
     #[test]
     fn test_average_performance() {
         let game = create_mock_game(3, 100);
-        let stats = GameStatistics::new(game);
+        let stats = GameStatistics::new(&game);
         assert_eq!(stats.average_performance(), 100.0);
     }
 
     #[test]
     fn test_total_xp() {
         let game = create_mock_game(2, 100);
-        let stats = GameStatistics::new(game);
+        let stats = GameStatistics::new(&game);
         assert_eq!(stats.total_xp(), 600);
     }
 
     #[test]
     fn test_perfect_challenges() {
         let game = create_mock_game(5, 100);
-        let stats = GameStatistics::new(game);
+        let stats = GameStatistics::new(&game);
         assert_eq!(stats.perfect_challenges(), 5);
     }
 
@@ -223,7 +223,7 @@ mod tests {
     fn test_different_challenge_types_completed() {
         let game = create_mock_game(3, 80);
 
-        let stats = GameStatistics::new(game);
+        let stats = GameStatistics::new(&game);
         assert_eq!(stats.different_challenge_types_completed(), 3);
     }
 }

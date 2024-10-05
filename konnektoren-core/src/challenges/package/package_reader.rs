@@ -1,4 +1,4 @@
-use crate::challenges::{ChallengeConfig, Custom, Package, PackageMetadata};
+use crate::challenges::{Package, PackageMetadata};
 use gloo::net::http::Request;
 use std::collections::HashMap;
 use std::io::{Cursor, Read};
