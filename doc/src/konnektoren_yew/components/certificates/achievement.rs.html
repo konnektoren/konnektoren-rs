@@ -17,6 +17,22 @@
 <a href="#17" id="17">17</a>
 <a href="#18" id="18">18</a>
 <a href="#19" id="19">19</a>
+<a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
+<a href="#22" id="22">22</a>
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">use </span>konnektoren_core::achievements::AchievementDefinition;
@@ -28,9 +44,25 @@
 
 <span class="attr">#[function_component(AchievementComponent)]
 </span><span class="kw">pub fn </span>achievement_component(props: <span class="kw-2">&amp;</span>AchievementComponentProps) -&gt; Html {
+    <span class="kw">let </span>icon_html = <span class="kw">if </span>props.achievement.icon.starts_with(<span class="string">"fa-"</span>) {
+        <span class="macro">html!</span> {
+            &lt;i class={<span class="macro">classes!</span>(<span class="string">"achievement__icon"</span>, <span class="string">"fas"</span>, <span class="kw-2">&amp;</span>props.achievement.icon)} aria-hidden=<span class="string">"true"</span>&gt;&lt;/i&gt;
+        }
+    } <span class="kw">else if </span>props.achievement.icon.starts_with(<span class="string">"http"</span>)
+        || props.achievement.icon.starts_with(<span class="string">"data:"</span>)
+    {
+        <span class="macro">html!</span> {
+            &lt;img class=<span class="string">"achievement__icon" </span>src={props.achievement.icon.clone()} alt={props.achievement.name.clone()} /&gt;
+        }
+    } <span class="kw">else </span>{
+        <span class="macro">html!</span> {
+            &lt;span class=<span class="string">"achievement__icon achievement__icon--text"</span>&gt;{<span class="kw-2">&amp;</span>props.achievement.icon}&lt;/span&gt;
+        }
+    };
+
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"achievement"</span>&gt;
-            &lt;img class=<span class="string">"achievement__icon" </span>src={props.achievement.icon.clone()} alt={props.achievement.name.clone()} /&gt;
+            {icon_html}
             &lt;h3 class=<span class="string">"achievement__name"</span>&gt;{ <span class="kw-2">&amp;</span>props.achievement.name }&lt;/h3&gt;
             &lt;p class=<span class="string">"achievement__description"</span>&gt;{ <span class="kw-2">&amp;</span>props.achievement.description }&lt;/p&gt;
         &lt;/div&gt;
