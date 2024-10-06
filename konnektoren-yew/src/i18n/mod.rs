@@ -99,6 +99,21 @@ pub fn flag(lang: &'static str) -> &'static str {
     }
 }
 
+pub fn language_name(lang: &'static str) -> &'static str {
+    match lang {
+        "en" => "English",
+        "de" => "Deutsch",
+        "ua" => "Українська",
+        "cn" => "中文",
+        "ar" => "العربية",
+        "pl" => "Polski",
+        "tr" => "Türkçe",
+        "es" => "Español",
+        "vi" => "Tiếng Việt",
+        _ => "🌐",
+    }
+}
+
 /// Unit tests for the `supported_language` and `flag` functions.
 #[cfg(test)]
 mod tests {
@@ -134,5 +149,20 @@ mod tests {
         assert_eq!(flag("es"), "🇪🇸");
         assert_eq!(flag("vi"), "🇻🇳");
         assert_eq!(flag("fr"), "🌐");
+    }
+
+    #[test]
+    /// Tests the `name` function to ensure it returns the correct language name.
+    fn test_language_name() {
+        assert_eq!(language_name("en"), "English");
+        assert_eq!(language_name("de"), "Deutsch");
+        assert_eq!(language_name("ua"), "Українська");
+        assert_eq!(language_name("cn"), "中文");
+        assert_eq!(language_name("ar"), "العربية");
+        assert_eq!(language_name("pl"), "Polski");
+        assert_eq!(language_name("tr"), "Türkçe");
+        assert_eq!(language_name("es"), "Español");
+        assert_eq!(language_name("vi"), "Tiếng Việt");
+        assert_eq!(language_name("fr"), "🌐");
     }
 }

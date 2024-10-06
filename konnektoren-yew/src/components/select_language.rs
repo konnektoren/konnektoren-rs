@@ -1,4 +1,4 @@
-use crate::i18n::{flag, use_i18n, use_selected_language, LANGUAGES};
+use crate::i18n::{flag, language_name, use_i18n, use_selected_language, LANGUAGES};
 use web_sys::HtmlSelectElement;
 use yew::prelude::*;
 
@@ -27,7 +27,7 @@ pub fn select_language() -> Html {
                 <select onchange={on_select_change} value={(selected_language.get()).clone()}>
                     <option value="" selected={selected_language.get().is_empty()} disabled=true>{ i18n.t("Select Language") }</option>
                     { for LANGUAGES.iter().map(|&lang| html! {
-                        <option value={lang} selected={*lang == *selected_language.get()}>{format!("{} {}", flag(lang), lang)}</option>
+                        <option value={lang} selected={*lang == *selected_language.get()}>{format!("{} {}", flag(lang), language_name(lang))}</option>
                     })}
                 </select>
             </p>
