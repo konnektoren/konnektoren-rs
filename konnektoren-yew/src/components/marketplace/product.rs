@@ -6,73 +6,108 @@ pub struct ProductComponentProps {
     pub product: Product,
     #[prop_or_default]
     pub on_select: Option<Callback<Product>>,
+    #[prop_or_default]
+    pub on_tag: Option<Callback<String>>,
     #[prop_or("Get".to_string())]
     pub button_text: String,
 }
 
 #[function_component(ProductComponent)]
 pub fn product_component(props: &ProductComponentProps) -> Html {
-    let price = match props.product.price {
-        Some(price) => html! {
-            <span>{format!("Price: {}", price)}</span>
+    html! {
+        <div class="product">
+            {render_header(&props.product)}
+            {render_body(props)}
+            {render_footer(props)}
+        </div>
+    }
+}
+
+fn render_header(product: &Product) -> Html {
+    html! {
+        <div class="product__header">
+            <h2 class="product__title">{&product.name}</h2>
+        </div>
+    }
+}
+
+fn render_body(props: &ProductComponentProps) -> Html {
+    html! {
+        <div class="product__body">
+            <p class="product__description">{&props.product.description}</p>
+            {render_image(&props.product)}
+            {render_tags(props)}
+        </div>
+    }
+}
+
+fn render_image(product: &Product) -> Html {
+    match &product.image {
+        Some(image) if image.starts_with("fa-") => html! {
+            <i class={format!("product__icon fas {}", image)}></i>
+        },
+        Some(image) => html! {
+            <img src={image.to_string()} alt={product.name.clone()} class="product__image" />
         },
         None => html!(),
-    };
-    let image = match &props.product.image {
-        Some(image) => {
-            if image.starts_with("fa-") {
-                html! {
-                    <i class={format!("fas {}", image)}></i>
+    }
+}
+
+fn render_tags(props: &ProductComponentProps) -> Html {
+    html! {
+        <div class="product__tags">
+            {props.product.tags.iter().map(|tag| render_tag(tag, props.on_tag.clone())).collect::<Html>()}
+        </div>
+    }
+}
+
+fn render_tag(tag: &str, on_tag: Option<Callback<String>>) -> Html {
+    let tag_clone = tag.to_string();
+    html! {
+        <span
+            class="product__tag"
+            onclick={Callback::from(move |_| {
+                if let Some(callback) = &on_tag {
+                    callback.emit(tag_clone.clone());
                 }
-            } else {
-                html! {
-                    <img src={image.to_string()} alt={props.product.name.clone()} class="product-image" />
-                }
-            }
-        }
+            })}
+        >
+            {tag}
+        </span>
+    }
+}
+
+fn render_footer(props: &ProductComponentProps) -> Html {
+    html! {
+        <div class="product__footer">
+            {render_price(&props.product)}
+            {render_button(props)}
+        </div>
+    }
+}
+
+fn render_price(product: &Product) -> Html {
+    match product.price {
+        Some(price) => html! {
+            <span class="product__price">{format!("Price: {}", price)}</span>
+        },
         None => html!(),
-    };
-    let tags = props
-        .product
-        .tags
-        .iter()
-        .map(|tag| {
-            html! {
-                <span>{tag}</span>
-            }
-        })
-        .collect::<Html>();
-    let button_text = props.button_text.clone();
-    let get_button = if let Some(on_select) = &props.on_select {
+    }
+}
+
+fn render_button(props: &ProductComponentProps) -> Html {
+    if let Some(on_select) = &props.on_select {
         let on_select = on_select.clone();
         let product = props.product.clone();
         html! {
-            <button class="product-button" onclick={
+            <button class="product__button" onclick={
                 Callback::from(move |_| on_select.emit(product.clone()))
             }>
-                {button_text}
+                {&props.button_text}
             </button>
         }
     } else {
         html! {}
-    };
-    html! {
-        <div class="product">
-            <div class="product-header">
-                <h2>{props.product.name.clone()}</h2>
-            </div>
-            <div class="product-body">
-                <p>{props.product.description.clone()}</p>
-                {image}
-                <div class="product-tags">
-                    {tags}
-                </div>
-            </div>
-            <div class="product-footer">
-                {price}
-                {get_button}
-            </div>
-        </div>
     }
 }
 

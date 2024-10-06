@@ -7,18 +7,21 @@ pub struct ProductCatalogCompProps {
     pub product_catalog: ProductCatalog,
     #[prop_or_default]
     pub on_select: Option<Callback<Product>>,
+    #[prop_or_default]
+    pub on_tag: Option<Callback<String>>,
 }
 
 #[function_component(ProductCatalogComponent)]
 pub fn product_catalog_component(props: &ProductCatalogCompProps) -> Html {
     let on_select = props.on_select.clone();
+    let on_tag = props.on_tag.clone();
     let products = props
         .product_catalog
         .products
         .iter()
         .map(|product| {
             html! {
-                <ProductComponent product={product.clone()} on_select={on_select.clone()} />
+                <ProductComponent product={product.clone()} on_select={on_select.clone()} on_tag={on_tag.clone()} />
             }
         })
         .collect::<Html>();
@@ -76,6 +79,7 @@ mod preview {
                     ],
                 },
                 on_select: Some(Callback::noop()),
+                on_tag: Some(Callback::noop()),
             }
         )
     );
