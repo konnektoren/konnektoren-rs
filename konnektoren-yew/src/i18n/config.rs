@@ -26,6 +26,7 @@ impl Default for I18nConfig {
             ("pl", include_str!("../assets/i18n/pl.json")),
             ("tr", include_str!("../assets/i18n/tr.json")),
             ("ua", include_str!("../assets/i18n/ua.json")),
+            ("vi", include_str!("../assets/i18n/vi.json")),
         ];
         for (lang, data) in i18n_data.iter() {
             let loader = I18nJsonLoader::new(data);
@@ -93,8 +94,8 @@ mod tests {
     fn test_default() {
         let config = I18nConfig::default();
 
-        assert_eq!(config.supported_languages.len(), 8);
-        assert_eq!(config.translations.len(), 8);
+        assert_eq!(config.supported_languages.len(), 9);
+        assert_eq!(config.translations.len(), 9);
         assert_eq!(config.default_language, "en");
     }
 

@@ -20,7 +20,7 @@ pub use i18n_yml_loader::I18nYmlLoader;
 pub const LANGUAGE_KEY: &str = "selected_language";
 
 /// A list of supported languages represented by their ISO codes.
-pub const LANGUAGES: [&str; 8] = ["en", "ua", "ar", "de", "cn", "pl", "tr", "es"];
+pub const LANGUAGES: [&str; 9] = ["en", "ua", "ar", "de", "cn", "pl", "tr", "es", "vi"];
 
 /// Re-export the `I18nConfig` struct from the `config` module.
 pub use config::I18nConfig;
@@ -94,6 +94,7 @@ pub fn flag(lang: &'static str) -> &'static str {
         "pl" => "🇵🇱",
         "tr" => "🇹🇷",
         "es" => "🇪🇸",
+        "vi" => "🇻🇳",
         _ => "🌐",
     }
 }
@@ -114,7 +115,9 @@ mod tests {
         assert_eq!(supported_language(Some("pl")), Some("pl".to_string()));
         assert_eq!(supported_language(Some("tr")), Some("tr".to_string()));
         assert_eq!(supported_language(Some("es")), Some("es".to_string()));
+        assert_eq!(supported_language(Some("vi")), Some("vi".to_string()));
         assert_eq!(supported_language(Some("fr")), None);
+
         assert_eq!(supported_language(None), None);
     }
 
@@ -129,6 +132,7 @@ mod tests {
         assert_eq!(flag("pl"), "🇵🇱");
         assert_eq!(flag("tr"), "🇹🇷");
         assert_eq!(flag("es"), "🇪🇸");
+        assert_eq!(flag("vi"), "🇻🇳");
         assert_eq!(flag("fr"), "🌐");
     }
 }
