@@ -93,6 +93,58 @@ To preserve privacy, the *konnektoren.help* system does not employ any backend l
 
 This documentation provides a clear description of the concepts that cross-cut multiple areas of the *konnektoren.help* project. By adhering to web3 principles, employing encryption, and focusing on a modular, reusable core, the system ensures security and flexibility in its design.
 
+=== Achievement System
+
+The achievement system in Konnektoren is designed to motivate users and recognize their progress in learning German grammar.
+
+==== Overview
+
+The achievement system works as follows:
+
+1. Achievements are defined in a YAML configuration file.
+2. As users complete challenges, their progress is recorded in the Challenge History.
+3. The Achievement Evaluator regularly checks the user's progress against the achievement conditions.
+4. Unlocked achievements are displayed in the frontend, providing visual feedback and motivation.
+
+==== Components
+
+[plantuml]
+....
+@startuml
+actor User
+database "Achievement\nConfiguration" as AC
+database "Challenge\nHistory" as CH
+component "Achievement\nEvaluator" as AE
+component "Game\nStatistics" as GS
+component "Frontend" as FE
+
+User -> CH : completes challenges
+CH -> GS : provides data
+AC -> AE : defines achievements
+GS -> AE : provides statistics
+AE -> FE : updates unlocked achievements
+FE -> User : displays achievements
+
+@enduml
+....
+
+1. Achievement Configuration: A YAML file that defines achievements, their conditions, and metadata (name, description, icon).
+2. Challenge History: Records the user's completed challenges and performance.
+3. Game Statistics: Aggregates data from the Challenge History to provide meaningful statistics for achievement evaluation.
+4. Achievement Evaluator: Processes the Achievement Configuration and Game Statistics to determine which achievements have been unlocked.
+5. Frontend: Displays unlocked and locked achievements to the user.
+
+==== Implementation
+
+The achievement system is implemented using the following key components:
+
+- `AchievementDefinition`: Represents an individual achievement with its metadata and condition.
+- `AchievementEvaluator`: Evaluates achievements based on game statistics.
+- `GameStatistics`: Provides methods to calculate various statistics from the Challenge History.
+
+The frontend periodically requests updated achievement information and displays it to the user, providing immediate feedback on their progress and newly unlocked achievements.
+
+
 === Self-Sovereign Identity (SSI) for Badges
 
 The Konnektoren project incorporates Self-Sovereign Identity (SSI) principles for issuing achievement badges. This approach aligns with our commitment to user empowerment and data privacy.

@@ -311,3 +311,30 @@ Key Entities:
 * Session: Links a player profile to their current game state.
 
 This data model supports the core functionality of the Konnektoren system, allowing for flexible challenge creation, user progress tracking, and game state management. The relationships between entities enable features like personalized learning paths and progress persistence across sessions.
+
+=== Achievement System
+
+The achievement system consists of the following components:
+
+* Achievement Configuration: Stored in YAML format, defining various achievements and their conditions.
+* Achievement Evaluator: Evaluates the user's progress against the achievement conditions.
+* Game Statistics: Collects and provides statistics about the user's game progress.
+* Achievement Display: Shows unlocked and locked achievements in the frontend.
+
+[plantuml]
+....
+@startuml
+package "Achievement System" {
+  [Achievement Configuration] as AC
+  [Achievement Evaluator] as AE
+  [Game Statistics] as GS
+  [Achievement Display] as AD
+}
+
+[Challenge History] --> GS
+AC --> AE
+GS --> AE
+AE --> AD
+
+@enduml
+....
