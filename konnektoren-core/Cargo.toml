@@ -14,7 +14,7 @@ crate-type = ["rlib"]
 
 [features]
 default = ["achievements", "certificates", "marketplace", "js"]
-achievements = []
+achievements = ["eval"]
 certificates = [
     "base64",
     "sha2",
@@ -42,6 +42,7 @@ js = [
 [dependencies]
 anyhow = "1.0"
 chrono = { version = "0.4.38", features = ["serde"] }
+eval = { version = "0.4", optional = true }
 log = { version = "0.4" }
 names = { version = "0.15.0-dev", git = "https://github.com/jakswa/names", default-features = false }
 serde = { version = "1.0", features = ["derive"] }

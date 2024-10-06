@@ -2,6 +2,7 @@ use super::achievement_definition::{AchievementDefinition, AchievementDefinition
 use super::achievement_statistic::*;
 use super::game_statistics::GameStatistics;
 use crate::game::Game;
+use eval::{eval, to_value as eval_to_value};
 
 pub struct AchievementEvaluator {
     definitions: Vec<AchievementDefinition>,
@@ -23,35 +24,39 @@ impl AchievementEvaluator {
     }
 
     fn evaluate_condition(&self, condition: &str, statistics: &GameStatistics) -> bool {
-        let parts: Vec<&str> = condition.split_whitespace().collect();
-        if parts.len() != 3 {
-            return false;
+        let expression = self.prepare_expression(condition, statistics);
+        let true_value = eval_to_value(true);
+        match eval(&expression) {
+            Ok(value) => value == true_value,
+            Err(_) => false,
         }
+    }
 
-        let statistic = parts[0];
-        let operator = parts[1];
-        let value: f64 = parts[2].parse().unwrap_or(0.0);
-
-        let stat_value = match statistic {
-            "total_challenges" => statistics.total_challenges() as f64,
-            "average_performance" => statistics.average_performance(),
-            "total_xp" => statistics.total_xp() as f64,
-            "completed_game_paths" => statistics.completed_game_paths() as f64,
-            "perfect_challenges" => statistics.perfect_challenges() as f64,
-            "different_challenge_types_completed" => {
-                statistics.different_challenge_types_completed() as f64
-            }
-            _ => return false,
-        };
-
-        match operator {
-            ">" => stat_value > value,
-            ">=" => stat_value >= value,
-            "<" => stat_value < value,
-            "<=" => stat_value <= value,
-            "==" => (stat_value - value).abs() < f64::EPSILON,
-            _ => false,
-        }
+    fn prepare_expression(&self, condition: &str, statistics: &GameStatistics) -> String {
+        condition
+            .replace(
+                "total_challenges",
+                &statistics.total_challenges().to_string(),
+            )
+            .replace(
+                "average_performance",
+                &statistics.average_performance().to_string(),
+            )
+            .replace("total_xp", &statistics.total_xp().to_string())
+            .replace(
+                "completed_game_paths",
+                &statistics.completed_game_paths().to_string(),
+            )
+            .replace(
+                "perfect_challenges",
+                &statistics.perfect_challenges().to_string(),
+            )
+            .replace(
+                "different_challenge_types_completed",
+                &statistics.different_challenge_types_completed().to_string(),
+            )
+            .replace("&", "&&")
+            .replace("|", "||")
     }
 }
 
@@ -73,6 +78,11 @@ mod tests {
         description: Complete 50 challenges
         icon: 🏅
         condition: "total_challenges >= 50"
+      - id: path_finder
+        name: Path Finder
+        description: Complete 3 game paths
+        icon: 🧭
+        condition: "completed_game_paths >= 3 && perfect_challenges >= 10"
     "#;
 
     #[test]
