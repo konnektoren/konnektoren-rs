@@ -87,10 +87,21 @@
 <a href="#87" id="87">87</a>
 <a href="#88" id="88">88</a>
 <a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::achievement_definition::{AchievementDefinition, AchievementDefinitions};
 <span class="kw">use </span><span class="kw">super</span>::achievement_statistic::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">super</span>::game_statistics::GameStatistics;
 <span class="kw">use </span><span class="kw">crate</span>::game::Game;
+<span class="kw">use </span>eval::{eval, to_value <span class="kw">as </span>eval_to_value};
 
 <span class="kw">pub struct </span>AchievementEvaluator {
     definitions: Vec&lt;AchievementDefinition&gt;,
@@ -112,35 +123,39 @@
     }
 
     <span class="kw">fn </span>evaluate_condition(<span class="kw-2">&amp;</span><span class="self">self</span>, condition: <span class="kw-2">&amp;</span>str, statistics: <span class="kw-2">&amp;</span>GameStatistics) -&gt; bool {
-        <span class="kw">let </span>parts: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = condition.split_whitespace().collect();
-        <span class="kw">if </span>parts.len() != <span class="number">3 </span>{
-            <span class="kw">return </span><span class="bool-val">false</span>;
+        <span class="kw">let </span>expression = <span class="self">self</span>.prepare_expression(condition, statistics);
+        <span class="kw">let </span>true_value = eval_to_value(<span class="bool-val">true</span>);
+        <span class="kw">match </span>eval(<span class="kw-2">&amp;</span>expression) {
+            <span class="prelude-val">Ok</span>(value) =&gt; value == true_value,
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
         }
+    }
 
-        <span class="kw">let </span>statistic = parts[<span class="number">0</span>];
-        <span class="kw">let </span>operator = parts[<span class="number">1</span>];
-        <span class="kw">let </span>value: f64 = parts[<span class="number">2</span>].parse().unwrap_or(<span class="number">0.0</span>);
-
-        <span class="kw">let </span>stat_value = <span class="kw">match </span>statistic {
-            <span class="string">"total_challenges" </span>=&gt; statistics.total_challenges() <span class="kw">as </span>f64,
-            <span class="string">"average_performance" </span>=&gt; statistics.average_performance(),
-            <span class="string">"total_xp" </span>=&gt; statistics.total_xp() <span class="kw">as </span>f64,
-            <span class="string">"completed_game_paths" </span>=&gt; statistics.completed_game_paths() <span class="kw">as </span>f64,
-            <span class="string">"perfect_challenges" </span>=&gt; statistics.perfect_challenges() <span class="kw">as </span>f64,
-            <span class="string">"different_challenge_types_completed" </span>=&gt; {
-                statistics.different_challenge_types_completed() <span class="kw">as </span>f64
-            }
-            <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="bool-val">false</span>,
-        };
-
-        <span class="kw">match </span>operator {
-            <span class="string">"&gt;" </span>=&gt; stat_value &gt; value,
-            <span class="string">"&gt;=" </span>=&gt; stat_value &gt;= value,
-            <span class="string">"&lt;" </span>=&gt; stat_value &lt; value,
-            <span class="string">"&lt;=" </span>=&gt; stat_value &lt;= value,
-            <span class="string">"==" </span>=&gt; (stat_value - value).abs() &lt; f64::EPSILON,
-            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
-        }
+    <span class="kw">fn </span>prepare_expression(<span class="kw-2">&amp;</span><span class="self">self</span>, condition: <span class="kw-2">&amp;</span>str, statistics: <span class="kw-2">&amp;</span>GameStatistics) -&gt; String {
+        condition
+            .replace(
+                <span class="string">"total_challenges"</span>,
+                <span class="kw-2">&amp;</span>statistics.total_challenges().to_string(),
+            )
+            .replace(
+                <span class="string">"average_performance"</span>,
+                <span class="kw-2">&amp;</span>statistics.average_performance().to_string(),
+            )
+            .replace(<span class="string">"total_xp"</span>, <span class="kw-2">&amp;</span>statistics.total_xp().to_string())
+            .replace(
+                <span class="string">"completed_game_paths"</span>,
+                <span class="kw-2">&amp;</span>statistics.completed_game_paths().to_string(),
+            )
+            .replace(
+                <span class="string">"perfect_challenges"</span>,
+                <span class="kw-2">&amp;</span>statistics.perfect_challenges().to_string(),
+            )
+            .replace(
+                <span class="string">"different_challenge_types_completed"</span>,
+                <span class="kw-2">&amp;</span>statistics.different_challenge_types_completed().to_string(),
+            )
+            .replace(<span class="string">"&amp;"</span>, <span class="string">"&amp;&amp;"</span>)
+            .replace(<span class="string">"|"</span>, <span class="string">"||"</span>)
     }
 }
 
@@ -162,6 +177,11 @@
         description: Complete 50 challenges
         icon: 🏅
         condition: "total_challenges &gt;= 50"
+      - id: path_finder
+        name: Path Finder
+        description: Complete 3 game paths
+        icon: 🧭
+        condition: "completed_game_paths &gt;= 3 &amp;&amp; perfect_challenges &gt;= 10"
     "#</span>;
 
     <span class="attr">#[test]
