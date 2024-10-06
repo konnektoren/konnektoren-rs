@@ -118,6 +118,41 @@
 <a href="#118" id="118">118</a>
 <a href="#119" id="119">119</a>
 <a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>konnektoren_core::marketplace::Product;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
@@ -126,73 +161,108 @@
     <span class="kw">pub </span>product: Product,
     <span class="attr">#[prop_or_default]
     </span><span class="kw">pub </span>on_select: <span class="prelude-ty">Option</span>&lt;Callback&lt;Product&gt;&gt;,
+    <span class="attr">#[prop_or_default]
+    </span><span class="kw">pub </span>on_tag: <span class="prelude-ty">Option</span>&lt;Callback&lt;String&gt;&gt;,
     <span class="attr">#[prop_or(<span class="string">"Get"</span>.to_string())]
     </span><span class="kw">pub </span>button_text: String,
 }
 
 <span class="attr">#[function_component(ProductComponent)]
 </span><span class="kw">pub fn </span>product_component(props: <span class="kw-2">&amp;</span>ProductComponentProps) -&gt; Html {
-    <span class="kw">let </span>price = <span class="kw">match </span>props.product.price {
-        <span class="prelude-val">Some</span>(price) =&gt; <span class="macro">html!</span> {
-            &lt;span&gt;{<span class="macro">format!</span>(<span class="string">"Price: {}"</span>, price)}&lt;/span&gt;
+    <span class="macro">html!</span> {
+        &lt;div class=<span class="string">"product"</span>&gt;
+            {render_header(<span class="kw-2">&amp;</span>props.product)}
+            {render_body(props)}
+            {render_footer(props)}
+        &lt;/div&gt;
+    }
+}
+
+<span class="kw">fn </span>render_header(product: <span class="kw-2">&amp;</span>Product) -&gt; Html {
+    <span class="macro">html!</span> {
+        &lt;div class=<span class="string">"product__header"</span>&gt;
+            &lt;h2 class=<span class="string">"product__title"</span>&gt;{<span class="kw-2">&amp;</span>product.name}&lt;/h2&gt;
+        &lt;/div&gt;
+    }
+}
+
+<span class="kw">fn </span>render_body(props: <span class="kw-2">&amp;</span>ProductComponentProps) -&gt; Html {
+    <span class="macro">html!</span> {
+        &lt;div class=<span class="string">"product__body"</span>&gt;
+            &lt;p class=<span class="string">"product__description"</span>&gt;{<span class="kw-2">&amp;</span>props.product.description}&lt;/p&gt;
+            {render_image(<span class="kw-2">&amp;</span>props.product)}
+            {render_tags(props)}
+        &lt;/div&gt;
+    }
+}
+
+<span class="kw">fn </span>render_image(product: <span class="kw-2">&amp;</span>Product) -&gt; Html {
+    <span class="kw">match </span><span class="kw-2">&amp;</span>product.image {
+        <span class="prelude-val">Some</span>(image) <span class="kw">if </span>image.starts_with(<span class="string">"fa-"</span>) =&gt; <span class="macro">html!</span> {
+            &lt;i class={<span class="macro">format!</span>(<span class="string">"product__icon fas {}"</span>, image)}&gt;&lt;/i&gt;
+        },
+        <span class="prelude-val">Some</span>(image) =&gt; <span class="macro">html!</span> {
+            &lt;img src={image.to_string()} alt={product.name.clone()} class=<span class="string">"product__image" </span>/&gt;
         },
         <span class="prelude-val">None </span>=&gt; <span class="macro">html!</span>(),
-    };
-    <span class="kw">let </span>image = <span class="kw">match </span><span class="kw-2">&amp;</span>props.product.image {
-        <span class="prelude-val">Some</span>(image) =&gt; {
-            <span class="kw">if </span>image.starts_with(<span class="string">"fa-"</span>) {
-                <span class="macro">html!</span> {
-                    &lt;i class={<span class="macro">format!</span>(<span class="string">"fas {}"</span>, image)}&gt;&lt;/i&gt;
+    }
+}
+
+<span class="kw">fn </span>render_tags(props: <span class="kw-2">&amp;</span>ProductComponentProps) -&gt; Html {
+    <span class="macro">html!</span> {
+        &lt;div class=<span class="string">"product__tags"</span>&gt;
+            {props.product.tags.iter().map(|tag| render_tag(tag, props.on_tag.clone())).collect::&lt;Html&gt;()}
+        &lt;/div&gt;
+    }
+}
+
+<span class="kw">fn </span>render_tag(tag: <span class="kw-2">&amp;</span>str, on_tag: <span class="prelude-ty">Option</span>&lt;Callback&lt;String&gt;&gt;) -&gt; Html {
+    <span class="kw">let </span>tag_clone = tag.to_string();
+    <span class="macro">html!</span> {
+        &lt;span
+            class=<span class="string">"product__tag"
+            </span>onclick={Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(callback) = <span class="kw-2">&amp;</span>on_tag {
+                    callback.emit(tag_clone.clone());
                 }
-            } <span class="kw">else </span>{
-                <span class="macro">html!</span> {
-                    &lt;img src={image.to_string()} alt={props.product.name.clone()} class=<span class="string">"product-image" </span>/&gt;
-                }
-            }
-        }
+            })}
+        &gt;
+            {tag}
+        &lt;/span&gt;
+    }
+}
+
+<span class="kw">fn </span>render_footer(props: <span class="kw-2">&amp;</span>ProductComponentProps) -&gt; Html {
+    <span class="macro">html!</span> {
+        &lt;div class=<span class="string">"product__footer"</span>&gt;
+            {render_price(<span class="kw-2">&amp;</span>props.product)}
+            {render_button(props)}
+        &lt;/div&gt;
+    }
+}
+
+<span class="kw">fn </span>render_price(product: <span class="kw-2">&amp;</span>Product) -&gt; Html {
+    <span class="kw">match </span>product.price {
+        <span class="prelude-val">Some</span>(price) =&gt; <span class="macro">html!</span> {
+            &lt;span class=<span class="string">"product__price"</span>&gt;{<span class="macro">format!</span>(<span class="string">"Price: {}"</span>, price)}&lt;/span&gt;
+        },
         <span class="prelude-val">None </span>=&gt; <span class="macro">html!</span>(),
-    };
-    <span class="kw">let </span>tags = props
-        .product
-        .tags
-        .iter()
-        .map(|tag| {
-            <span class="macro">html!</span> {
-                &lt;span&gt;{tag}&lt;/span&gt;
-            }
-        })
-        .collect::&lt;Html&gt;();
-    <span class="kw">let </span>button_text = props.button_text.clone();
-    <span class="kw">let </span>get_button = <span class="kw">if let </span><span class="prelude-val">Some</span>(on_select) = <span class="kw-2">&amp;</span>props.on_select {
+    }
+}
+
+<span class="kw">fn </span>render_button(props: <span class="kw-2">&amp;</span>ProductComponentProps) -&gt; Html {
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(on_select) = <span class="kw-2">&amp;</span>props.on_select {
         <span class="kw">let </span>on_select = on_select.clone();
         <span class="kw">let </span>product = props.product.clone();
         <span class="macro">html!</span> {
-            &lt;button class=<span class="string">"product-button" </span>onclick={
+            &lt;button class=<span class="string">"product__button" </span>onclick={
                 Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| on_select.emit(product.clone()))
             }&gt;
-                {button_text}
+                {<span class="kw-2">&amp;</span>props.button_text}
             &lt;/button&gt;
         }
     } <span class="kw">else </span>{
         <span class="macro">html!</span> {}
-    };
-    <span class="macro">html!</span> {
-        &lt;div class=<span class="string">"product"</span>&gt;
-            &lt;div class=<span class="string">"product-header"</span>&gt;
-                &lt;h2&gt;{props.product.name.clone()}&lt;/h2&gt;
-            &lt;/div&gt;
-            &lt;div class=<span class="string">"product-body"</span>&gt;
-                &lt;p&gt;{props.product.description.clone()}&lt;/p&gt;
-                {image}
-                &lt;div class=<span class="string">"product-tags"</span>&gt;
-                    {tags}
-                &lt;/div&gt;
-            &lt;/div&gt;
-            &lt;div class=<span class="string">"product-footer"</span>&gt;
-                {price}
-                {get_button}
-            &lt;/div&gt;
-        &lt;/div&gt;
     }
 }
 
