@@ -485,6 +485,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_level_2_challenge_rating_system">6.2. Level 2: Challenge Rating System</a></li>
 <li><a href="#_level_3_frontend_components">6.3. Level 3: Frontend Components</a></li>
 <li><a href="#_level_4_data_model">6.4. Level 4: Data Model</a></li>
+<li><a href="#_achievement_system">6.5. Achievement System</a></li>
 </ul>
 </li>
 <li><a href="#section-runtime-view">7. Runtime View</a>
@@ -508,7 +509,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_web3_oriented_architecture">9.2. Web3-Oriented Architecture</a></li>
 <li><a href="#_encryption_and_signatures_for_verification">9.3. Encryption and Signatures for Verification</a></li>
 <li><a href="#_no_backend_logging_and_analytics">9.4. No Backend Logging and Analytics</a></li>
-<li><a href="#_self_sovereign_identity_ssi_for_badges">9.5. Self-Sovereign Identity (SSI) for Badges</a></li>
+<li><a href="#_achievement_system_2">9.5. Achievement System</a></li>
+<li><a href="#_self_sovereign_identity_ssi_for_badges">9.6. Self-Sovereign Identity (SSI) for Badges</a></li>
 </ul>
 </li>
 <li><a href="#section-quality-scenarios">10. Quality Requirements</a>
@@ -1364,6 +1366,33 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>This data model supports the core functionality of the Konnektoren system, allowing for flexible challenge creation, user progress tracking, and game state management. The relationships between entities enable features like personalized learning paths and progress persistence across sessions.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_achievement_system">6.5. Achievement System</h3>
+<div class="paragraph">
+<p>The achievement system consists of the following components:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Achievement Configuration: Stored in YAML format, defining various achievements and their conditions.</p>
+</li>
+<li>
+<p>Achievement Evaluator: Evaluates the user&#8217;s progress against the achievement conditions.</p>
+</li>
+<li>
+<p>Game Statistics: Collects and provides statistics about the user&#8217;s game progress.</p>
+</li>
+<li>
+<p>Achievement Display: Shows unlocked and locked achievements in the frontend.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/diag-plantuml-md5-825feddd9a1a4d437a7325ed2291e0df.png" alt="Diagram" width="461" height="393">
+</div>
+</div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -1770,7 +1799,84 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_self_sovereign_identity_ssi_for_badges">9.5. Self-Sovereign Identity (SSI) for Badges</h3>
+<h3 id="_achievement_system_2">9.5. Achievement System</h3>
+<div class="paragraph">
+<p>The achievement system in Konnektoren is designed to motivate users and recognize their progress in learning German grammar.</p>
+</div>
+<div class="sect3">
+<h4 id="_overview">9.5.1. Overview</h4>
+<div class="paragraph">
+<p>The achievement system works as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Achievements are defined in a YAML configuration file.</p>
+</li>
+<li>
+<p>As users complete challenges, their progress is recorded in the Challenge History.</p>
+</li>
+<li>
+<p>The Achievement Evaluator regularly checks the user&#8217;s progress against the achievement conditions.</p>
+</li>
+<li>
+<p>Unlocked achievements are displayed in the frontend, providing visual feedback and motivation.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_components">9.5.2. Components</h4>
+<div class="imageblock">
+<div class="content">
+<img src="images/diag-plantuml-md5-c289366f0b0efaef6e8fc7cd6956e0a9.png" alt="Diagram" width="1353" height="138">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Achievement Configuration: A YAML file that defines achievements, their conditions, and metadata (name, description, icon).</p>
+</li>
+<li>
+<p>Challenge History: Records the user&#8217;s completed challenges and performance.</p>
+</li>
+<li>
+<p>Game Statistics: Aggregates data from the Challenge History to provide meaningful statistics for achievement evaluation.</p>
+</li>
+<li>
+<p>Achievement Evaluator: Processes the Achievement Configuration and Game Statistics to determine which achievements have been unlocked.</p>
+</li>
+<li>
+<p>Frontend: Displays unlocked and locked achievements to the user.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implementation">9.5.3. Implementation</h4>
+<div class="paragraph">
+<p>The achievement system is implemented using the following key components:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>AchievementDefinition</code>: Represents an individual achievement with its metadata and condition.</p>
+</li>
+<li>
+<p><code>AchievementEvaluator</code>: Evaluates achievements based on game statistics.</p>
+</li>
+<li>
+<p><code>GameStatistics</code>: Provides methods to calculate various statistics from the Challenge History.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The frontend periodically requests updated achievement information and displays it to the user, providing immediate feedback on their progress and newly unlocked achievements.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_self_sovereign_identity_ssi_for_badges">9.6. Self-Sovereign Identity (SSI) for Badges</h3>
 <div class="paragraph">
 <p>The Konnektoren project incorporates Self-Sovereign Identity (SSI) principles for issuing achievement badges. This approach aligns with our commitment to user empowerment and data privacy.</p>
 </div>
@@ -2106,7 +2212,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-10-06 10:29:27 UTC
+Last updated 2024-10-06 14:40:06 UTC
 </div>
 </div>
 </body>
