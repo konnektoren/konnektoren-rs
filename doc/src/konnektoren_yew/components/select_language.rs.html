@@ -42,7 +42,7 @@
 <a href="#42" id="42">42</a>
 <a href="#43" id="43">43</a>
 <a href="#44" id="44">44</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::{flag, use_i18n, use_selected_language, LANGUAGES};
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::{flag, language_name, use_i18n, use_selected_language, LANGUAGES};
 <span class="kw">use </span>web_sys::HtmlSelectElement;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
@@ -71,7 +71,7 @@
                 &lt;select onchange={on_select_change} value={(selected_language.get()).clone()}&gt;
                     &lt;option value=<span class="string">"" </span>selected={selected_language.get().is_empty()} disabled=<span class="bool-val">true</span>&gt;{ i18n.t(<span class="string">"Select Language"</span>) }&lt;/option&gt;
                     { <span class="kw">for </span>LANGUAGES.iter().map(|<span class="kw-2">&amp;</span>lang| <span class="macro">html!</span> {
-                        &lt;option value={lang} selected={<span class="kw-2">*</span>lang == <span class="kw-2">*</span>selected_language.get()}&gt;{<span class="macro">format!</span>(<span class="string">"{} {}"</span>, flag(lang), lang)}&lt;/option&gt;
+                        &lt;option value={lang} selected={<span class="kw-2">*</span>lang == <span class="kw-2">*</span>selected_language.get()}&gt;{<span class="macro">format!</span>(<span class="string">"{} {}"</span>, flag(lang), language_name(lang))}&lt;/option&gt;
                     })}
                 &lt;/select&gt;
             &lt;/p&gt;
