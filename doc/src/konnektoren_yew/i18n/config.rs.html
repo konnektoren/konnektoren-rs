@@ -196,6 +196,7 @@
 <a href="#196" id="196">196</a>
 <a href="#197" id="197">197</a>
 <a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::i18n_json_loader::I18nJsonLoader;
 <span class="kw">use </span><span class="kw">crate</span>::i18n::i18n_loader::I18nLoader;
 <span class="kw">use </span><span class="kw">crate</span>::i18n::LANGUAGES;
@@ -224,6 +225,7 @@
             (<span class="string">"pl"</span>, <span class="macro">include_str!</span>(<span class="string">"../assets/i18n/pl.json"</span>)),
             (<span class="string">"tr"</span>, <span class="macro">include_str!</span>(<span class="string">"../assets/i18n/tr.json"</span>)),
             (<span class="string">"ua"</span>, <span class="macro">include_str!</span>(<span class="string">"../assets/i18n/ua.json"</span>)),
+            (<span class="string">"vi"</span>, <span class="macro">include_str!</span>(<span class="string">"../assets/i18n/vi.json"</span>)),
         ];
         <span class="kw">for </span>(lang, data) <span class="kw">in </span>i18n_data.iter() {
             <span class="kw">let </span>loader = I18nJsonLoader::new(data);
@@ -291,8 +293,8 @@
     </span><span class="kw">fn </span>test_default() {
         <span class="kw">let </span>config = I18nConfig::default();
 
-        <span class="macro">assert_eq!</span>(config.supported_languages.len(), <span class="number">8</span>);
-        <span class="macro">assert_eq!</span>(config.translations.len(), <span class="number">8</span>);
+        <span class="macro">assert_eq!</span>(config.supported_languages.len(), <span class="number">9</span>);
+        <span class="macro">assert_eq!</span>(config.translations.len(), <span class="number">9</span>);
         <span class="macro">assert_eq!</span>(config.default_language, <span class="string">"en"</span>);
     }
 
