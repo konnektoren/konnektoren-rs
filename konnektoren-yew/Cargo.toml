@@ -46,6 +46,9 @@ web-sys = { version = "0.3.*", features = [
     "SpeechSynthesisUtterance",
     "TouchList",
     "Touch",
+    "HtmlElement",
+    "Element",
+    "DomRect",
 ] }
 yew = { version = "0.21", features = ["csr"] }
 yew-hooks = { version = "0.3.2" }

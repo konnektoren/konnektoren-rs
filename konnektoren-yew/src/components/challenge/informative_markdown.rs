@@ -1,12 +1,20 @@
 use crate::components::challenge::informative::InformativeComponentProps;
 use gloo::net::http::Request;
 use konnektoren_core::challenges::ChallengeResult;
+use wasm_bindgen::prelude::*;
+use web_sys::HtmlElement;
 use yew::prelude::*;
 
 pub enum LoadingState {
     Loading,
     FetchSuccess(String),
     FetchError(String),
+}
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = window)]
+    fn scrollTo(x: f64, y: f64);
 }
 
 #[function_component(InformativeMarkdownComponent)]
@@ -23,6 +31,24 @@ pub fn informative_markdown_component(props: &InformativeComponentProps) -> Html
             }
         })
     };
+
+    let scroll_to_bottom = Callback::from(move |_| {
+        wasm_bindgen_futures::spawn_local(async move {
+            // Wait a bit for the content to render
+            gloo::timers::future::TimeoutFuture::new(100).await;
+            if let Some(window) = web_sys::window() {
+                if let Some(document) = window.document() {
+                    if let Some(element) = document.get_element_by_id("finish-button") {
+                        if let Ok(html_element) = element.dyn_into::<HtmlElement>() {
+                            let rect = html_element.get_bounding_client_rect();
+                            let scroll_y = rect.top() + window.scroll_y().unwrap_or(0.0);
+                            scrollTo(0.0, scroll_y);
+                        }
+                    }
+                }
+            }
+        });
+    });
 
     let fallback_path = props
         .challenge
@@ -79,7 +105,7 @@ pub fn informative_markdown_component(props: &InformativeComponentProps) -> Html
             html! {
                 <div class="informative-markdown">
                     <h2>{&props.challenge.description}</h2>
-                    <a href="#finish-button"><button>{"Scroll down"}</button></a>
+                    <button onclick={scroll_to_bottom}>{"Scroll down"}</button>
                     <div class="markdown-content">
                         {content}
                     </div>
