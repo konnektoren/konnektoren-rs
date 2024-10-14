@@ -7,6 +7,7 @@ pub struct Settings {
     pub music_volume: f32,
     pub sound_volume: f32,
     pub theme: String,
+    pub show_helpers: bool,
 }
 
 impl Default for Settings {
@@ -17,6 +18,7 @@ impl Default for Settings {
             music_volume: 0.4,
             sound_volume: 0.8,
             theme: "light".to_string(),
+            show_helpers: true,
         }
     }
 }
@@ -32,6 +34,7 @@ mod tests {
         assert_eq!(settings.music_volume, 0.4);
         assert_eq!(settings.sound_volume, 0.8);
         assert_eq!(settings.theme, "light");
+        assert_eq!(settings.show_helpers, true);
     }
 
     #[test]
