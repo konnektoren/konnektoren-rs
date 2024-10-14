@@ -2,10 +2,11 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Settings {
+    pub id: String,
     pub language: String,
     pub music_volume: f32,
     pub sound_volume: f32,
-    pub id: String,
+    pub theme: String,
 }
 
 impl Default for Settings {
@@ -15,6 +16,7 @@ impl Default for Settings {
             language: "en".to_string(),
             music_volume: 0.4,
             sound_volume: 0.8,
+            theme: "light".to_string(),
         }
     }
 }
@@ -29,6 +31,7 @@ mod tests {
         assert_eq!(settings.language, "en");
         assert_eq!(settings.music_volume, 0.4);
         assert_eq!(settings.sound_volume, 0.8);
+        assert_eq!(settings.theme, "light");
     }
 
     #[test]
