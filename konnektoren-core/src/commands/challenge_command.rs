@@ -7,6 +7,7 @@ use crate::game::GameState;
 use anyhow::{anyhow, Result};
 
 /// Represents challenge-level commands that can be executed on the game state.
+#[derive(Debug, PartialEq, Eq)]
 pub enum ChallengeCommand {
     /// Command to move to the next task within a challenge.
     NextTask,
