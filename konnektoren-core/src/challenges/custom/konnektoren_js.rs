@@ -11,6 +11,7 @@ pub struct KonnektorenJs {
     js_event_callback: Rc<RefCell<Option<Closure<dyn FnMut(JsValue)>>>>,
     tr_callback: Rc<RefCell<Option<Closure<dyn FnMut(JsValue) -> JsValue>>>>,
     translations: Rc<RefCell<HashMap<String, String>>>,
+    execute_command_callback: Rc<RefCell<Option<Closure<dyn FnMut(JsValue)>>>>,
 }
 
 impl KonnektorenJs {
@@ -28,6 +29,7 @@ impl KonnektorenJs {
             js_event_callback: Rc::new(RefCell::new(None)),
             tr_callback: Rc::new(RefCell::new(None)),
             translations: Rc::new(RefCell::new(HashMap::new())),
+            execute_command_callback: Rc::new(RefCell::new(None)),
         }
     }
 
@@ -93,6 +95,33 @@ impl KonnektorenJs {
         js_sys::Reflect::set(
             &konnektoren_obj,
             &JsValue::from_str("sendEvent"),
+            callback_ref,
+        )
+        .unwrap();
+    }
+
+    /// Exposes `executeCommand` to JavaScript, allowing it to send commands to Rust.
+    /// This is a generic function that receives a closure for command handling.
+    pub fn expose_execute_command<F>(&self, on_command: F)
+    where
+        F: 'static + FnMut(JsValue),
+    {
+        let closure = Closure::wrap(Box::new(on_command) as Box<dyn FnMut(JsValue)>);
+        *self.execute_command_callback.borrow_mut() = Some(closure);
+
+        let window = web_sys::window().unwrap();
+        let global_obj = window.as_ref();
+
+        // Get `window.konnektoren` (it should exist after `new()` creates it)
+        let konnektoren_obj =
+            js_sys::Reflect::get(global_obj, &JsValue::from_str("konnektoren")).unwrap();
+
+        // Set the `executeCommand` function inside `window.konnektoren`
+        let binding = self.execute_command_callback.borrow();
+        let callback_ref = binding.as_ref().unwrap().as_ref().unchecked_ref();
+        js_sys::Reflect::set(
+            &konnektoren_obj,
+            &JsValue::from_str("executeCommand"),
             callback_ref,
         )
         .unwrap();
