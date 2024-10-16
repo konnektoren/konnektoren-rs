@@ -1,13 +1,16 @@
 //! This module contains the implementation of challenge-level commands.
 
 use super::command::CommandTrait;
-use crate::challenges::{ChallengeInput, ChallengeType, MultipleChoiceOption, Solvable};
+use crate::challenges::{
+    ChallengeInput, ChallengeResult, ChallengeType, CustomChallengeResult, MultipleChoiceOption,
+    Solvable,
+};
 use crate::game::GamePath;
 use crate::game::GameState;
 use anyhow::{anyhow, Result};
 
 /// Represents challenge-level commands that can be executed on the game state.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub enum ChallengeCommand {
     /// Command to move to the next task within a challenge.
     NextTask,
@@ -15,6 +18,8 @@ pub enum ChallengeCommand {
     PreviousTask,
     /// Command to solve a multiple choice option.
     SolveOption(usize),
+    /// Command to finish the challenge with a custom result.
+    Finish(Option<ChallengeResult>),
 }
 
 impl CommandTrait for ChallengeCommand {
@@ -32,6 +37,7 @@ impl CommandTrait for ChallengeCommand {
             ChallengeCommand::NextTask => Self::next_task(state),
             ChallengeCommand::PreviousTask => Self::previous_task(state),
             ChallengeCommand::SolveOption(option_index) => Self::solve_option(state, *option_index),
+            ChallengeCommand::Finish(result) => Self::finish_challenge(state, &result),
         }
     }
 }
@@ -112,6 +118,19 @@ impl ChallengeCommand {
 
         Ok(())
     }
+
+    /// Finishes the current challenge with a custom result.
+    fn finish_challenge(
+        state: &mut GameState,
+        custom_result: &Option<ChallengeResult>,
+    ) -> Result<()> {
+        // Logic to handle finishing the challenge
+        if let Some(result) = custom_result {
+            state.challenge.challenge_result = result.clone();
+        }
+        // Additional logic to mark the challenge as finished
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -153,5 +172,16 @@ mod tests {
         let result = ChallengeCommand::previous_task(&mut state);
         assert!(result.is_ok());
         assert_eq!(state.current_task_index, 0);
+    }
+
+    #[test]
+    fn test_finish_challenge() {
+        let mut state = GameState::default();
+        state.current_game_path = 0;
+        state.current_challenge_index = 0;
+        state.current_task_index = 1;
+
+        let result = ChallengeCommand::finish_challenge(&mut state, &None);
+        assert!(result.is_ok());
     }
 }

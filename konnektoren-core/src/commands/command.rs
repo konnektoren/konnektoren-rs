@@ -22,7 +22,7 @@ pub trait CommandTrait {
 /// An enum representing all possible commands in the game.
 ///
 /// This enum serves as a unified interface for both game-level and challenge-level commands.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub enum Command {
     /// Represents a game-level command.
     Game(GameCommand),

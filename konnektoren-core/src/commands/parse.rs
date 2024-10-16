@@ -1,4 +1,5 @@
 use super::{ChallengeCommand, Command, CommandParseError, GameCommand};
+use crate::challenges::{ChallengeResult, CustomChallengeResult};
 use serde_json::Value;
 use wasm_bindgen::prelude::*;
 
@@ -65,6 +66,14 @@ impl TryFrom<Value> for ChallengeCommand {
                     })?;
                 Ok(ChallengeCommand::SolveOption(option_index as usize))
             }
+            Some("Finish") => {
+                let result = value.get("result").ok_or(CommandParseError::MissingData)?;
+                let result: CustomChallengeResult = serde_json::from_value(result.clone())
+                    .map_err(|e| CommandParseError::ParseError(e.to_string()))?;
+                Ok(ChallengeCommand::Finish(Some(ChallengeResult::Custom(
+                    result.clone(),
+                ))))
+            }
             Some(unknown_action) => Err(CommandParseError::UnknownCommandType(
                 unknown_action.to_string(),
             )),
@@ -76,6 +85,7 @@ impl TryFrom<Value> for ChallengeCommand {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::challenges::ChallengeResult;
 
     #[test]
     fn test_parse_game_command() {
@@ -101,6 +111,23 @@ mod tests {
         assert_eq!(
             command,
             Command::Challenge(ChallengeCommand::SolveOption(0))
+        );
+    }
+
+    #[test]
+    fn test_parse_challenge_command_with_result() {
+        let json = r#"{"type":"Challenge","action":"Finish","result":{"id":"123","performance":0.0,"data":{}}}"#;
+        let value: serde_json::Value = serde_json::from_str(json).unwrap();
+        let command = Command::try_from(value).unwrap();
+        assert_eq!(
+            command,
+            Command::Challenge(ChallengeCommand::Finish(Some(ChallengeResult::Custom(
+                CustomChallengeResult {
+                    id: "123".to_string(),
+                    performance: 0.0,
+                    data: serde_json::json!({}),
+                }
+            ))))
         );
     }
 
