@@ -6,15 +6,16 @@ use crate::prelude::ReadText;
 use konnektoren_core::challenges::{
     ChallengeInput, ChallengeResult, MultipleChoice, MultipleChoiceOption,
 };
+use konnektoren_core::commands::{ChallengeCommand, Command};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Default)]
 pub struct MultipleChoiceComponentProps {
     pub challenge: MultipleChoice,
     #[prop_or_default]
-    pub on_finish: Option<Callback<ChallengeResult>>,
-    #[prop_or_default]
     pub on_event: Option<Callback<ChallengeEvent>>,
+    #[prop_or_default]
+    pub on_command: Option<Callback<Command>>,
 }
 
 pub fn is_correct(
@@ -37,7 +38,7 @@ pub fn create_handle_action(
     task_index: UseStateHandle<usize>,
     show_help: UseStateHandle<bool>,
     total_tasks: usize,
-    on_event: Option<Callback<ChallengeEvent>>,
+    on_command: Option<Callback<Command>>,
 ) -> Callback<ChallengeActions> {
     Callback::from(move |action: ChallengeActions| match action {
         ChallengeActions::Next => {
@@ -45,8 +46,8 @@ pub fn create_handle_action(
                 let next_task_index = *task_index + 1;
                 task_index.set(next_task_index);
 
-                if let Some(on_event) = on_event.as_ref() {
-                    on_event.emit(ChallengeEvent::NextTask(next_task_index));
+                if let Some(on_command) = on_command.as_ref() {
+                    on_command.emit(Command::Challenge(ChallengeCommand::NextTask));
                 }
             }
         }
@@ -54,8 +55,9 @@ pub fn create_handle_action(
             if *task_index > 0 {
                 let previous_task_index = *task_index - 1;
                 task_index.set(previous_task_index);
-                if let Some(on_event) = on_event.as_ref() {
-                    on_event.emit(ChallengeEvent::PreviousTask(previous_task_index));
+
+                if let Some(on_command) = on_command.as_ref() {
+                    on_command.emit(Command::Challenge(ChallengeCommand::PreviousTask));
                 }
             }
         }
@@ -70,7 +72,7 @@ pub fn create_handle_option_selection(
     challenge: MultipleChoice,
     challenge_result: UseStateHandle<ChallengeResult>,
     total_tasks: usize,
-    on_finish: Option<Callback<ChallengeResult>>,
+    on_command: Option<Callback<Command>>,
     on_event: Option<Callback<ChallengeEvent>>,
 ) -> Callback<MultipleChoiceOption> {
     Callback::from(move |option: MultipleChoiceOption| {
@@ -92,15 +94,14 @@ pub fn create_handle_option_selection(
             let next_task_index = *task_index + 1;
             task_index.set(next_task_index);
 
-            if let Some(on_event) = on_event.as_ref() {
-                on_event.emit(ChallengeEvent::NextTask(next_task_index));
+            if let Some(on_command) = on_command.as_ref() {
+                on_command.emit(Command::Challenge(ChallengeCommand::NextTask));
             }
         } else {
-            if let Some(on_finish) = on_finish.as_ref() {
-                on_finish.emit(challenge_result_update.clone());
-            }
-            if let Some(on_event) = on_event.as_ref() {
-                on_event.emit(ChallengeEvent::Finish(challenge_result_update.clone()));
+            if let Some(on_command) = on_command.as_ref() {
+                on_command.emit(Command::Challenge(ChallengeCommand::Finish(Some(
+                    challenge_result_update.clone(),
+                ))));
             }
         }
     })
@@ -120,7 +121,7 @@ pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
         task_index.clone(),
         show_help.clone(),
         props.challenge.questions.len(),
-        props.on_event.clone(),
+        props.on_command.clone(),
     );
 
     let handle_option_selection = create_handle_option_selection(
@@ -128,7 +129,7 @@ pub fn multiple_choice_component(props: &MultipleChoiceComponentProps) -> Html {
         props.challenge.clone(),
         challenge_result.clone(),
         props.challenge.questions.len(),
-        props.on_finish.clone(),
+        props.on_command.clone(),
         props.on_event.clone(),
     );
 

@@ -2,6 +2,7 @@ use super::{ChallengeActions, ChallengeActionsComponent};
 use crate::components::challenge::ChallengeEvent;
 use crate::components::ProgressBar;
 use konnektoren_core::challenges::{ChallengeResult, ContextItemChoiceAnswers, ContextualChoice};
+use konnektoren_core::commands::{ChallengeCommand, Command};
 use std::collections::HashMap;
 use yew::prelude::*;
 
@@ -9,7 +10,7 @@ use yew::prelude::*;
 pub struct ContextualChoiceComponentProps {
     pub challenge: ContextualChoice,
     #[prop_or_default]
-    pub on_finish: Option<Callback<ChallengeResult>>,
+    pub on_command: Option<Callback<Command>>,
     #[prop_or_default]
     pub on_event: Option<Callback<ChallengeEvent>>,
 }
@@ -29,14 +30,14 @@ pub fn contextual_choice_component(props: &ContextualChoiceComponentProps) -> Ht
         item_index.clone(),
         show_help.clone(),
         props.challenge.items.len(),
-        props.on_event.clone(),
+        props.on_command.clone(),
         selections.clone(),
     );
     let handle_option_selection = create_option_selection_handler(
         item_index.clone(),
         props.challenge.clone(),
         challenge_result.clone(),
-        props.on_finish.clone(),
+        props.on_command.clone(),
         props.on_event.clone(),
         selections.clone(),
     );
@@ -65,14 +66,14 @@ fn create_action_handler(
     item_index: UseStateHandle<usize>,
     show_help: UseStateHandle<bool>,
     total_items: usize,
-    on_event: Option<Callback<ChallengeEvent>>,
+    on_command: Option<Callback<Command>>,
     selections: UseStateHandle<HashMap<(usize, usize), usize>>,
 ) -> Callback<ChallengeActions> {
     Callback::from(move |action: ChallengeActions| match action {
         ChallengeActions::Next => {
-            handle_next_action(&item_index, total_items, &on_event, &selections)
+            handle_next_action(&item_index, total_items, &on_command, &selections)
         }
-        ChallengeActions::Previous => handle_previous_action(&item_index, &on_event, &selections),
+        ChallengeActions::Previous => handle_previous_action(&item_index, &on_command, &selections),
         ChallengeActions::Help => show_help.set(!*show_help),
     })
 }
@@ -80,7 +81,7 @@ fn create_action_handler(
 fn handle_next_action(
     item_index: &UseStateHandle<usize>,
     total_items: usize,
-    on_event: &Option<Callback<ChallengeEvent>>,
+    on_command: &Option<Callback<Command>>,
     selections: &UseStateHandle<HashMap<(usize, usize), usize>>,
 ) {
     if **item_index < total_items - 1 {
@@ -91,15 +92,16 @@ fn handle_next_action(
         new_selections.retain(|&(item, _), _| item != next_item_index);
         selections.set(new_selections);
 
-        if let Some(on_event) = on_event {
-            on_event.emit(ChallengeEvent::NextTask(next_item_index));
+        if let Some(on_command) = on_command {
+            let command = Command::Challenge(ChallengeCommand::NextTask);
+            on_command.emit(command);
         }
     }
 }
 
 fn handle_previous_action(
     item_index: &UseStateHandle<usize>,
-    on_event: &Option<Callback<ChallengeEvent>>,
+    on_command: &Option<Callback<Command>>,
     selections: &UseStateHandle<HashMap<(usize, usize), usize>>,
 ) {
     if **item_index > 0 {
@@ -111,8 +113,9 @@ fn handle_previous_action(
         new_selections.retain(|&(item, _), _| item != previous_item_index);
         selections.set(new_selections);
 
-        if let Some(on_event) = on_event {
-            on_event.emit(ChallengeEvent::PreviousTask(previous_item_index));
+        if let Some(on_command) = on_command {
+            let command = Command::Challenge(ChallengeCommand::PreviousTask);
+            on_command.emit(command);
         }
     }
 }
@@ -121,7 +124,7 @@ fn create_option_selection_handler(
     item_index: UseStateHandle<usize>,
     challenge: ContextualChoice,
     challenge_result: UseStateHandle<ChallengeResult>,
-    on_finish: Option<Callback<ChallengeResult>>,
+    on_command: Option<Callback<Command>>,
     on_event: Option<Callback<ChallengeEvent>>,
     selections: UseStateHandle<HashMap<(usize, usize), usize>>,
 ) -> Callback<(usize, usize)> {
@@ -135,13 +138,7 @@ fn create_option_selection_handler(
             choice_index,
             option_index,
         );
-        check_for_task_completion(
-            &item_index,
-            &challenge,
-            &challenge_result,
-            &on_finish,
-            &on_event,
-        );
+        check_for_task_completion(&item_index, &challenge, &challenge_result, &on_command);
     })
 }
 
@@ -214,23 +211,21 @@ fn check_for_task_completion(
     item_index: &UseStateHandle<usize>,
     challenge: &ContextualChoice,
     challenge_result: &UseStateHandle<ChallengeResult>,
-    on_finish: &Option<Callback<ChallengeResult>>,
-    on_event: &Option<Callback<ChallengeEvent>>,
+    on_command: &Option<Callback<Command>>,
 ) {
     if **item_index < challenge.items.len() {
         if **item_index == challenge.items.len() - 1 {
             let result = (**challenge_result).clone();
-            if let Some(on_finish) = on_finish {
-                on_finish.emit(result.clone());
-            }
-            if let Some(on_event) = on_event {
-                on_event.emit(ChallengeEvent::Finish(result));
+            if let Some(on_command) = on_command {
+                let command = Command::Challenge(ChallengeCommand::Finish(Some(result)));
+                on_command.emit(command);
             }
         } else {
             let next_index = **item_index + 1;
             item_index.set(next_index);
-            if let Some(on_event) = on_event {
-                on_event.emit(ChallengeEvent::NextTask(next_index));
+            if let Some(on_command) = on_command {
+                let command = Command::Challenge(ChallengeCommand::NextTask);
+                on_command.emit(command);
             }
         }
     }
@@ -334,7 +329,7 @@ mod preview {
                 ],
                 ..Default::default()
             },
-            on_finish: None,
+            on_command: None,
             on_event: None,
         },
     );

@@ -10,8 +10,6 @@ use yew::prelude::*;
 pub struct CustomComponentProps {
     pub challenge: Custom,
     #[prop_or_default]
-    pub on_finish: Option<Callback<ChallengeResult>>,
-    #[prop_or_default]
     pub on_event: Option<Callback<ChallengeEvent>>,
     #[prop_or_default]
     pub on_command: Option<Callback<Command>>,

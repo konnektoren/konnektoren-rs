@@ -1,11 +1,12 @@
 use konnektoren_core::challenges::{ChallengeResult, Informative};
+use konnektoren_core::commands::{ChallengeCommand, Command};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Default)]
 pub struct InformativeComponentProps {
     pub challenge: Informative,
     #[prop_or_default]
-    pub on_finish: Option<Callback<ChallengeResult>>,
+    pub on_command: Option<Callback<Command>>,
     #[prop_or_default]
     pub language: Option<String>,
 }
@@ -14,10 +15,12 @@ pub struct InformativeComponentProps {
 pub fn informative_component(props: &InformativeComponentProps) -> Html {
     let language = props.language.as_deref().unwrap_or("en");
 
-    let on_finish = props.on_finish.clone();
+    let on_command = props.on_command.clone();
     let on_finish = Callback::from(move |_| {
-        if let Some(on_finish) = on_finish.as_ref() {
-            on_finish.emit(ChallengeResult::Informative);
+        if let Some(on_command) = on_command.as_ref() {
+            let command =
+                Command::Challenge(ChallengeCommand::Finish(Some(ChallengeResult::Informative)));
+            on_command.emit(command);
         }
     });
 
@@ -55,7 +58,7 @@ mod preview {
                     text: "This is an informative challenge".to_string(),
                 }],
             },
-            on_finish: None,
+            on_command: None,
             language: None,
         },
         (
@@ -70,7 +73,7 @@ mod preview {
                         text: "This is an informative challenge".to_string(),
                     }],
                 },
-                on_finish: None,
+                on_command: None,
                 language: Some("de".to_string()),
             }
         )

@@ -1,5 +1,6 @@
 use crate::components::challenge::ChallengeEvent;
 use konnektoren_core::challenges::{ChallengeResult, SortTable, SortTableRow};
+use konnektoren_core::commands::{ChallengeCommand, Command};
 use wasm_bindgen::JsCast;
 use web_sys::{DragEvent, Element, TouchEvent};
 use yew::prelude::*;
@@ -8,7 +9,7 @@ use yew::prelude::*;
 pub struct SortTableComponentProps {
     pub challenge: SortTable,
     #[prop_or_default]
-    pub on_finish: Option<Callback<ChallengeResult>>,
+    pub on_command: Option<Callback<Command>>,
     #[prop_or_default]
     pub on_event: Option<Callback<ChallengeEvent>>,
 }
@@ -45,7 +46,7 @@ fn shuffle(rows: &[SortTableRow]) -> Vec<SortTableRow> {
 pub fn sort_table_comp(props: &SortTableComponentProps) -> Html {
     let SortTableComponentProps {
         challenge,
-        on_finish,
+        on_command,
         on_event,
     } = props;
 
@@ -200,16 +201,13 @@ pub fn sort_table_comp(props: &SortTableComponentProps) -> Html {
     };
 
     let handle_finish = {
-        let on_finish = on_finish.clone();
-        let on_event = on_event.clone();
+        let on_command = on_command.clone();
         let rows = rows.clone();
         Callback::from(move |_| {
             let result = ChallengeResult::SortTable((*rows).clone());
-            if let Some(on_finish) = on_finish.as_ref() {
-                on_finish.emit(result.clone());
-            }
-            if let Some(on_event) = on_event.as_ref() {
-                on_event.emit(ChallengeEvent::Finish(result));
+            if let Some(on_command) = on_command.as_ref() {
+                let command = Command::Challenge(ChallengeCommand::Finish(Some(result)));
+                on_command.emit(command);
             }
         })
     };

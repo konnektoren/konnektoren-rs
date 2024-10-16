@@ -3,6 +3,7 @@ use crate::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
 use konnektoren_core::challenges::{
     ChallengeResult, Custom, KonnektorenJs, Package, PackageReader,
 };
+use konnektoren_core::commands::{ChallengeCommand, Command};
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
 
@@ -10,7 +11,7 @@ use yew::prelude::*;
 pub struct CustomPackageComponentProps {
     pub challenge: Custom,
     #[prop_or_default]
-    pub on_finish: Option<Callback<ChallengeResult>>,
+    pub on_command: Option<Callback<Command>>,
     #[prop_or_default]
     pub on_event: Option<Callback<ChallengeEvent>>,
 }
@@ -50,15 +51,24 @@ pub fn custom_package_component(props: &CustomPackageComponentProps) -> Html {
     {
         let konnektoren_js = konnektoren_js.clone();
         let on_event = props.on_event.clone();
+        let on_command = props.on_command.clone();
 
         use_effect(move || {
             let on_event = on_event.clone();
+            let on_command = on_command.clone();
             konnektoren_js.expose_send_event(move |event: JsValue| {
                 if let Some(on_event_callback) = &on_event {
                     let challenge_event: ChallengeEvent = event.into();
                     on_event_callback.emit(challenge_event);
                 }
             });
+            konnektoren_js.expose_execute_command(move |command: JsValue| {
+                if let Some(on_command_callback) = &on_command {
+                    let command: Command = command.try_into().unwrap();
+                    on_command_callback.emit(command);
+                }
+            });
+
             || ()
         });
     }

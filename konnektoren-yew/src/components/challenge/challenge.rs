@@ -16,8 +16,6 @@ pub struct ChallengeComponentProps {
     #[prop_or_default]
     pub variant: Option<ChallengeVariant>,
     #[prop_or_default]
-    pub on_finish: Option<Callback<ChallengeResult>>,
-    #[prop_or_default]
     pub on_event: Option<Callback<ChallengeEvent>>,
     #[prop_or_default]
     pub on_command: Option<Callback<Command>>,
@@ -30,33 +28,20 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
     let challenge_result = use_state(|| Option::<ChallengeResult>::None);
     let show_challenge_info = use_state(|| false);
 
-    let handle_finish = {
-        let challenge_result = challenge_result.clone();
-        let on_finish = props.on_finish.clone();
-        let on_event = props.on_event.clone();
-        let on_command = props.on_command.clone();
-        Callback::from(move |result: ChallengeResult| {
-            log::info!("Challenge Result: {:?}", result);
-            challenge_result.set(Some(result.clone()));
-            if let Some(on_finish) = on_finish.as_ref() {
-                on_finish.emit(result.clone());
-            }
-            if let Some(on_event) = on_event.as_ref() {
-                on_event.emit(ChallengeEvent::Finish(result.clone()));
-            }
-            if let Some(on_command) = on_command.as_ref() {
-                on_command.emit(Command::Challenge(ChallengeCommand::Finish(Some(
-                    result.clone(),
-                ))));
-            }
-        })
-    };
-
     let handle_event = {
         let on_event = props.on_event.clone();
         Callback::from(move |event: ChallengeEvent| {
             if let Some(on_event) = on_event.as_ref() {
                 on_event.emit(event);
+            }
+        })
+    };
+
+    let handle_command = {
+        let on_command = props.on_command.clone();
+        Callback::from(move |command: Command| {
+            if let Some(on_command) = on_command.as_ref() {
+                on_command.emit(command);
             }
         })
     };
@@ -68,7 +53,9 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
     ) {
         (None, ChallengeType::MultipleChoice(challenge), ChallengeVariant::MultipleChoice) => {
             html! {
-                <MultipleChoiceComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+                <MultipleChoiceComponent challenge={challenge.clone()}
+                on_event={handle_event}
+               on_command={handle_command} />
             }
         }
         (
@@ -76,29 +63,36 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
             ChallengeType::MultipleChoice(challenge),
             ChallengeVariant::MultipleChoiceCircle,
         ) => html! {
-            <MultipleChoiceCircleComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+            <MultipleChoiceCircleComponent challenge={challenge.clone()}
+                on_event={handle_event}
+               on_command={handle_command} />
         },
         (None, ChallengeType::ContextualChoice(challenge), ChallengeVariant::ContextualChoice) => {
             html! {
-                <ContextualChoiceComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+                <ContextualChoiceComponent challenge={challenge.clone()}
+                on_event={handle_event}
+               on_command={handle_command} />
             }
         }
         (None, ChallengeType::SortTable(challenge), ChallengeVariant::SortTable) => html! {
-            <SortTableComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+            <SortTableComponent challenge={challenge.clone()} on_event={handle_event}
+           on_command={handle_command} />
         },
         (None, ChallengeType::Informative(challenge), ChallengeVariant::InformativeText) => html! {
-            <InformativeComponent challenge={challenge.clone()} on_finish={handle_finish} language={props.language.clone()} />
+            <InformativeComponent challenge={challenge.clone()} on_command={handle_command} language={props.language.clone()} />
         },
         (None, ChallengeType::Informative(challenge), ChallengeVariant::InformativeMarkdown) => {
             html! {
-                <InformativeMarkdownComponent challenge={challenge.clone()} on_finish={handle_finish} language={props.language.clone()}  />
+                <InformativeMarkdownComponent challenge={challenge.clone()} on_command={handle_command} language={props.language.clone()}  />
             }
         }
         (None, ChallengeType::Custom(challenge), ChallengeVariant::Custom) => html! {
-            <CustomComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+            <CustomComponent challenge={challenge.clone()} on_event={handle_event}
+           on_command={handle_command} />
         },
         (None, ChallengeType::Custom(challenge), ChallengeVariant::CustomPackage) => html! {
-            <CustomPackageComponent challenge={challenge.clone()} on_finish={handle_finish} on_event={handle_event} />
+            <CustomPackageComponent challenge={challenge.clone()} on_event={handle_event}
+           on_command={handle_command} />
         },
         _ => html! {},
     };
