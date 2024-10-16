@@ -1,4 +1,3 @@
-use crate::challenges::{ChallengeResult, CustomChallengeResult};
 #[cfg(feature = "js")]
 use js_sys::{Object, Reflect};
 use serde::{Deserialize, Serialize};
@@ -7,11 +6,8 @@ use wasm_bindgen::prelude::*;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum ChallengeEvent {
-    NextTask(usize),
-    PreviousTask(usize),
     SolvedCorrect(usize),
     SolvedIncorrect(usize),
-    Finish(ChallengeResult),
 }
 
 #[cfg(feature = "js")]
@@ -24,20 +20,6 @@ impl From<JsValue> for ChallengeEvent {
             .unwrap();
 
         match event_type.as_str() {
-            "NextTask" => {
-                let index = Reflect::get(&obj, &JsValue::from_str("index"))
-                    .unwrap()
-                    .as_f64()
-                    .unwrap() as usize;
-                ChallengeEvent::NextTask(index)
-            }
-            "PreviousTask" => {
-                let index = Reflect::get(&obj, &JsValue::from_str("index"))
-                    .unwrap()
-                    .as_f64()
-                    .unwrap() as usize;
-                ChallengeEvent::PreviousTask(index)
-            }
             "SolvedCorrect" => {
                 let index = Reflect::get(&obj, &JsValue::from_str("index"))
                     .unwrap()
@@ -52,11 +34,6 @@ impl From<JsValue> for ChallengeEvent {
                     .unwrap() as usize;
                 ChallengeEvent::SolvedIncorrect(index)
             }
-            "Finish" => {
-                let result: JsValue = Reflect::get(&obj, &JsValue::from_str("result")).unwrap();
-                let result: CustomChallengeResult = result.into_serde().unwrap();
-                ChallengeEvent::Finish(ChallengeResult::Custom(result))
-            }
             _ => panic!("Unknown event type: {}", event_type),
         }
     }
@@ -70,24 +47,6 @@ mod tests {
 
     #[wasm_bindgen_test]
     fn test_challenge_event_from_js_value() {
-        // Test case for NextTask
-        let next_task_event = JsValue::from_serde(&serde_json::json!({
-            "type": "NextTask",
-            "index": 1,
-        }))
-        .unwrap();
-        let challenge_event = ChallengeEvent::from(next_task_event);
-        assert_eq!(challenge_event, ChallengeEvent::NextTask(1));
-
-        // Test case for PreviousTask
-        let prev_task_event = JsValue::from_serde(&serde_json::json!({
-            "type": "PreviousTask",
-            "index": 2,
-        }))
-        .unwrap();
-        let challenge_event = ChallengeEvent::from(prev_task_event);
-        assert_eq!(challenge_event, ChallengeEvent::PreviousTask(2));
-
         // Test case for SolvedCorrect
         let solved_correct_event = JsValue::from_serde(&serde_json::json!({
             "type": "SolvedCorrect",
@@ -105,27 +64,5 @@ mod tests {
         .unwrap();
         let challenge_event = ChallengeEvent::from(solved_incorrect_event);
         assert_eq!(challenge_event, ChallengeEvent::SolvedIncorrect(4));
-
-        // Test case for Finish (with a simple result)
-        let finish_event = JsValue::from_serde(&serde_json::json!({
-            "type": "Finish",
-            "result": {
-                "id": "123",
-                "performance": 0.0,
-                "data": {},
-            } // Minimal structure for result
-        }))
-        .unwrap();
-        let finish_challenge_event = ChallengeEvent::from(finish_event);
-
-        let result = CustomChallengeResult {
-            id: "".to_string(),
-            performance: 0.0,
-            data: serde_json::json!({}),
-        };
-        assert_eq!(
-            finish_challenge_event,
-            ChallengeEvent::Finish(ChallengeResult::Custom(result))
-        );
     }
 }
