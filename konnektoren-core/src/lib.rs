@@ -1,5 +1,6 @@
 pub mod challenges;
 pub mod commands;
+pub mod events;
 pub mod game;
 pub mod player_profile;
 pub mod session;
