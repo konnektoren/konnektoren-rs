@@ -22,7 +22,7 @@ pub fn multiple_choice_circle_component(props: &MultipleChoiceComponentProps) ->
         props.challenge.clone(),
         challenge_result.clone(),
         props.challenge.questions.len(),
-        props.on_finish.clone(),
+        props.on_command.clone(),
         props.on_event.clone(),
     );
 

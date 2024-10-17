@@ -10,7 +10,6 @@ pub mod challenge_type;
 pub mod challenge_variant;
 pub mod contextual_choice;
 pub mod custom;
-pub mod events;
 pub mod informative;
 pub mod multiple_choice;
 #[cfg(feature = "js")]
@@ -33,7 +32,6 @@ pub use challenge_type::ChallengeType;
 pub use challenge_variant::ChallengeVariant;
 pub use contextual_choice::*;
 pub use custom::*;
-pub use events::ChallengeEvent;
 pub use informative::{Informative, InformativeText};
 pub use multiple_choice::*;
 #[cfg(feature = "js")]

@@ -1,5 +1,4 @@
-use crate::components::challenge::ChallengeResult;
-use konnektoren_core::challenges::{Challenge, Performance};
+use konnektoren_core::challenges::{Challenge, ChallengeResult, Performance};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]

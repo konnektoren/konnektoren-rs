@@ -1,6 +1,7 @@
 use crate::components::challenge::informative::InformativeComponentProps;
 use gloo::net::http::Request;
 use konnektoren_core::challenges::ChallengeResult;
+use konnektoren_core::commands::{ChallengeCommand, Command};
 use wasm_bindgen::prelude::*;
 use web_sys::HtmlElement;
 use yew::prelude::*;
@@ -23,11 +24,13 @@ pub fn informative_markdown_component(props: &InformativeComponentProps) -> Html
     let language = props.language.as_deref().unwrap_or("en");
 
     let on_finish = {
-        let on_finish = props.on_finish.clone();
+        let on_command = props.on_command.clone();
         Callback::from(move |_| {
-            let on_finish = on_finish.clone();
-            if let Some(on_finish) = on_finish {
-                on_finish.emit(ChallengeResult::Informative);
+            if let Some(on_command) = on_command.as_ref() {
+                let command = Command::Challenge(ChallengeCommand::Finish(Some(
+                    ChallengeResult::Informative,
+                )));
+                on_command.emit(command);
             }
         })
     };
@@ -149,7 +152,7 @@ mod preview {
                     text: "assets/articles.md".to_string(),
                 }],
             },
-            on_finish: None,
+            on_command: None,
             language: None,
         },
         (
@@ -164,7 +167,7 @@ mod preview {
                         text: "assets/articles-de.md".to_string(),
                     }],
                 },
-                on_finish: None,
+                on_command: None,
                 language: Some("de".to_string()),
             }
         ),
@@ -180,7 +183,7 @@ mod preview {
                         text: "assets/unknown-en.md".to_string(),
                     }],
                 },
-                on_finish: None,
+                on_command: None,
                 language: None,
             }
         )

@@ -1,7 +1,8 @@
-use crate::components::ChallengeEvent;
 use crate::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
 use gloo::net::http::Request;
 use konnektoren_core::challenges::{ChallengeResult, Custom, KonnektorenJs};
+use konnektoren_core::commands::Command;
+use konnektoren_core::events::Event;
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
 
@@ -9,9 +10,9 @@ use yew::prelude::*;
 pub struct CustomComponentProps {
     pub challenge: Custom,
     #[prop_or_default]
-    pub on_finish: Option<Callback<ChallengeResult>>,
+    pub on_event: Option<Callback<Event>>,
     #[prop_or_default]
-    pub on_event: Option<Callback<ChallengeEvent>>,
+    pub on_command: Option<Callback<Command>>,
 }
 
 #[function_component(CustomComponent)]
@@ -49,17 +50,25 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
         });
     }
 
-    // Effect to set up the sendEvent callback once on mount
+    // Effect to set up the sendEvent and command callback once on mount
     {
         let konnektoren_js = konnektoren_js.clone();
         let on_event = props.on_event.clone();
+        let on_command = props.on_command.clone();
 
         use_effect(move || {
             let on_event = on_event.clone();
+            let on_command = on_command.clone();
             konnektoren_js.expose_send_event(move |event: JsValue| {
                 if let Some(on_event_callback) = &on_event {
-                    let challenge_event: ChallengeEvent = event.into();
-                    on_event_callback.emit(challenge_event);
+                    let event: Event = event.try_into().unwrap();
+                    on_event_callback.emit(event);
+                }
+            });
+            konnektoren_js.expose_execute_command(move |command: JsValue| {
+                if let Some(on_command_callback) = &on_command {
+                    let command: Command = command.try_into().unwrap();
+                    on_command_callback.emit(command);
                 }
             });
             || ()

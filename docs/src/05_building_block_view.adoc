@@ -135,6 +135,89 @@ Contained Building Blocks::
 
 This detailed diagram provides a clearer picture of the internal structure of the `konnektoren-core` crate, showing the relationships between different modules and packages.
 
+=== Level 2: Command Structure
+
+The command structure in konnektoren-core is designed to handle various actions within the game. It consists of the following main components:
+
+[plantuml, command-structure, png]
+----
+@startuml
+package "commands" {
+    interface CommandTrait {
+        +execute(state: &mut GameState) -> Result<()>
+    }
+    enum Command {
+        Game(GameCommand)
+        Challenge(ChallengeCommand)
+    }
+    enum GameCommand {
+        NextChallenge
+        PreviousChallenge
+    }
+    enum ChallengeCommand {
+        NextTask
+        PreviousTask
+        SolveOption(usize)
+        Finish(Option<ChallengeResult>)
+    }
+    CommandTrait <|.. Command
+    Command *-- GameCommand
+    Command *-- ChallengeCommand
+}
+@enduml
+----
+
+- `CommandTrait`: Defines the basic behavior for all commands in the game.
+- `Command`: An enum representing all possible commands, including both game-level and challenge-level commands.
+- `GameCommand`: Enum for game-level commands like navigating between challenges.
+- `ChallengeCommand`: Enum for challenge-level commands like navigating tasks or solving options.
+
+This command structure allows for a unified interface to execute various actions within the game, providing flexibility and extensibility for future additions.
+
+=== Level 2: Event Structure
+
+The event structure in konnektoren-core is designed to handle various occurrences within the game. It consists of the following main components:
+
+[plantuml, event-structure, png]
+----
+@startuml
+package "events" {
+    enum Event {
+        Game(GameEvent)
+        Challenge(ChallengeEvent)
+    }
+    enum GameEvent {
+        Started
+    }
+    enum ChallengeEvent {
+        SolvedCorrect(usize)
+        SolvedIncorrect(usize)
+        Started
+        Completed
+    }
+    Event *-- GameEvent
+    Event *-- ChallengeEvent
+}
+@enduml
+----
+
+- `Event`: An enum representing all possible events, including both game-level and challenge-level events.
+- `GameEvent`: Enum for game-level events like game start.
+- `ChallengeEvent`: Enum for challenge-level events like solving questions or completing challenges.
+
+This event structure allows for a unified interface to represent various occurrences within the game, providing flexibility and extensibility for future additions.
+
+==== Event Types
+
+Game Events::
+- `Started`: Triggered when a new game session begins.
+
+Challenge Events::
+- `SolvedCorrect(usize)`: Triggered when a user solves a challenge correctly. The `usize` parameter represents the index of the solved question.
+- `SolvedIncorrect(usize)`: Triggered when a user solves a challenge incorrectly. The `usize` parameter represents the index of the incorrectly solved question.
+- `Started`: Triggered when a user starts a new challenge.
+- `Completed`: Triggered when a user completes a challenge.
+
 ==== konnektoren-yew
 
 Purpose/Responsibility::

@@ -50,6 +50,7 @@ mod preview {
                     products: vec![],
                 },
                 on_select: None,
+                on_tag: Some(Callback::noop()),
             }
         ),
         (

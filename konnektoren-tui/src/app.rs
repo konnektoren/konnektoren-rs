@@ -9,13 +9,7 @@ use crate::tui::Tui;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 
 use konnektoren_core::{
-    commands::{
-        game_commands::{
-            NextChallengeCommand, NextTaskCommand, PreviousChallengeCommand, PreviousTaskCommand,
-            SolveOptionCommand,
-        },
-        GameCommand,
-    },
+    commands::{ChallengeCommand, Command, CommandTrait, GameCommand},
     session::Session,
 };
 use ratatui::{
@@ -65,40 +59,35 @@ impl App {
     }
 
     pub fn next_question(&mut self) {
-        let command = NextTaskCommand();
+        let command = Command::Challenge(ChallengeCommand::NextTask);
         command
             .execute(&mut self.session.game_state)
             .unwrap_or_default();
     }
 
     pub fn previous_question(&mut self) {
-        let command = PreviousTaskCommand();
+        let command = Command::Challenge(ChallengeCommand::PreviousTask);
         command
             .execute(&mut self.session.game_state)
             .unwrap_or_default();
     }
 
     pub fn next_challenge(&mut self) {
-        let command = NextChallengeCommand();
-
+        let command = Command::Game(GameCommand::NextChallenge);
         command
             .execute(&mut self.session.game_state)
             .unwrap_or_default();
     }
 
     pub fn previous_challenge(&mut self) {
-        let command = PreviousChallengeCommand();
-
+        let command = Command::Game(GameCommand::PreviousChallenge);
         command
             .execute(&mut self.session.game_state)
             .unwrap_or_default();
     }
 
     pub fn solve_option(&mut self, option_id: usize) -> anyhow::Result<()> {
-        let command = SolveOptionCommand {
-            option_index: option_id,
-        };
-
+        let command = Command::Challenge(ChallengeCommand::SolveOption(option_id));
         command.execute(&mut self.session.game_state)
     }
 
