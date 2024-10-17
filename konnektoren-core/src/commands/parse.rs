@@ -172,4 +172,80 @@ mod tests {
             CommandParseError::InvalidData(_)
         ));
     }
+
+    use wasm_bindgen_test::*;
+
+    #[wasm_bindgen_test]
+    fn test_parse_game_event_js() {
+        let json = r#"{"type":"Game", "action":"NextChallenge"}"#;
+        let value: JsValue = js_sys::JSON::parse(json).unwrap();
+        let command = Command::try_from(value).unwrap();
+        assert_eq!(command, Command::Game(GameCommand::NextChallenge));
+    }
+
+    #[wasm_bindgen_test]
+    fn test_parse_challenge_event_js() {
+        let json = r#"{"type":"Challenge", "action":"NextTask"}"#;
+        let value: JsValue = js_sys::JSON::parse(json).unwrap();
+        let command = Command::try_from(value).unwrap();
+        assert_eq!(command, Command::Challenge(ChallengeCommand::NextTask));
+    }
+
+    #[wasm_bindgen_test]
+    fn test_parse_challenge_event_with_option_js() {
+        let json = r#"{"type":"Challenge", "action":"SolveOption", "optionIndex":0}"#;
+        let value: JsValue = js_sys::JSON::parse(json).unwrap();
+        let command = Command::try_from(value).unwrap();
+        assert_eq!(
+            command,
+            Command::Challenge(ChallengeCommand::SolveOption(0))
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn test_parse_challenge_event_with_result_js() {
+        let json = r#"{"type":"Challenge", "action":"Finish", "result":{"id":"123","performance":0.0,"data":{}}}"#;
+        let value: JsValue = js_sys::JSON::parse(json).unwrap();
+        let command = Command::try_from(value).unwrap();
+        assert_eq!(
+            command,
+            Command::Challenge(ChallengeCommand::Finish(Some(ChallengeResult::Custom(
+                CustomChallengeResult {
+                    id: "123".to_string(),
+                    performance: 0.0,
+                    data: serde_json::json!({}),
+                }
+            ))))
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn test_parse_unknown_command_js() {
+        let json = r#"{"type":"Unknown", "action":"NextTask"}"#;
+        let value: JsValue = js_sys::JSON::parse(json).unwrap();
+        let result = Command::try_from(value);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err(),
+            CommandParseError::UnknownCommandType("Unknown".to_string())
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn test_parse_missing_data_js() {
+        let json = r#"{"type":"Challenge"}"#;
+        let value: JsValue = js_sys::JSON::parse(json).unwrap();
+        let result = Command::try_from(value);
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), CommandParseError::MissingData);
+    }
+
+    #[wasm_bindgen_test]
+    fn test_parse_missing_option_index_js() {
+        let json = r#"{"type":"Challenge", "action":"SolveOption"}"#;
+        let value: JsValue = js_sys::JSON::parse(json).unwrap();
+        let result = Command::try_from(value);
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), CommandParseError::MissingData);
+    }
 }
