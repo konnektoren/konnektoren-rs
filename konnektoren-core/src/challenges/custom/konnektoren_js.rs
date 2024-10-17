@@ -169,6 +169,7 @@ impl KonnektorenJs {
     }
 }
 
+#[cfg(target_arch = "wasm32")]
 #[cfg(test)]
 mod tests {
     use super::*;
