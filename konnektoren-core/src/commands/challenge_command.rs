@@ -183,4 +183,16 @@ mod tests {
         let result = ChallengeCommand::finish_challenge(&mut state, &None);
         assert!(result.is_ok());
     }
+
+    #[test]
+    fn test_execute() {
+        let mut state = GameState::default();
+        state.current_game_path = 0;
+        state.current_challenge_index = 0;
+        state.current_task_index = 0;
+
+        let result = ChallengeCommand::SolveOption(0).execute(&mut state);
+        assert!(result.is_ok());
+        assert_eq!(state.current_task_index, 1);
+    }
 }
