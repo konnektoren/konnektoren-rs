@@ -2,8 +2,7 @@
 
 use super::command::CommandTrait;
 use crate::challenges::{
-    ChallengeInput, ChallengeResult, ChallengeType, CustomChallengeResult, MultipleChoiceOption,
-    Solvable,
+    ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
 };
 use crate::game::GamePath;
 use crate::game::GameState;

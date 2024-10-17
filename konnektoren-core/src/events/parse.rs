@@ -84,7 +84,6 @@ impl TryFrom<Value> for ChallengeEvent {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use wasm_bindgen_test::*;
 
     #[test]
     fn test_parse_game_event() {
@@ -126,83 +125,89 @@ mod tests {
         assert_eq!(event, Event::Challenge(ChallengeEvent::Completed));
     }
 
-    wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
+    #[cfg(target_arch = "wasm32")]
+    mod wasm_tests {
+        use super::*;
+        use wasm_bindgen_test::*;
 
-    #[wasm_bindgen_test]
-    fn test_parse_game_event_js() {
-        let json = r#"{"type":"Game","action":"Started"}"#;
-        let value: JsValue = js_sys::JSON::parse(json).unwrap();
-        let event = Event::try_from(value).unwrap();
-        assert_eq!(event, Event::Game(GameEvent::Started));
-    }
+        wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 
-    #[wasm_bindgen_test]
-    fn test_parse_challenge_event_js() {
-        let json = r#"{"type":"Challenge","action":"SolvedCorrect","index":2}"#;
-        let value: JsValue = js_sys::JSON::parse(json).unwrap();
-        let event = Event::try_from(value).unwrap();
-        assert_eq!(event, Event::Challenge(ChallengeEvent::SolvedCorrect(2)));
-    }
+        #[wasm_bindgen_test]
+        fn test_parse_game_event_js() {
+            let json = r#"{"type":"Game","action":"Started"}"#;
+            let value: JsValue = js_sys::JSON::parse(json).unwrap();
+            let event = Event::try_from(value).unwrap();
+            assert_eq!(event, Event::Game(GameEvent::Started));
+        }
 
-    #[wasm_bindgen_test]
-    fn test_parse_challenge_event_solved_incorrect_js() {
-        let json = r#"{"type":"Challenge","action":"SolvedIncorrect","index":2}"#;
-        let value: JsValue = js_sys::JSON::parse(json).unwrap();
-        let event = Event::try_from(value).unwrap();
-        assert_eq!(event, Event::Challenge(ChallengeEvent::SolvedIncorrect(2)));
-    }
+        #[wasm_bindgen_test]
+        fn test_parse_challenge_event_js() {
+            let json = r#"{"type":"Challenge","action":"SolvedCorrect","index":2}"#;
+            let value: JsValue = js_sys::JSON::parse(json).unwrap();
+            let event = Event::try_from(value).unwrap();
+            assert_eq!(event, Event::Challenge(ChallengeEvent::SolvedCorrect(2)));
+        }
 
-    #[wasm_bindgen_test]
-    fn test_parse_challenge_event_started_js() {
-        let json = r#"{"type":"Challenge","action":"Started"}"#;
-        let value: JsValue = js_sys::JSON::parse(json).unwrap();
-        let event = Event::try_from(value).unwrap();
-        assert_eq!(event, Event::Challenge(ChallengeEvent::Started));
-    }
+        #[wasm_bindgen_test]
+        fn test_parse_challenge_event_solved_incorrect_js() {
+            let json = r#"{"type":"Challenge","action":"SolvedIncorrect","index":2}"#;
+            let value: JsValue = js_sys::JSON::parse(json).unwrap();
+            let event = Event::try_from(value).unwrap();
+            assert_eq!(event, Event::Challenge(ChallengeEvent::SolvedIncorrect(2)));
+        }
 
-    #[wasm_bindgen_test]
-    fn test_parse_challenge_event_completed_js() {
-        let json = r#"{"type":"Challenge","action":"Completed"}"#;
-        let value: JsValue = js_sys::JSON::parse(json).unwrap();
-        let event = Event::try_from(value).unwrap();
-        assert_eq!(event, Event::Challenge(ChallengeEvent::Completed));
-    }
+        #[wasm_bindgen_test]
+        fn test_parse_challenge_event_started_js() {
+            let json = r#"{"type":"Challenge","action":"Started"}"#;
+            let value: JsValue = js_sys::JSON::parse(json).unwrap();
+            let event = Event::try_from(value).unwrap();
+            assert_eq!(event, Event::Challenge(ChallengeEvent::Started));
+        }
 
-    #[wasm_bindgen_test]
-    fn test_parse_game_event_invalid() {
-        let json = r#"{"type":"Game","action":"Invalid"}"#;
-        let value: JsValue = js_sys::JSON::parse(json).unwrap();
-        let event = Event::try_from(value);
-        assert_eq!(
-            event,
-            Err(EventParseError::UnknownEventType("Invalid".to_string()))
-        );
-    }
+        #[wasm_bindgen_test]
+        fn test_parse_challenge_event_completed_js() {
+            let json = r#"{"type":"Challenge","action":"Completed"}"#;
+            let value: JsValue = js_sys::JSON::parse(json).unwrap();
+            let event = Event::try_from(value).unwrap();
+            assert_eq!(event, Event::Challenge(ChallengeEvent::Completed));
+        }
 
-    #[wasm_bindgen_test]
-    fn test_parse_challenge_event_invalid() {
-        let json = r#"{"type":"Challenge","action":"Invalid"}"#;
-        let value: JsValue = js_sys::JSON::parse(json).unwrap();
-        let event = Event::try_from(value);
-        assert_eq!(
-            event,
-            Err(EventParseError::UnknownEventType("Invalid".to_string()))
-        );
-    }
+        #[wasm_bindgen_test]
+        fn test_parse_game_event_invalid() {
+            let json = r#"{"type":"Game","action":"Invalid"}"#;
+            let value: JsValue = js_sys::JSON::parse(json).unwrap();
+            let event = Event::try_from(value);
+            assert_eq!(
+                event,
+                Err(EventParseError::UnknownEventType("Invalid".to_string()))
+            );
+        }
 
-    #[wasm_bindgen_test]
-    fn test_parse_game_event_missing_data() {
-        let json = r#"{"type":"Game"}"#;
-        let value: JsValue = js_sys::JSON::parse(json).unwrap();
-        let event = Event::try_from(value);
-        assert_eq!(event, Err(EventParseError::MissingData));
-    }
+        #[wasm_bindgen_test]
+        fn test_parse_challenge_event_invalid() {
+            let json = r#"{"type":"Challenge","action":"Invalid"}"#;
+            let value: JsValue = js_sys::JSON::parse(json).unwrap();
+            let event = Event::try_from(value);
+            assert_eq!(
+                event,
+                Err(EventParseError::UnknownEventType("Invalid".to_string()))
+            );
+        }
 
-    #[wasm_bindgen_test]
-    fn test_parse_challenge_event_missing_data() {
-        let json = r#"{"type":"Challenge"}"#;
-        let value: JsValue = js_sys::JSON::parse(json).unwrap();
-        let event = Event::try_from(value);
-        assert_eq!(event, Err(EventParseError::MissingData));
+        #[wasm_bindgen_test]
+        fn test_parse_game_event_missing_data() {
+            let json = r#"{"type":"Game"}"#;
+            let value: JsValue = js_sys::JSON::parse(json).unwrap();
+            let event = Event::try_from(value);
+            assert_eq!(event, Err(EventParseError::MissingData));
+        }
+
+        #[wasm_bindgen_test]
+        fn test_parse_challenge_event_missing_data() {
+            let json = r#"{"type":"Challenge"}"#;
+            let value: JsValue = js_sys::JSON::parse(json).unwrap();
+            let event = Event::try_from(value);
+            assert_eq!(event, Err(EventParseError::MissingData));
+        }
     }
 }
