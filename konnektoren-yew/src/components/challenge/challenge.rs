@@ -1,12 +1,13 @@
 use super::{
-    ChallengeEvent, ContextualChoiceComponent, ContextualChoiceResultComponent, CustomComponent,
+    ContextualChoiceComponent, ContextualChoiceResultComponent, CustomComponent,
     CustomPackageComponent, InformativeComponent, InformativeMarkdownComponent,
     MultipleChoiceCircleComponent, MultipleChoiceComponent, MultipleChoiceResultComponent,
     SortTableComponent,
 };
 use crate::components::ChallengeInfoComponent;
 use konnektoren_core::challenges::ChallengeVariant;
-use konnektoren_core::commands::{ChallengeCommand, Command};
+use konnektoren_core::commands::Command;
+use konnektoren_core::events::{ChallengeEvent, Event};
 use konnektoren_core::prelude::*;
 use yew::prelude::*;
 
@@ -16,7 +17,7 @@ pub struct ChallengeComponentProps {
     #[prop_or_default]
     pub variant: Option<ChallengeVariant>,
     #[prop_or_default]
-    pub on_event: Option<Callback<ChallengeEvent>>,
+    pub on_event: Option<Callback<Event>>,
     #[prop_or_default]
     pub on_command: Option<Callback<Command>>,
     #[prop_or_default]
@@ -30,7 +31,7 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
 
     let handle_event = {
         let on_event = props.on_event.clone();
-        Callback::from(move |event: ChallengeEvent| {
+        Callback::from(move |event: Event| {
             if let Some(on_event) = on_event.as_ref() {
                 on_event.emit(event);
             }

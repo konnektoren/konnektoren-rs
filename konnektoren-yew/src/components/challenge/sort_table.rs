@@ -1,6 +1,6 @@
-use crate::components::challenge::ChallengeEvent;
 use konnektoren_core::challenges::{ChallengeResult, SortTable, SortTableRow};
 use konnektoren_core::commands::{ChallengeCommand, Command};
+use konnektoren_core::events::{ChallengeEvent, Event};
 use wasm_bindgen::JsCast;
 use web_sys::{DragEvent, Element, TouchEvent};
 use yew::prelude::*;
@@ -11,7 +11,7 @@ pub struct SortTableComponentProps {
     #[prop_or_default]
     pub on_command: Option<Callback<Command>>,
     #[prop_or_default]
-    pub on_event: Option<Callback<ChallengeEvent>>,
+    pub on_event: Option<Callback<Event>>,
 }
 
 fn shuffle(rows: &[SortTableRow]) -> Vec<SortTableRow> {

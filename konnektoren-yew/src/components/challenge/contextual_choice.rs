@@ -1,8 +1,8 @@
 use super::{ChallengeActions, ChallengeActionsComponent};
-use crate::components::challenge::ChallengeEvent;
 use crate::components::ProgressBar;
 use konnektoren_core::challenges::{ChallengeResult, ContextItemChoiceAnswers, ContextualChoice};
 use konnektoren_core::commands::{ChallengeCommand, Command};
+use konnektoren_core::events::{ChallengeEvent, Event};
 use std::collections::HashMap;
 use yew::prelude::*;
 
@@ -12,7 +12,7 @@ pub struct ContextualChoiceComponentProps {
     #[prop_or_default]
     pub on_command: Option<Callback<Command>>,
     #[prop_or_default]
-    pub on_event: Option<Callback<ChallengeEvent>>,
+    pub on_event: Option<Callback<Event>>,
 }
 
 #[function_component(ContextualChoiceComponent)]
@@ -125,7 +125,7 @@ fn create_option_selection_handler(
     challenge: ContextualChoice,
     challenge_result: UseStateHandle<ChallengeResult>,
     on_command: Option<Callback<Command>>,
-    on_event: Option<Callback<ChallengeEvent>>,
+    on_event: Option<Callback<Event>>,
     selections: UseStateHandle<HashMap<(usize, usize), usize>>,
 ) -> Callback<(usize, usize)> {
     Callback::from(move |(choice_index, option_index): (usize, usize)| {
@@ -186,7 +186,7 @@ fn update_challenge_result(
 }
 
 fn handle_event(
-    on_event: &Option<Callback<ChallengeEvent>>,
+    on_event: &Option<Callback<Event>>,
     challenge: &ContextualChoice,
     item_index: usize,
     choice_index: usize,
@@ -199,9 +199,11 @@ fn handle_event(
             let is_correct = challenge.items[item_index].choices[choice_index].correct_answer
                 == challenge.items[item_index].choices[choice_index].options[option_index];
             if is_correct {
-                on_event.emit(ChallengeEvent::SolvedCorrect(item_index));
+                on_event.emit(Event::Challenge(ChallengeEvent::SolvedCorrect(item_index)));
             } else {
-                on_event.emit(ChallengeEvent::SolvedIncorrect(item_index));
+                on_event.emit(Event::Challenge(ChallengeEvent::SolvedIncorrect(
+                    item_index,
+                )));
             }
         }
     }
@@ -273,7 +275,7 @@ fn render_select(
             value={selected_value.map(|v| v.to_string()).unwrap_or_default()}
             onchange={
                 let handle_option_selection = handle_option_selection.clone();
-                Callback::from(move |e: Event| {
+                Callback::from(move |e: web_sys::Event| {
                     let target: web_sys::HtmlSelectElement = e.target_unchecked_into();
                     handle_option_selection.emit((choice_index, target.selected_index() as usize - 1));
                 })

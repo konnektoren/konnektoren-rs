@@ -31,7 +31,6 @@ pub use custom_result::CustomResultComponent;
 pub use informative::InformativeComponent;
 pub use informative_markdown::InformativeMarkdownComponent;
 pub use informative_result::InformativeResultComponent;
-pub use konnektoren_core::challenges::events::ChallengeEvent;
 pub use multiple_choice::MultipleChoiceComponent;
 pub use multiple_choice_circle::MultipleChoiceCircleComponent;
 pub use multiple_choice_result::MultipleChoiceResultComponent;

@@ -1,5 +1,4 @@
 use super::{ChallengeActions, ChallengeActionsComponent, OptionsComponent, QuestionComponent};
-use crate::components::challenge::ChallengeEvent;
 use crate::components::challenge::MultipleChoiceResultComponent;
 use crate::components::ProgressBar;
 use crate::prelude::ReadText;
@@ -7,13 +6,14 @@ use konnektoren_core::challenges::{
     ChallengeInput, ChallengeResult, MultipleChoice, MultipleChoiceOption,
 };
 use konnektoren_core::commands::{ChallengeCommand, Command};
+use konnektoren_core::events::{ChallengeEvent, Event};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Default)]
 pub struct MultipleChoiceComponentProps {
     pub challenge: MultipleChoice,
     #[prop_or_default]
-    pub on_event: Option<Callback<ChallengeEvent>>,
+    pub on_event: Option<Callback<Event>>,
     #[prop_or_default]
     pub on_command: Option<Callback<Command>>,
 }
@@ -73,7 +73,7 @@ pub fn create_handle_option_selection(
     challenge_result: UseStateHandle<ChallengeResult>,
     total_tasks: usize,
     on_command: Option<Callback<Command>>,
-    on_event: Option<Callback<ChallengeEvent>>,
+    on_event: Option<Callback<Event>>,
 ) -> Callback<MultipleChoiceOption> {
     Callback::from(move |option: MultipleChoiceOption| {
         let mut challenge_result_update = (*challenge_result).clone();
@@ -84,9 +84,11 @@ pub fn create_handle_option_selection(
 
         if let Some(on_event) = on_event.as_ref() {
             if is_correct(&challenge, &challenge_result_update, *task_index) {
-                on_event.emit(ChallengeEvent::SolvedCorrect(*task_index));
+                on_event.emit(Event::Challenge(ChallengeEvent::SolvedCorrect(*task_index)));
             } else {
-                on_event.emit(ChallengeEvent::SolvedIncorrect(*task_index));
+                on_event.emit(Event::Challenge(ChallengeEvent::SolvedIncorrect(
+                    *task_index,
+                )));
             }
         }
 

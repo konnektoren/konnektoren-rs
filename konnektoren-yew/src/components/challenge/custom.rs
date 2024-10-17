@@ -1,8 +1,8 @@
-use crate::components::ChallengeEvent;
 use crate::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
 use gloo::net::http::Request;
 use konnektoren_core::challenges::{ChallengeResult, Custom, KonnektorenJs};
 use konnektoren_core::commands::Command;
+use konnektoren_core::events::Event;
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
 
@@ -10,7 +10,7 @@ use yew::prelude::*;
 pub struct CustomComponentProps {
     pub challenge: Custom,
     #[prop_or_default]
-    pub on_event: Option<Callback<ChallengeEvent>>,
+    pub on_event: Option<Callback<Event>>,
     #[prop_or_default]
     pub on_command: Option<Callback<Command>>,
 }
@@ -61,8 +61,8 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
             let on_command = on_command.clone();
             konnektoren_js.expose_send_event(move |event: JsValue| {
                 if let Some(on_event_callback) = &on_event {
-                    let challenge_event: ChallengeEvent = event.into();
-                    on_event_callback.emit(challenge_event);
+                    let event: Event = event.try_into().unwrap();
+                    on_event_callback.emit(event);
                 }
             });
             konnektoren_js.expose_execute_command(move |command: JsValue| {
