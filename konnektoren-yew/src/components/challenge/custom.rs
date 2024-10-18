@@ -25,8 +25,10 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
     let i18n_content = use_state(|| "".to_string());
     let loading = use_state(|| true);
 
-    // Initialize KonnektorenJs instance
-    let konnektoren_js = use_state(|| KonnektorenJs::new());
+    let konnektoren_js = use_mut_ref(|| {
+        let window = web_sys::window().expect("no global `window` exists");
+        KonnektorenJs::new(&window)
+    });
 
     // Effect to fetch content when the challenge changes
     {
@@ -60,18 +62,22 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
         use_effect(move || {
             let on_event = on_event.clone();
             let on_command = on_command.clone();
-            konnektoren_js.expose_send_event(move |event: JsValue| {
-                if let Some(on_event_callback) = &on_event {
-                    let event: Event = event.try_into().unwrap();
-                    on_event_callback.emit(event);
-                }
-            });
-            konnektoren_js.expose_execute_command(move |command: JsValue| {
-                if let Some(on_command_callback) = &on_command {
-                    let command: Command = command.try_into().unwrap();
-                    on_command_callback.emit(command);
-                }
-            });
+            konnektoren_js
+                .borrow_mut()
+                .expose_send_event(move |event: JsValue| {
+                    if let Some(on_event_callback) = &on_event {
+                        let event: Event = event.try_into().unwrap();
+                        on_event_callback.emit(event);
+                    }
+                });
+            konnektoren_js
+                .borrow_mut()
+                .expose_execute_command(move |command: JsValue| {
+                    if let Some(on_command_callback) = &on_command {
+                        let command: Command = command.try_into().unwrap();
+                        on_command_callback.emit(command);
+                    }
+                });
             || ()
         });
     }
@@ -89,18 +95,20 @@ pub fn custom_component(props: &CustomComponentProps) -> Html {
             move |(loading, challenge, js_code, i18n_content)| {
                 if !*loading {
                     // Set challenge data
-                    konnektoren_js.set_challenge_data(challenge.clone());
+                    konnektoren_js
+                        .borrow_mut()
+                        .set_challenge_data(challenge.clone());
 
                     // Set i18n data if available
-                    if !(i18n_content).is_empty() {
+                    if !i18n_content.is_empty() {
                         let language = SelectedLanguage::default().get();
                         let loader = I18nYmlLoader::new(&i18n_content);
                         let translations = loader.get(&language).unwrap_or_default();
-                        konnektoren_js.set_i18n_data(translations);
+                        konnektoren_js.borrow_mut().set_i18n_data(translations);
                     }
 
                     // Execute JS code
-                    konnektoren_js.execute_js(&js_code);
+                    konnektoren_js.borrow_mut().execute_js(&js_code);
                 }
             },
         );
