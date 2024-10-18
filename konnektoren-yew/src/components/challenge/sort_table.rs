@@ -1,6 +1,6 @@
 use konnektoren_core::challenges::{ChallengeResult, SortTable, SortTableRow};
 use konnektoren_core::commands::{ChallengeCommand, Command};
-use konnektoren_core::events::{ChallengeEvent, Event};
+use konnektoren_core::events::Event;
 use wasm_bindgen::JsCast;
 use web_sys::{DragEvent, Element, TouchEvent};
 use yew::prelude::*;
@@ -47,7 +47,7 @@ pub fn sort_table_comp(props: &SortTableComponentProps) -> Html {
     let SortTableComponentProps {
         challenge,
         on_command,
-        on_event,
+        ..
     } = props;
 
     let rows = use_state(|| shuffle(&challenge.rows));

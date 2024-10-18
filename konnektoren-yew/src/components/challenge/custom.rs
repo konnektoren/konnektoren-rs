@@ -1,8 +1,9 @@
 use crate::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
 use gloo::net::http::Request;
-use konnektoren_core::challenges::{ChallengeResult, Custom, KonnektorenJs};
+use konnektoren_core::challenges::Custom;
 use konnektoren_core::commands::Command;
 use konnektoren_core::events::Event;
+use konnektoren_core::konnektoren_js::KonnektorenJs;
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
 

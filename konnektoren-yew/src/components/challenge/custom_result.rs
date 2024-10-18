@@ -1,6 +1,7 @@
 use crate::components::custom::fetch_content;
 use crate::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
-use konnektoren_core::challenges::{Custom, CustomChallengeResult, KonnektorenJs};
+use konnektoren_core::challenges::{Custom, CustomChallengeResult};
+use konnektoren_core::konnektoren_js::KonnektorenJs;
 use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]

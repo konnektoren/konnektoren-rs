@@ -7,7 +7,7 @@ use super::{
 use crate::components::ChallengeInfoComponent;
 use konnektoren_core::challenges::ChallengeVariant;
 use konnektoren_core::commands::Command;
-use konnektoren_core::events::{ChallengeEvent, Event};
+use konnektoren_core::events::Event;
 use konnektoren_core::prelude::*;
 use yew::prelude::*;
 

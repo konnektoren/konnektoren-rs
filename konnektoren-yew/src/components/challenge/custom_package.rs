@@ -1,9 +1,8 @@
 use crate::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
-use konnektoren_core::challenges::{
-    ChallengeResult, Custom, KonnektorenJs, Package, PackageReader,
-};
-use konnektoren_core::commands::{ChallengeCommand, Command};
-use konnektoren_core::events::{ChallengeEvent, Event};
+use konnektoren_core::challenges::{Custom, Package, PackageReader};
+use konnektoren_core::commands::Command;
+use konnektoren_core::events::Event;
+use konnektoren_core::konnektoren_js::KonnektorenJs;
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
 
