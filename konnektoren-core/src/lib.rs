@@ -11,6 +11,9 @@ pub mod achievements;
 #[cfg(feature = "certificates")]
 pub mod certificates;
 
+#[cfg(feature = "js")]
+pub mod konnektoren_js;
+
 #[cfg(feature = "marketplace")]
 pub mod marketplace;
 
@@ -37,6 +40,9 @@ pub mod prelude {
 
     #[cfg(feature = "achievements")]
     pub use crate::achievements::*;
+
+    #[cfg(feature = "js")]
+    pub use crate::konnektoren_js::*;
 
     #[cfg(feature = "marketplace")]
     pub use crate::marketplace::*;
