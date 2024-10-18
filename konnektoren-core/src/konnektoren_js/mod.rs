@@ -6,6 +6,8 @@ mod js_executor;
 mod konnektoren_js;
 mod result;
 
+pub const KONNEKTOREN_NAMESPACE: &str = "konnektoren";
+
 pub use challenge::ChallengeHandler;
 pub use command::CommandHandler;
 pub use event::EventHandler;
