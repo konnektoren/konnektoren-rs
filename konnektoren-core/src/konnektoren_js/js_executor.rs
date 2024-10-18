@@ -1,12 +1,9 @@
-use web_sys::Window;
+#[derive(Default)]
+pub struct JsExecutor {}
 
-pub struct JsExecutor<'a> {
-    window: &'a Window,
-}
-
-impl<'a> JsExecutor<'a> {
-    pub fn new(window: &'a Window) -> Self {
-        Self { window }
+impl JsExecutor {
+    pub fn new() -> Self {
+        Self {}
     }
 
     pub fn execute(&self, js_code: &str) {
