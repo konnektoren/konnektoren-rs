@@ -218,6 +218,55 @@ Challenge Events::
 - `Started`: Triggered when a user starts a new challenge.
 - `Completed`: Triggered when a user completes a challenge.
 
+==== KonnektorenJs
+
+The `KonnektorenJs` struct provides a bridge between the Rust core functionality and JavaScript, enabling seamless integration of Konnektoren features in web applications.
+
+[plantuml, konnektoren-js-structure, png]
+----
+@startuml
+class KonnektorenJs {
+  +new(window: &Window): KonnektorenJs
+  +set_challenge_data(challenge_data: Custom)
+  +set_result_data(result_data: CustomChallengeResult)
+  +expose_send_event(on_event: F)
+  +expose_execute_command(on_command: F)
+  +execute_js(js_code: &str)
+  +set_i18n_data(i18n_data: serde_json::Value)
+  +finish_challenge(result: Option<CustomChallengeResult>)
+}
+
+KonnektorenJs *-- ChallengeHandler
+KonnektorenJs *-- CommandHandler
+KonnektorenJs *-- EventHandler
+KonnektorenJs *-- I18nHandler
+KonnektorenJs *-- JsExecutor
+KonnektorenJs *-- ResultHandler
+
+@enduml
+----
+
+The `KonnektorenJs` struct encapsulates several handlers, each responsible for a specific aspect of the JavaScript integration:
+
+- **ChallengeHandler**: Manages challenge data in the JavaScript environment.
+- **CommandHandler**: Handles command execution between Rust and JavaScript.
+- **EventHandler**: Manages event handling between Rust and JavaScript.
+- **I18nHandler**: Handles internationalization data.
+- **JsExecutor**: Executes JavaScript code from Rust.
+- **ResultHandler**: Manages result data in the JavaScript environment.
+
+Key functionalities:
+
+1. **Challenge Data Management**: Set and retrieve challenge data in the JavaScript environment.
+2. **Result Handling**: Set and retrieve challenge result data.
+3. **Event Handling**: Expose functions to handle events between Rust and JavaScript.
+4. **Command Execution**: Enable execution of commands between Rust and JavaScript.
+5. **JavaScript Execution**: Execute JavaScript code from Rust.
+6. **Internationalization**: Set and manage internationalization data.
+7. **Challenge Completion**: Finish challenges and handle results.
+
+This structure allows for efficient communication between the Rust core and JavaScript, enabling the development of interactive web applications using Konnektoren's functionality.
+
 ==== konnektoren-yew
 
 Purpose/Responsibility::

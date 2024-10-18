@@ -1,6 +1,7 @@
 use crate::components::custom::fetch_content;
 use crate::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
-use konnektoren_core::challenges::{Custom, CustomChallengeResult, KonnektorenJs};
+use konnektoren_core::challenges::{Custom, CustomChallengeResult};
+use konnektoren_core::konnektoren_js::KonnektorenJs;
 use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
@@ -25,7 +26,10 @@ pub fn custom_result(props: &CustomResultComponentProps) -> Html {
     let i18n_content = use_state(|| "".to_string());
     let loading = use_state(|| true);
 
-    let konnektoren_js = use_mut_ref(|| KonnektorenJs::new());
+    let konnektoren_js = use_mut_ref(|| {
+        let window = web_sys::window().expect("no global `window` exists");
+        KonnektorenJs::new(&window)
+    });
 
     // Effect to fetch content when the challenge changes
     {

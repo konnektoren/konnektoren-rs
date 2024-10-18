@@ -1,9 +1,8 @@
 use crate::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
-use konnektoren_core::challenges::{
-    ChallengeResult, Custom, KonnektorenJs, Package, PackageReader,
-};
-use konnektoren_core::commands::{ChallengeCommand, Command};
-use konnektoren_core::events::{ChallengeEvent, Event};
+use konnektoren_core::challenges::{Custom, Package, PackageReader};
+use konnektoren_core::commands::Command;
+use konnektoren_core::events::Event;
+use konnektoren_core::konnektoren_js::KonnektorenJs;
 use wasm_bindgen::JsValue;
 use yew::prelude::*;
 
@@ -20,8 +19,10 @@ pub struct CustomPackageComponentProps {
 pub fn custom_package_component(props: &CustomPackageComponentProps) -> Html {
     let package = use_state(|| None::<Package>);
     let loading = use_state(|| true);
-    let konnektoren_js = use_state(|| KonnektorenJs::new());
-
+    let konnektoren_js = use_mut_ref(|| {
+        let window = web_sys::window().expect("no global `window` exists");
+        KonnektorenJs::new(&window)
+    });
     // Effect to load the package
     {
         let package = package.clone();
@@ -56,18 +57,22 @@ pub fn custom_package_component(props: &CustomPackageComponentProps) -> Html {
         use_effect(move || {
             let on_event = on_event.clone();
             let on_command = on_command.clone();
-            konnektoren_js.expose_send_event(move |event: JsValue| {
-                if let Some(on_event_callback) = &on_event {
-                    let event: Event = event.try_into().unwrap();
-                    on_event_callback.emit(event);
-                }
-            });
-            konnektoren_js.expose_execute_command(move |command: JsValue| {
-                if let Some(on_command_callback) = &on_command {
-                    let command: Command = command.try_into().unwrap();
-                    on_command_callback.emit(command);
-                }
-            });
+            konnektoren_js
+                .borrow_mut()
+                .expose_send_event(move |event: JsValue| {
+                    if let Some(on_event_callback) = &on_event {
+                        let event: Event = event.try_into().unwrap();
+                        on_event_callback.emit(event);
+                    }
+                });
+            konnektoren_js
+                .borrow_mut()
+                .expose_execute_command(move |command: JsValue| {
+                    if let Some(on_command_callback) = &on_command {
+                        let command: Command = command.try_into().unwrap();
+                        on_command_callback.emit(command);
+                    }
+                });
 
             || ()
         });
@@ -84,7 +89,9 @@ pub fn custom_package_component(props: &CustomPackageComponentProps) -> Html {
                 if let Some(loaded_package) = &**package {
                     // Set challenge data
                     if let Some(custom_challenge) = loaded_package.get_custom_challenge() {
-                        konnektoren_js.set_challenge_data(custom_challenge);
+                        konnektoren_js
+                            .borrow_mut()
+                            .set_challenge_data(custom_challenge);
                     }
 
                     // Set i18n data if available
@@ -92,12 +99,12 @@ pub fn custom_package_component(props: &CustomPackageComponentProps) -> Html {
                         let language = SelectedLanguage::default().get();
                         let loader = I18nYmlLoader::new(i18n_content.as_str());
                         let translations = loader.get(&language).unwrap_or_default();
-                        konnektoren_js.set_i18n_data(translations);
+                        konnektoren_js.borrow_mut().set_i18n_data(translations);
                     }
 
                     // Execute JS code
                     if let Some(js_content) = loaded_package.get_js_file() {
-                        konnektoren_js.execute_js(js_content.as_str());
+                        konnektoren_js.borrow_mut().execute_js(js_content.as_str());
                     }
                 }
             }
