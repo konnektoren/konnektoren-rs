@@ -1285,7 +1285,74 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect3">
-<h4 id="_konnektoren_yew">6.3.2. konnektoren-yew</h4>
+<h4 id="_konnektorenjs">6.3.2. KonnektorenJs</h4>
+<div class="paragraph">
+<p>The <code>KonnektorenJs</code> struct provides a bridge between the Rust core functionality and JavaScript, enabling seamless integration of Konnektoren features in web applications.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/konnektoren-js-structure.png" alt="konnektoren js structure" width="987" height="299">
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>KonnektorenJs</code> struct encapsulates several handlers, each responsible for a specific aspect of the JavaScript integration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>ChallengeHandler</strong>: Manages challenge data in the JavaScript environment.</p>
+</li>
+<li>
+<p><strong>CommandHandler</strong>: Handles command execution between Rust and JavaScript.</p>
+</li>
+<li>
+<p><strong>EventHandler</strong>: Manages event handling between Rust and JavaScript.</p>
+</li>
+<li>
+<p><strong>I18nHandler</strong>: Handles internationalization data.</p>
+</li>
+<li>
+<p><strong>JsExecutor</strong>: Executes JavaScript code from Rust.</p>
+</li>
+<li>
+<p><strong>ResultHandler</strong>: Manages result data in the JavaScript environment.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Key functionalities:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Challenge Data Management</strong>: Set and retrieve challenge data in the JavaScript environment.</p>
+</li>
+<li>
+<p><strong>Result Handling</strong>: Set and retrieve challenge result data.</p>
+</li>
+<li>
+<p><strong>Event Handling</strong>: Expose functions to handle events between Rust and JavaScript.</p>
+</li>
+<li>
+<p><strong>Command Execution</strong>: Enable execution of commands between Rust and JavaScript.</p>
+</li>
+<li>
+<p><strong>JavaScript Execution</strong>: Execute JavaScript code from Rust.</p>
+</li>
+<li>
+<p><strong>Internationalization</strong>: Set and manage internationalization data.</p>
+</li>
+<li>
+<p><strong>Challenge Completion</strong>: Finish challenges and handle results.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This structure allows for efficient communication between the Rust core and JavaScript, enabling the development of interactive web applications using Konnektoren&#8217;s functionality.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_konnektoren_yew">6.3.3. konnektoren-yew</h4>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Purpose/Responsibility</dt>
@@ -2307,7 +2374,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-10-18 06:18:40 UTC
+Last updated 2024-10-18 14:34:40 UTC
 </div>
 </div>
 </body>
