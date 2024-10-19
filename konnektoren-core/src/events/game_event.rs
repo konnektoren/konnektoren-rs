@@ -1,16 +1,21 @@
 use serde::{Deserialize, Serialize};
 
-use super::event::EventTrait;
+use super::{event::EventTrait, EventType};
 
-#[derive(Debug, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum GameEvent {
-    #[default]
     Started,
 }
 
+impl Default for GameEvent {
+    fn default() -> Self {
+        GameEvent::Started
+    }
+}
+
 impl EventTrait for GameEvent {
-    fn get_type(&self) -> &str {
-        "Game"
+    fn get_type(&self) -> EventType {
+        EventType::Game
     }
 
     fn get_action(&self) -> &str {
