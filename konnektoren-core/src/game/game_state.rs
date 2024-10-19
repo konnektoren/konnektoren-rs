@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{game::Game, prelude::Challenge};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GameState {
     pub game: Game,
     pub challenge: Challenge,
