@@ -1,6 +1,6 @@
 [package]
 name = "konnektoren-yew"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 [lib]
@@ -24,6 +24,7 @@ storage = ["gloo/storage"]
 yew-preview = ["dep:yew-preview"]
 
 [dependencies]
+async-trait = "0.1.83"
 console_log = "1.0"
 log = "0.4.21"
 implicit-clone = "0.4.9"
@@ -32,6 +33,7 @@ gloo = { version = "0.11.0", features = ["net"] }
 konnektoren-core = { path = "../konnektoren-core", features = ["js"] }
 markdown = { version = "1.0.0-alpha.18" }
 serde_json = "1.0.117"
+thiserror = "1.0"
 wasm-bindgen = { version = "0.2", features = ["serde"] }
 wasm-bindgen-futures = { version = "0.4.42" }
 web-sys = { version = "0.3.*", features = [
@@ -64,3 +66,4 @@ serde_yaml = "0.9.34+deprecated"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
+tokio = { version = "1.0", features = ["rt", "macros"] }
