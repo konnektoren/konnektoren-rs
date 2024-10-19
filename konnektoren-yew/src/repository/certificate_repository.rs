@@ -7,6 +7,7 @@ use serde_json;
 
 pub const CERTIFICATE_STORAGE_KEY: &str = "konnektoren_certificates";
 
+#[derive(Debug, PartialEq)]
 pub struct CertificateRepository<S: Storage> {
     storage: S,
 }

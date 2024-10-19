@@ -3,6 +3,7 @@ use super::storage_error::StorageError;
 use async_trait::async_trait;
 use gloo::storage::{LocalStorage as GlooLocalStorage, Storage as GlooStorage};
 
+#[derive(Clone, PartialEq)]
 pub struct LocalStorage {
     key_prefix: Option<String>,
 }

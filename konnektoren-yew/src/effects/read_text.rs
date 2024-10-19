@@ -1,3 +1,4 @@
+use crate::repository::SettingsRepository;
 use crate::storage::{SettingsStorage, Storage};
 use gloo::timers::callback::Timeout;
 use gloo::utils::window;

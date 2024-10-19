@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, PartialEq, Clone)]
 pub enum StorageError {
     #[error("Failed to access storage: {0}")]
     AccessError(String),

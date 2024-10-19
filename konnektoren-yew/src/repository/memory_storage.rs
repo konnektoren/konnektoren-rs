@@ -4,9 +4,19 @@ use async_trait::async_trait;
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct MemoryStorage {
     storage: Arc<RwLock<HashMap<String, String>>>,
+}
+
+impl PartialEq for MemoryStorage {
+    fn eq(&self, other: &Self) -> bool {
+        if let (Ok(self_guard), Ok(other_guard)) = (self.storage.read(), other.storage.read()) {
+            *self_guard == *other_guard
+        } else {
+            false
+        }
+    }
 }
 
 #[async_trait]

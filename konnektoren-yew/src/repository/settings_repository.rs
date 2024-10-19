@@ -6,6 +6,7 @@ use async_trait::async_trait;
 
 pub const SETTINGS_STORAGE_KEY: &str = "konnektoren_settings";
 
+#[derive(Debug, PartialEq)]
 pub struct SettingsRepository<S: Storage> {
     storage: S,
 }
