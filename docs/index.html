@@ -484,10 +484,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_whitebox_overall_system">6.1. Whitebox Overall System</a></li>
 <li><a href="#_level_2_command_structure">6.2. Level 2: Command Structure</a></li>
 <li><a href="#_level_2_event_structure">6.3. Level 2: Event Structure</a></li>
-<li><a href="#_level_2_challenge_rating_system">6.4. Level 2: Challenge Rating System</a></li>
-<li><a href="#_level_3_frontend_components">6.5. Level 3: Frontend Components</a></li>
-<li><a href="#_level_4_data_model">6.6. Level 4: Data Model</a></li>
-<li><a href="#_achievement_system">6.7. Achievement System</a></li>
+<li><a href="#_level_2_event_and_command_handling">6.4. Level 2: Event and Command Handling</a></li>
+<li><a href="#_level_2_challenge_rating_system">6.5. Level 2: Challenge Rating System</a></li>
+<li><a href="#_level_3_frontend_components">6.6. Level 3: Frontend Components</a></li>
+<li><a href="#_level_3_yew_game_controller_provider">6.7. Level 3: Yew Game Controller Provider</a></li>
+<li><a href="#_level_4_data_model">6.8. Level 4: Data Model</a></li>
+<li><a href="#_achievement_system">6.9. Achievement System</a></li>
 </ul>
 </li>
 <li><a href="#section-runtime-view">7. Runtime View</a>
@@ -497,6 +499,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_challenge_participation_scenario">7.3. Challenge Participation Scenario</a></li>
 <li><a href="#_leaderboard_and_certificate_scenario">7.4. Leaderboard and Certificate Scenario</a></li>
 <li><a href="#_verifiable_credential_issuance_scenario">7.5. Verifiable Credential Issuance Scenario</a></li>
+<li><a href="#_event_and_command_handling_scenario">7.6. Event and Command Handling Scenario</a></li>
+<li><a href="#_game_controller_interaction_scenario">7.7. Game Controller Interaction Scenario</a></li>
 </ul>
 </li>
 <li><a href="#section-deployment-view">8. Deployment View</a>
@@ -508,11 +512,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#section-concepts">9. Cross-cutting Concepts</a>
 <ul class="sectlevel2">
 <li><a href="#_core_library_and_ui_components">9.1. Core Library and UI Components</a></li>
-<li><a href="#_web3_oriented_architecture">9.2. Web3-Oriented Architecture</a></li>
-<li><a href="#_encryption_and_signatures_for_verification">9.3. Encryption and Signatures for Verification</a></li>
-<li><a href="#_no_backend_logging_and_analytics">9.4. No Backend Logging and Analytics</a></li>
-<li><a href="#_achievement_system_2">9.5. Achievement System</a></li>
-<li><a href="#_self_sovereign_identity_ssi_for_badges">9.6. Self-Sovereign Identity (SSI) for Badges</a></li>
+<li><a href="#_command_and_event_handling">9.2. Command and Event Handling</a></li>
+<li><a href="#_web3_oriented_architecture">9.3. Web3-Oriented Architecture</a></li>
+<li><a href="#_encryption_and_signatures_for_verification">9.4. Encryption and Signatures for Verification</a></li>
+<li><a href="#_no_backend_logging_and_analytics">9.5. No Backend Logging and Analytics</a></li>
+<li><a href="#_achievement_system_2">9.6. Achievement System</a></li>
+<li><a href="#_self_sovereign_identity_ssi_for_badges">9.7. Self-Sovereign Identity (SSI) for Badges</a></li>
 </ul>
 </li>
 <li><a href="#section-quality-scenarios">10. Quality Requirements</a>
@@ -1284,8 +1289,63 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </dl>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_level_2_event_and_command_handling">6.4. Level 2: Event and Command Handling</h3>
 <div class="sect3">
-<h4 id="_konnektorenjs">6.3.2. KonnektorenJs</h4>
+<h4 id="_eventbus">6.4.1. EventBus</h4>
+<div class="paragraph">
+<p>The EventBus is a central component for handling events in the Konnektoren system. It allows for decoupled communication between different parts of the application.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/eventbus-structure.png" alt="eventbus structure" width="422" height="392">
+</div>
+</div>
+<div class="paragraph">
+<p>Key responsibilities:
+- Allows components to subscribe to specific event types
+- Publishes events to all subscribed handlers
+- Provides a decoupled way for components to communicate</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_commandbus">6.4.2. CommandBus</h4>
+<div class="paragraph">
+<p>The CommandBus is responsible for handling and executing commands in the Konnektoren system. It centralizes command processing and allows for separation of command dispatch and execution.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/commandbus-structure.png" alt="commandbus structure" width="525" height="409">
+</div>
+</div>
+<div class="paragraph">
+<p>Key responsibilities:
+- Allows registration of command handlers for specific command types
+- Dispatches commands to appropriate handlers
+- Provides a centralized way to execute game actions</p>
+</div>
+<div class="sect4">
+<h5 id="_gamecontroller">GameController</h5>
+<div class="paragraph">
+<p>The GameController is a central component that manages the game state, handles commands, and coordinates events within the system.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/game-controller-structure.png" alt="game controller structure" width="547" height="230">
+</div>
+</div>
+<div class="paragraph">
+<p>Key responsibilities:
+- Manages the game state
+- Handles and publishes commands
+- Coordinates events through the EventBus
+- Manages game state persistence</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_konnektorenjs">6.4.3. KonnektorenJs</h4>
 <div class="paragraph">
 <p>The <code>KonnektorenJs</code> struct provides a bridge between the Rust core functionality and JavaScript, enabling seamless integration of Konnektoren features in web applications.</p>
 </div>
@@ -1352,7 +1412,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect3">
-<h4 id="_konnektoren_yew">6.3.3. konnektoren-yew</h4>
+<h4 id="_konnektoren_yew">6.4.4. konnektoren-yew</h4>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Purpose/Responsibility</dt>
@@ -1402,7 +1462,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_level_2_challenge_rating_system">6.4. Level 2: Challenge Rating System</h3>
+<h3 id="_level_2_challenge_rating_system">6.5. Level 2: Challenge Rating System</h3>
 <div class="paragraph">
 <p>The challenge rating system is a crucial part of the Konnektoren project, allowing users to provide feedback on challenges and view aggregate ratings.</p>
 </div>
@@ -1446,7 +1506,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect2">
-<h3 id="_level_3_frontend_components">6.5. Level 3: Frontend Components</h3>
+<h3 id="_level_3_frontend_components">6.6. Level 3: Frontend Components</h3>
 <div class="paragraph">
 <p>This level provides a more detailed view of the frontend components in the Konnektoren Yew application.</p>
 </div>
@@ -1494,7 +1554,90 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect2">
-<h3 id="_level_4_data_model">6.6. Level 4: Data Model</h3>
+<h3 id="_level_3_yew_game_controller_provider">6.7. Level 3: Yew Game Controller Provider</h3>
+<div class="paragraph">
+<p>The Game Controller Provider is a crucial component in the Konnektoren Yew frontend application. It manages the game state and provides access to the game controller throughout the component tree.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/game-controller-provider.png" alt="game controller provider" width="529" height="355">
+</div>
+</div>
+<div class="sect3">
+<h4 id="_gamecontrollerprovider">6.7.1. GameControllerProvider</h4>
+<div class="paragraph">
+<p>The <code>GameControllerProvider</code> is a Yew component that wraps the entire application and provides the <code>GameController</code> context to all child components.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Responsibilities</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Initialize the <code>GameController</code> with default game state</p>
+</li>
+<li>
+<p>Provide the <code>GameController</code> context to child components</p>
+</li>
+<li>
+<p>Manage the lifecycle of the <code>GameController</code></p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_gamecontrollercontext">6.7.2. GameControllerContext</h4>
+<div class="paragraph">
+<p>The <code>GameControllerContext</code> is a struct that holds a reference to the <code>GameController</code> and is passed down the component tree.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_custom_hooks">6.7.3. Custom Hooks</h4>
+<div class="paragraph">
+<p>The provider also includes several custom hooks to easily access different parts of the game state:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>use_game_controller()</code>: Returns the <code>GameControllerContext</code></p>
+</li>
+<li>
+<p><code>use_game_state()</code>: Returns the current <code>GameState</code></p>
+</li>
+<li>
+<p><code>use_event_bus()</code>: Returns the <code>EventBus</code> for subscribing to and publishing events</p>
+</li>
+<li>
+<p><code>use_command_bus()</code>: Returns the <code>CommandBus</code> for dispatching commands</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Example Usage:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-rust" data-lang="rust">#[function_component(MyComponent)]
+fn my_component() -&gt; Html {
+    let game_state = use_game_state();
+    let command_bus = use_command_bus();
+
+    // Use game_state and command_bus in your component logic
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This structure allows for efficient state management and easy access to game-related functionality throughout the Yew application.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_level_4_data_model">6.8. Level 4: Data Model</h3>
 <div class="paragraph">
 <p>The data model is a crucial part of the Konnektoren system, defining the structure and relationships of the core entities. Understanding this model is essential for developers working on the system and for maintaining data integrity across different components.</p>
 </div>
@@ -1530,7 +1673,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_achievement_system">6.7. Achievement System</h3>
+<h3 id="_achievement_system">6.9. Achievement System</h3>
 <div class="paragraph">
 <p>The achievement system consists of the following components:</p>
 </div>
@@ -1813,6 +1956,78 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>This simplified diagram illustrates the key steps in the verifiable credential issuance process, highlighting the interaction between the user, the Konnektoren system, and the external credential issuer.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_event_and_command_handling_scenario">7.6. Event and Command Handling Scenario</h3>
+<div class="paragraph">
+<p>This scenario illustrates how the EventBus and CommandBus facilitate communication and action execution in the Konnektoren system.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/event-command-scenario.png" alt="event command scenario" width="779" height="294">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The User Interface publishes a NextChallengeCommand to the CommandBus.</p>
+</li>
+<li>
+<p>The CommandBus executes the command, which is handled by the Game Logic.</p>
+</li>
+<li>
+<p>The Game Logic loads the next challenge from the Challenge Module.</p>
+</li>
+<li>
+<p>Once the challenge is loaded, the Game Logic publishes a ChallengeLoadedEvent to the EventBus.</p>
+</li>
+<li>
+<p>The EventBus notifies all subscribers, including the User Interface, about the new challenge.</p>
+</li>
+<li>
+<p>The User Interface updates the display for the user.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This scenario demonstrates how the EventBus and CommandBus decouple different parts of the system, allowing for a more modular and maintainable architecture.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_game_controller_interaction_scenario">7.7. Game Controller Interaction Scenario</h3>
+<div class="paragraph">
+<p>This scenario demonstrates how the GameController manages game state and handles commands.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/game-controller-interaction.png" alt="game controller interaction" width="1017" height="352">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The Client publishes a NextChallengeCommand to the GameController.</p>
+</li>
+<li>
+<p>The GameController forwards the command to the CommandBus.</p>
+</li>
+<li>
+<p>The CommandBus calls back to the GameController to handle the command.</p>
+</li>
+<li>
+<p>The GameController executes the command on the GameState.</p>
+</li>
+<li>
+<p>After the state is updated, the GameController publishes a ChallengeChangedEvent to the EventBus.</p>
+</li>
+<li>
+<p>The GameController saves the updated state using the Persistence layer.</p>
+</li>
+<li>
+<p>The EventBus notifies the Client about the state change.</p>
+</li>
+</ol>
+</div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -1923,7 +2138,25 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_web3_oriented_architecture">9.2. Web3-Oriented Architecture</h3>
+<h3 id="_command_and_event_handling">9.2. Command and Event Handling</h3>
+<div class="paragraph">
+<p>The Konnektoren system uses a command and event handling pattern, implemented primarily through the GameController, to manage game state and user interactions.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/command-event-pattern.png" alt="command event pattern" width="594" height="181">
+</div>
+</div>
+<div class="paragraph">
+<p>This pattern provides several benefits:
+- Decouples components by using commands and events for communication
+- Allows for easy extension of functionality by adding new command and event types
+- Provides a clear flow of control and data in the system
+- Facilitates testing by allowing commands and events to be easily mocked or verified</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_web3_oriented_architecture">9.3. Web3-Oriented Architecture</h3>
 <div class="paragraph">
 <p>The apps are designed with a web3-oriented architecture, minimizing server-side storage. User data, except for the leaderboard, is stored client-side to ensure privacy and security. The system also employs encryption and digital signatures to verify certificates and user data.</p>
 </div>
@@ -1937,7 +2170,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_encryption_and_signatures_for_verification">9.3. Encryption and Signatures for Verification</h3>
+<h3 id="_encryption_and_signatures_for_verification">9.4. Encryption and Signatures for Verification</h3>
 <div class="paragraph">
 <p>To ensure data integrity and security, the system uses encryption and signatures to verify certificates. This is a key part of the system’s security, ensuring that data shared between users and the server is verified without relying on a central authority.</p>
 </div>
@@ -1951,7 +2184,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_no_backend_logging_and_analytics">9.4. No Backend Logging and Analytics</h3>
+<h3 id="_no_backend_logging_and_analytics">9.5. No Backend Logging and Analytics</h3>
 <div class="paragraph">
 <p>To preserve privacy, the <strong>konnektoren.help</strong> system does not employ any backend logging. Google Analytics is used minimally to help improve the product while adhering to privacy standards.</p>
 </div>
@@ -1961,12 +2194,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_achievement_system_2">9.5. Achievement System</h3>
+<h3 id="_achievement_system_2">9.6. Achievement System</h3>
 <div class="paragraph">
 <p>The achievement system in Konnektoren is designed to motivate users and recognize their progress in learning German grammar.</p>
 </div>
 <div class="sect3">
-<h4 id="_overview">9.5.1. Overview</h4>
+<h4 id="_overview">9.6.1. Overview</h4>
 <div class="paragraph">
 <p>The achievement system works as follows:</p>
 </div>
@@ -1988,7 +2221,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect3">
-<h4 id="_components">9.5.2. Components</h4>
+<h4 id="_components">9.6.2. Components</h4>
 <div class="imageblock">
 <div class="content">
 <img src="images/diag-plantuml-md5-c289366f0b0efaef6e8fc7cd6956e0a9.png" alt="Diagram" width="1353" height="138">
@@ -2015,7 +2248,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementation">9.5.3. Implementation</h4>
+<h4 id="_implementation">9.6.3. Implementation</h4>
 <div class="paragraph">
 <p>The achievement system is implemented using the following key components:</p>
 </div>
@@ -2038,7 +2271,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_self_sovereign_identity_ssi_for_badges">9.6. Self-Sovereign Identity (SSI) for Badges</h3>
+<h3 id="_self_sovereign_identity_ssi_for_badges">9.7. Self-Sovereign Identity (SSI) for Badges</h3>
 <div class="paragraph">
 <p>The Konnektoren project incorporates Self-Sovereign Identity (SSI) principles for issuing achievement badges. This approach aligns with our commitment to user empowerment and data privacy.</p>
 </div>
@@ -2374,7 +2607,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-10-18 14:34:40 UTC
+Last updated 2024-10-19 16:32:33 UTC
 </div>
 </div>
 </body>
