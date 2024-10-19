@@ -1,7 +1,9 @@
 pub mod challenges;
 pub mod commands;
+pub mod controller;
 pub mod events;
 pub mod game;
+pub mod persistence;
 pub mod player_profile;
 pub mod session;
 

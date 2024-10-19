@@ -218,6 +218,102 @@ Challenge Events::
 - `Started`: Triggered when a user starts a new challenge.
 - `Completed`: Triggered when a user completes a challenge.
 
+=== Level 2: Event and Command Handling
+
+==== EventBus
+
+The EventBus is a central component for handling events in the Konnektoren system. It allows for decoupled communication between different parts of the application.
+
+[plantuml, eventbus-structure, png]
+----
+@startuml
+class EventBus {
+  +subscribe(event_type: EventType, callback: Fn(Event))
+  +publish(event: Event)
+}
+
+enum EventType {
+  Game
+  Challenge
+}
+
+class Event {
+  +get_type(): EventType
+}
+
+EventBus --> "*" Event : publishes
+EventBus --> EventType : uses
+Event --> EventType : has
+@enduml
+----
+
+Key responsibilities:
+- Allows components to subscribe to specific event types
+- Publishes events to all subscribed handlers
+- Provides a decoupled way for components to communicate
+
+==== CommandBus
+
+The CommandBus is responsible for handling and executing commands in the Konnektoren system. It centralizes command processing and allows for separation of command dispatch and execution.
+
+[plantuml, commandbus-structure, png]
+----
+@startuml
+class CommandBus {
+  +subscribe(command_type: CommandType, handler: Fn(Command))
+  +publish(command: Command)
+}
+
+enum CommandType {
+  Game
+  Challenge
+}
+
+class Command {
+  +get_type(): CommandType
+  +execute(state: &mut GameState)
+}
+
+CommandBus --> "*" Command : executes
+CommandBus --> CommandType : uses
+Command --> CommandType : has
+@enduml
+----
+
+Key responsibilities:
+- Allows registration of command handlers for specific command types
+- Dispatches commands to appropriate handlers
+- Provides a centralized way to execute game actions
+
+===== GameController
+
+The GameController is a central component that manages the game state, handles commands, and coordinates events within the system.
+
+[plantuml, game-controller-structure, png]
+----
+@startuml
+class GameController {
+  -game_state: Arc<Mutex<GameState>>
+  -event_bus: EventBus
+  -command_bus: CommandBus
+  -persistence: Arc<dyn GameStatePersistence>
+
+  +new(game: Game, persistence: Arc<dyn GameStatePersistence>): Self
+  +init(): Arc<Self>
+  +handle_command(command: Command)
+  +publish_command(command: Command)
+  +save_game_state(): Result<()>
+  +load_game_state(): Result<()>
+}
+@enduml
+----
+
+Key responsibilities:
+- Manages the game state
+- Handles and publishes commands
+- Coordinates events through the EventBus
+- Manages game state persistence
+
 ==== KonnektorenJs
 
 The `KonnektorenJs` struct provides a bridge between the Rust core functionality and JavaScript, enabling seamless integration of Konnektoren features in web applications.
@@ -380,6 +476,79 @@ Contained Building Blocks::
 | LeaderBoard | Displays the top-performing users based on their challenge results.
 | UserProfile | Shows user information, progress, and achievements.
 |===
+
+=== Level 3: Yew Game Controller Provider
+
+The Game Controller Provider is a crucial component in the Konnektoren Yew frontend application. It manages the game state and provides access to the game controller throughout the component tree.
+
+[plantuml, game-controller-provider, png]
+----
+@startuml
+package "Frontend" {
+  [GameControllerProvider] as GCP
+  [GameController] as GC
+  [Child Components] as CC
+}
+
+GCP --> GC : Creates and manages
+CC --> GCP : Consumes context
+
+note right of GCP
+  Yew Component
+  Provides GameController context
+end note
+
+note right of GC
+  Rust Struct
+  Manages game state and logic
+end note
+
+note right of CC
+  Yew Components
+  Various child components in the app
+end note
+
+@enduml
+----
+
+==== GameControllerProvider
+
+The `GameControllerProvider` is a Yew component that wraps the entire application and provides the `GameController` context to all child components.
+
+Responsibilities::
+- Initialize the `GameController` with default game state
+- Provide the `GameController` context to child components
+- Manage the lifecycle of the `GameController`
+
+==== GameControllerContext
+
+The `GameControllerContext` is a struct that holds a reference to the `GameController` and is passed down the component tree.
+
+==== Custom Hooks
+
+The provider also includes several custom hooks to easily access different parts of the game state:
+
+- `use_game_controller()`: Returns the `GameControllerContext`
+- `use_game_state()`: Returns the current `GameState`
+- `use_event_bus()`: Returns the `EventBus` for subscribing to and publishing events
+- `use_command_bus()`: Returns the `CommandBus` for dispatching commands
+
+Example Usage:
+
+[source,rust]
+----
+#[function_component(MyComponent)]
+fn my_component() -> Html {
+    let game_state = use_game_state();
+    let command_bus = use_command_bus();
+
+    // Use game_state and command_bus in your component logic
+    // ...
+}
+----
+
+This structure allows for efficient state management and easy access to game-related functionality throughout the Yew application.
+
 
 === Level 4: Data Model
 

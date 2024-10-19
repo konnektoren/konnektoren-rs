@@ -4,7 +4,7 @@ use crate::challenges::challenge_type::ChallengeType;
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ChallengeFactory {
     pub challenge_types: Vec<ChallengeType>,
 }

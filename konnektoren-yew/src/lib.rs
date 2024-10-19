@@ -1,7 +1,7 @@
 pub mod app;
 pub mod components;
-
 pub mod i18n;
+pub mod providers;
 
 pub mod model;
 
@@ -19,4 +19,5 @@ pub mod prelude {
     pub use crate::effects::*;
     pub use crate::i18n::*;
     pub use crate::model::*;
+    pub use crate::providers::*;
 }

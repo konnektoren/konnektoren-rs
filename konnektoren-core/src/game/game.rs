@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use super::GamePath;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Game {
     pub game_paths: Vec<GamePath>,
     pub challenge_factory: ChallengeFactory,
