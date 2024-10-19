@@ -9,7 +9,7 @@ type EventHandler = Arc<dyn Fn(Event) + Send + Sync>;
 
 #[derive(Default, Clone)]
 pub struct EventBus {
-    listeners: Arc<Mutex<HashMap<EventType, Vec<EventHandler>>>>,
+    pub listeners: Arc<Mutex<HashMap<EventType, Vec<EventHandler>>>>,
 }
 
 impl EventBus {

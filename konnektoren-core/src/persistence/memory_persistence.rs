@@ -9,6 +9,9 @@ pub struct MemoryPersistence {
     game_state: Rc<RefCell<GameState>>,
 }
 
+unsafe impl Send for MemoryPersistence {}
+unsafe impl Sync for MemoryPersistence {}
+
 impl MemoryPersistence {
     pub fn new(game_state: GameState) -> Self {
         MemoryPersistence {

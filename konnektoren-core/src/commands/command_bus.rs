@@ -6,7 +6,7 @@ type CommandHandler = Arc<dyn Fn(Command) + Send + Sync>;
 
 #[derive(Default, Clone)]
 pub struct CommandBus {
-    listeners: Arc<Mutex<HashMap<CommandType, Vec<CommandHandler>>>>,
+    pub listeners: Arc<Mutex<HashMap<CommandType, Vec<CommandHandler>>>>,
 }
 
 impl CommandBus {

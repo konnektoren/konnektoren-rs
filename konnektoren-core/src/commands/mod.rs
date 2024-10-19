@@ -12,6 +12,7 @@ pub mod parse;
 pub use challenge_command::ChallengeCommand;
 pub use command::Command;
 pub use command::CommandTrait;
+pub use command_bus::CommandBus;
 pub use command_type::CommandType;
 pub use errors::CommandParseError;
 pub use game_command::GameCommand;
