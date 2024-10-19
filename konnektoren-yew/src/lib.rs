@@ -9,9 +9,6 @@ pub mod model;
 pub mod effects;
 
 #[cfg(feature = "storage")]
-pub mod storage;
-
-#[cfg(feature = "storage")]
 pub mod repository;
 
 /// This is a prelude module that re-exports the most important types and traits.

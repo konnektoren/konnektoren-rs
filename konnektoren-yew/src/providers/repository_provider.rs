@@ -1,4 +1,4 @@
-use crate::repository::{CertificateRepository, SettingsRepository, Storage};
+use crate::repository::{CertificateRepository, ProfileRepository, SettingsRepository, Storage};
 use std::sync::Arc;
 use yew::prelude::*;
 
@@ -6,6 +6,7 @@ use yew::prelude::*;
 pub struct RepositoryContext<S: Storage + Send + Sync + 'static> {
     pub certificate_repository: Arc<CertificateRepository<S>>,
     pub settings_repository: Arc<SettingsRepository<S>>,
+    pub profile_repository: Arc<ProfileRepository<S>>,
 }
 
 impl<S: Storage + Send + Sync + 'static> RepositoryContext<S> {
@@ -13,6 +14,7 @@ impl<S: Storage + Send + Sync + 'static> RepositoryContext<S> {
         Self {
             certificate_repository: Arc::new(CertificateRepository::new(storage.clone())),
             settings_repository: Arc::new(SettingsRepository::new(storage.clone())),
+            profile_repository: Arc::new(ProfileRepository::new(storage.clone())),
         }
     }
 }
@@ -47,4 +49,10 @@ pub fn use_certificate_repository<S: Storage + Send + Sync + 'static>(
 pub fn use_settings_repository<S: Storage + Send + Sync + 'static>() -> Arc<SettingsRepository<S>> {
     let context = use_context::<RepositoryContext<S>>().expect("RepositoryContext not found");
     context.settings_repository.clone()
+}
+
+#[hook]
+pub fn use_profile_repository<S: Storage + Send + Sync + 'static>() -> Arc<ProfileRepository<S>> {
+    let context = use_context::<RepositoryContext<S>>().expect("RepositoryContext not found");
+    context.profile_repository.clone()
 }

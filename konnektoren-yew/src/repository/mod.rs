@@ -1,4 +1,5 @@
 mod certificate_repository;
+mod profile_repository;
 mod settings_repository;
 
 mod local_storage;
@@ -11,6 +12,7 @@ mod storage;
 mod storage_error;
 
 pub use certificate_repository::{CertificateRepository, CERTIFICATE_STORAGE_KEY};
+pub use profile_repository::{ProfileRepository, PROFILE_STORAGE_KEY};
 pub use settings_repository::{SettingsRepository, SETTINGS_STORAGE_KEY};
 
 pub use local_storage::LocalStorage;

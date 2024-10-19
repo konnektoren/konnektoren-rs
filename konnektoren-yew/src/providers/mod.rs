@@ -7,6 +7,6 @@ pub use game_controller_provider::{
     GameControllerProvider, GameControllerProviderProps,
 };
 pub use repository_provider::{
-    use_certificate_repository, use_settings_repository, RepositoryContext, RepositoryProvider,
-    RepositoryProviderProps,
+    use_certificate_repository, use_profile_repository, use_settings_repository, RepositoryContext,
+    RepositoryProvider, RepositoryProviderProps,
 };
