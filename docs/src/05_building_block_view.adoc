@@ -477,6 +477,79 @@ Contained Building Blocks::
 | UserProfile | Shows user information, progress, and achievements.
 |===
 
+=== Level 3: Yew Game Controller Provider
+
+The Game Controller Provider is a crucial component in the Konnektoren Yew frontend application. It manages the game state and provides access to the game controller throughout the component tree.
+
+[plantuml, game-controller-provider, png]
+----
+@startuml
+package "Frontend" {
+  [GameControllerProvider] as GCP
+  [GameController] as GC
+  [Child Components] as CC
+}
+
+GCP --> GC : Creates and manages
+CC --> GCP : Consumes context
+
+note right of GCP
+  Yew Component
+  Provides GameController context
+end note
+
+note right of GC
+  Rust Struct
+  Manages game state and logic
+end note
+
+note right of CC
+  Yew Components
+  Various child components in the app
+end note
+
+@enduml
+----
+
+==== GameControllerProvider
+
+The `GameControllerProvider` is a Yew component that wraps the entire application and provides the `GameController` context to all child components.
+
+Responsibilities::
+- Initialize the `GameController` with default game state
+- Provide the `GameController` context to child components
+- Manage the lifecycle of the `GameController`
+
+==== GameControllerContext
+
+The `GameControllerContext` is a struct that holds a reference to the `GameController` and is passed down the component tree.
+
+==== Custom Hooks
+
+The provider also includes several custom hooks to easily access different parts of the game state:
+
+- `use_game_controller()`: Returns the `GameControllerContext`
+- `use_game_state()`: Returns the current `GameState`
+- `use_event_bus()`: Returns the `EventBus` for subscribing to and publishing events
+- `use_command_bus()`: Returns the `CommandBus` for dispatching commands
+
+Example Usage:
+
+[source,rust]
+----
+#[function_component(MyComponent)]
+fn my_component() -> Html {
+    let game_state = use_game_state();
+    let command_bus = use_command_bus();
+
+    // Use game_state and command_bus in your component logic
+    // ...
+}
+----
+
+This structure allows for efficient state management and easy access to game-related functionality throughout the Yew application.
+
+
 === Level 4: Data Model
 
 The data model is a crucial part of the Konnektoren system, defining the structure and relationships of the core entities. Understanding this model is essential for developers working on the system and for maintaining data integrity across different components.
