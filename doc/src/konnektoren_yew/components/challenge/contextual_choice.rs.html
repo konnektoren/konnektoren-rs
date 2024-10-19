@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/contextual_choice.rs`."><title>contextual_choice.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/contextual_choice.rs`."><title>contextual_choice.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -336,13 +336,11 @@
 <a href="#336" id="336">336</a>
 <a href="#337" id="337">337</a>
 <a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
-<a href="#341" id="341">341</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{ChallengeActions, ChallengeActionsComponent};
-<span class="kw">use </span><span class="kw">crate</span>::components::challenge::ChallengeEvent;
 <span class="kw">use </span><span class="kw">crate</span>::components::ProgressBar;
 <span class="kw">use </span>konnektoren_core::challenges::{ChallengeResult, ContextItemChoiceAnswers, ContextualChoice};
+<span class="kw">use </span>konnektoren_core::commands::{ChallengeCommand, Command};
+<span class="kw">use </span>konnektoren_core::events::{ChallengeEvent, Event};
 <span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
@@ -350,9 +348,9 @@
 </span><span class="kw">pub struct </span>ContextualChoiceComponentProps {
     <span class="kw">pub </span>challenge: ContextualChoice,
     <span class="attr">#[prop_or_default]
-    </span><span class="kw">pub </span>on_finish: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeResult&gt;&gt;,
+    </span><span class="kw">pub </span>on_command: <span class="prelude-ty">Option</span>&lt;Callback&lt;Command&gt;&gt;,
     <span class="attr">#[prop_or_default]
-    </span><span class="kw">pub </span>on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    </span><span class="kw">pub </span>on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;Event&gt;&gt;,
 }
 
 <span class="attr">#[function_component(ContextualChoiceComponent)]
@@ -370,14 +368,14 @@
         item_index.clone(),
         show_help.clone(),
         props.challenge.items.len(),
-        props.on_event.clone(),
+        props.on_command.clone(),
         selections.clone(),
     );
     <span class="kw">let </span>handle_option_selection = create_option_selection_handler(
         item_index.clone(),
         props.challenge.clone(),
         challenge_result.clone(),
-        props.on_finish.clone(),
+        props.on_command.clone(),
         props.on_event.clone(),
         selections.clone(),
     );
@@ -406,14 +404,14 @@
     item_index: UseStateHandle&lt;usize&gt;,
     show_help: UseStateHandle&lt;bool&gt;,
     total_items: usize,
-    on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    on_command: <span class="prelude-ty">Option</span>&lt;Callback&lt;Command&gt;&gt;,
     selections: UseStateHandle&lt;HashMap&lt;(usize, usize), usize&gt;&gt;,
 ) -&gt; Callback&lt;ChallengeActions&gt; {
     Callback::from(<span class="kw">move </span>|action: ChallengeActions| <span class="kw">match </span>action {
         ChallengeActions::Next =&gt; {
-            handle_next_action(<span class="kw-2">&amp;</span>item_index, total_items, <span class="kw-2">&amp;</span>on_event, <span class="kw-2">&amp;</span>selections)
+            handle_next_action(<span class="kw-2">&amp;</span>item_index, total_items, <span class="kw-2">&amp;</span>on_command, <span class="kw-2">&amp;</span>selections)
         }
-        ChallengeActions::Previous =&gt; handle_previous_action(<span class="kw-2">&amp;</span>item_index, <span class="kw-2">&amp;</span>on_event, <span class="kw-2">&amp;</span>selections),
+        ChallengeActions::Previous =&gt; handle_previous_action(<span class="kw-2">&amp;</span>item_index, <span class="kw-2">&amp;</span>on_command, <span class="kw-2">&amp;</span>selections),
         ChallengeActions::Help =&gt; show_help.set(!<span class="kw-2">*</span>show_help),
     })
 }
@@ -421,7 +419,7 @@
 <span class="kw">fn </span>handle_next_action(
     item_index: <span class="kw-2">&amp;</span>UseStateHandle&lt;usize&gt;,
     total_items: usize,
-    on_event: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    on_command: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Callback&lt;Command&gt;&gt;,
     selections: <span class="kw-2">&amp;</span>UseStateHandle&lt;HashMap&lt;(usize, usize), usize&gt;&gt;,
 ) {
     <span class="kw">if </span><span class="kw-2">**</span>item_index &lt; total_items - <span class="number">1 </span>{
@@ -432,15 +430,16 @@
         new_selections.retain(|<span class="kw-2">&amp;</span>(item, <span class="kw">_</span>), <span class="kw">_</span>| item != next_item_index);
         selections.set(new_selections);
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event) = on_event {
-            on_event.emit(ChallengeEvent::NextTask(next_item_index));
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(on_command) = on_command {
+            <span class="kw">let </span>command = Command::Challenge(ChallengeCommand::NextTask);
+            on_command.emit(command);
         }
     }
 }
 
 <span class="kw">fn </span>handle_previous_action(
     item_index: <span class="kw-2">&amp;</span>UseStateHandle&lt;usize&gt;,
-    on_event: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    on_command: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Callback&lt;Command&gt;&gt;,
     selections: <span class="kw-2">&amp;</span>UseStateHandle&lt;HashMap&lt;(usize, usize), usize&gt;&gt;,
 ) {
     <span class="kw">if </span><span class="kw-2">**</span>item_index &gt; <span class="number">0 </span>{
@@ -452,8 +451,9 @@
         new_selections.retain(|<span class="kw-2">&amp;</span>(item, <span class="kw">_</span>), <span class="kw">_</span>| item != previous_item_index);
         selections.set(new_selections);
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event) = on_event {
-            on_event.emit(ChallengeEvent::PreviousTask(previous_item_index));
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(on_command) = on_command {
+            <span class="kw">let </span>command = Command::Challenge(ChallengeCommand::PreviousTask);
+            on_command.emit(command);
         }
     }
 }
@@ -462,8 +462,8 @@
     item_index: UseStateHandle&lt;usize&gt;,
     challenge: ContextualChoice,
     challenge_result: UseStateHandle&lt;ChallengeResult&gt;,
-    on_finish: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeResult&gt;&gt;,
-    on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    on_command: <span class="prelude-ty">Option</span>&lt;Callback&lt;Command&gt;&gt;,
+    on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;Event&gt;&gt;,
     selections: UseStateHandle&lt;HashMap&lt;(usize, usize), usize&gt;&gt;,
 ) -&gt; Callback&lt;(usize, usize)&gt; {
     Callback::from(<span class="kw">move </span>|(choice_index, option_index): (usize, usize)| {
@@ -476,13 +476,7 @@
             choice_index,
             option_index,
         );
-        check_for_task_completion(
-            <span class="kw-2">&amp;</span>item_index,
-            <span class="kw-2">&amp;</span>challenge,
-            <span class="kw-2">&amp;</span>challenge_result,
-            <span class="kw-2">&amp;</span>on_finish,
-            <span class="kw-2">&amp;</span>on_event,
-        );
+        check_for_task_completion(<span class="kw-2">&amp;</span>item_index, <span class="kw-2">&amp;</span>challenge, <span class="kw-2">&amp;</span>challenge_result, <span class="kw-2">&amp;</span>on_command);
     })
 }
 
@@ -530,7 +524,7 @@
 }
 
 <span class="kw">fn </span>handle_event(
-    on_event: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    on_event: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Callback&lt;Event&gt;&gt;,
     challenge: <span class="kw-2">&amp;</span>ContextualChoice,
     item_index: usize,
     choice_index: usize,
@@ -543,9 +537,11 @@
             <span class="kw">let </span>is_correct = challenge.items[item_index].choices[choice_index].correct_answer
                 == challenge.items[item_index].choices[choice_index].options[option_index];
             <span class="kw">if </span>is_correct {
-                on_event.emit(ChallengeEvent::SolvedCorrect(item_index));
+                on_event.emit(Event::Challenge(ChallengeEvent::SolvedCorrect(item_index)));
             } <span class="kw">else </span>{
-                on_event.emit(ChallengeEvent::SolvedIncorrect(item_index));
+                on_event.emit(Event::Challenge(ChallengeEvent::SolvedIncorrect(
+                    item_index,
+                )));
             }
         }
     }
@@ -555,23 +551,21 @@
     item_index: <span class="kw-2">&amp;</span>UseStateHandle&lt;usize&gt;,
     challenge: <span class="kw-2">&amp;</span>ContextualChoice,
     challenge_result: <span class="kw-2">&amp;</span>UseStateHandle&lt;ChallengeResult&gt;,
-    on_finish: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeResult&gt;&gt;,
-    on_event: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    on_command: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Callback&lt;Command&gt;&gt;,
 ) {
     <span class="kw">if </span><span class="kw-2">**</span>item_index &lt; challenge.items.len() {
         <span class="kw">if </span><span class="kw-2">**</span>item_index == challenge.items.len() - <span class="number">1 </span>{
             <span class="kw">let </span>result = (<span class="kw-2">**</span>challenge_result).clone();
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_finish) = on_finish {
-                on_finish.emit(result.clone());
-            }
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event) = on_event {
-                on_event.emit(ChallengeEvent::Finish(result));
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_command) = on_command {
+                <span class="kw">let </span>command = Command::Challenge(ChallengeCommand::Finish(<span class="prelude-val">Some</span>(result)));
+                on_command.emit(command);
             }
         } <span class="kw">else </span>{
             <span class="kw">let </span>next_index = <span class="kw-2">**</span>item_index + <span class="number">1</span>;
             item_index.set(next_index);
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event) = on_event {
-                on_event.emit(ChallengeEvent::NextTask(next_index));
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_command) = on_command {
+                <span class="kw">let </span>command = Command::Challenge(ChallengeCommand::NextTask);
+                on_command.emit(command);
             }
         }
     }
@@ -619,7 +613,7 @@
             </span>value={selected_value.map(|v| v.to_string()).unwrap_or_default()}
             onchange={
                 <span class="kw">let </span>handle_option_selection = handle_option_selection.clone();
-                Callback::from(<span class="kw">move </span>|e: Event| {
+                Callback::from(<span class="kw">move </span>|e: web_sys::Event| {
                     <span class="kw">let </span>target: web_sys::HtmlSelectElement = e.target_unchecked_into();
                     handle_option_selection.emit((choice_index, target.selected_index() <span class="kw">as </span>usize - <span class="number">1</span>));
                 })
@@ -675,7 +669,7 @@
                 ],
                 ..Default::default()
             },
-            on_finish: <span class="prelude-val">None</span>,
+            on_command: <span class="prelude-val">None</span>,
             on_event: <span class="prelude-val">None</span>,
         },
     );

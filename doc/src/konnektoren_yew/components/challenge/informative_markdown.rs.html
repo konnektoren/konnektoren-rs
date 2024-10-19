@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/informative_markdown.rs`."><title>informative_markdown.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/informative_markdown.rs`."><title>informative_markdown.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -160,9 +160,41 @@
 <a href="#160" id="160">160</a>
 <a href="#161" id="161">161</a>
 <a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::challenge::informative::InformativeComponentProps;
 <span class="kw">use </span>gloo::net::http::Request;
 <span class="kw">use </span>konnektoren_core::challenges::ChallengeResult;
+<span class="kw">use </span>konnektoren_core::commands::{ChallengeCommand, Command};
+<span class="kw">use </span>wasm_bindgen::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>web_sys::HtmlElement;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">pub enum </span>LoadingState {
@@ -171,20 +203,46 @@
     FetchError(String),
 }
 
+<span class="attr">#[wasm_bindgen]
+</span><span class="kw">extern </span><span class="string">"C" </span>{
+    <span class="attr">#[wasm_bindgen(js_namespace = window)]
+    </span><span class="kw">fn </span>scrollTo(x: f64, y: f64);
+}
+
 <span class="attr">#[function_component(InformativeMarkdownComponent)]
 </span><span class="kw">pub fn </span>informative_markdown_component(props: <span class="kw-2">&amp;</span>InformativeComponentProps) -&gt; Html {
     <span class="kw">let </span>loading_state = use_state(|| LoadingState::Loading);
     <span class="kw">let </span>language = props.language.as_deref().unwrap_or(<span class="string">"en"</span>);
 
     <span class="kw">let </span>on_finish = {
-        <span class="kw">let </span>on_finish = props.on_finish.clone();
+        <span class="kw">let </span>on_command = props.on_command.clone();
         Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| {
-            <span class="kw">let </span>on_finish = on_finish.clone();
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_finish) = on_finish {
-                on_finish.emit(ChallengeResult::Informative);
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_command) = on_command.as_ref() {
+                <span class="kw">let </span>command = Command::Challenge(ChallengeCommand::Finish(<span class="prelude-val">Some</span>(
+                    ChallengeResult::Informative,
+                )));
+                on_command.emit(command);
             }
         })
     };
+
+    <span class="kw">let </span>scroll_to_bottom = Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| {
+        wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
+            <span class="comment">// Wait a bit for the content to render
+            </span>gloo::timers::future::TimeoutFuture::new(<span class="number">100</span>).<span class="kw">await</span>;
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(window) = web_sys::window() {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(document) = window.document() {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(element) = document.get_element_by_id(<span class="string">"finish-button"</span>) {
+                        <span class="kw">if let </span><span class="prelude-val">Ok</span>(html_element) = element.dyn_into::&lt;HtmlElement&gt;() {
+                            <span class="kw">let </span>rect = html_element.get_bounding_client_rect();
+                            <span class="kw">let </span>scroll_y = rect.top() + window.scroll_y().unwrap_or(<span class="number">0.0</span>);
+                            scrollTo(<span class="number">0.0</span>, scroll_y);
+                        }
+                    }
+                }
+            }
+        });
+    });
 
     <span class="kw">let </span>fallback_path = props
         .challenge
@@ -241,7 +299,7 @@
             <span class="macro">html!</span> {
                 &lt;div class=<span class="string">"informative-markdown"</span>&gt;
                     &lt;h2&gt;{<span class="kw-2">&amp;</span>props.challenge.description}&lt;/h2&gt;
-                    &lt;a href=<span class="string">"#finish-button"</span>&gt;&lt;button&gt;{<span class="string">"Scroll down"</span>}&lt;/button&gt;&lt;/a&gt;
+                    &lt;button onclick={scroll_to_bottom}&gt;{<span class="string">"Scroll down"</span>}&lt;/button&gt;
                     &lt;div class=<span class="string">"markdown-content"</span>&gt;
                         {content}
                     &lt;/div&gt;
@@ -285,7 +343,7 @@
                     text: <span class="string">"assets/articles.md"</span>.to_string(),
                 }],
             },
-            on_finish: <span class="prelude-val">None</span>,
+            on_command: <span class="prelude-val">None</span>,
             language: <span class="prelude-val">None</span>,
         },
         (
@@ -300,7 +358,7 @@
                         text: <span class="string">"assets/articles-de.md"</span>.to_string(),
                     }],
                 },
-                on_finish: <span class="prelude-val">None</span>,
+                on_command: <span class="prelude-val">None</span>,
                 language: <span class="prelude-val">Some</span>(<span class="string">"de"</span>.to_string()),
             }
         ),
@@ -316,7 +374,7 @@
                         text: <span class="string">"assets/unknown-en.md"</span>.to_string(),
                     }],
                 },
-                on_finish: <span class="prelude-val">None</span>,
+                on_command: <span class="prelude-val">None</span>,
                 language: <span class="prelude-val">None</span>,
             }
         )

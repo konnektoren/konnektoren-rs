@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/custom_package.rs`."><title>custom_package.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/custom_package.rs`."><title>custom_package.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -118,11 +118,28 @@
 <a href="#118" id="118">118</a>
 <a href="#119" id="119">119</a>
 <a href="#120" id="120">120</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::ChallengeEvent;
-<span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
-<span class="kw">use </span>konnektoren_core::challenges::{
-    ChallengeResult, Custom, KonnektorenJs, Package, PackageReader,
-};
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
+<span class="kw">use </span>konnektoren_core::challenges::{Custom, Package, PackageReader};
+<span class="kw">use </span>konnektoren_core::commands::Command;
+<span class="kw">use </span>konnektoren_core::events::Event;
+<span class="kw">use </span>konnektoren_core::konnektoren_js::KonnektorenJs;
 <span class="kw">use </span>wasm_bindgen::JsValue;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
@@ -130,17 +147,19 @@
 </span><span class="kw">pub struct </span>CustomPackageComponentProps {
     <span class="kw">pub </span>challenge: Custom,
     <span class="attr">#[prop_or_default]
-    </span><span class="kw">pub </span>on_finish: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeResult&gt;&gt;,
+    </span><span class="kw">pub </span>on_command: <span class="prelude-ty">Option</span>&lt;Callback&lt;Command&gt;&gt;,
     <span class="attr">#[prop_or_default]
-    </span><span class="kw">pub </span>on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    </span><span class="kw">pub </span>on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;Event&gt;&gt;,
 }
 
 <span class="attr">#[function_component(CustomPackageComponent)]
 </span><span class="kw">pub fn </span>custom_package_component(props: <span class="kw-2">&amp;</span>CustomPackageComponentProps) -&gt; Html {
     <span class="kw">let </span>package = use_state(|| <span class="prelude-val">None</span>::&lt;Package&gt;);
     <span class="kw">let </span>loading = use_state(|| <span class="bool-val">true</span>);
-    <span class="kw">let </span>konnektoren_js = use_state(|| KonnektorenJs::new());
-
+    <span class="kw">let </span>konnektoren_js = use_mut_ref(|| {
+        <span class="kw">let </span>window = web_sys::window().expect(<span class="string">"no global `window` exists"</span>);
+        KonnektorenJs::new(<span class="kw-2">&amp;</span>window)
+    });
     <span class="comment">// Effect to load the package
     </span>{
         <span class="kw">let </span>package = package.clone();
@@ -170,15 +189,28 @@
     </span>{
         <span class="kw">let </span>konnektoren_js = konnektoren_js.clone();
         <span class="kw">let </span>on_event = props.on_event.clone();
+        <span class="kw">let </span>on_command = props.on_command.clone();
 
         use_effect(<span class="kw">move </span>|| {
             <span class="kw">let </span>on_event = on_event.clone();
-            konnektoren_js.expose_send_event(<span class="kw">move </span>|event: JsValue| {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event_callback) = <span class="kw-2">&amp;</span>on_event {
-                    <span class="kw">let </span>challenge_event: ChallengeEvent = event.into();
-                    on_event_callback.emit(challenge_event);
-                }
-            });
+            <span class="kw">let </span>on_command = on_command.clone();
+            konnektoren_js
+                .borrow_mut()
+                .expose_send_event(<span class="kw">move </span>|event: JsValue| {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event_callback) = <span class="kw-2">&amp;</span>on_event {
+                        <span class="kw">let </span>event: Event = event.try_into().unwrap();
+                        on_event_callback.emit(event);
+                    }
+                });
+            konnektoren_js
+                .borrow_mut()
+                .expose_execute_command(<span class="kw">move </span>|command: JsValue| {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(on_command_callback) = <span class="kw-2">&amp;</span>on_command {
+                        <span class="kw">let </span>command: Command = command.try_into().unwrap();
+                        on_command_callback.emit(command);
+                    }
+                });
+
             || ()
         });
     }
@@ -194,7 +226,9 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(loaded_package) = <span class="kw-2">&amp;**</span>package {
                     <span class="comment">// Set challenge data
                     </span><span class="kw">if let </span><span class="prelude-val">Some</span>(custom_challenge) = loaded_package.get_custom_challenge() {
-                        konnektoren_js.set_challenge_data(custom_challenge);
+                        konnektoren_js
+                            .borrow_mut()
+                            .set_challenge_data(custom_challenge);
                     }
 
                     <span class="comment">// Set i18n data if available
@@ -202,12 +236,12 @@
                         <span class="kw">let </span>language = SelectedLanguage::default().get();
                         <span class="kw">let </span>loader = I18nYmlLoader::new(i18n_content.as_str());
                         <span class="kw">let </span>translations = loader.get(<span class="kw-2">&amp;</span>language).unwrap_or_default();
-                        konnektoren_js.set_i18n_data(translations);
+                        konnektoren_js.borrow_mut().set_i18n_data(translations);
                     }
 
                     <span class="comment">// Execute JS code
                     </span><span class="kw">if let </span><span class="prelude-val">Some</span>(js_content) = loaded_package.get_js_file() {
-                        konnektoren_js.execute_js(js_content.as_str());
+                        konnektoren_js.borrow_mut().execute_js(js_content.as_str());
                     }
                 }
             }

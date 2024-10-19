@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/sort_table.rs`."><title>sort_table.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/sort_table.rs`."><title>sort_table.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -269,10 +269,9 @@
 <a href="#269" id="269">269</a>
 <a href="#270" id="270">270</a>
 <a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::challenge::ChallengeEvent;
-<span class="kw">use </span>konnektoren_core::challenges::{ChallengeResult, SortTable, SortTableRow};
+</pre></div><pre class="rust"><code><span class="kw">use </span>konnektoren_core::challenges::{ChallengeResult, SortTable, SortTableRow};
+<span class="kw">use </span>konnektoren_core::commands::{ChallengeCommand, Command};
+<span class="kw">use </span>konnektoren_core::events::Event;
 <span class="kw">use </span>wasm_bindgen::JsCast;
 <span class="kw">use </span>web_sys::{DragEvent, Element, TouchEvent};
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
@@ -281,9 +280,9 @@
 </span><span class="kw">pub struct </span>SortTableComponentProps {
     <span class="kw">pub </span>challenge: SortTable,
     <span class="attr">#[prop_or_default]
-    </span><span class="kw">pub </span>on_finish: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeResult&gt;&gt;,
+    </span><span class="kw">pub </span>on_command: <span class="prelude-ty">Option</span>&lt;Callback&lt;Command&gt;&gt;,
     <span class="attr">#[prop_or_default]
-    </span><span class="kw">pub </span>on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    </span><span class="kw">pub </span>on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;Event&gt;&gt;,
 }
 
 <span class="kw">fn </span>shuffle(rows: <span class="kw-2">&amp;</span>[SortTableRow]) -&gt; Vec&lt;SortTableRow&gt; {
@@ -318,8 +317,8 @@
 </span><span class="kw">pub fn </span>sort_table_comp(props: <span class="kw-2">&amp;</span>SortTableComponentProps) -&gt; Html {
     <span class="kw">let </span>SortTableComponentProps {
         challenge,
-        on_finish,
-        on_event,
+        on_command,
+        ..
     } = props;
 
     <span class="kw">let </span>rows = use_state(|| shuffle(<span class="kw-2">&amp;</span>challenge.rows));
@@ -473,16 +472,13 @@
     };
 
     <span class="kw">let </span>handle_finish = {
-        <span class="kw">let </span>on_finish = on_finish.clone();
-        <span class="kw">let </span>on_event = on_event.clone();
+        <span class="kw">let </span>on_command = on_command.clone();
         <span class="kw">let </span>rows = rows.clone();
         Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| {
             <span class="kw">let </span>result = ChallengeResult::SortTable((<span class="kw-2">*</span>rows).clone());
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_finish) = on_finish.as_ref() {
-                on_finish.emit(result.clone());
-            }
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event) = on_event.as_ref() {
-                on_event.emit(ChallengeEvent::Finish(result));
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(on_command) = on_command.as_ref() {
+                <span class="kw">let </span>command = Command::Challenge(ChallengeCommand::Finish(<span class="prelude-val">Some</span>(result)));
+                on_command.emit(command);
             }
         })
     };

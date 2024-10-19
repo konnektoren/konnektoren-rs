@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["KONNEKTOREN_NAMESPACE"],"struct":["ChallengeHandler","CommandHandler","EventHandler","I18nHandler","JsExecutor","KonnektorenJs","ResultHandler"]};

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/custom.rs`."><title>custom.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `konnektoren-yew/src/components/challenge/custom.rs`."><title>custom.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="konnektoren_yew" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -141,10 +141,30 @@
 <a href="#141" id="141">141</a>
 <a href="#142" id="142">142</a>
 <a href="#143" id="143">143</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::ChallengeEvent;
-<span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nLoader, I18nYmlLoader, SelectedLanguage};
 <span class="kw">use </span>gloo::net::http::Request;
-<span class="kw">use </span>konnektoren_core::challenges::{ChallengeResult, Custom, KonnektorenJs};
+<span class="kw">use </span>konnektoren_core::challenges::Custom;
+<span class="kw">use </span>konnektoren_core::commands::Command;
+<span class="kw">use </span>konnektoren_core::events::Event;
+<span class="kw">use </span>konnektoren_core::konnektoren_js::KonnektorenJs;
 <span class="kw">use </span>wasm_bindgen::JsValue;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
@@ -152,9 +172,9 @@
 </span><span class="kw">pub struct </span>CustomComponentProps {
     <span class="kw">pub </span>challenge: Custom,
     <span class="attr">#[prop_or_default]
-    </span><span class="kw">pub </span>on_finish: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeResult&gt;&gt;,
+    </span><span class="kw">pub </span>on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;Event&gt;&gt;,
     <span class="attr">#[prop_or_default]
-    </span><span class="kw">pub </span>on_event: <span class="prelude-ty">Option</span>&lt;Callback&lt;ChallengeEvent&gt;&gt;,
+    </span><span class="kw">pub </span>on_command: <span class="prelude-ty">Option</span>&lt;Callback&lt;Command&gt;&gt;,
 }
 
 <span class="attr">#[function_component(CustomComponent)]
@@ -166,8 +186,10 @@
     <span class="kw">let </span>i18n_content = use_state(|| <span class="string">""</span>.to_string());
     <span class="kw">let </span>loading = use_state(|| <span class="bool-val">true</span>);
 
-    <span class="comment">// Initialize KonnektorenJs instance
-    </span><span class="kw">let </span>konnektoren_js = use_state(|| KonnektorenJs::new());
+    <span class="kw">let </span>konnektoren_js = use_mut_ref(|| {
+        <span class="kw">let </span>window = web_sys::window().expect(<span class="string">"no global `window` exists"</span>);
+        KonnektorenJs::new(<span class="kw-2">&amp;</span>window)
+    });
 
     <span class="comment">// Effect to fetch content when the challenge changes
     </span>{
@@ -192,19 +214,31 @@
         });
     }
 
-    <span class="comment">// Effect to set up the sendEvent callback once on mount
+    <span class="comment">// Effect to set up the sendEvent and command callback once on mount
     </span>{
         <span class="kw">let </span>konnektoren_js = konnektoren_js.clone();
         <span class="kw">let </span>on_event = props.on_event.clone();
+        <span class="kw">let </span>on_command = props.on_command.clone();
 
         use_effect(<span class="kw">move </span>|| {
             <span class="kw">let </span>on_event = on_event.clone();
-            konnektoren_js.expose_send_event(<span class="kw">move </span>|event: JsValue| {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event_callback) = <span class="kw-2">&amp;</span>on_event {
-                    <span class="kw">let </span>challenge_event: ChallengeEvent = event.into();
-                    on_event_callback.emit(challenge_event);
-                }
-            });
+            <span class="kw">let </span>on_command = on_command.clone();
+            konnektoren_js
+                .borrow_mut()
+                .expose_send_event(<span class="kw">move </span>|event: JsValue| {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(on_event_callback) = <span class="kw-2">&amp;</span>on_event {
+                        <span class="kw">let </span>event: Event = event.try_into().unwrap();
+                        on_event_callback.emit(event);
+                    }
+                });
+            konnektoren_js
+                .borrow_mut()
+                .expose_execute_command(<span class="kw">move </span>|command: JsValue| {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(on_command_callback) = <span class="kw-2">&amp;</span>on_command {
+                        <span class="kw">let </span>command: Command = command.try_into().unwrap();
+                        on_command_callback.emit(command);
+                    }
+                });
             || ()
         });
     }
@@ -222,18 +256,20 @@
             <span class="kw">move </span>|(loading, challenge, js_code, i18n_content)| {
                 <span class="kw">if </span>!<span class="kw-2">*</span>loading {
                     <span class="comment">// Set challenge data
-                    </span>konnektoren_js.set_challenge_data(challenge.clone());
+                    </span>konnektoren_js
+                        .borrow_mut()
+                        .set_challenge_data(challenge.clone());
 
                     <span class="comment">// Set i18n data if available
-                    </span><span class="kw">if </span>!(i18n_content).is_empty() {
+                    </span><span class="kw">if </span>!i18n_content.is_empty() {
                         <span class="kw">let </span>language = SelectedLanguage::default().get();
                         <span class="kw">let </span>loader = I18nYmlLoader::new(<span class="kw-2">&amp;</span>i18n_content);
                         <span class="kw">let </span>translations = loader.get(<span class="kw-2">&amp;</span>language).unwrap_or_default();
-                        konnektoren_js.set_i18n_data(translations);
+                        konnektoren_js.borrow_mut().set_i18n_data(translations);
                     }
 
                     <span class="comment">// Execute JS code
-                    </span>konnektoren_js.execute_js(<span class="kw-2">&amp;</span>js_code);
+                    </span>konnektoren_js.borrow_mut().execute_js(<span class="kw-2">&amp;</span>js_code);
                 }
             },
         );

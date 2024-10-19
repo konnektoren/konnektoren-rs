@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["game_commands"],"trait":["GameCommand"]};
+window.SIDEBAR_ITEMS = {"mod":["challenge_command","command","command_bus","command_type","errors","game_command","parse"]};

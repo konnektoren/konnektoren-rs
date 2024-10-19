@@ -1,3 +1,9 @@
-(function() {var implementors = {
-"konnektoren_core":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.81.0/core/hash/trait.Hash.html\" title=\"trait core::hash::Hash\">Hash</a> for <a class=\"struct\" href=\"konnektoren_core/certificates/struct.CertificateData.html\" title=\"struct konnektoren_core::certificates::CertificateData\">CertificateData</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.81.0/core/hash/trait.Hash.html\" title=\"trait core::hash::Hash\">Hash</a> for <a class=\"struct\" href=\"konnektoren_core/challenges/performance_record/struct.PerformanceRecord.html\" title=\"struct konnektoren_core::challenges::performance_record::PerformanceRecord\">PerformanceRecord</a>"]]
-};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
+(function() {
+    var implementors = Object.fromEntries([["konnektoren_core",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.82.0/core/hash/trait.Hash.html\" title=\"trait core::hash::Hash\">Hash</a> for <a class=\"enum\" href=\"konnektoren_core/commands/command_type/enum.CommandType.html\" title=\"enum konnektoren_core::commands::command_type::CommandType\">CommandType</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.82.0/core/hash/trait.Hash.html\" title=\"trait core::hash::Hash\">Hash</a> for <a class=\"enum\" href=\"konnektoren_core/events/event_type/enum.EventType.html\" title=\"enum konnektoren_core::events::event_type::EventType\">EventType</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.82.0/core/hash/trait.Hash.html\" title=\"trait core::hash::Hash\">Hash</a> for <a class=\"struct\" href=\"konnektoren_core/certificates/struct.CertificateData.html\" title=\"struct konnektoren_core::certificates::CertificateData\">CertificateData</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.82.0/core/hash/trait.Hash.html\" title=\"trait core::hash::Hash\">Hash</a> for <a class=\"struct\" href=\"konnektoren_core/challenges/performance_record/struct.PerformanceRecord.html\" title=\"struct konnektoren_core::challenges::performance_record::PerformanceRecord\">PerformanceRecord</a>"]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":57,"fragment_lengths":[1307]}
