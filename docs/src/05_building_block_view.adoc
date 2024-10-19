@@ -285,6 +285,35 @@ Key responsibilities:
 - Dispatches commands to appropriate handlers
 - Provides a centralized way to execute game actions
 
+===== GameController
+
+The GameController is a central component that manages the game state, handles commands, and coordinates events within the system.
+
+[plantuml, game-controller-structure, png]
+----
+@startuml
+class GameController {
+  -game_state: Arc<Mutex<GameState>>
+  -event_bus: EventBus
+  -command_bus: CommandBus
+  -persistence: Arc<dyn GameStatePersistence>
+
+  +new(game: Game, persistence: Arc<dyn GameStatePersistence>): Self
+  +init(): Arc<Self>
+  +handle_command(command: Command)
+  +publish_command(command: Command)
+  +save_game_state(): Result<()>
+  +load_game_state(): Result<()>
+}
+@enduml
+----
+
+Key responsibilities:
+- Manages the game state
+- Handles and publishes commands
+- Coordinates events through the EventBus
+- Manages game state persistence
+
 ==== KonnektorenJs
 
 The `KonnektorenJs` struct provides a bridge between the Rust core functionality and JavaScript, enabling seamless integration of Konnektoren features in web applications.

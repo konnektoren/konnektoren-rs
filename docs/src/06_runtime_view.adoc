@@ -288,3 +288,37 @@ UI -> User : Update Display
 6. The User Interface updates the display for the user.
 
 This scenario demonstrates how the EventBus and CommandBus decouple different parts of the system, allowing for a more modular and maintainable architecture.
+
+=== Game Controller Interaction Scenario
+
+This scenario demonstrates how the GameController manages game state and handles commands.
+
+[plantuml, game-controller-interaction, png]
+----
+@startuml
+participant "Client" as C
+participant "GameController" as GC
+participant "CommandBus" as CB
+participant "EventBus" as EB
+participant "GameState" as GS
+participant "Persistence" as P
+
+C -> GC: publish_command(NextChallengeCommand)
+GC -> CB: publish(NextChallengeCommand)
+CB -> GC: handle_command(NextChallengeCommand)
+GC -> GS: execute(NextChallengeCommand)
+GS --> GC: state updated
+GC -> EB: publish(ChallengeChangedEvent)
+GC -> P: save_game_state()
+P --> GC: state saved
+EB --> C: notify(ChallengeChangedEvent)
+@enduml
+----
+
+1. The Client publishes a NextChallengeCommand to the GameController.
+2. The GameController forwards the command to the CommandBus.
+3. The CommandBus calls back to the GameController to handle the command.
+4. The GameController executes the command on the GameState.
+5. After the state is updated, the GameController publishes a ChallengeChangedEvent to the EventBus.
+6. The GameController saves the updated state using the Persistence layer.
+7. The EventBus notifies the Client about the state change.
