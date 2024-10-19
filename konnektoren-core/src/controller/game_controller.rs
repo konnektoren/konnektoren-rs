@@ -14,6 +14,12 @@ pub struct GameController {
     persistence: Arc<dyn GameStatePersistence>,
 }
 
+impl PartialEq for GameController {
+    fn eq(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.game_state, &other.game_state)
+    }
+}
+
 impl Debug for GameController {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("GameController").finish()
