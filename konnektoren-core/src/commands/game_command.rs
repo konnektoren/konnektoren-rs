@@ -1,12 +1,13 @@
 //! This module contains the implementation of game-level commands.
 
 use super::command::CommandTrait;
+use super::command_type::CommandType;
 use crate::game::GamePath;
 use crate::game::GameState;
 use anyhow::{anyhow, Result};
 
 /// Represents game-level commands that can be executed on the game state.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum GameCommand {
     /// Command to move to the next challenge.
     NextChallenge,
@@ -29,6 +30,11 @@ impl CommandTrait for GameCommand {
             GameCommand::NextChallenge => Self::next_challenge(state),
             GameCommand::PreviousChallenge => Self::previous_challenge(state),
         }
+    }
+
+    /// Gets the type of the command.
+    fn get_type(&self) -> CommandType {
+        CommandType::Game
     }
 }
 

@@ -2,6 +2,7 @@
 
 use super::challenge_command::ChallengeCommand;
 use super::game_command::GameCommand;
+use super::CommandType;
 use crate::game::GameState;
 use anyhow::Result;
 
@@ -17,12 +18,15 @@ pub trait CommandTrait {
     ///
     /// A `Result` indicating success or containing an error if the command execution failed.
     fn execute(&self, state: &mut GameState) -> Result<()>;
+
+    /// Gets the type of the command.
+    fn get_type(&self) -> CommandType;
 }
 
 /// An enum representing all possible commands in the game.
 ///
 /// This enum serves as a unified interface for both game-level and challenge-level commands.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Command {
     /// Represents a game-level command.
     Game(GameCommand),
@@ -47,6 +51,14 @@ impl CommandTrait for Command {
         match self {
             Command::Game(cmd) => cmd.execute(state),
             Command::Challenge(cmd) => cmd.execute(state),
+        }
+    }
+
+    /// Gets the type of the command.
+    fn get_type(&self) -> CommandType {
+        match self {
+            Command::Game(_) => CommandType::Game,
+            Command::Challenge(_) => CommandType::Challenge,
         }
     }
 }

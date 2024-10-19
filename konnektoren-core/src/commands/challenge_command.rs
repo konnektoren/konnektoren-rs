@@ -1,6 +1,7 @@
 //! This module contains the implementation of challenge-level commands.
 
 use super::command::CommandTrait;
+use super::command_type::CommandType;
 use crate::challenges::{
     ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
 };
@@ -9,7 +10,7 @@ use crate::game::GameState;
 use anyhow::{anyhow, Result};
 
 /// Represents challenge-level commands that can be executed on the game state.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum ChallengeCommand {
     /// Command to move to the next task within a challenge.
     NextTask,
@@ -38,6 +39,11 @@ impl CommandTrait for ChallengeCommand {
             ChallengeCommand::SolveOption(option_index) => Self::solve_option(state, *option_index),
             ChallengeCommand::Finish(result) => Self::finish_challenge(state, &result),
         }
+    }
+
+    /// Gets the type of the command.
+    fn get_type(&self) -> CommandType {
+        CommandType::Challenge
     }
 }
 
