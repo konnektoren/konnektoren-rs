@@ -256,3 +256,35 @@ Rel(frontend, user, "6. Displays QR code for credential")
 * **Step 6:** The Frontend displays a QR code to the User, which can be scanned with a self-sovereign identity wallet to receive the badge.
 
 This simplified diagram illustrates the key steps in the verifiable credential issuance process, highlighting the interaction between the user, the Konnektoren system, and the external credential issuer.
+
+=== Event and Command Handling Scenario
+
+This scenario illustrates how the EventBus and CommandBus facilitate communication and action execution in the Konnektoren system.
+
+[plantuml, event-command-scenario, png]
+----
+@startuml
+participant "User Interface" as UI
+participant "Game Logic" as Game
+participant "EventBus" as EB
+participant "CommandBus" as CB
+participant "Challenge Module" as CM
+
+UI -> CB : Publish(NextChallengeCommand)
+CB -> Game : Execute(NextChallengeCommand)
+Game -> CM : Load Next Challenge
+CM --> Game : Challenge Loaded
+Game -> EB : Publish(ChallengeLoadedEvent)
+EB -> UI : Notify(ChallengeLoadedEvent)
+UI -> User : Update Display
+@enduml
+----
+
+1. The User Interface publishes a NextChallengeCommand to the CommandBus.
+2. The CommandBus executes the command, which is handled by the Game Logic.
+3. The Game Logic loads the next challenge from the Challenge Module.
+4. Once the challenge is loaded, the Game Logic publishes a ChallengeLoadedEvent to the EventBus.
+5. The EventBus notifies all subscribers, including the User Interface, about the new challenge.
+6. The User Interface updates the display for the user.
+
+This scenario demonstrates how the EventBus and CommandBus decouple different parts of the system, allowing for a more modular and maintainable architecture.
