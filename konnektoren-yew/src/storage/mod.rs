@@ -3,9 +3,6 @@
 /// The `profile_storage` module manages the storage of user profiles.
 pub mod profile_storage;
 
-/// The `settings_storage` module manages the storage of application settings.
-mod settings_storage;
-
 /// The `Storage` trait defines a common interface for interacting with storage
 /// systems that store and retrieve items. Each storage type must define its
 /// name, item type, and implement basic CRUD operations.
@@ -58,6 +55,3 @@ pub trait Storage {
 
 /// Re-export the `ProfileStorage` type for managing user profile data.
 pub use profile_storage::ProfileStorage;
-
-/// Re-export the `SettingsStorage` type for managing application settings data.
-pub use settings_storage::SettingsStorage;
