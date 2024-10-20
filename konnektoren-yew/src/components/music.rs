@@ -1,4 +1,4 @@
-use crate::storage::{SettingsStorage, Storage};
+use crate::providers::use_settings;
 use uuid::Uuid;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
@@ -27,11 +27,11 @@ impl Default for MusicComponentProps {
 
 #[function_component(MusicComponent)]
 pub fn music_component(props: &MusicComponentProps) -> Html {
-    let settings = SettingsStorage::default().get("").unwrap_or_default();
+    let settings = use_settings();
 
     let audio_ref = use_node_ref();
 
-    use_effect({
+    {
         let audio_ref = audio_ref.clone();
         let music_url = props
             .url
@@ -40,21 +40,19 @@ pub fn music_component(props: &MusicComponentProps) -> Html {
         let repeat = props
             .repeat
             .unwrap_or(MusicComponentProps::default().repeat.unwrap());
-        move || {
-            let audio_element = audio_ref
-                .cast::<HtmlAudioElement>()
-                .expect("Failed to cast audio ref");
-            audio_element.set_src(&music_url);
-            audio_element.set_loop(repeat);
-            audio_element.set_autoplay(true);
-            audio_element.set_volume(settings.music_volume as f64);
+        let settings = settings.clone();
+        use_effect_with((audio_ref, settings), move |(audio_ref, settings)| {
+            if let Some(audio_element) = audio_ref.cast::<HtmlAudioElement>() {
+                audio_element.set_src(&music_url);
+                audio_element.set_loop(repeat);
+                audio_element.set_autoplay(true);
+                audio_element.set_volume(settings.music_volume as f64);
 
-            move || {
-                audio_element.pause().expect("Failed to pause audio");
-                audio_element.set_src("");
+                let _ = audio_element.play();
             }
-        }
-    });
+            || ()
+        });
+    }
 
     let id = props.id.clone().unwrap_or(Uuid::new_v4().to_string());
 

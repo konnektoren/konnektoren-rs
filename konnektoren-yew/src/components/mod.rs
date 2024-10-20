@@ -8,6 +8,7 @@ pub mod challenge_info;
 pub mod challenge_rating;
 pub mod challenge_review;
 pub mod game_path;
+pub mod inbox;
 mod map;
 #[cfg(feature = "music")]
 pub mod music;
@@ -28,6 +29,7 @@ pub use challenge_info::ChallengeInfoComponent;
 pub use challenge_rating::ChallengeRatingComponent;
 pub use challenge_review::ChallengeReviewComponent;
 pub use game_path::GamePathComponent;
+pub use inbox::InboxComponent;
 pub use map::*;
 pub use progress_bar::ProgressBar;
 pub use select_language::SelectLanguage;
