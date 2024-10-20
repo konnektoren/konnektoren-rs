@@ -477,30 +477,44 @@ Contained Building Blocks::
 | UserProfile | Shows user information, progress, and achievements.
 |===
 
-=== Level 3: Yew Game Controller Provider
+=== Level 3: Yew Game Controller and Repository Providers
 
-The Game Controller Provider is a crucial component in the Konnektoren Yew frontend application. It manages the game state and provides access to the game controller throughout the component tree.
+The Game Controller Provider and Repository Provider are crucial components in the Konnektoren Yew frontend application. They manage the game state, repository access, and provide these services throughout the component tree.
 
-[plantuml, game-controller-provider, png]
+[plantuml, game-controller-and-repository-providers, png]
 ----
 @startuml
 package "Frontend" {
   [GameControllerProvider] as GCP
+  [RepositoryProvider] as RP
   [GameController] as GC
+  [Repositories] as R
   [Child Components] as CC
 }
 
 GCP --> GC : Creates and manages
+RP --> R : Creates and manages
 CC --> GCP : Consumes context
+CC --> RP : Consumes context
 
 note right of GCP
   Yew Component
   Provides GameController context
 end note
 
+note right of RP
+  Yew Component
+  Provides Repository context
+end note
+
 note right of GC
   Rust Struct
   Manages game state and logic
+end note
+
+note right of R
+  Rust Structs
+  Manage data access
 end note
 
 note right of CC
@@ -520,13 +534,13 @@ Responsibilities::
 - Provide the `GameController` context to child components
 - Manage the lifecycle of the `GameController`
 
-==== GameControllerContext
+===== GameControllerContext
 
 The `GameControllerContext` is a struct that holds a reference to the `GameController` and is passed down the component tree.
 
-==== Custom Hooks
+===== Custom Hooks for GameController
 
-The provider also includes several custom hooks to easily access different parts of the game state:
+The provider includes several custom hooks to easily access different parts of the game state:
 
 - `use_game_controller()`: Returns the `GameControllerContext`
 - `use_game_state()`: Returns the current `GameState`
@@ -547,8 +561,130 @@ fn my_component() -> Html {
 }
 ----
 
-This structure allows for efficient state management and easy access to game-related functionality throughout the Yew application.
+==== RepositoryProvider
 
+The `RepositoryProvider` is a Yew component that provides access to various repositories throughout the component tree.
+
+Responsibilities::
+- Initialize repositories with appropriate storage backends
+- Provide the repository context to child components
+- Manage the lifecycle of repositories
+
+===== RepositoryContext
+
+The `RepositoryContext` is a struct that holds references to various repositories (e.g., `CertificateRepository`, `SettingsRepository`, `ProfileRepository`) and is passed down the component tree.
+
+===== Custom Hooks for Repositories
+
+The provider includes several custom hooks to easily access different repositories:
+
+- `use_certificate_repository()`: Returns the `CertificateRepository`
+- `use_settings_repository()`: Returns the `SettingsRepository`
+- `use_profile_repository()`: Returns the `ProfileRepository`
+
+Example Usage:
+
+[source,rust]
+----
+#[function_component(SettingsComponent)]
+fn settings_component() -> Html {
+    let settings_repository = use_settings_repository();
+
+    // Use settings_repository in your component logic
+    // ...
+}
+----
+
+==== Additional Repository Hooks
+
+To simplify common repository operations, additional hooks are provided:
+
+===== use_settings
+
+The `use_settings` hook provides easy access to the application settings.
+
+[source,rust]
+----
+#[hook]
+pub fn use_settings() -> UseStateHandle<Settings> {
+    let settings_repository = use_settings_repository();
+    let settings = use_state(|| Settings::default());
+
+    use_effect_with_deps(
+        move |_| {
+            let settings = settings.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Ok(Some(loaded_settings)) = settings_repository.get_settings(SETTINGS_STORAGE_KEY).await {
+                    settings.set(loaded_settings);
+                }
+            });
+            || ()
+        },
+        (),
+    );
+
+    settings
+}
+----
+
+===== use_certificate
+
+The `use_certificate` hook provides access to the user's certificate data.
+
+[source,rust]
+----
+#[hook]
+pub fn use_certificate() -> UseStateHandle<Option<Certificate>> {
+    let certificate_repository = use_certificate_repository();
+    let certificate = use_state(|| None);
+
+    use_effect_with_deps(
+        move |_| {
+            let certificate = certificate.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Ok(Some(loaded_certificate)) = certificate_repository.get_certificates(CERTIFICATE_STORAGE_KEY).await {
+                    certificate.set(Some(loaded_certificate));
+                }
+            });
+            || ()
+        },
+        (),
+    );
+
+    certificate
+}
+----
+
+===== use_profile
+
+The `use_profile` hook provides access to the user's profile data.
+
+[source,rust]
+----
+#[hook]
+pub fn use_profile() -> UseStateHandle<PlayerProfile> {
+    let profile_repository = use_profile_repository();
+    let profile = use_state(|| PlayerProfile::default());
+
+    use_effect_with_deps(
+        move |_| {
+            let profile = profile.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Ok(Some(loaded_profile)) = profile_repository.get_profile(PROFILE_STORAGE_KEY).await {
+                    profile.set(loaded_profile);
+                }
+            });
+            || ()
+        },
+        (),
+    );
+
+    profile
+}
+----
+
+These hooks simplify data access and state management in components,
+allowing for more concise and readable code when working with repository data.
 
 === Level 4: Data Model
 
