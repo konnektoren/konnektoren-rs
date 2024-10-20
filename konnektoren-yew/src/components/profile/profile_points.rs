@@ -1,11 +1,11 @@
 use crate::providers::use_profile_repository;
-use crate::repository::{LocalStorage, ProfileRepository, PROFILE_STORAGE_KEY};
+use crate::repository::PROFILE_STORAGE_KEY;
 use konnektoren_core::prelude::PlayerProfile;
 use yew::prelude::*;
 
 #[function_component(ProfilePointsComponent)]
 pub fn profile_points_component() -> Html {
-    let profile_repository = use_profile_repository::<LocalStorage>();
+    let profile_repository = use_profile_repository();
     let profile = use_state(|| PlayerProfile::default());
 
     {

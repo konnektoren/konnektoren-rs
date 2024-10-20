@@ -7,6 +7,19 @@ use serde_json;
 
 pub const PROFILE_STORAGE_KEY: &str = "konnektoren_profile";
 
+#[async_trait]
+pub trait ProfileRepositoryTrait: Send + Sync {
+    async fn save_profile(&self, key: &str, profile: &PlayerProfile)
+        -> Result<(), RepositoryError>;
+    async fn get_profile(&self, key: &str) -> Result<Option<PlayerProfile>, RepositoryError>;
+    async fn delete_profile(&self, key: &str) -> Result<(), RepositoryError>;
+    async fn update_profile(
+        &self,
+        key: &str,
+        profile: &PlayerProfile,
+    ) -> Result<(), RepositoryError>;
+}
+
 #[derive(Debug, PartialEq)]
 pub struct ProfileRepository<S: Storage> {
     storage: S,
@@ -49,17 +62,30 @@ impl<S: Storage + Send + Sync> Repository<PlayerProfile> for ProfileRepository<S
     }
 }
 
-impl<S: Storage + Send + Sync> ProfileRepository<S> {
-    pub async fn get_profile(&self, key: &str) -> Result<Option<PlayerProfile>, RepositoryError> {
-        self.get(key).await
-    }
-
-    pub async fn update_profile(
+#[async_trait]
+impl<S: Storage + Send + Sync> ProfileRepositoryTrait for ProfileRepository<S> {
+    async fn save_profile(
         &self,
         key: &str,
         profile: &PlayerProfile,
     ) -> Result<(), RepositoryError> {
-        self.save(key, profile).await
+        Repository::save(self, key, profile).await
+    }
+
+    async fn get_profile(&self, key: &str) -> Result<Option<PlayerProfile>, RepositoryError> {
+        Repository::get(self, key).await
+    }
+
+    async fn delete_profile(&self, key: &str) -> Result<(), RepositoryError> {
+        Repository::delete(self, key).await
+    }
+
+    async fn update_profile(
+        &self,
+        key: &str,
+        profile: &PlayerProfile,
+    ) -> Result<(), RepositoryError> {
+        self.save_profile(key, profile).await
     }
 }
 
@@ -100,7 +126,7 @@ mod tests {
         assert_eq!(updated_profile, stored_updated_profile);
 
         // Test deleting the profile
-        repo.delete(key).await.unwrap();
+        repo.delete_profile(key).await.unwrap();
         let deleted_profile = repo.get_profile(key).await.unwrap();
         assert!(deleted_profile.is_none());
     }

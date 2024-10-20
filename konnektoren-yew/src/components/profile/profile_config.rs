@@ -1,12 +1,12 @@
 use crate::providers::use_profile_repository;
-use crate::repository::{LocalStorage, ProfileRepository, PROFILE_STORAGE_KEY};
+use crate::repository::PROFILE_STORAGE_KEY;
 use konnektoren_core::prelude::PlayerProfile;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
 #[function_component(ProfileConfigComponent)]
 pub fn profile_config_component() -> Html {
-    let profile_repository = use_profile_repository::<LocalStorage>();
+    let profile_repository = use_profile_repository();
     let profile = use_state(|| PlayerProfile::default());
     let name = use_state(|| profile.name.clone());
 

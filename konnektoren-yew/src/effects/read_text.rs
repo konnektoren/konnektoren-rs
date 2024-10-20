@@ -1,5 +1,5 @@
 use crate::providers::use_settings_repository;
-use crate::repository::{LocalStorage, Repository, SETTINGS_STORAGE_KEY};
+use crate::repository::SETTINGS_STORAGE_KEY;
 use gloo::timers::callback::Timeout;
 use gloo::utils::window;
 use web_sys::SpeechSynthesisUtterance;
@@ -14,7 +14,7 @@ pub struct ReadTextProps {
 
 #[function_component(ReadText)]
 pub fn read_text(props: &ReadTextProps) -> Html {
-    let settings_repository = use_settings_repository::<LocalStorage>();
+    let settings_repository = use_settings_repository();
     let settings = use_state(|| None);
 
     {
@@ -23,7 +23,7 @@ pub fn read_text(props: &ReadTextProps) -> Html {
         use_effect_with((), move |_| {
             wasm_bindgen_futures::spawn_local(async move {
                 if let Ok(Some(loaded_settings)) =
-                    settings_repository.get(SETTINGS_STORAGE_KEY).await
+                    settings_repository.get_settings(SETTINGS_STORAGE_KEY).await
                 {
                     settings.set(Some(loaded_settings));
                 }

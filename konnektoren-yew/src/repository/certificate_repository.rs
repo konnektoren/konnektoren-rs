@@ -7,6 +7,26 @@ use serde_json;
 
 pub const CERTIFICATE_STORAGE_KEY: &str = "konnektoren_certificates";
 
+#[async_trait]
+pub trait CertificateRepositoryTrait: Send + Sync {
+    async fn save_certificates(
+        &self,
+        key: &str,
+        certificates: &Vec<CertificateData>,
+    ) -> Result<(), RepositoryError>;
+    async fn get_certificates(
+        &self,
+        key: &str,
+    ) -> Result<Option<Vec<CertificateData>>, RepositoryError>;
+    async fn delete_certificates(&self, key: &str) -> Result<(), RepositoryError>;
+    async fn add_certificate(
+        &self,
+        key: &str,
+        certificate: CertificateData,
+    ) -> Result<(), RepositoryError>;
+    async fn list_certificates(&self, key: &str) -> Result<Vec<CertificateData>, RepositoryError>;
+}
+
 #[derive(Debug, PartialEq)]
 pub struct CertificateRepository<S: Storage> {
     storage: S,
@@ -53,22 +73,41 @@ impl<S: Storage + Send + Sync> Repository<Vec<CertificateData>> for CertificateR
     }
 }
 
-impl<S: Storage + Send + Sync> CertificateRepository<S> {
-    pub async fn add_certificate(
+#[async_trait]
+impl<S: Storage + Send + Sync> CertificateRepositoryTrait for CertificateRepository<S> {
+    async fn save_certificates(
+        &self,
+        key: &str,
+        certificates: &Vec<CertificateData>,
+    ) -> Result<(), RepositoryError> {
+        Repository::save(self, key, certificates).await
+    }
+
+    async fn get_certificates(
+        &self,
+        key: &str,
+    ) -> Result<Option<Vec<CertificateData>>, RepositoryError> {
+        Repository::get(self, key).await
+    }
+
+    async fn delete_certificates(&self, key: &str) -> Result<(), RepositoryError> {
+        Repository::delete(self, key).await
+    }
+
+    async fn add_certificate(
         &self,
         key: &str,
         certificate: CertificateData,
     ) -> Result<(), RepositoryError> {
-        let mut certificates = self.get(key).await?.unwrap_or_default();
+        let mut certificates = self.get_certificates(key).await?.unwrap_or_default();
         certificates.push(certificate);
-        self.save(key, &certificates).await
+        self.save_certificates(key, &certificates).await
     }
 
-    pub async fn get_certificates(
-        &self,
-        key: &str,
-    ) -> Result<Vec<CertificateData>, RepositoryError> {
-        self.get(key).await.map(|opt| opt.unwrap_or_default())
+    async fn list_certificates(&self, key: &str) -> Result<Vec<CertificateData>, RepositoryError> {
+        self.get_certificates(key)
+            .await
+            .map(|opt| opt.unwrap_or_default())
     }
 }
 
@@ -97,7 +136,7 @@ mod tests {
             .unwrap();
 
         // Test getting certificates
-        let certificates = repo.get_certificates(key).await.unwrap();
+        let certificates = repo.list_certificates(key).await.unwrap();
         assert_eq!(certificates.len(), 1);
         assert_eq!(certificates[0].profile_name, "Alice");
 
@@ -112,17 +151,19 @@ mod tests {
                 ..Default::default()
             },
         ];
-        repo.save(key, &new_certificates).await.unwrap();
+        repo.save_certificates(key, &new_certificates)
+            .await
+            .unwrap();
 
         // Test getting updated certificates
-        let updated_certificates = repo.get_certificates(key).await.unwrap();
+        let updated_certificates = repo.list_certificates(key).await.unwrap();
         assert_eq!(updated_certificates.len(), 2);
         assert_eq!(updated_certificates[0].profile_name, "Bob");
         assert_eq!(updated_certificates[1].profile_name, "Charlie");
 
         // Test deleting certificates
-        repo.delete(key).await.unwrap();
-        let empty_certificates = repo.get_certificates(key).await.unwrap();
+        repo.delete_certificates(key).await.unwrap();
+        let empty_certificates = repo.list_certificates(key).await.unwrap();
         assert!(empty_certificates.is_empty());
     }
 }

@@ -1,5 +1,5 @@
 use crate::providers::use_settings_repository;
-use crate::repository::{LocalStorage, Repository, SETTINGS_STORAGE_KEY};
+use crate::repository::SETTINGS_STORAGE_KEY;
 use uuid::Uuid;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
@@ -28,7 +28,7 @@ impl Default for MusicComponentProps {
 
 #[function_component(MusicComponent)]
 pub fn music_component(props: &MusicComponentProps) -> Html {
-    let settings_repository = use_settings_repository::<LocalStorage>();
+    let settings_repository = use_settings_repository();
     let settings = use_state(|| None);
 
     {
@@ -37,7 +37,7 @@ pub fn music_component(props: &MusicComponentProps) -> Html {
         use_effect_with((), move |_| {
             wasm_bindgen_futures::spawn_local(async move {
                 if let Ok(Some(loaded_settings)) =
-                    settings_repository.get(SETTINGS_STORAGE_KEY).await
+                    settings_repository.get_settings(SETTINGS_STORAGE_KEY).await
                 {
                     settings.set(Some(loaded_settings));
                 }

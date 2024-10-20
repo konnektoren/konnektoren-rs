@@ -1,58 +1,96 @@
-use crate::repository::{CertificateRepository, ProfileRepository, SettingsRepository, Storage};
+use crate::repository::{
+    CertificateRepository, CertificateRepositoryTrait, ProfileRepository, ProfileRepositoryTrait,
+    SettingsRepository, SettingsRepositoryTrait, Storage,
+};
 use std::sync::Arc;
 use yew::prelude::*;
 
-#[derive(Clone, PartialEq)]
-pub struct RepositoryContext<S: Storage + Send + Sync + 'static> {
-    pub certificate_repository: Arc<CertificateRepository<S>>,
-    pub settings_repository: Arc<SettingsRepository<S>>,
-    pub profile_repository: Arc<ProfileRepository<S>>,
+#[derive(Clone)]
+pub struct RepositoryConfig {
+    pub certificate_repository: Arc<dyn CertificateRepositoryTrait>,
+    pub settings_repository: Arc<dyn SettingsRepositoryTrait>,
+    pub profile_repository: Arc<dyn ProfileRepositoryTrait>,
 }
 
-impl<S: Storage + Send + Sync + 'static> RepositoryContext<S> {
-    pub fn new(storage: S) -> Self {
+impl PartialEq for RepositoryConfig {
+    fn eq(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.certificate_repository, &other.certificate_repository)
+            && Arc::ptr_eq(&self.settings_repository, &other.settings_repository)
+            && Arc::ptr_eq(&self.profile_repository, &other.profile_repository)
+    }
+}
+
+#[derive(Clone)]
+pub struct RepositoryContext {
+    pub certificate_repository: Arc<dyn CertificateRepositoryTrait>,
+    pub settings_repository: Arc<dyn SettingsRepositoryTrait>,
+    pub profile_repository: Arc<dyn ProfileRepositoryTrait>,
+}
+
+impl PartialEq for RepositoryContext {
+    fn eq(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.certificate_repository, &other.certificate_repository)
+            && Arc::ptr_eq(&self.settings_repository, &other.settings_repository)
+            && Arc::ptr_eq(&self.profile_repository, &other.profile_repository)
+    }
+}
+
+impl RepositoryContext {
+    pub fn new(config: RepositoryConfig) -> Self {
         Self {
-            certificate_repository: Arc::new(CertificateRepository::new(storage.clone())),
-            settings_repository: Arc::new(SettingsRepository::new(storage.clone())),
-            profile_repository: Arc::new(ProfileRepository::new(storage.clone())),
+            certificate_repository: config.certificate_repository,
+            settings_repository: config.settings_repository,
+            profile_repository: config.profile_repository,
         }
     }
 }
 
-#[derive(Properties, PartialEq)]
-pub struct RepositoryProviderProps<S: Storage + Send + Sync + 'static> {
+#[derive(Properties, PartialEq, Clone)]
+pub struct RepositoryProviderProps {
     pub children: Children,
-    pub storage: S,
+    pub config: RepositoryConfig,
 }
 
 #[function_component(RepositoryProvider)]
-pub fn repository_provider<S: Storage + Send + Sync + 'static>(
-    props: &RepositoryProviderProps<S>,
-) -> Html {
-    let context = RepositoryContext::new(props.storage.clone());
+pub fn repository_provider(props: &RepositoryProviderProps) -> Html {
+    let context = RepositoryContext::new(props.config.clone());
 
     html! {
-        <ContextProvider<RepositoryContext<S>> context={context}>
+        <ContextProvider<RepositoryContext> context={context}>
             { for props.children.iter() }
-        </ContextProvider<RepositoryContext<S>>>
+        </ContextProvider<RepositoryContext>>
     }
 }
 
 #[hook]
-pub fn use_certificate_repository<S: Storage + Send + Sync + 'static>(
-) -> Arc<CertificateRepository<S>> {
-    let context = use_context::<RepositoryContext<S>>().expect("RepositoryContext not found");
-    context.certificate_repository.clone()
+pub fn use_certificate_repository() -> Arc<dyn CertificateRepositoryTrait> {
+    use_context::<RepositoryContext>()
+        .expect("RepositoryContext not found")
+        .certificate_repository
+        .clone()
 }
 
 #[hook]
-pub fn use_settings_repository<S: Storage + Send + Sync + 'static>() -> Arc<SettingsRepository<S>> {
-    let context = use_context::<RepositoryContext<S>>().expect("RepositoryContext not found");
-    context.settings_repository.clone()
+pub fn use_settings_repository() -> Arc<dyn SettingsRepositoryTrait> {
+    use_context::<RepositoryContext>()
+        .expect("RepositoryContext not found")
+        .settings_repository
 }
 
 #[hook]
-pub fn use_profile_repository<S: Storage + Send + Sync + 'static>() -> Arc<ProfileRepository<S>> {
-    let context = use_context::<RepositoryContext<S>>().expect("RepositoryContext not found");
-    context.profile_repository.clone()
+pub fn use_profile_repository() -> Arc<dyn ProfileRepositoryTrait> {
+    use_context::<RepositoryContext>()
+        .expect("RepositoryContext not found")
+        .profile_repository
+}
+
+pub fn create_repositories<S: Storage + Send + Sync + 'static>(storage: S) -> RepositoryConfig {
+    RepositoryConfig {
+        certificate_repository: Arc::new(CertificateRepository::new(storage.clone()))
+            as Arc<dyn CertificateRepositoryTrait>,
+        settings_repository: Arc::new(SettingsRepository::new(storage.clone()))
+            as Arc<dyn SettingsRepositoryTrait>,
+        profile_repository: Arc::new(ProfileRepository::new(storage))
+            as Arc<dyn ProfileRepositoryTrait>,
+    }
 }

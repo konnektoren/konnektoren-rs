@@ -2,12 +2,12 @@ use crate::components::settings::sound_config::SoundConfig;
 use crate::components::MusicConfig;
 use crate::model::Settings;
 use crate::providers::use_settings_repository;
-use crate::repository::{LocalStorage, Repository, SETTINGS_STORAGE_KEY};
+use crate::repository::SETTINGS_STORAGE_KEY;
 use yew::prelude::*;
 
 #[function_component(SettingsComponent)]
 pub fn settings_component() -> Html {
-    let settings_repository = use_settings_repository::<LocalStorage>();
+    let settings_repository = use_settings_repository();
     let settings = use_state(|| Settings::default());
     let initial_settings = use_state(|| Settings::default());
 
@@ -18,7 +18,7 @@ pub fn settings_component() -> Html {
         use_effect_with((), move |_| {
             wasm_bindgen_futures::spawn_local(async move {
                 if let Ok(Some(loaded_settings)) =
-                    settings_repository.get(SETTINGS_STORAGE_KEY).await
+                    settings_repository.get_settings(SETTINGS_STORAGE_KEY).await
                 {
                     settings.set(loaded_settings.clone());
                     initial_settings.set(loaded_settings);
@@ -36,7 +36,7 @@ pub fn settings_component() -> Html {
             settings.set(new_settings.clone());
             wasm_bindgen_futures::spawn_local(async move {
                 let _ = settings_repository
-                    .save(SETTINGS_STORAGE_KEY, &new_settings)
+                    .save_settings(SETTINGS_STORAGE_KEY, &new_settings)
                     .await;
             });
         })

@@ -3,8 +3,16 @@ use super::repository_error::RepositoryError;
 use super::storage::Storage;
 use crate::model::Settings;
 use async_trait::async_trait;
+use serde_json;
 
 pub const SETTINGS_STORAGE_KEY: &str = "konnektoren_settings";
+
+#[async_trait]
+pub trait SettingsRepositoryTrait: Send + Sync {
+    async fn save_settings(&self, key: &str, settings: &Settings) -> Result<(), RepositoryError>;
+    async fn get_settings(&self, key: &str) -> Result<Option<Settings>, RepositoryError>;
+    async fn delete_settings(&self, key: &str) -> Result<(), RepositoryError>;
+}
 
 #[derive(Debug, PartialEq)]
 pub struct SettingsRepository<S: Storage> {
@@ -48,6 +56,21 @@ impl<S: Storage + Send + Sync> Repository<Settings> for SettingsRepository<S> {
     }
 }
 
+#[async_trait]
+impl<S: Storage + Send + Sync> SettingsRepositoryTrait for SettingsRepository<S> {
+    async fn save_settings(&self, key: &str, settings: &Settings) -> Result<(), RepositoryError> {
+        Repository::save(self, key, settings).await
+    }
+
+    async fn get_settings(&self, key: &str) -> Result<Option<Settings>, RepositoryError> {
+        Repository::get(self, key).await
+    }
+
+    async fn delete_settings(&self, key: &str) -> Result<(), RepositoryError> {
+        Repository::delete(self, key).await
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -61,11 +84,15 @@ mod tests {
 
         let settings = Settings::default();
         repository
-            .save(SETTINGS_STORAGE_KEY, &settings)
+            .save_settings(SETTINGS_STORAGE_KEY, &settings)
             .await
             .unwrap();
 
-        let loaded = repository.get(SETTINGS_STORAGE_KEY).await.unwrap().unwrap();
+        let loaded = repository
+            .get_settings(SETTINGS_STORAGE_KEY)
+            .await
+            .unwrap()
+            .unwrap();
         assert_eq!(settings, loaded);
     }
 
@@ -76,13 +103,16 @@ mod tests {
 
         let settings = Settings::default();
         repository
-            .save(SETTINGS_STORAGE_KEY, &settings)
+            .save_settings(SETTINGS_STORAGE_KEY, &settings)
             .await
             .unwrap();
 
-        repository.delete(SETTINGS_STORAGE_KEY).await.unwrap();
+        repository
+            .delete_settings(SETTINGS_STORAGE_KEY)
+            .await
+            .unwrap();
 
-        let loaded = repository.get(SETTINGS_STORAGE_KEY).await.unwrap();
+        let loaded = repository.get_settings(SETTINGS_STORAGE_KEY).await.unwrap();
         assert!(loaded.is_none());
     }
 }

@@ -11,9 +11,11 @@ mod repository_error;
 mod storage;
 mod storage_error;
 
-pub use certificate_repository::{CertificateRepository, CERTIFICATE_STORAGE_KEY};
-pub use profile_repository::{ProfileRepository, PROFILE_STORAGE_KEY};
-pub use settings_repository::{SettingsRepository, SETTINGS_STORAGE_KEY};
+pub use certificate_repository::{
+    CertificateRepository, CertificateRepositoryTrait, CERTIFICATE_STORAGE_KEY,
+};
+pub use profile_repository::{ProfileRepository, ProfileRepositoryTrait, PROFILE_STORAGE_KEY};
+pub use settings_repository::{SettingsRepository, SettingsRepositoryTrait, SETTINGS_STORAGE_KEY};
 
 pub use local_storage::LocalStorage;
 pub use memory_storage::MemoryStorage;
