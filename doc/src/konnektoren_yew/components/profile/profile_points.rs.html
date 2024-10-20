@@ -23,19 +23,34 @@
 <a href="#23" id="23">23</a>
 <a href="#24" id="24">24</a>
 <a href="#25" id="25">25</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::storage::{ProfileStorage, Storage};
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
+<a href="#37" id="37">37</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>konnektoren_core::prelude::PlayerProfile;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
-<span class="attr">#[function_component(ProfilePointsComponent)]
-</span><span class="kw">pub fn </span>profile_points_component() -&gt; Html {
-    <span class="kw">let </span>profile = use_state(|| ProfileStorage::default().get(<span class="string">""</span>).unwrap_or_default());
+<span class="attr">#[derive(Properties, PartialEq, Clone)]
+</span><span class="kw">pub struct </span>ProfilePointsProps {
+    <span class="kw">pub </span>profile: PlayerProfile,
+}
 
-    <span class="kw">let </span>points = profile.xp;
+<span class="attr">#[function_component(ProfilePointsComponent)]
+</span><span class="kw">pub fn </span>profile_points_component(props: <span class="kw-2">&amp;</span>ProfilePointsProps) -&gt; Html {
+    <span class="kw">let </span>points = props.profile.xp;
 
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"profile-points"</span>&gt;
             &lt;div class=<span class="string">"icon"</span>&gt;{<span class="string">"⭐️"</span>}&lt;/div&gt;
-            &lt;div class=<span class="string">"profile-name"</span>&gt;{ <span class="kw-2">&amp;</span>profile.name }&lt;/div&gt;
+            &lt;div class=<span class="string">"profile-name"</span>&gt;{ <span class="kw-2">&amp;</span>props.profile.name }&lt;/div&gt;
             &lt;div class=<span class="string">"points"</span>&gt;{ points }&lt;/div&gt;
         &lt;/div&gt;
     }
@@ -46,6 +61,15 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>yew_preview::prelude::<span class="kw-2">*</span>;
 
-    <span class="macro">yew_preview::create_preview!</span>(ProfilePointsComponent, (),);
+    <span class="macro">yew_preview::create_preview!</span>(
+        ProfilePointsComponent,
+        ProfilePointsProps {
+            profile: PlayerProfile {
+                id: <span class="string">"1"</span>.to_string(),
+                name: <span class="string">"Test Player"</span>.to_string(),
+                xp: <span class="number">100</span>,
+            },
+        },
+    );
 }
 </code></pre></div></section></main></body></html>

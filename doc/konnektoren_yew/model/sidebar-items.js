@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Settings"]};
+window.SIDEBAR_ITEMS = {"struct":["Inbox","Settings"]};

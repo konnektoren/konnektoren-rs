@@ -64,7 +64,9 @@
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::storage::{SettingsStorage, Storage};
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::providers::use_settings;
 <span class="kw">use </span>gloo::timers::callback::Timeout;
 <span class="kw">use </span>gloo::utils::window;
 <span class="kw">use </span>web_sys::SpeechSynthesisUtterance;
@@ -79,17 +81,19 @@
 
 <span class="attr">#[function_component(ReadText)]
 </span><span class="kw">pub fn </span>read_text(props: <span class="kw-2">&amp;</span>ReadTextProps) -&gt; Html {
-    <span class="kw">let </span>settings = SettingsStorage::default().get(<span class="string">""</span>).unwrap_or_default();
+    <span class="kw">let </span>settings = use_settings();
 
     <span class="kw">let </span>text_clone = props.text.clone();
     <span class="kw">let </span>lang_clone = props.lang.clone();
     use_effect(<span class="kw">move </span>|| {
+        <span class="kw">let </span>settings = settings.clone();
         Timeout::new(<span class="number">0</span>, <span class="kw">move </span>|| {
             <span class="kw">if let </span><span class="prelude-val">Ok</span>(speech_synthesis) = window().speech_synthesis() {
                 <span class="kw">let </span>utterance = SpeechSynthesisUtterance::new().unwrap();
                 utterance.set_text(<span class="kw-2">&amp;</span>text_clone);
                 utterance.set_lang(<span class="kw-2">&amp;</span>lang_clone);
                 utterance.set_volume(settings.sound_volume);
+
                 speech_synthesis.speak(<span class="kw-2">&amp;</span>utterance);
             }
         })

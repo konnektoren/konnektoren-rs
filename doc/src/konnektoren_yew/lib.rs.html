@@ -21,18 +21,19 @@
 <a href="#21" id="21">21</a>
 <a href="#22" id="22">22</a>
 <a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
 </pre></div><pre class="rust"><code><span class="kw">pub mod </span>app;
 <span class="kw">pub mod </span>components;
 <span class="kw">pub mod </span>i18n;
-<span class="kw">pub mod </span>providers;
-
+<span class="kw">pub mod </span>managers;
 <span class="kw">pub mod </span>model;
+<span class="kw">pub mod </span>providers;
 
 <span class="attr">#[cfg(feature = <span class="string">"effects"</span>)]
 </span><span class="kw">pub mod </span>effects;
 
 <span class="attr">#[cfg(feature = <span class="string">"storage"</span>)]
-</span><span class="kw">pub mod </span>storage;
+</span><span class="kw">pub mod </span>repository;
 
 <span class="doccomment">/// This is a prelude module that re-exports the most important types and traits.
 </span><span class="kw">pub mod </span>prelude {
@@ -41,6 +42,7 @@
     <span class="attr">#[cfg(feature = <span class="string">"effects"</span>)]
     </span><span class="kw">pub use </span><span class="kw">crate</span>::effects::<span class="kw-2">*</span>;
     <span class="kw">pub use </span><span class="kw">crate</span>::i18n::<span class="kw-2">*</span>;
+    <span class="kw">pub use </span><span class="kw">crate</span>::managers::<span class="kw-2">*</span>;
     <span class="kw">pub use </span><span class="kw">crate</span>::model::<span class="kw-2">*</span>;
     <span class="kw">pub use </span><span class="kw">crate</span>::providers::<span class="kw-2">*</span>;
 }

@@ -189,6 +189,7 @@
 <a href="#189" id="189">189</a>
 <a href="#190" id="190">190</a>
 <a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{
     challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
     ChallengeInfoComponent, ContextualChoiceComponent, MusicComponent, ProgressBar,
@@ -215,7 +216,8 @@
 <span class="kw">use </span><span class="kw">crate</span>::prelude::{
     BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, ChallengeRatingComponent,
     ChallengeReviewComponent, InformativeComponent, InformativeMarkdownComponent, MapComponent,
-    OptionsComponent, QuestionComponent, ReadText, SelectLanguage, SelectLevelComp,
+    OptionsComponent, ProfilePointsManager, QuestionComponent, ReadText, SelectLanguage,
+    SelectLevelComp,
 };
 
 <span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nConfig, I18nProvider};
@@ -274,7 +276,7 @@
 
     <span class="kw">let </span>profile_points_component = {
         <span class="attr">#[cfg(feature = <span class="string">"storage"</span>)]
-        </span><span class="macro">html!</span> {&lt;ProfilePointsComponent /&gt;}
+        </span><span class="macro">html!</span> {&lt;ProfilePointsManager&gt;&lt;ProfilePointsComponent profile={PlayerProfile::default()} /&gt;&lt;/ProfilePointsManager&gt;}
         <span class="attr">#[cfg(not(feature = <span class="string">"storage"</span>))]
         </span><span class="macro">html!</span> {&lt;&gt;&lt;/&gt;}
     };

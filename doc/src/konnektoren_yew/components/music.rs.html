@@ -85,9 +85,7 @@
 <a href="#85" id="85">85</a>
 <a href="#86" id="86">86</a>
 <a href="#87" id="87">87</a>
-<a href="#88" id="88">88</a>
-<a href="#89" id="89">89</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::storage::{SettingsStorage, Storage};
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::providers::use_settings;
 <span class="kw">use </span>uuid::Uuid;
 <span class="kw">use </span>web_sys::HtmlAudioElement;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
@@ -116,11 +114,11 @@
 
 <span class="attr">#[function_component(MusicComponent)]
 </span><span class="kw">pub fn </span>music_component(props: <span class="kw-2">&amp;</span>MusicComponentProps) -&gt; Html {
-    <span class="kw">let </span>settings = SettingsStorage::default().get(<span class="string">""</span>).unwrap_or_default();
+    <span class="kw">let </span>settings = use_settings();
 
     <span class="kw">let </span>audio_ref = use_node_ref();
 
-    use_effect({
+    {
         <span class="kw">let </span>audio_ref = audio_ref.clone();
         <span class="kw">let </span>music_url = props
             .url
@@ -129,21 +127,19 @@
         <span class="kw">let </span>repeat = props
             .repeat
             .unwrap_or(MusicComponentProps::default().repeat.unwrap());
-        <span class="kw">move </span>|| {
-            <span class="kw">let </span>audio_element = audio_ref
-                .cast::&lt;HtmlAudioElement&gt;()
-                .expect(<span class="string">"Failed to cast audio ref"</span>);
-            audio_element.set_src(<span class="kw-2">&amp;</span>music_url);
-            audio_element.set_loop(repeat);
-            audio_element.set_autoplay(<span class="bool-val">true</span>);
-            audio_element.set_volume(settings.music_volume <span class="kw">as </span>f64);
+        <span class="kw">let </span>settings = settings.clone();
+        use_effect_with((audio_ref, settings), <span class="kw">move </span>|(audio_ref, settings)| {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(audio_element) = audio_ref.cast::&lt;HtmlAudioElement&gt;() {
+                audio_element.set_src(<span class="kw-2">&amp;</span>music_url);
+                audio_element.set_loop(repeat);
+                audio_element.set_autoplay(<span class="bool-val">true</span>);
+                audio_element.set_volume(settings.music_volume <span class="kw">as </span>f64);
 
-            <span class="kw">move </span>|| {
-                audio_element.pause().expect(<span class="string">"Failed to pause audio"</span>);
-                audio_element.set_src(<span class="string">""</span>);
+                <span class="kw">let _ </span>= audio_element.play();
             }
-        }
-    });
+            || ()
+        });
+    }
 
     <span class="kw">let </span>id = props.id.clone().unwrap_or(Uuid::new_v4().to_string());
 
