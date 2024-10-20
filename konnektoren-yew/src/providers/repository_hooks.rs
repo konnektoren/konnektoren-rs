@@ -139,7 +139,15 @@ pub fn use_inbox() -> UseStateHandle<Inbox> {
 #[hook]
 pub fn use_session() -> UseStateHandle<Session> {
     let session_repository = use_session_repository();
-    let session = use_state(|| Session::default());
+    let repository_context =
+        use_context::<RepositoryContext>().expect("RepositoryContext not found");
+
+    let session = use_state(|| {
+        repository_context
+            .session_initializer
+            .initialize(&Session::default())
+            .unwrap()
+    });
 
     {
         let session = session.clone();
@@ -149,7 +157,11 @@ pub fn use_session() -> UseStateHandle<Session> {
                 if let Ok(Some(loaded_session)) =
                     session_repository.get_session(SESSION_STORAGE_KEY).await
                 {
-                    session.set(loaded_session);
+                    let initialized_session = repository_context
+                        .session_initializer
+                        .initialize(&loaded_session)
+                        .unwrap();
+                    session.set(initialized_session);
                 }
             });
             || ()

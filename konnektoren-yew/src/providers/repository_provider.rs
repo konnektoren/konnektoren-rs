@@ -1,3 +1,4 @@
+use crate::model::SessionInitializer;
 use crate::repository::{
     CertificateRepository, CertificateRepositoryTrait, InboxRepository, InboxRepositoryTrait,
     ProfileRepository, ProfileRepositoryTrait, SessionRepository, SessionRepositoryTrait,
@@ -13,6 +14,7 @@ pub struct RepositoryConfig {
     pub profile_repository: Arc<dyn ProfileRepositoryTrait>,
     pub inbox_repository: Arc<dyn InboxRepositoryTrait>,
     pub session_repository: Arc<dyn SessionRepositoryTrait>,
+    pub session_initializer: Arc<dyn SessionInitializer>,
 }
 
 impl PartialEq for RepositoryConfig {
@@ -22,6 +24,7 @@ impl PartialEq for RepositoryConfig {
             && Arc::ptr_eq(&self.profile_repository, &other.profile_repository)
             && Arc::ptr_eq(&self.inbox_repository, &other.inbox_repository)
             && Arc::ptr_eq(&self.session_repository, &other.session_repository)
+            && Arc::ptr_eq(&self.session_initializer, &other.session_initializer)
     }
 }
 
@@ -32,6 +35,7 @@ pub struct RepositoryContext {
     pub profile_repository: Arc<dyn ProfileRepositoryTrait>,
     pub inbox_repository: Arc<dyn InboxRepositoryTrait>,
     pub session_repository: Arc<dyn SessionRepositoryTrait>,
+    pub session_initializer: Arc<dyn SessionInitializer>,
 }
 
 impl PartialEq for RepositoryContext {
@@ -41,6 +45,7 @@ impl PartialEq for RepositoryContext {
             && Arc::ptr_eq(&self.profile_repository, &other.profile_repository)
             && Arc::ptr_eq(&self.inbox_repository, &other.inbox_repository)
             && Arc::ptr_eq(&self.session_repository, &other.session_repository)
+            && Arc::ptr_eq(&self.session_initializer, &other.session_initializer)
     }
 }
 
@@ -52,6 +57,7 @@ impl RepositoryContext {
             profile_repository: config.profile_repository,
             inbox_repository: config.inbox_repository,
             session_repository: config.session_repository,
+            session_initializer: config.session_initializer,
         }
     }
 }
@@ -73,7 +79,10 @@ pub fn repository_provider(props: &RepositoryProviderProps) -> Html {
     }
 }
 
-pub fn create_repositories<S: Storage + Send + Sync + 'static>(storage: S) -> RepositoryConfig {
+pub fn create_repositories<S: Storage + Send + Sync + 'static>(
+    storage: S,
+    session_initializer: Arc<dyn SessionInitializer>,
+) -> RepositoryConfig {
     RepositoryConfig {
         certificate_repository: Arc::new(CertificateRepository::new(storage.clone()))
             as Arc<dyn CertificateRepositoryTrait>,
@@ -85,5 +94,6 @@ pub fn create_repositories<S: Storage + Send + Sync + 'static>(storage: S) -> Re
             as Arc<dyn InboxRepositoryTrait>,
         session_repository: Arc::new(SessionRepository::new(storage))
             as Arc<dyn SessionRepositoryTrait>,
+        session_initializer,
     }
 }
