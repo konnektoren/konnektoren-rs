@@ -27,9 +27,12 @@
 <a href="#27" id="27">27</a>
 <a href="#28" id="28">28</a>
 <a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>certificate_repository;
 <span class="kw">mod </span>inbox_repository;
 <span class="kw">mod </span>profile_repository;
+<span class="kw">mod </span>session_repository;
 <span class="kw">mod </span>settings_repository;
 
 <span class="kw">mod </span>local_storage;
@@ -46,6 +49,7 @@
 };
 <span class="kw">pub use </span>inbox_repository::{InboxRepository, InboxRepositoryTrait, INBOX_STORAGE_KEY};
 <span class="kw">pub use </span>profile_repository::{ProfileRepository, ProfileRepositoryTrait, PROFILE_STORAGE_KEY};
+<span class="kw">pub use </span>session_repository::{SessionRepository, SessionRepositoryTrait, SESSION_STORAGE_KEY};
 <span class="kw">pub use </span>settings_repository::{SettingsRepository, SettingsRepositoryTrait, SETTINGS_STORAGE_KEY};
 
 <span class="kw">pub use </span>local_storage::LocalStorage;
