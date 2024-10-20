@@ -158,6 +158,12 @@
 <a href="#158" id="158">158</a>
 <a href="#159" id="159">159</a>
 <a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::model::{Inbox, Settings};
 <span class="kw">use </span><span class="kw">crate</span>::providers::RepositoryContext;
 <span class="kw">use </span><span class="kw">crate</span>::repository::{
@@ -300,6 +306,8 @@
 </span><span class="kw">pub fn </span>use_session() -&gt; UseStateHandle&lt;Session&gt; {
     <span class="kw">let </span>session_repository = use_session_repository();
     <span class="kw">let </span>session = use_state(|| Session::default());
+    <span class="kw">let </span>repository_context =
+        use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
 
     {
         <span class="kw">let </span>session = session.clone();
@@ -309,7 +317,11 @@
                 <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_session)) =
                     session_repository.get_session(SESSION_STORAGE_KEY).<span class="kw">await
                 </span>{
-                    session.set(loaded_session);
+                    <span class="kw">let </span>initialized_session = repository_context
+                        .session_initializer
+                        .initialize(<span class="kw-2">&amp;</span>loaded_session)
+                        .unwrap();
+                    session.set(initialized_session);
                 }
             });
             || ()

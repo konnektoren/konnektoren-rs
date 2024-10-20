@@ -87,7 +87,18 @@
 <a href="#87" id="87">87</a>
 <a href="#88" id="88">88</a>
 <a href="#89" id="89">89</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::repository::{
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::model::SessionInitializer;
+<span class="kw">use </span><span class="kw">crate</span>::repository::{
     CertificateRepository, CertificateRepositoryTrait, InboxRepository, InboxRepositoryTrait,
     ProfileRepository, ProfileRepositoryTrait, SessionRepository, SessionRepositoryTrait,
     SettingsRepository, SettingsRepositoryTrait, Storage,
@@ -102,6 +113,7 @@
     <span class="kw">pub </span>profile_repository: Arc&lt;<span class="kw">dyn </span>ProfileRepositoryTrait&gt;,
     <span class="kw">pub </span>inbox_repository: Arc&lt;<span class="kw">dyn </span>InboxRepositoryTrait&gt;,
     <span class="kw">pub </span>session_repository: Arc&lt;<span class="kw">dyn </span>SessionRepositoryTrait&gt;,
+    <span class="kw">pub </span>session_initializer: Arc&lt;<span class="kw">dyn </span>SessionInitializer&gt;,
 }
 
 <span class="kw">impl </span>PartialEq <span class="kw">for </span>RepositoryConfig {
@@ -111,6 +123,7 @@
             &amp;&amp; Arc::ptr_eq(<span class="kw-2">&amp;</span><span class="self">self</span>.profile_repository, <span class="kw-2">&amp;</span>other.profile_repository)
             &amp;&amp; Arc::ptr_eq(<span class="kw-2">&amp;</span><span class="self">self</span>.inbox_repository, <span class="kw-2">&amp;</span>other.inbox_repository)
             &amp;&amp; Arc::ptr_eq(<span class="kw-2">&amp;</span><span class="self">self</span>.session_repository, <span class="kw-2">&amp;</span>other.session_repository)
+            &amp;&amp; Arc::ptr_eq(<span class="kw-2">&amp;</span><span class="self">self</span>.session_initializer, <span class="kw-2">&amp;</span>other.session_initializer)
     }
 }
 
@@ -121,6 +134,7 @@
     <span class="kw">pub </span>profile_repository: Arc&lt;<span class="kw">dyn </span>ProfileRepositoryTrait&gt;,
     <span class="kw">pub </span>inbox_repository: Arc&lt;<span class="kw">dyn </span>InboxRepositoryTrait&gt;,
     <span class="kw">pub </span>session_repository: Arc&lt;<span class="kw">dyn </span>SessionRepositoryTrait&gt;,
+    <span class="kw">pub </span>session_initializer: Arc&lt;<span class="kw">dyn </span>SessionInitializer&gt;,
 }
 
 <span class="kw">impl </span>PartialEq <span class="kw">for </span>RepositoryContext {
@@ -130,6 +144,7 @@
             &amp;&amp; Arc::ptr_eq(<span class="kw-2">&amp;</span><span class="self">self</span>.profile_repository, <span class="kw-2">&amp;</span>other.profile_repository)
             &amp;&amp; Arc::ptr_eq(<span class="kw-2">&amp;</span><span class="self">self</span>.inbox_repository, <span class="kw-2">&amp;</span>other.inbox_repository)
             &amp;&amp; Arc::ptr_eq(<span class="kw-2">&amp;</span><span class="self">self</span>.session_repository, <span class="kw-2">&amp;</span>other.session_repository)
+            &amp;&amp; Arc::ptr_eq(<span class="kw-2">&amp;</span><span class="self">self</span>.session_initializer, <span class="kw-2">&amp;</span>other.session_initializer)
     }
 }
 
@@ -141,6 +156,7 @@
             profile_repository: config.profile_repository,
             inbox_repository: config.inbox_repository,
             session_repository: config.session_repository,
+            session_initializer: config.session_initializer,
         }
     }
 }
@@ -162,7 +178,10 @@
     }
 }
 
-<span class="kw">pub fn </span>create_repositories&lt;S: Storage + Send + Sync + <span class="lifetime">'static</span>&gt;(storage: S) -&gt; RepositoryConfig {
+<span class="kw">pub fn </span>create_repositories&lt;S: Storage + Send + Sync + <span class="lifetime">'static</span>&gt;(
+    storage: S,
+    session_initializer: Arc&lt;<span class="kw">dyn </span>SessionInitializer&gt;,
+) -&gt; RepositoryConfig {
     RepositoryConfig {
         certificate_repository: Arc::new(CertificateRepository::new(storage.clone()))
             <span class="kw">as </span>Arc&lt;<span class="kw">dyn </span>CertificateRepositoryTrait&gt;,
@@ -174,6 +193,7 @@
             <span class="kw">as </span>Arc&lt;<span class="kw">dyn </span>InboxRepositoryTrait&gt;,
         session_repository: Arc::new(SessionRepository::new(storage))
             <span class="kw">as </span>Arc&lt;<span class="kw">dyn </span>SessionRepositoryTrait&gt;,
+        session_initializer,
     }
 }
 </code></pre></div></section></main></body></html>

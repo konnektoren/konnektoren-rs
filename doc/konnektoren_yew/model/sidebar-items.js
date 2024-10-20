@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Inbox","Settings"]};
+window.SIDEBAR_ITEMS = {"struct":["Inbox","Settings"],"trait":["SessionInitializer"]};
