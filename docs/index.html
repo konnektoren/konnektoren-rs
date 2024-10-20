@@ -487,9 +487,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_level_2_event_and_command_handling">6.4. Level 2: Event and Command Handling</a></li>
 <li><a href="#_level_2_challenge_rating_system">6.5. Level 2: Challenge Rating System</a></li>
 <li><a href="#_level_3_frontend_components">6.6. Level 3: Frontend Components</a></li>
-<li><a href="#_level_3_yew_game_controller_provider">6.7. Level 3: Yew Game Controller Provider</a></li>
-<li><a href="#_level_4_data_model">6.8. Level 4: Data Model</a></li>
-<li><a href="#_achievement_system">6.9. Achievement System</a></li>
+<li><a href="#_level_3_yew_game_controller_and_repository_providers">6.7. Level 3: Yew Game Controller and Repository Providers</a></li>
+<li><a href="#_yew_managers">6.8. Yew Managers</a></li>
+<li><a href="#_level_4_data_model">6.9. Level 4: Data Model</a></li>
+<li><a href="#_achievement_system">6.10. Achievement System</a></li>
 </ul>
 </li>
 <li><a href="#section-runtime-view">7. Runtime View</a>
@@ -1423,7 +1424,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="images/konnektoren-yew-structure-c4.png" alt="konnektoren yew structure c4" width="469" height="807">
+<img src="images/konnektoren-yew-structure-c4.png" alt="konnektoren yew structure c4" width="621" height="807">
 </div>
 </div>
 <div class="dlist">
@@ -1456,6 +1457,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Services</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Interfaces with konnektoren-core and handles API calls.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Managers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yew components that manage state and data flow for specific features or parts of the UI</p></td>
 </tr>
 </tbody>
 </table>
@@ -1554,13 +1559,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect2">
-<h3 id="_level_3_yew_game_controller_provider">6.7. Level 3: Yew Game Controller Provider</h3>
+<h3 id="_level_3_yew_game_controller_and_repository_providers">6.7. Level 3: Yew Game Controller and Repository Providers</h3>
 <div class="paragraph">
-<p>The Game Controller Provider is a crucial component in the Konnektoren Yew frontend application. It manages the game state and provides access to the game controller throughout the component tree.</p>
+<p>The Game Controller Provider and Repository Provider are crucial components in the Konnektoren Yew frontend application. They manage the game state, repository access, and provide these services throughout the component tree.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="images/game-controller-provider.png" alt="game controller provider" width="529" height="355">
+<img src="images/game-controller-and-repository-providers.png" alt="game controller and repository providers" width="956" height="355">
 </div>
 </div>
 <div class="sect3">
@@ -1588,17 +1593,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </dd>
 </dl>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_gamecontrollercontext">6.7.2. GameControllerContext</h4>
+<div class="sect4">
+<h5 id="_gamecontrollercontext">GameControllerContext</h5>
 <div class="paragraph">
 <p>The <code>GameControllerContext</code> is a struct that holds a reference to the <code>GameController</code> and is passed down the component tree.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_custom_hooks">6.7.3. Custom Hooks</h4>
+<div class="sect4">
+<h5 id="_custom_hooks_for_gamecontroller">Custom Hooks for GameController</h5>
 <div class="paragraph">
-<p>The provider also includes several custom hooks to easily access different parts of the game state:</p>
+<p>The provider includes several custom hooks to easily access different parts of the game state:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1631,13 +1635,211 @@ fn my_component() -&gt; Html {
 }</code></pre>
 </div>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_repositoryprovider">6.7.2. RepositoryProvider</h4>
 <div class="paragraph">
-<p>This structure allows for efficient state management and easy access to game-related functionality throughout the Yew application.</p>
+<p>The <code>RepositoryProvider</code> is a Yew component that provides access to various repositories throughout the component tree.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Responsibilities</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Initialize repositories with appropriate storage backends</p>
+</li>
+<li>
+<p>Provide the repository context to child components</p>
+</li>
+<li>
+<p>Manage the lifecycle of repositories</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<div class="sect4">
+<h5 id="_repositorycontext">RepositoryContext</h5>
+<div class="paragraph">
+<p>The <code>RepositoryContext</code> is a struct that holds references to various repositories (e.g., <code>CertificateRepository</code>, <code>SettingsRepository</code>, <code>ProfileRepository</code>) and is passed down the component tree.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_custom_hooks_for_repositories">Custom Hooks for Repositories</h5>
+<div class="paragraph">
+<p>The provider includes several custom hooks to easily access different repositories:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>use_certificate_repository()</code>: Returns the <code>CertificateRepository</code></p>
+</li>
+<li>
+<p><code>use_settings_repository()</code>: Returns the <code>SettingsRepository</code></p>
+</li>
+<li>
+<p><code>use_profile_repository()</code>: Returns the <code>ProfileRepository</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Example Usage:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-rust" data-lang="rust">#[function_component(SettingsComponent)]
+fn settings_component() -&gt; Html {
+    let settings_repository = use_settings_repository();
+
+    // Use settings_repository in your component logic
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_additional_repository_hooks">6.7.3. Additional Repository Hooks</h4>
+<div class="paragraph">
+<p>To simplify common repository operations, additional hooks are provided:</p>
+</div>
+<div class="sect4">
+<h5 id="_use_settings">use_settings</h5>
+<div class="paragraph">
+<p>The <code>use_settings</code> hook provides easy access to the application settings.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-rust" data-lang="rust">#[hook]
+pub fn use_settings() -&gt; UseStateHandle&lt;Settings&gt; {
+    let settings_repository = use_settings_repository();
+    let settings = use_state(|| Settings::default());
+
+    use_effect_with((),
+        move |_| {
+            let settings = settings.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Ok(Some(loaded_settings)) = settings_repository.get_settings(SETTINGS_STORAGE_KEY).await {
+                    settings.set(loaded_settings);
+                }
+            });
+            || ()
+        },
+    );
+
+    settings
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_use_certificate">use_certificate</h5>
+<div class="paragraph">
+<p>The <code>use_certificate</code> hook provides access to the user&#8217;s certificate data.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-rust" data-lang="rust">#[hook]
+pub fn use_certificate() -&gt; UseStateHandle&lt;Option&lt;Certificate&gt;&gt; {
+    let certificate_repository = use_certificate_repository();
+    let certificate = use_state(|| None);
+
+    use_effect_with((),
+        move |_| {
+            let certificate = certificate.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Ok(Some(loaded_certificate)) = certificate_repository.get_certificates(CERTIFICATE_STORAGE_KEY).await {
+                    certificate.set(Some(loaded_certificate));
+                }
+            });
+            || ()
+        },
+    );
+
+    certificate
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_use_profile">use_profile</h5>
+<div class="paragraph">
+<p>The <code>use_profile</code> hook provides access to the user&#8217;s profile data.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-rust" data-lang="rust">#[hook]
+pub fn use_profile() -&gt; UseStateHandle&lt;PlayerProfile&gt; {
+    let profile_repository = use_profile_repository();
+    let profile = use_state(|| PlayerProfile::default());
+
+    use_effect_with((),
+        move |_| {
+            let profile = profile.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Ok(Some(loaded_profile)) = profile_repository.get_profile(PROFILE_STORAGE_KEY).await {
+                    profile.set(loaded_profile);
+                }
+            });
+            || ()
+        },
+    );
+
+    profile
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These hooks simplify data access and state management in components,
+allowing for more concise and readable code when working with repository data.</p>
+</div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_level_4_data_model">6.8. Level 4: Data Model</h3>
+<h3 id="_yew_managers">6.8. Yew Managers</h3>
+<div class="paragraph">
+<p>Managers in the Yew frontend are special components that handle state management and data loading for specific parts of the application. They typically use the Context API or custom hooks to provide data and functionality to their child components.</p>
+</div>
+<div class="sect3">
+<h4 id="_types_of_managers">6.8.1. Types of Managers:</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>ProfilePointsManager:</strong> This manager handles the loading and updating of the user&#8217;s profile points. It fetches the profile data from the <code>ProfileRepository</code> and makes it available to child components through properties.</p>
+</li>
+<li>
+<p><strong>InboxManager:</strong> This manager is responsible for loading and managing the user&#8217;s inbox messages. It retrieves inbox data from a YAML file and the <code>InboxRepository</code>. It also provides functionality to mark messages as read and persist this state.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_benefits_of_using_managers">6.8.2. Benefits of using Managers:</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Centralized State Management:</strong>  Instead of scattering state management logic across multiple components, managers provide a single source of truth for specific data.</p>
+</li>
+<li>
+<p><strong>Improved Data Loading:</strong> Managers can handle asynchronous data fetching from repositories or APIs, simplifying data loading in child components.</p>
+</li>
+<li>
+<p><strong>Code Reusability:</strong>  Managers encapsulate common logic related to specific data or features, promoting code reuse and reducing redundancy.</p>
+</li>
+<li>
+<p><strong>Better Organization:</strong> Using managers helps organize your Yew application and separate concerns, making the codebase easier to understand and maintain.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_level_4_data_model">6.9. Level 4: Data Model</h3>
 <div class="paragraph">
 <p>The data model is a crucial part of the Konnektoren system, defining the structure and relationships of the core entities. Understanding this model is essential for developers working on the system and for maintaining data integrity across different components.</p>
 </div>
@@ -1673,7 +1875,7 @@ fn my_component() -&gt; Html {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_achievement_system">6.9. Achievement System</h3>
+<h3 id="_achievement_system">6.10. Achievement System</h3>
 <div class="paragraph">
 <p>The achievement system consists of the following components:</p>
 </div>
@@ -2607,7 +2809,7 @@ fn my_component() -&gt; Html {
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-10-19 16:37:56 UTC
+Last updated 2024-10-20 11:01:06 UTC
 </div>
 </div>
 </body>
