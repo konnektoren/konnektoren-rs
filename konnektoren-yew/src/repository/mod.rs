@@ -1,6 +1,7 @@
 mod certificate_repository;
 mod inbox_repository;
 mod profile_repository;
+mod session_repository;
 mod settings_repository;
 
 mod local_storage;
@@ -17,6 +18,7 @@ pub use certificate_repository::{
 };
 pub use inbox_repository::{InboxRepository, InboxRepositoryTrait, INBOX_STORAGE_KEY};
 pub use profile_repository::{ProfileRepository, ProfileRepositoryTrait, PROFILE_STORAGE_KEY};
+pub use session_repository::{SessionRepository, SessionRepositoryTrait, SESSION_STORAGE_KEY};
 pub use settings_repository::{SettingsRepository, SettingsRepositoryTrait, SETTINGS_STORAGE_KEY};
 
 pub use local_storage::LocalStorage;

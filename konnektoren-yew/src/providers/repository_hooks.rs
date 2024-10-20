@@ -2,11 +2,11 @@ use crate::model::{Inbox, Settings};
 use crate::providers::RepositoryContext;
 use crate::repository::{
     CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
-    SettingsRepositoryTrait, CERTIFICATE_STORAGE_KEY, INBOX_STORAGE_KEY, PROFILE_STORAGE_KEY,
-    SETTINGS_STORAGE_KEY,
+    SessionRepositoryTrait, SettingsRepositoryTrait, CERTIFICATE_STORAGE_KEY, INBOX_STORAGE_KEY,
+    PROFILE_STORAGE_KEY, SESSION_STORAGE_KEY, SETTINGS_STORAGE_KEY,
 };
 use konnektoren_core::certificates::CertificateData;
-use konnektoren_core::prelude::PlayerProfile;
+use konnektoren_core::prelude::{PlayerProfile, Session};
 use std::sync::Arc;
 use yew::prelude::*;
 
@@ -37,6 +37,13 @@ pub fn use_inbox_repository() -> Arc<dyn InboxRepositoryTrait> {
     use_context::<RepositoryContext>()
         .expect("RepositoryContext not found")
         .inbox_repository
+}
+
+#[hook]
+pub fn use_session_repository() -> Arc<dyn SessionRepositoryTrait> {
+    use_context::<RepositoryContext>()
+        .expect("RepositoryContext not found")
+        .session_repository
 }
 
 #[hook]
@@ -127,4 +134,27 @@ pub fn use_inbox() -> UseStateHandle<Inbox> {
     }
 
     inbox
+}
+
+#[hook]
+pub fn use_session() -> UseStateHandle<Session> {
+    let session_repository = use_session_repository();
+    let session = use_state(|| Session::default());
+
+    {
+        let session = session.clone();
+        let session_repository = session_repository.clone();
+        use_effect_with((), move |_| {
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Ok(Some(loaded_session)) =
+                    session_repository.get_session(SESSION_STORAGE_KEY).await
+                {
+                    session.set(loaded_session);
+                }
+            });
+            || ()
+        });
+    }
+
+    session
 }
