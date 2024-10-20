@@ -82,6 +82,16 @@
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::InboxComponent;
 <span class="kw">use </span><span class="kw">crate</span>::model::Inbox;
 <span class="kw">use </span><span class="kw">crate</span>::providers::use_inbox_repository;
@@ -92,7 +102,8 @@
 
 <span class="attr">#[derive(Properties, PartialEq)]
 </span><span class="kw">pub struct </span>InboxManagerProps {
-    <span class="kw">pub </span>children: ChildrenWithProps&lt;InboxComponent&gt;,
+    <span class="attr">#[prop_or_default]
+    </span><span class="kw">pub </span>children: <span class="prelude-ty">Option</span>&lt;ChildrenWithProps&lt;InboxComponent&gt;&gt;,
 }
 
 <span class="attr">#[function_component(InboxManager)]
@@ -158,12 +169,21 @@
         })
     };
 
-    <span class="kw">let </span>modified_children = props.children.iter().map(|<span class="kw-2">mut </span>item| {
-        <span class="kw">let </span>props = Rc::make_mut(<span class="kw-2">&amp;mut </span>item.props);
-        props.inbox = (<span class="kw-2">&amp;*</span>inbox_state).clone();
-        props.on_read_message = mark_as_read.clone();
-        item
-    });
-    <span class="macro">html!</span> { <span class="kw">for </span>modified_children }
+    <span class="kw">match </span><span class="kw-2">&amp;</span>props.children {
+        <span class="prelude-val">Some</span>(children) =&gt; {
+            <span class="kw">let </span>modified_children = children.iter().map(|<span class="kw-2">mut </span>item| {
+                <span class="kw">let </span>props = Rc::make_mut(<span class="kw-2">&amp;mut </span>item.props);
+                props.inbox = (<span class="kw-2">&amp;*</span>inbox_state).clone();
+                props.on_read_message = mark_as_read.clone();
+                item
+            });
+            <span class="macro">html!</span> { <span class="kw">for </span>modified_children }
+        }
+        <span class="prelude-val">None </span>=&gt; {
+            <span class="kw">return </span><span class="macro">html!</span> {
+                &lt;InboxComponent inbox={(<span class="kw-2">&amp;*</span>inbox_state).clone()} on_read_message={mark_as_read.clone()} /&gt;
+            }
+        }
+    }
 }
 </code></pre></div></section></main></body></html>
