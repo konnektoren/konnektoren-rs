@@ -7,7 +7,7 @@ pub use game_controller_provider::{
     GameControllerProvider, GameControllerProviderProps,
 };
 pub use repository_hooks::{
-    use_certificate, use_certificate_repository, use_profile, use_profile_repository, use_settings,
-    use_settings_repository,
+    use_certificate, use_certificate_repository, use_inbox, use_inbox_repository, use_profile,
+    use_profile_repository, use_settings, use_settings_repository,
 };
 pub use repository_provider::{RepositoryContext, RepositoryProvider, RepositoryProviderProps};

@@ -25,6 +25,7 @@ yew-preview = ["dep:yew-preview"]
 
 [dependencies]
 async-trait = "0.1.83"
+chrono = "0.4.38"
 console_log = "1.0"
 log = "0.4.21"
 implicit-clone = "0.4.9"

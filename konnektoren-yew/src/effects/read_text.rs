@@ -1,5 +1,4 @@
 use crate::providers::use_settings;
-use crate::repository::SETTINGS_STORAGE_KEY;
 use gloo::timers::callback::Timeout;
 use gloo::utils::window;
 use web_sys::SpeechSynthesisUtterance;

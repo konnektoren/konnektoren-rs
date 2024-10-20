@@ -24,7 +24,8 @@ use crate::effects::BlinkAnimation;
 use crate::prelude::{
     BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, ChallengeRatingComponent,
     ChallengeReviewComponent, InformativeComponent, InformativeMarkdownComponent, MapComponent,
-    OptionsComponent, QuestionComponent, ReadText, SelectLanguage, SelectLevelComp,
+    OptionsComponent, ProfilePointsManager, QuestionComponent, ReadText, SelectLanguage,
+    SelectLevelComp,
 };
 
 use crate::i18n::{I18nConfig, I18nProvider};
@@ -83,7 +84,7 @@ pub fn Example() -> Html {
 
     let profile_points_component = {
         #[cfg(feature = "storage")]
-        html! {<ProfilePointsComponent />}
+        html! {<ProfilePointsManager><ProfilePointsComponent profile={PlayerProfile::default()} /></ProfilePointsManager>}
         #[cfg(not(feature = "storage"))]
         html! {<></>}
     };
