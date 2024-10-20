@@ -8,7 +8,8 @@ use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct InboxManagerProps {
-    pub children: ChildrenWithProps<InboxComponent>,
+    #[prop_or_default]
+    pub children: Option<ChildrenWithProps<InboxComponent>>,
 }
 
 #[function_component(InboxManager)]
@@ -74,11 +75,20 @@ pub fn inbox_manager(props: &InboxManagerProps) -> Html {
         })
     };
 
-    let modified_children = props.children.iter().map(|mut item| {
-        let props = Rc::make_mut(&mut item.props);
-        props.inbox = (&*inbox_state).clone();
-        props.on_read_message = mark_as_read.clone();
-        item
-    });
-    html! { for modified_children }
+    match &props.children {
+        Some(children) => {
+            let modified_children = children.iter().map(|mut item| {
+                let props = Rc::make_mut(&mut item.props);
+                props.inbox = (&*inbox_state).clone();
+                props.on_read_message = mark_as_read.clone();
+                item
+            });
+            html! { for modified_children }
+        }
+        None => {
+            return html! {
+                <InboxComponent inbox={(&*inbox_state).clone()} on_read_message={mark_as_read.clone()} />
+            }
+        }
+    }
 }
