@@ -62,28 +62,6 @@ pub fn repository_provider(props: &RepositoryProviderProps) -> Html {
     }
 }
 
-#[hook]
-pub fn use_certificate_repository() -> Arc<dyn CertificateRepositoryTrait> {
-    use_context::<RepositoryContext>()
-        .expect("RepositoryContext not found")
-        .certificate_repository
-        .clone()
-}
-
-#[hook]
-pub fn use_settings_repository() -> Arc<dyn SettingsRepositoryTrait> {
-    use_context::<RepositoryContext>()
-        .expect("RepositoryContext not found")
-        .settings_repository
-}
-
-#[hook]
-pub fn use_profile_repository() -> Arc<dyn ProfileRepositoryTrait> {
-    use_context::<RepositoryContext>()
-        .expect("RepositoryContext not found")
-        .profile_repository
-}
-
 pub fn create_repositories<S: Storage + Send + Sync + 'static>(storage: S) -> RepositoryConfig {
     RepositoryConfig {
         certificate_repository: Arc::new(CertificateRepository::new(storage.clone()))

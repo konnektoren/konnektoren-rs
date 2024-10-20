@@ -1,5 +1,4 @@
-use crate::providers::use_settings_repository;
-use crate::repository::SETTINGS_STORAGE_KEY;
+use crate::providers::use_settings;
 use uuid::Uuid;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
@@ -28,23 +27,7 @@ impl Default for MusicComponentProps {
 
 #[function_component(MusicComponent)]
 pub fn music_component(props: &MusicComponentProps) -> Html {
-    let settings_repository = use_settings_repository();
-    let settings = use_state(|| None);
-
-    {
-        let settings = settings.clone();
-        let settings_repository = settings_repository.clone();
-        use_effect_with((), move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(Some(loaded_settings)) =
-                    settings_repository.get_settings(SETTINGS_STORAGE_KEY).await
-                {
-                    settings.set(Some(loaded_settings));
-                }
-            });
-            || ()
-        });
-    }
+    let settings = use_settings();
 
     let audio_ref = use_node_ref();
 
@@ -63,9 +46,7 @@ pub fn music_component(props: &MusicComponentProps) -> Html {
                 audio_element.set_src(&music_url);
                 audio_element.set_loop(repeat);
                 audio_element.set_autoplay(true);
-                if let Some(settings) = settings.as_ref() {
-                    audio_element.set_volume(settings.music_volume as f64);
-                }
+                audio_element.set_volume(settings.music_volume as f64);
 
                 let _ = audio_element.play();
             }

@@ -1,4 +1,4 @@
-use crate::providers::use_settings_repository;
+use crate::providers::use_settings;
 use crate::repository::SETTINGS_STORAGE_KEY;
 use gloo::timers::callback::Timeout;
 use gloo::utils::window;
@@ -14,23 +14,7 @@ pub struct ReadTextProps {
 
 #[function_component(ReadText)]
 pub fn read_text(props: &ReadTextProps) -> Html {
-    let settings_repository = use_settings_repository();
-    let settings = use_state(|| None);
-
-    {
-        let settings = settings.clone();
-        let settings_repository = settings_repository.clone();
-        use_effect_with((), move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(Some(loaded_settings)) =
-                    settings_repository.get_settings(SETTINGS_STORAGE_KEY).await
-                {
-                    settings.set(Some(loaded_settings));
-                }
-            });
-            || ()
-        });
-    }
+    let settings = use_settings();
 
     let text_clone = props.text.clone();
     let lang_clone = props.lang.clone();
@@ -41,12 +25,7 @@ pub fn read_text(props: &ReadTextProps) -> Html {
                 let utterance = SpeechSynthesisUtterance::new().unwrap();
                 utterance.set_text(&text_clone);
                 utterance.set_lang(&lang_clone);
-
-                if let Some(settings_value) = &*settings {
-                    utterance.set_volume(settings_value.sound_volume);
-                } else {
-                    utterance.set_volume(1.0);
-                }
+                utterance.set_volume(settings.sound_volume);
 
                 speech_synthesis.speak(&utterance);
             }
