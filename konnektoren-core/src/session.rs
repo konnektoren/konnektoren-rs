@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{game::GameState, player_profile::PlayerProfile};
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Session {
     pub id: String,
     pub player_profile: PlayerProfile,
