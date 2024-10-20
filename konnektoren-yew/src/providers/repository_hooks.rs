@@ -1,8 +1,9 @@
-use crate::model::Settings;
+use crate::model::{Inbox, Settings};
 use crate::providers::RepositoryContext;
 use crate::repository::{
-    CertificateRepositoryTrait, ProfileRepositoryTrait, SettingsRepositoryTrait,
-    CERTIFICATE_STORAGE_KEY, PROFILE_STORAGE_KEY, SETTINGS_STORAGE_KEY,
+    CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
+    SettingsRepositoryTrait, CERTIFICATE_STORAGE_KEY, INBOX_STORAGE_KEY, PROFILE_STORAGE_KEY,
+    SETTINGS_STORAGE_KEY,
 };
 use konnektoren_core::certificates::CertificateData;
 use konnektoren_core::prelude::PlayerProfile;
@@ -29,6 +30,13 @@ pub fn use_profile_repository() -> Arc<dyn ProfileRepositoryTrait> {
     use_context::<RepositoryContext>()
         .expect("RepositoryContext not found")
         .profile_repository
+}
+
+#[hook]
+pub fn use_inbox_repository() -> Arc<dyn InboxRepositoryTrait> {
+    use_context::<RepositoryContext>()
+        .expect("RepositoryContext not found")
+        .inbox_repository
 }
 
 #[hook]
@@ -97,4 +105,26 @@ pub fn use_profile() -> UseStateHandle<PlayerProfile> {
     }
 
     profile
+}
+
+#[hook]
+pub fn use_inbox() -> UseStateHandle<Inbox> {
+    let inbox_repository = use_inbox_repository();
+    let inbox = use_state(|| Inbox::default());
+
+    {
+        let inbox = inbox.clone();
+        let inbox_repository = inbox_repository.clone();
+        use_effect_with((), move |_| {
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Ok(Some(loaded_inbox)) = inbox_repository.get_inbox(INBOX_STORAGE_KEY).await
+                {
+                    inbox.set(loaded_inbox);
+                }
+            });
+            || ()
+        });
+    }
+
+    inbox
 }

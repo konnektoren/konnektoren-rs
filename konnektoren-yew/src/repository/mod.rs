@@ -1,4 +1,5 @@
 mod certificate_repository;
+mod inbox_repository;
 mod profile_repository;
 mod settings_repository;
 
@@ -14,6 +15,7 @@ mod storage_error;
 pub use certificate_repository::{
     CertificateRepository, CertificateRepositoryTrait, CERTIFICATE_STORAGE_KEY,
 };
+pub use inbox_repository::{InboxRepository, InboxRepositoryTrait, INBOX_STORAGE_KEY};
 pub use profile_repository::{ProfileRepository, ProfileRepositoryTrait, PROFILE_STORAGE_KEY};
 pub use settings_repository::{SettingsRepository, SettingsRepositoryTrait, SETTINGS_STORAGE_KEY};
 

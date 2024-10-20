@@ -1,6 +1,7 @@
 use crate::repository::{
-    CertificateRepository, CertificateRepositoryTrait, ProfileRepository, ProfileRepositoryTrait,
-    SettingsRepository, SettingsRepositoryTrait, Storage,
+    CertificateRepository, CertificateRepositoryTrait, InboxRepository, InboxRepositoryTrait,
+    ProfileRepository, ProfileRepositoryTrait, SettingsRepository, SettingsRepositoryTrait,
+    Storage,
 };
 use std::sync::Arc;
 use yew::prelude::*;
@@ -10,6 +11,7 @@ pub struct RepositoryConfig {
     pub certificate_repository: Arc<dyn CertificateRepositoryTrait>,
     pub settings_repository: Arc<dyn SettingsRepositoryTrait>,
     pub profile_repository: Arc<dyn ProfileRepositoryTrait>,
+    pub inbox_repository: Arc<dyn InboxRepositoryTrait>,
 }
 
 impl PartialEq for RepositoryConfig {
@@ -17,6 +19,7 @@ impl PartialEq for RepositoryConfig {
         Arc::ptr_eq(&self.certificate_repository, &other.certificate_repository)
             && Arc::ptr_eq(&self.settings_repository, &other.settings_repository)
             && Arc::ptr_eq(&self.profile_repository, &other.profile_repository)
+            && Arc::ptr_eq(&self.inbox_repository, &other.inbox_repository)
     }
 }
 
@@ -25,6 +28,7 @@ pub struct RepositoryContext {
     pub certificate_repository: Arc<dyn CertificateRepositoryTrait>,
     pub settings_repository: Arc<dyn SettingsRepositoryTrait>,
     pub profile_repository: Arc<dyn ProfileRepositoryTrait>,
+    pub inbox_repository: Arc<dyn InboxRepositoryTrait>,
 }
 
 impl PartialEq for RepositoryContext {
@@ -32,6 +36,7 @@ impl PartialEq for RepositoryContext {
         Arc::ptr_eq(&self.certificate_repository, &other.certificate_repository)
             && Arc::ptr_eq(&self.settings_repository, &other.settings_repository)
             && Arc::ptr_eq(&self.profile_repository, &other.profile_repository)
+            && Arc::ptr_eq(&self.inbox_repository, &other.inbox_repository)
     }
 }
 
@@ -41,6 +46,7 @@ impl RepositoryContext {
             certificate_repository: config.certificate_repository,
             settings_repository: config.settings_repository,
             profile_repository: config.profile_repository,
+            inbox_repository: config.inbox_repository,
         }
     }
 }
@@ -68,7 +74,8 @@ pub fn create_repositories<S: Storage + Send + Sync + 'static>(storage: S) -> Re
             as Arc<dyn CertificateRepositoryTrait>,
         settings_repository: Arc::new(SettingsRepository::new(storage.clone()))
             as Arc<dyn SettingsRepositoryTrait>,
-        profile_repository: Arc::new(ProfileRepository::new(storage))
+        profile_repository: Arc::new(ProfileRepository::new(storage.clone()))
             as Arc<dyn ProfileRepositoryTrait>,
+        inbox_repository: Arc::new(InboxRepository::new(storage)) as Arc<dyn InboxRepositoryTrait>,
     }
 }
