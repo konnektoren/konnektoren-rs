@@ -40,7 +40,7 @@
 
 <span class="kw">use crate</span>::{game::GameState, player_profile::PlayerProfile};
 
-<span class="attr">#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+<span class="attr">#[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
 </span><span class="kw">pub struct </span>Session {
     <span class="kw">pub </span>id: String,
     <span class="kw">pub </span>player_profile: PlayerProfile,
