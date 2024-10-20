@@ -378,6 +378,7 @@ System_Boundary(konnektoren_yew, "konnektoren-yew") {
     Container(components, "Components", "Yew UI Components", "Reusable UI components used across different pages")
     Container(pages, "Pages", "Yew Page Components", "Individual page components for different views in the application")
     Container(services, "Services", "Rust Modules", "Interfaces with konnektoren-core and handles API calls")
+    Container(managers, "Managers", "Yew Components", "Manage state and data flow for specific features or parts of the UI")
 }
 
 System_Ext(konnektoren_core, "konnektoren-core", "Core library containing business logic")
@@ -388,6 +389,8 @@ Rel(pages, components, "Uses")
 Rel(pages, services, "Uses")
 Rel(components, konnektoren_core, "Uses")
 Rel(services, konnektoren_core, "Uses")
+Rel(managers, components, "Uses")
+Rel(managers, services, "Uses")
 
 @enduml
 ----
@@ -400,6 +403,7 @@ Contained Building Blocks::
 | Components | Reusable UI components used across different pages.
 | Pages | Individual page components for different views in the application.
 | Services | Interfaces with konnektoren-core and handles API calls.
+| Managers | Yew components that manage state and data flow for specific features or parts of the UI
 |===
 
 === Level 2: Challenge Rating System
@@ -610,7 +614,7 @@ pub fn use_settings() -> UseStateHandle<Settings> {
     let settings_repository = use_settings_repository();
     let settings = use_state(|| Settings::default());
 
-    use_effect_with_deps(
+    use_effect_with((),
         move |_| {
             let settings = settings.clone();
             wasm_bindgen_futures::spawn_local(async move {
@@ -620,7 +624,6 @@ pub fn use_settings() -> UseStateHandle<Settings> {
             });
             || ()
         },
-        (),
     );
 
     settings
@@ -638,7 +641,7 @@ pub fn use_certificate() -> UseStateHandle<Option<Certificate>> {
     let certificate_repository = use_certificate_repository();
     let certificate = use_state(|| None);
 
-    use_effect_with_deps(
+    use_effect_with((),
         move |_| {
             let certificate = certificate.clone();
             wasm_bindgen_futures::spawn_local(async move {
@@ -648,7 +651,6 @@ pub fn use_certificate() -> UseStateHandle<Option<Certificate>> {
             });
             || ()
         },
-        (),
     );
 
     certificate
@@ -666,7 +668,7 @@ pub fn use_profile() -> UseStateHandle<PlayerProfile> {
     let profile_repository = use_profile_repository();
     let profile = use_state(|| PlayerProfile::default());
 
-    use_effect_with_deps(
+    use_effect_with((),
         move |_| {
             let profile = profile.clone();
             wasm_bindgen_futures::spawn_local(async move {
@@ -676,7 +678,6 @@ pub fn use_profile() -> UseStateHandle<PlayerProfile> {
             });
             || ()
         },
-        (),
     );
 
     profile
@@ -685,6 +686,27 @@ pub fn use_profile() -> UseStateHandle<PlayerProfile> {
 
 These hooks simplify data access and state management in components,
 allowing for more concise and readable code when working with repository data.
+
+=== Yew Managers
+
+Managers in the Yew frontend are special components that handle state management and data loading for specific parts of the application. They typically use the Context API or custom hooks to provide data and functionality to their child components.
+
+==== Types of Managers:
+
+* **ProfilePointsManager:** This manager handles the loading and updating of the user's profile points. It fetches the profile data from the `ProfileRepository` and makes it available to child components through properties.
+
+* **InboxManager:** This manager is responsible for loading and managing the user's inbox messages. It retrieves inbox data from a YAML file and the `InboxRepository`. It also provides functionality to mark messages as read and persist this state.
+
+==== Benefits of using Managers:
+
+* **Centralized State Management:**  Instead of scattering state management logic across multiple components, managers provide a single source of truth for specific data.
+
+* **Improved Data Loading:** Managers can handle asynchronous data fetching from repositories or APIs, simplifying data loading in child components.
+
+* **Code Reusability:**  Managers encapsulate common logic related to specific data or features, promoting code reuse and reducing redundancy.
+
+* **Better Organization:** Using managers helps organize your Yew application and separate concerns, making the codebase easier to understand and maintain.
+
 
 === Level 4: Data Model
 
