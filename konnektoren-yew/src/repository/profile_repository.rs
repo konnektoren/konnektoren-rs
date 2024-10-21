@@ -3,7 +3,6 @@ use super::repository_error::RepositoryError;
 use super::storage::Storage;
 use async_trait::async_trait;
 use konnektoren_core::prelude::PlayerProfile;
-use serde_json;
 
 pub const PROFILE_STORAGE_KEY: &str = "konnektoren_profile";
 
@@ -34,21 +33,15 @@ impl<S: Storage> ProfileRepository<S> {
 #[async_trait]
 impl<S: Storage + Send + Sync> Repository<PlayerProfile> for ProfileRepository<S> {
     async fn save(&self, key: &str, profile: &PlayerProfile) -> Result<(), RepositoryError> {
-        let serialized =
-            serde_json::to_string(profile).map_err(|e| RepositoryError::SerializationError(e))?;
         self.storage
-            .set(key, &serialized)
+            .set(key, profile)
             .await
             .map_err(|e| RepositoryError::StorageError(e.to_string()))
     }
 
     async fn get(&self, key: &str) -> Result<Option<PlayerProfile>, RepositoryError> {
         match self.storage.get(key).await {
-            Ok(Some(serialized)) => {
-                let profile = serde_json::from_str(&serialized)
-                    .map_err(|e| RepositoryError::SerializationError(e))?;
-                Ok(Some(profile))
-            }
+            Ok(Some(profile)) => Ok(Some(profile)),
             Ok(None) => Ok(None),
             Err(e) => Err(RepositoryError::StorageError(e.to_string())),
         }

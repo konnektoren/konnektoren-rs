@@ -3,7 +3,6 @@ use super::repository_error::RepositoryError;
 use super::storage::Storage;
 use async_trait::async_trait;
 use konnektoren_core::certificates::CertificateData;
-use serde_json;
 
 pub const CERTIFICATE_STORAGE_KEY: &str = "konnektoren_certificates";
 
@@ -45,21 +44,15 @@ impl<S: Storage + Send + Sync> Repository<Vec<CertificateData>> for CertificateR
         key: &str,
         certificates: &Vec<CertificateData>,
     ) -> Result<(), RepositoryError> {
-        let serialized = serde_json::to_string(certificates)
-            .map_err(|e| RepositoryError::SerializationError(e))?;
         self.storage
-            .set(key, &serialized)
+            .set(key, certificates)
             .await
             .map_err(|e| RepositoryError::StorageError(e.to_string()))
     }
 
     async fn get(&self, key: &str) -> Result<Option<Vec<CertificateData>>, RepositoryError> {
         match self.storage.get(key).await {
-            Ok(Some(serialized)) => {
-                let certificates = serde_json::from_str(&serialized)
-                    .map_err(|e| RepositoryError::SerializationError(e))?;
-                Ok(Some(certificates))
-            }
+            Ok(Some(certificates)) => Ok(Some(certificates)),
             Ok(None) => Ok(None),
             Err(e) => Err(RepositoryError::StorageError(e.to_string())),
         }

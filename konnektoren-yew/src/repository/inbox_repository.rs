@@ -3,7 +3,6 @@ use super::repository_error::RepositoryError;
 use super::storage::Storage;
 use crate::model::Inbox;
 use async_trait::async_trait;
-use serde_json;
 use yew_chat::prelude::Message;
 
 pub const INBOX_STORAGE_KEY: &str = "konnektoren_inbox";
@@ -32,21 +31,15 @@ impl<S: Storage> InboxRepository<S> {
 #[async_trait]
 impl<S: Storage + Send + Sync> Repository<Inbox> for InboxRepository<S> {
     async fn save(&self, key: &str, inbox: &Inbox) -> Result<(), RepositoryError> {
-        let serialized =
-            serde_json::to_string(inbox).map_err(RepositoryError::SerializationError)?;
         self.storage
-            .set(key, &serialized)
+            .set(key, inbox)
             .await
             .map_err(|e| RepositoryError::StorageError(e.to_string()))
     }
 
     async fn get(&self, key: &str) -> Result<Option<Inbox>, RepositoryError> {
         match self.storage.get(key).await {
-            Ok(Some(serialized)) => {
-                let inbox = serde_json::from_str(&serialized)
-                    .map_err(RepositoryError::SerializationError)?;
-                Ok(Some(inbox))
-            }
+            Ok(Some(inbox)) => Ok(Some(inbox)),
             Ok(None) => Ok(None),
             Err(e) => Err(RepositoryError::StorageError(e.to_string())),
         }

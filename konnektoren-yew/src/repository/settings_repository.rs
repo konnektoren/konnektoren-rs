@@ -3,7 +3,6 @@ use super::repository_error::RepositoryError;
 use super::storage::Storage;
 use crate::model::Settings;
 use async_trait::async_trait;
-use serde_json;
 
 pub const SETTINGS_STORAGE_KEY: &str = "konnektoren_settings";
 
@@ -28,21 +27,15 @@ impl<S: Storage> SettingsRepository<S> {
 #[async_trait]
 impl<S: Storage + Send + Sync> Repository<Settings> for SettingsRepository<S> {
     async fn save(&self, key: &str, settings: &Settings) -> Result<(), RepositoryError> {
-        let serialized =
-            serde_json::to_string(settings).map_err(RepositoryError::SerializationError)?;
         self.storage
-            .set(key, &serialized)
+            .set(key, settings)
             .await
             .map_err(|e| RepositoryError::StorageError(e.to_string()))
     }
 
     async fn get(&self, key: &str) -> Result<Option<Settings>, RepositoryError> {
         match self.storage.get(key).await {
-            Ok(Some(serialized)) => {
-                let settings = serde_json::from_str(&serialized)
-                    .map_err(RepositoryError::SerializationError)?;
-                Ok(Some(settings))
-            }
+            Ok(Some(settings)) => Ok(Some(settings)),
             Ok(None) => Ok(None),
             Err(e) => Err(RepositoryError::StorageError(e.to_string())),
         }

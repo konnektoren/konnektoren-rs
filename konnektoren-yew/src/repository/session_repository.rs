@@ -3,7 +3,6 @@ use super::repository_error::RepositoryError;
 use super::storage::Storage;
 use async_trait::async_trait;
 use konnektoren_core::session::Session;
-use serde_json;
 
 pub const SESSION_STORAGE_KEY: &str = "konnektoren_session";
 
@@ -29,21 +28,15 @@ impl<S: Storage> SessionRepository<S> {
 #[async_trait]
 impl<S: Storage + Send + Sync> Repository<Session> for SessionRepository<S> {
     async fn save(&self, key: &str, session: &Session) -> Result<(), RepositoryError> {
-        let serialized =
-            serde_json::to_string(session).map_err(|e| RepositoryError::SerializationError(e))?;
         self.storage
-            .set(key, &serialized)
+            .set(key, session)
             .await
             .map_err(|e| RepositoryError::StorageError(e.to_string()))
     }
 
     async fn get(&self, key: &str) -> Result<Option<Session>, RepositoryError> {
         match self.storage.get(key).await {
-            Ok(Some(serialized)) => {
-                let session = serde_json::from_str(&serialized)
-                    .map_err(|e| RepositoryError::SerializationError(e))?;
-                Ok(Some(session))
-            }
+            Ok(Some(session)) => Ok(Some(session)),
             Ok(None) => Ok(None),
             Err(e) => Err(RepositoryError::StorageError(e.to_string())),
         }
@@ -70,6 +63,7 @@ impl<S: Storage + Send + Sync> SessionRepositoryTrait for SessionRepository<S> {
     async fn delete_session(&self, key: &str) -> Result<(), RepositoryError> {
         Repository::delete(self, key).await
     }
+
     async fn update_session(&self, key: &str, session: &Session) -> Result<(), RepositoryError> {
         self.save_session(key, session).await
     }
