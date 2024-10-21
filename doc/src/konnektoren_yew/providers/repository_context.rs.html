@@ -141,7 +141,7 @@
 };
 <span class="kw">use </span>konnektoren_core::certificates::CertificateData;
 <span class="kw">use </span>konnektoren_core::prelude::{PlayerProfile, Session};
-<span class="kw">use </span>std::sync::Arc;
+<span class="kw">use </span>std::sync::{Arc, RwLock};
 
 <span class="attr">#[derive(Clone)]
 </span><span class="kw">pub struct </span>RepositoryContext {
@@ -151,11 +151,11 @@
     <span class="kw">pub </span>inbox_repository: Arc&lt;<span class="kw">dyn </span>InboxRepositoryTrait&gt;,
     <span class="kw">pub </span>session_repository: Arc&lt;<span class="kw">dyn </span>SessionRepositoryTrait&gt;,
     <span class="kw">pub </span>session_initializer: Arc&lt;<span class="kw">dyn </span>SessionInitializer&gt;,
-    <span class="kw">pub </span>session: Arc&lt;Session&gt;,
-    <span class="kw">pub </span>profile: Arc&lt;PlayerProfile&gt;,
-    <span class="kw">pub </span>inbox: Arc&lt;Inbox&gt;,
-    <span class="kw">pub </span>settings: Arc&lt;Settings&gt;,
-    <span class="kw">pub </span>certificates: Arc&lt;Vec&lt;CertificateData&gt;&gt;,
+    <span class="kw">pub </span>session: Arc&lt;RwLock&lt;Session&gt;&gt;,
+    <span class="kw">pub </span>profile: Arc&lt;RwLock&lt;PlayerProfile&gt;&gt;,
+    <span class="kw">pub </span>inbox: Arc&lt;RwLock&lt;Inbox&gt;&gt;,
+    <span class="kw">pub </span>settings: Arc&lt;RwLock&lt;Settings&gt;&gt;,
+    <span class="kw">pub </span>certificates: Arc&lt;RwLock&lt;Vec&lt;CertificateData&gt;&gt;&gt;,
 }
 
 <span class="kw">impl </span>PartialEq <span class="kw">for </span>RepositoryContext {
@@ -187,17 +187,17 @@
             inbox_repository: config.inbox_repository,
             session_repository: config.session_repository,
             session_initializer: config.session_initializer,
-            session: Arc::new(session),
-            profile: Arc::new(PlayerProfile::default()),
-            inbox: Arc::new(Inbox::default()),
-            settings: Arc::new(Settings::default()),
-            certificates: Arc::new(Vec::new()),
+            session: Arc::new(RwLock::new(session)),
+            profile: Arc::new(RwLock::new(PlayerProfile::default())),
+            inbox: Arc::new(RwLock::new(Inbox::default())),
+            settings: Arc::new(RwLock::new(Settings::default())),
+            certificates: Arc::new(RwLock::new(Vec::new())),
         }
     }
 
     <span class="kw">pub fn </span>load_session(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">let </span>session_repository = <span class="self">self</span>.session_repository.clone();
-        <span class="kw">let </span><span class="kw-2">mut </span>session = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.session);
+        <span class="kw">let </span>session = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.session);
         <span class="kw">let </span>session_initializer = <span class="self">self</span>.session_initializer.clone();
 
         wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
@@ -205,7 +205,7 @@
                 session_repository.get_session(SESSION_STORAGE_KEY).<span class="kw">await
             </span>{
                 <span class="kw">let </span>initialized_session = session_initializer.initialize(<span class="kw-2">&amp;</span>loaded_session).unwrap();
-                <span class="kw">let </span>session_guard = Arc::make_mut(<span class="kw-2">&amp;mut </span>session);
+                <span class="kw">let </span><span class="kw-2">mut </span>session_guard = session.write().unwrap();
                 <span class="kw-2">*</span>session_guard = initialized_session;
             }
         });
@@ -213,13 +213,13 @@
 
     <span class="kw">pub fn </span>load_profile(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">let </span>profile_repository = <span class="self">self</span>.profile_repository.clone();
-        <span class="kw">let </span><span class="kw-2">mut </span>profile = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.profile);
+        <span class="kw">let </span>profile = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.profile);
 
         wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
             <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_profile)) =
                 profile_repository.get_profile(PROFILE_STORAGE_KEY).<span class="kw">await
             </span>{
-                <span class="kw">let </span>profile_guard = Arc::make_mut(<span class="kw-2">&amp;mut </span>profile);
+                <span class="kw">let </span><span class="kw-2">mut </span>profile_guard = profile.write().unwrap();
                 <span class="kw-2">*</span>profile_guard = loaded_profile;
             }
         });
@@ -227,11 +227,11 @@
 
     <span class="kw">pub fn </span>load_inbox(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">let </span>inbox_repository = <span class="self">self</span>.inbox_repository.clone();
-        <span class="kw">let </span><span class="kw-2">mut </span>inbox = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.inbox);
+        <span class="kw">let </span>inbox = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.inbox);
 
         wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
             <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_inbox)) = inbox_repository.get_inbox(INBOX_STORAGE_KEY).<span class="kw">await </span>{
-                <span class="kw">let </span>inbox_guard = Arc::make_mut(<span class="kw-2">&amp;mut </span>inbox);
+                <span class="kw">let </span><span class="kw-2">mut </span>inbox_guard = inbox.write().unwrap();
                 <span class="kw-2">*</span>inbox_guard = loaded_inbox;
             }
         });
@@ -239,13 +239,13 @@
 
     <span class="kw">pub fn </span>load_settings(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">let </span>settings_repository = <span class="self">self</span>.settings_repository.clone();
-        <span class="kw">let </span><span class="kw-2">mut </span>settings = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.settings);
+        <span class="kw">let </span>settings = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.settings);
 
         wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
             <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_settings)) =
                 settings_repository.get_settings(SETTINGS_STORAGE_KEY).<span class="kw">await
             </span>{
-                <span class="kw">let </span>settings_guard = Arc::make_mut(<span class="kw-2">&amp;mut </span>settings);
+                <span class="kw">let </span><span class="kw-2">mut </span>settings_guard = settings.write().unwrap();
                 <span class="kw-2">*</span>settings_guard = loaded_settings;
             }
         });
@@ -253,14 +253,14 @@
 
     <span class="kw">pub fn </span>load_certificates(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">let </span>certificate_repository = <span class="self">self</span>.certificate_repository.clone();
-        <span class="kw">let </span><span class="kw-2">mut </span>certificates = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.certificates);
+        <span class="kw">let </span>certificates = Arc::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.certificates);
 
         wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
             <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_certificates)) = certificate_repository
                 .get_certificates(CERTIFICATE_STORAGE_KEY)
                 .<span class="kw">await
             </span>{
-                <span class="kw">let </span>certificates_guard = Arc::make_mut(<span class="kw-2">&amp;mut </span>certificates);
+                <span class="kw">let </span><span class="kw-2">mut </span>certificates_guard = certificates.write().unwrap();
                 <span class="kw-2">*</span>certificates_guard = loaded_certificates;
             }
         });

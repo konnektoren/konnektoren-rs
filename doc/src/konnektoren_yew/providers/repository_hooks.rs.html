@@ -122,7 +122,7 @@
 };
 <span class="kw">use </span>konnektoren_core::certificates::CertificateData;
 <span class="kw">use </span>konnektoren_core::prelude::{PlayerProfile, Session};
-<span class="kw">use </span>std::sync::Arc;
+<span class="kw">use </span>std::sync::{Arc, RwLock};
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>yew_hooks::use_effect_once;
 
@@ -163,7 +163,7 @@
 }
 
 <span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_session() -&gt; Arc&lt;Session&gt; {
+</span><span class="kw">pub fn </span>use_session() -&gt; Arc&lt;RwLock&lt;Session&gt;&gt; {
     <span class="kw">let </span>repository_context =
         use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
     <span class="kw">let </span>session = repository_context.session.clone();
@@ -177,7 +177,7 @@
 }
 
 <span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_profile() -&gt; Arc&lt;PlayerProfile&gt; {
+</span><span class="kw">pub fn </span>use_profile() -&gt; Arc&lt;RwLock&lt;PlayerProfile&gt;&gt; {
     <span class="kw">let </span>repository_context =
         use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
     <span class="kw">let </span>profile = repository_context.profile.clone();
@@ -191,7 +191,7 @@
 }
 
 <span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_inbox() -&gt; Arc&lt;Inbox&gt; {
+</span><span class="kw">pub fn </span>use_inbox() -&gt; Arc&lt;RwLock&lt;Inbox&gt;&gt; {
     <span class="kw">let </span>repository_context =
         use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
     <span class="kw">let </span>inbox = repository_context.inbox.clone();
@@ -205,7 +205,7 @@
 }
 
 <span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_settings() -&gt; Arc&lt;Settings&gt; {
+</span><span class="kw">pub fn </span>use_settings() -&gt; Arc&lt;RwLock&lt;Settings&gt;&gt; {
     <span class="kw">let </span>repository_context =
         use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
     <span class="kw">let </span>settings = repository_context.settings.clone();
@@ -219,7 +219,7 @@
 }
 
 <span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_certificates() -&gt; Arc&lt;Vec&lt;CertificateData&gt;&gt; {
+</span><span class="kw">pub fn </span>use_certificates() -&gt; Arc&lt;RwLock&lt;Vec&lt;CertificateData&gt;&gt;&gt; {
     <span class="kw">let </span>repository_context =
         use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
     <span class="kw">let </span>certificates = repository_context.certificates.clone();
