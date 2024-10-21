@@ -109,19 +109,11 @@
 <a href="#109" id="109">109</a>
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
-<a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a>
-<a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
-<a href="#116" id="116">116</a>
-<a href="#117" id="117">117</a>
-<a href="#118" id="118">118</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::repository::Repository;
 <span class="kw">use </span><span class="kw">super</span>::repository_error::RepositoryError;
 <span class="kw">use </span><span class="kw">super</span>::storage::Storage;
 <span class="kw">use </span><span class="kw">crate</span>::model::Settings;
 <span class="kw">use </span>async_trait::async_trait;
-<span class="kw">use </span>serde_json;
 
 <span class="kw">pub const </span>SETTINGS_STORAGE_KEY: <span class="kw-2">&amp;</span>str = <span class="string">"konnektoren_settings"</span>;
 
@@ -146,21 +138,15 @@
 <span class="attr">#[async_trait]
 </span><span class="kw">impl</span>&lt;S: Storage + Send + Sync&gt; Repository&lt;Settings&gt; <span class="kw">for </span>SettingsRepository&lt;S&gt; {
     <span class="kw">async fn </span>save(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str, settings: <span class="kw-2">&amp;</span>Settings) -&gt; <span class="prelude-ty">Result</span>&lt;(), RepositoryError&gt; {
-        <span class="kw">let </span>serialized =
-            serde_json::to_string(settings).map_err(RepositoryError::SerializationError)<span class="question-mark">?</span>;
         <span class="self">self</span>.storage
-            .set(key, <span class="kw-2">&amp;</span>serialized)
+            .set(key, settings)
             .<span class="kw">await
             </span>.map_err(|e| RepositoryError::StorageError(e.to_string()))
     }
 
     <span class="kw">async fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Settings&gt;, RepositoryError&gt; {
         <span class="kw">match </span><span class="self">self</span>.storage.get(key).<span class="kw">await </span>{
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(serialized)) =&gt; {
-                <span class="kw">let </span>settings = serde_json::from_str(<span class="kw-2">&amp;</span>serialized)
-                    .map_err(RepositoryError::SerializationError)<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(settings))
-            }
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(settings)) =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(settings)),
             <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
             <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(RepositoryError::StorageError(e.to_string())),
         }

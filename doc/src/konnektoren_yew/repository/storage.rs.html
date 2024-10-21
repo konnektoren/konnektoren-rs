@@ -7,13 +7,21 @@
 <a href="#7" id="7">7</a>
 <a href="#8" id="8">8</a>
 <a href="#9" id="9">9</a>
+<a href="#10" id="10">10</a>
+<a href="#11" id="11">11</a>
+<a href="#12" id="12">12</a>
+<a href="#13" id="13">13</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::storage_error::StorageError;
 <span class="kw">use </span>async_trait::async_trait;
+<span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[async_trait]
 </span><span class="kw">pub trait </span>Storage: Clone + PartialEq + Send + Sync + <span class="lifetime">'static </span>{
-    <span class="kw">async fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;String&gt;, StorageError&gt;;
-    <span class="kw">async fn </span>set(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str, value: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), StorageError&gt;;
+    <span class="kw">async fn </span>get&lt;T: <span class="kw">for</span>&lt;<span class="lifetime">'de</span>&gt; Deserialize&lt;<span class="lifetime">'de</span>&gt; + Sync&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        key: <span class="kw-2">&amp;</span>str,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;T&gt;, StorageError&gt;;
+    <span class="kw">async fn </span>set&lt;T: Serialize + Sync&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str, value: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;(), StorageError&gt;;
     <span class="kw">async fn </span>remove(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), StorageError&gt;;
 }
 </code></pre></div></section></main></body></html>
