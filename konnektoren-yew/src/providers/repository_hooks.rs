@@ -2,13 +2,13 @@ use crate::model::{Inbox, Settings};
 use crate::providers::RepositoryContext;
 use crate::repository::{
     CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
-    SessionRepositoryTrait, SettingsRepositoryTrait, CERTIFICATE_STORAGE_KEY, INBOX_STORAGE_KEY,
-    PROFILE_STORAGE_KEY, SESSION_STORAGE_KEY, SETTINGS_STORAGE_KEY,
+    SessionRepositoryTrait, SettingsRepositoryTrait,
 };
 use konnektoren_core::certificates::CertificateData;
 use konnektoren_core::prelude::{PlayerProfile, Session};
 use std::sync::Arc;
 use yew::prelude::*;
+use yew_hooks::use_effect_once;
 
 #[hook]
 pub fn use_certificate_repository() -> Arc<dyn CertificateRepositoryTrait> {
@@ -47,126 +47,70 @@ pub fn use_session_repository() -> Arc<dyn SessionRepositoryTrait> {
 }
 
 #[hook]
-pub fn use_settings() -> UseStateHandle<Settings> {
-    let settings_repository = use_settings_repository();
-    let settings = use_state(|| Settings::default());
+pub fn use_session() -> Arc<Session> {
+    let repository_context =
+        use_context::<RepositoryContext>().expect("RepositoryContext not found");
+    let session = repository_context.session.clone();
 
-    {
-        let settings = settings.clone();
-        let settings_repository = settings_repository.clone();
-        use_effect_with((), move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(Some(loaded_settings)) =
-                    settings_repository.get_settings(SETTINGS_STORAGE_KEY).await
-                {
-                    settings.set(loaded_settings.clone());
-                }
-            });
-            || ()
-        });
-    }
+    use_effect_once(move || {
+        repository_context.load_session();
+        || {}
+    });
 
-    settings
+    session
 }
 
 #[hook]
-pub fn use_certificate() -> UseStateHandle<Option<Vec<CertificateData>>> {
-    let certificate_repository = use_certificate_repository();
-    let certificate = use_state(|| None);
-    {
-        let certificate = certificate.clone();
-        let certificate_repository = certificate_repository.clone();
-        use_effect_with((), move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(Some(loaded_certificate)) = certificate_repository
-                    .get_certificates(CERTIFICATE_STORAGE_KEY)
-                    .await
-                {
-                    certificate.set(Some(loaded_certificate));
-                }
-            });
-            || ()
-        });
-    }
-    certificate
-}
+pub fn use_profile() -> Arc<PlayerProfile> {
+    let repository_context =
+        use_context::<RepositoryContext>().expect("RepositoryContext not found");
+    let profile = repository_context.profile.clone();
 
-#[hook]
-pub fn use_profile() -> UseStateHandle<PlayerProfile> {
-    let profile_repository = use_profile_repository();
-    let profile = use_state(|| PlayerProfile::default());
-
-    {
-        let profile = profile.clone();
-        let profile_repository = profile_repository.clone();
-        use_effect_with((), move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(Some(loaded_profile)) =
-                    profile_repository.get_profile(PROFILE_STORAGE_KEY).await
-                {
-                    profile.set(loaded_profile);
-                }
-            });
-            || ()
-        });
-    }
+    use_effect_once(move || {
+        repository_context.load_profile();
+        || {}
+    });
 
     profile
 }
 
 #[hook]
-pub fn use_inbox() -> UseStateHandle<Inbox> {
-    let inbox_repository = use_inbox_repository();
-    let inbox = use_state(|| Inbox::default());
+pub fn use_inbox() -> Arc<Inbox> {
+    let repository_context =
+        use_context::<RepositoryContext>().expect("RepositoryContext not found");
+    let inbox = repository_context.inbox.clone();
 
-    {
-        let inbox = inbox.clone();
-        let inbox_repository = inbox_repository.clone();
-        use_effect_with((), move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(Some(loaded_inbox)) = inbox_repository.get_inbox(INBOX_STORAGE_KEY).await
-                {
-                    inbox.set(loaded_inbox);
-                }
-            });
-            || ()
-        });
-    }
+    use_effect_once(move || {
+        repository_context.load_inbox();
+        || {}
+    });
 
     inbox
 }
 
 #[hook]
-pub fn use_session() -> UseStateHandle<Session> {
-    let session_repository = use_session_repository();
+pub fn use_settings() -> Arc<Settings> {
     let repository_context =
         use_context::<RepositoryContext>().expect("RepositoryContext not found");
+    let settings = repository_context.settings.clone();
 
-    let session = use_state(|| {
-        repository_context
-            .session_initializer
-            .initialize(&Session::default())
-            .unwrap()
+    use_effect_once(move || {
+        repository_context.load_settings();
+        || {}
     });
 
-    {
-        let session = session.clone();
-        let session_repository = session_repository.clone();
-        use_effect_with((), move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(Some(loaded_session)) =
-                    session_repository.get_session(SESSION_STORAGE_KEY).await
-                {
-                    let initialized_session = repository_context
-                        .session_initializer
-                        .initialize(&loaded_session)
-                        .unwrap();
-                    session.set(initialized_session);
-                }
-            });
-            || ()
-        });
-    }
+    settings
+}
 
-    session
+#[hook]
+pub fn use_certificates() -> Arc<Vec<CertificateData>> {
+    let repository_context =
+        use_context::<RepositoryContext>().expect("RepositoryContext not found");
+    let certificates = repository_context.certificates.clone();
+
+    use_effect_once(move || {
+        repository_context.load_certificates();
+        || {}
+    });
+    certificates
 }
