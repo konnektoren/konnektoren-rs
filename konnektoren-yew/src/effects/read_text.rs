@@ -13,7 +13,7 @@ pub struct ReadTextProps {
 
 #[function_component(ReadText)]
 pub fn read_text(props: &ReadTextProps) -> Html {
-    let settings = use_settings();
+    let settings = use_settings().read().unwrap().clone();
 
     let text_clone = props.text.clone();
     let lang_clone = props.lang.clone();

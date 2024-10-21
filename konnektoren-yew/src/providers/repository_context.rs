@@ -7,7 +7,7 @@ use crate::repository::{
 };
 use konnektoren_core::certificates::CertificateData;
 use konnektoren_core::prelude::{PlayerProfile, Session};
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 
 #[derive(Clone)]
 pub struct RepositoryContext {
@@ -17,11 +17,11 @@ pub struct RepositoryContext {
     pub inbox_repository: Arc<dyn InboxRepositoryTrait>,
     pub session_repository: Arc<dyn SessionRepositoryTrait>,
     pub session_initializer: Arc<dyn SessionInitializer>,
-    pub session: Arc<Session>,
-    pub profile: Arc<PlayerProfile>,
-    pub inbox: Arc<Inbox>,
-    pub settings: Arc<Settings>,
-    pub certificates: Arc<Vec<CertificateData>>,
+    pub session: Arc<RwLock<Session>>,
+    pub profile: Arc<RwLock<PlayerProfile>>,
+    pub inbox: Arc<RwLock<Inbox>>,
+    pub settings: Arc<RwLock<Settings>>,
+    pub certificates: Arc<RwLock<Vec<CertificateData>>>,
 }
 
 impl PartialEq for RepositoryContext {
@@ -53,17 +53,17 @@ impl RepositoryContext {
             inbox_repository: config.inbox_repository,
             session_repository: config.session_repository,
             session_initializer: config.session_initializer,
-            session: Arc::new(session),
-            profile: Arc::new(PlayerProfile::default()),
-            inbox: Arc::new(Inbox::default()),
-            settings: Arc::new(Settings::default()),
-            certificates: Arc::new(Vec::new()),
+            session: Arc::new(RwLock::new(session)),
+            profile: Arc::new(RwLock::new(PlayerProfile::default())),
+            inbox: Arc::new(RwLock::new(Inbox::default())),
+            settings: Arc::new(RwLock::new(Settings::default())),
+            certificates: Arc::new(RwLock::new(Vec::new())),
         }
     }
 
     pub fn load_session(&self) {
         let session_repository = self.session_repository.clone();
-        let mut session = Arc::clone(&self.session);
+        let session = Arc::clone(&self.session);
         let session_initializer = self.session_initializer.clone();
 
         wasm_bindgen_futures::spawn_local(async move {
@@ -71,7 +71,7 @@ impl RepositoryContext {
                 session_repository.get_session(SESSION_STORAGE_KEY).await
             {
                 let initialized_session = session_initializer.initialize(&loaded_session).unwrap();
-                let session_guard = Arc::make_mut(&mut session);
+                let mut session_guard = session.write().unwrap();
                 *session_guard = initialized_session;
             }
         });
@@ -79,13 +79,13 @@ impl RepositoryContext {
 
     pub fn load_profile(&self) {
         let profile_repository = self.profile_repository.clone();
-        let mut profile = Arc::clone(&self.profile);
+        let profile = Arc::clone(&self.profile);
 
         wasm_bindgen_futures::spawn_local(async move {
             if let Ok(Some(loaded_profile)) =
                 profile_repository.get_profile(PROFILE_STORAGE_KEY).await
             {
-                let profile_guard = Arc::make_mut(&mut profile);
+                let mut profile_guard = profile.write().unwrap();
                 *profile_guard = loaded_profile;
             }
         });
@@ -93,11 +93,11 @@ impl RepositoryContext {
 
     pub fn load_inbox(&self) {
         let inbox_repository = self.inbox_repository.clone();
-        let mut inbox = Arc::clone(&self.inbox);
+        let inbox = Arc::clone(&self.inbox);
 
         wasm_bindgen_futures::spawn_local(async move {
             if let Ok(Some(loaded_inbox)) = inbox_repository.get_inbox(INBOX_STORAGE_KEY).await {
-                let inbox_guard = Arc::make_mut(&mut inbox);
+                let mut inbox_guard = inbox.write().unwrap();
                 *inbox_guard = loaded_inbox;
             }
         });
@@ -105,13 +105,13 @@ impl RepositoryContext {
 
     pub fn load_settings(&self) {
         let settings_repository = self.settings_repository.clone();
-        let mut settings = Arc::clone(&self.settings);
+        let settings = Arc::clone(&self.settings);
 
         wasm_bindgen_futures::spawn_local(async move {
             if let Ok(Some(loaded_settings)) =
                 settings_repository.get_settings(SETTINGS_STORAGE_KEY).await
             {
-                let settings_guard = Arc::make_mut(&mut settings);
+                let mut settings_guard = settings.write().unwrap();
                 *settings_guard = loaded_settings;
             }
         });
@@ -119,14 +119,14 @@ impl RepositoryContext {
 
     pub fn load_certificates(&self) {
         let certificate_repository = self.certificate_repository.clone();
-        let mut certificates = Arc::clone(&self.certificates);
+        let certificates = Arc::clone(&self.certificates);
 
         wasm_bindgen_futures::spawn_local(async move {
             if let Ok(Some(loaded_certificates)) = certificate_repository
                 .get_certificates(CERTIFICATE_STORAGE_KEY)
                 .await
             {
-                let certificates_guard = Arc::make_mut(&mut certificates);
+                let mut certificates_guard = certificates.write().unwrap();
                 *certificates_guard = loaded_certificates;
             }
         });

@@ -6,7 +6,7 @@ use crate::repository::{
 };
 use konnektoren_core::certificates::CertificateData;
 use konnektoren_core::prelude::{PlayerProfile, Session};
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 use yew::prelude::*;
 use yew_hooks::use_effect_once;
 
@@ -47,7 +47,7 @@ pub fn use_session_repository() -> Arc<dyn SessionRepositoryTrait> {
 }
 
 #[hook]
-pub fn use_session() -> Arc<Session> {
+pub fn use_session() -> Arc<RwLock<Session>> {
     let repository_context =
         use_context::<RepositoryContext>().expect("RepositoryContext not found");
     let session = repository_context.session.clone();
@@ -61,7 +61,7 @@ pub fn use_session() -> Arc<Session> {
 }
 
 #[hook]
-pub fn use_profile() -> Arc<PlayerProfile> {
+pub fn use_profile() -> Arc<RwLock<PlayerProfile>> {
     let repository_context =
         use_context::<RepositoryContext>().expect("RepositoryContext not found");
     let profile = repository_context.profile.clone();
@@ -75,7 +75,7 @@ pub fn use_profile() -> Arc<PlayerProfile> {
 }
 
 #[hook]
-pub fn use_inbox() -> Arc<Inbox> {
+pub fn use_inbox() -> Arc<RwLock<Inbox>> {
     let repository_context =
         use_context::<RepositoryContext>().expect("RepositoryContext not found");
     let inbox = repository_context.inbox.clone();
@@ -89,7 +89,7 @@ pub fn use_inbox() -> Arc<Inbox> {
 }
 
 #[hook]
-pub fn use_settings() -> Arc<Settings> {
+pub fn use_settings() -> Arc<RwLock<Settings>> {
     let repository_context =
         use_context::<RepositoryContext>().expect("RepositoryContext not found");
     let settings = repository_context.settings.clone();
@@ -103,7 +103,7 @@ pub fn use_settings() -> Arc<Settings> {
 }
 
 #[hook]
-pub fn use_certificates() -> Arc<Vec<CertificateData>> {
+pub fn use_certificates() -> Arc<RwLock<Vec<CertificateData>>> {
     let repository_context =
         use_context::<RepositoryContext>().expect("RepositoryContext not found");
     let certificates = repository_context.certificates.clone();
