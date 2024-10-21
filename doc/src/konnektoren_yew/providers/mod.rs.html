@@ -12,7 +12,10 @@
 <a href="#12" id="12">12</a>
 <a href="#13" id="13">13</a>
 <a href="#14" id="14">14</a>
+<a href="#15" id="15">15</a>
+<a href="#16" id="16">16</a>
 </pre></div><pre class="rust"><code><span class="kw">pub mod </span>game_controller_provider;
+<span class="kw">mod </span>repository_context;
 <span class="kw">pub mod </span>repository_hooks;
 <span class="kw">pub mod </span>repository_provider;
 
@@ -20,10 +23,11 @@
     use_command_bus, use_event_bus, use_game_controller, use_game_state, GameControllerContext,
     GameControllerProvider, GameControllerProviderProps,
 };
+<span class="kw">pub use </span>repository_context::RepositoryContext;
 <span class="kw">pub use </span>repository_hooks::{
-    use_certificate, use_certificate_repository, use_inbox, use_inbox_repository, use_profile,
+    use_certificate_repository, use_certificates, use_inbox, use_inbox_repository, use_profile,
     use_profile_repository, use_session, use_session_repository, use_settings,
     use_settings_repository,
 };
-<span class="kw">pub use </span>repository_provider::{RepositoryContext, RepositoryProvider, RepositoryProviderProps};
+<span class="kw">pub use </span>repository_provider::{RepositoryConfig, RepositoryProvider, RepositoryProviderProps};
 </code></pre></div></section></main></body></html>

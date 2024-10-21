@@ -114,73 +114,17 @@
 <a href="#114" id="114">114</a>
 <a href="#115" id="115">115</a>
 <a href="#116" id="116">116</a>
-<a href="#117" id="117">117</a>
-<a href="#118" id="118">118</a>
-<a href="#119" id="119">119</a>
-<a href="#120" id="120">120</a>
-<a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a>
-<a href="#123" id="123">123</a>
-<a href="#124" id="124">124</a>
-<a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
-<a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
-<a href="#134" id="134">134</a>
-<a href="#135" id="135">135</a>
-<a href="#136" id="136">136</a>
-<a href="#137" id="137">137</a>
-<a href="#138" id="138">138</a>
-<a href="#139" id="139">139</a>
-<a href="#140" id="140">140</a>
-<a href="#141" id="141">141</a>
-<a href="#142" id="142">142</a>
-<a href="#143" id="143">143</a>
-<a href="#144" id="144">144</a>
-<a href="#145" id="145">145</a>
-<a href="#146" id="146">146</a>
-<a href="#147" id="147">147</a>
-<a href="#148" id="148">148</a>
-<a href="#149" id="149">149</a>
-<a href="#150" id="150">150</a>
-<a href="#151" id="151">151</a>
-<a href="#152" id="152">152</a>
-<a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
-<a href="#156" id="156">156</a>
-<a href="#157" id="157">157</a>
-<a href="#158" id="158">158</a>
-<a href="#159" id="159">159</a>
-<a href="#160" id="160">160</a>
-<a href="#161" id="161">161</a>
-<a href="#162" id="162">162</a>
-<a href="#163" id="163">163</a>
-<a href="#164" id="164">164</a>
-<a href="#165" id="165">165</a>
-<a href="#166" id="166">166</a>
-<a href="#167" id="167">167</a>
-<a href="#168" id="168">168</a>
-<a href="#169" id="169">169</a>
-<a href="#170" id="170">170</a>
-<a href="#171" id="171">171</a>
-<a href="#172" id="172">172</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::model::{Inbox, Settings};
 <span class="kw">use </span><span class="kw">crate</span>::providers::RepositoryContext;
 <span class="kw">use </span><span class="kw">crate</span>::repository::{
     CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
-    SessionRepositoryTrait, SettingsRepositoryTrait, CERTIFICATE_STORAGE_KEY, INBOX_STORAGE_KEY,
-    PROFILE_STORAGE_KEY, SESSION_STORAGE_KEY, SETTINGS_STORAGE_KEY,
+    SessionRepositoryTrait, SettingsRepositoryTrait,
 };
 <span class="kw">use </span>konnektoren_core::certificates::CertificateData;
 <span class="kw">use </span>konnektoren_core::prelude::{PlayerProfile, Session};
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>yew_hooks::use_effect_once;
 
 <span class="attr">#[hook]
 </span><span class="kw">pub fn </span>use_certificate_repository() -&gt; Arc&lt;<span class="kw">dyn </span>CertificateRepositoryTrait&gt; {
@@ -219,127 +163,71 @@
 }
 
 <span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_settings() -&gt; UseStateHandle&lt;Settings&gt; {
-    <span class="kw">let </span>settings_repository = use_settings_repository();
-    <span class="kw">let </span>settings = use_state(|| Settings::default());
+</span><span class="kw">pub fn </span>use_session() -&gt; Arc&lt;Session&gt; {
+    <span class="kw">let </span>repository_context =
+        use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
+    <span class="kw">let </span>session = repository_context.session.clone();
 
-    {
-        <span class="kw">let </span>settings = settings.clone();
-        <span class="kw">let </span>settings_repository = settings_repository.clone();
-        use_effect_with((), <span class="kw">move </span>|<span class="kw">_</span>| {
-            wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_settings)) =
-                    settings_repository.get_settings(SETTINGS_STORAGE_KEY).<span class="kw">await
-                </span>{
-                    settings.set(loaded_settings.clone());
-                }
-            });
-            || ()
-        });
-    }
+    use_effect_once(<span class="kw">move </span>|| {
+        repository_context.load_session();
+        || {}
+    });
 
-    settings
+    session
 }
 
 <span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_certificate() -&gt; UseStateHandle&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;CertificateData&gt;&gt;&gt; {
-    <span class="kw">let </span>certificate_repository = use_certificate_repository();
-    <span class="kw">let </span>certificate = use_state(|| <span class="prelude-val">None</span>);
-    {
-        <span class="kw">let </span>certificate = certificate.clone();
-        <span class="kw">let </span>certificate_repository = certificate_repository.clone();
-        use_effect_with((), <span class="kw">move </span>|<span class="kw">_</span>| {
-            wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_certificate)) = certificate_repository
-                    .get_certificates(CERTIFICATE_STORAGE_KEY)
-                    .<span class="kw">await
-                </span>{
-                    certificate.set(<span class="prelude-val">Some</span>(loaded_certificate));
-                }
-            });
-            || ()
-        });
-    }
-    certificate
-}
+</span><span class="kw">pub fn </span>use_profile() -&gt; Arc&lt;PlayerProfile&gt; {
+    <span class="kw">let </span>repository_context =
+        use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
+    <span class="kw">let </span>profile = repository_context.profile.clone();
 
-<span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_profile() -&gt; UseStateHandle&lt;PlayerProfile&gt; {
-    <span class="kw">let </span>profile_repository = use_profile_repository();
-    <span class="kw">let </span>profile = use_state(|| PlayerProfile::default());
-
-    {
-        <span class="kw">let </span>profile = profile.clone();
-        <span class="kw">let </span>profile_repository = profile_repository.clone();
-        use_effect_with((), <span class="kw">move </span>|<span class="kw">_</span>| {
-            wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_profile)) =
-                    profile_repository.get_profile(PROFILE_STORAGE_KEY).<span class="kw">await
-                </span>{
-                    profile.set(loaded_profile);
-                }
-            });
-            || ()
-        });
-    }
+    use_effect_once(<span class="kw">move </span>|| {
+        repository_context.load_profile();
+        || {}
+    });
 
     profile
 }
 
 <span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_inbox() -&gt; UseStateHandle&lt;Inbox&gt; {
-    <span class="kw">let </span>inbox_repository = use_inbox_repository();
-    <span class="kw">let </span>inbox = use_state(|| Inbox::default());
+</span><span class="kw">pub fn </span>use_inbox() -&gt; Arc&lt;Inbox&gt; {
+    <span class="kw">let </span>repository_context =
+        use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
+    <span class="kw">let </span>inbox = repository_context.inbox.clone();
 
-    {
-        <span class="kw">let </span>inbox = inbox.clone();
-        <span class="kw">let </span>inbox_repository = inbox_repository.clone();
-        use_effect_with((), <span class="kw">move </span>|<span class="kw">_</span>| {
-            wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_inbox)) = inbox_repository.get_inbox(INBOX_STORAGE_KEY).<span class="kw">await
-                </span>{
-                    inbox.set(loaded_inbox);
-                }
-            });
-            || ()
-        });
-    }
+    use_effect_once(<span class="kw">move </span>|| {
+        repository_context.load_inbox();
+        || {}
+    });
 
     inbox
 }
 
 <span class="attr">#[hook]
-</span><span class="kw">pub fn </span>use_session() -&gt; UseStateHandle&lt;Session&gt; {
-    <span class="kw">let </span>session_repository = use_session_repository();
+</span><span class="kw">pub fn </span>use_settings() -&gt; Arc&lt;Settings&gt; {
     <span class="kw">let </span>repository_context =
         use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
+    <span class="kw">let </span>settings = repository_context.settings.clone();
 
-    <span class="kw">let </span>session = use_state(|| {
-        repository_context
-            .session_initializer
-            .initialize(<span class="kw-2">&amp;</span>Session::default())
-            .unwrap()
+    use_effect_once(<span class="kw">move </span>|| {
+        repository_context.load_settings();
+        || {}
     });
 
-    {
-        <span class="kw">let </span>session = session.clone();
-        <span class="kw">let </span>session_repository = session_repository.clone();
-        use_effect_with((), <span class="kw">move </span>|<span class="kw">_</span>| {
-            wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_session)) =
-                    session_repository.get_session(SESSION_STORAGE_KEY).<span class="kw">await
-                </span>{
-                    <span class="kw">let </span>initialized_session = repository_context
-                        .session_initializer
-                        .initialize(<span class="kw-2">&amp;</span>loaded_session)
-                        .unwrap();
-                    session.set(initialized_session);
-                }
-            });
-            || ()
-        });
-    }
+    settings
+}
 
-    session
+<span class="attr">#[hook]
+</span><span class="kw">pub fn </span>use_certificates() -&gt; Arc&lt;Vec&lt;CertificateData&gt;&gt; {
+    <span class="kw">let </span>repository_context =
+        use_context::&lt;RepositoryContext&gt;().expect(<span class="string">"RepositoryContext not found"</span>);
+    <span class="kw">let </span>certificates = repository_context.certificates.clone();
+
+    use_effect_once(<span class="kw">move </span>|| {
+        repository_context.load_certificates();
+        || {}
+    });
+    certificates
 }
 </code></pre></div></section></main></body></html>

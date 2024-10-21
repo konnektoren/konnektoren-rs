@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["create_repositories"],"struct":["RepositoryConfig","RepositoryContext","RepositoryProvider","RepositoryProviderProps"]};
+window.SIDEBAR_ITEMS = {"fn":["create_repositories"],"struct":["RepositoryConfig","RepositoryProvider","RepositoryProviderProps"]};
