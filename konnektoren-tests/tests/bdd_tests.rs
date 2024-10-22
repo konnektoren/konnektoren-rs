@@ -1,3 +1,4 @@
+use anyhow::Result;
 use cucumber::World;
 pub mod steps;
 use cucumber::WriterExt;
@@ -12,6 +13,7 @@ pub struct BddWorld {
     pub challenge_result: Option<ChallengeResult>,
     pub game_path: GamePath,
     pub factory: Option<ChallengeFactory>,
+    pub last_command_result: Result<()>,
     pub game: Game,
 }
 
@@ -35,6 +37,7 @@ impl Default for BddWorld {
             challenge_result: None,
             game_path,
             factory: Some(factory),
+            last_command_result: Ok(()),
             game,
         };
         world
