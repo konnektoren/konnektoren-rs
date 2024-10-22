@@ -18,6 +18,14 @@ impl Session {
             game_state: GameState::default(),
         }
     }
+
+    pub fn new_with_profile(player_profile: PlayerProfile) -> Self {
+        Session {
+            id: player_profile.id.clone(),
+            player_profile,
+            game_state: GameState::default(),
+        }
+    }
 }
 
 #[cfg(test)]
