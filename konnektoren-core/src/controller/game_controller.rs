@@ -7,6 +7,21 @@ use anyhow::Result;
 use std::fmt::{Debug, Formatter};
 use std::sync::{Arc, Mutex};
 
+pub trait GameControllerTrait {
+    fn save_game_state(&self) -> Result<()>;
+    fn load_game_state(&self) -> Result<()>;
+
+    fn handle_command(&self, command: Command);
+    fn publish_command(&self, command: Command);
+
+    // Getters for internal components
+    fn game_state(&self) -> &Arc<Mutex<GameState>>;
+    fn event_bus(&self) -> &EventBus;
+    fn event_bus_mut(&mut self) -> &mut EventBus;
+    fn command_bus(&self) -> &CommandBus;
+    fn command_bus_mut(&mut self) -> &mut CommandBus;
+}
+
 pub struct GameController {
     game_state: Arc<Mutex<GameState>>,
     event_bus: EventBus,
@@ -40,18 +55,6 @@ impl GameController {
         }
     }
 
-    pub fn save_game_state(&self) -> Result<()> {
-        let game_state = self.game_state.lock().unwrap();
-        self.persistence.save_game_state(&game_state)
-    }
-
-    pub fn load_game_state(&self) -> Result<()> {
-        let loaded_state = self.persistence.load_game_state()?;
-        let mut game_state = self.game_state.lock().unwrap();
-        *game_state = loaded_state;
-        Ok(())
-    }
-
     #[must_use]
     pub fn init(self) -> Arc<Self> {
         let controller = Arc::new(self);
@@ -72,40 +75,54 @@ impl GameController {
 
         controller
     }
+}
 
-    pub fn handle_command(&self, command: Command) {
+impl GameControllerTrait for GameController {
+    fn save_game_state(&self) -> Result<()> {
+        let game_state = self.game_state.lock().unwrap();
+        self.persistence.save_game_state(&game_state)
+    }
+
+    fn load_game_state(&self) -> Result<()> {
+        let loaded_state = self.persistence.load_game_state()?;
+        let mut game_state = self.game_state.lock().unwrap();
+        *game_state = loaded_state;
+        Ok(())
+    }
+
+    fn handle_command(&self, command: Command) {
         let mut state = self.game_state.lock().unwrap();
         if let Err(e) = command.execute(&mut state) {
             eprintln!("Error executing command: {:?}", e);
         }
     }
 
-    pub fn publish_command(&self, command: Command) {
+    fn publish_command(&self, command: Command) {
         self.command_bus.publish(command);
     }
 
     // Getter for game_state
-    pub fn game_state(&self) -> &Arc<Mutex<GameState>> {
+    fn game_state(&self) -> &Arc<Mutex<GameState>> {
         &self.game_state
     }
 
     // Getter for event_bus
-    pub fn event_bus(&self) -> &EventBus {
+    fn event_bus(&self) -> &EventBus {
         &self.event_bus
     }
 
     // Mutable getter for event_bus
-    pub fn event_bus_mut(&mut self) -> &mut EventBus {
+    fn event_bus_mut(&mut self) -> &mut EventBus {
         &mut self.event_bus
     }
 
     // Getter for command_bus
-    pub fn command_bus(&self) -> &CommandBus {
+    fn command_bus(&self) -> &CommandBus {
         &self.command_bus
     }
 
     // Mutable getter for command_bus
-    pub fn command_bus_mut(&mut self) -> &mut CommandBus {
+    fn command_bus_mut(&mut self) -> &mut CommandBus {
         &mut self.command_bus
     }
 }
