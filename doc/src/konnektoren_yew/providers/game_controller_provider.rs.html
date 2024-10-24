@@ -64,6 +64,8 @@
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::repository_hooks::{use_session, use_session_repository};
 <span class="kw">use </span><span class="kw">crate</span>::repository::GameStatePersistenceImpl;
 <span class="kw">use </span>konnektoren_core::commands::CommandBus;
@@ -122,6 +124,8 @@
         session,
     });
     <span class="kw">let </span>controller = GameController::new(game, persistence).init();
+    controller.load_game_state().unwrap();
+
     <span class="kw">let </span>context = GameControllerContext::new(controller);
 
     <span class="macro">html!</span> {
