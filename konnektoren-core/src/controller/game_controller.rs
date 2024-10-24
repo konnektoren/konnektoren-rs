@@ -8,7 +8,7 @@ use std::fmt::{Debug, Formatter};
 use std::sync::{Arc, Mutex};
 
 #[cfg(test)]
-use mockall::{automock, mock, predicate::*};
+use mockall::{automock, predicate::*};
 
 #[cfg_attr(test, automock)]
 pub trait GameControllerTrait {
