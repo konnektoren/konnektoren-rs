@@ -77,6 +77,7 @@ zip = { version = "2.2.0", optional = true, default-features = false, features =
 rand = "0.8.5"
 
 [dev-dependencies]
-wasm-bindgen-test = { version = "0.3.43" }
+mockall = "0.13.0"
 env_logger = "0.10"
+wasm-bindgen-test = { version = "0.3.43" }
 wasm-logger = { version = "0.2.0" }

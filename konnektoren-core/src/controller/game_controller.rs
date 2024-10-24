@@ -7,6 +7,10 @@ use anyhow::Result;
 use std::fmt::{Debug, Formatter};
 use std::sync::{Arc, Mutex};
 
+#[cfg(test)]
+use mockall::{automock, mock, predicate::*};
+
+#[cfg_attr(test, automock)]
 pub trait GameControllerTrait {
     fn save_game_state(&self) -> Result<()>;
     fn load_game_state(&self) -> Result<()>;

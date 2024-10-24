@@ -1,6 +1,7 @@
-use super::game_controller::GameController;
+use super::GameControllerTrait;
 use std::sync::Arc;
 
+#[derive(Debug, PartialEq)]
 pub enum ControllerPluginError {
     PluginError(String),
 }
@@ -8,6 +9,12 @@ pub enum ControllerPluginError {
 pub trait ControllerPlugin {
     fn name(&self) -> &str;
     fn init(&self) -> Result<(), ControllerPluginError>;
-    fn load(&self, game_controller: Arc<GameController>) -> Result<(), ControllerPluginError>;
-    fn unload(&self, game_controller: Arc<GameController>) -> Result<(), ControllerPluginError>;
+    fn load(
+        &self,
+        game_controller: Arc<dyn GameControllerTrait>,
+    ) -> Result<(), ControllerPluginError>;
+    fn unload(
+        &self,
+        game_controller: Arc<dyn GameControllerTrait>,
+    ) -> Result<(), ControllerPluginError>;
 }
