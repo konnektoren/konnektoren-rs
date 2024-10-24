@@ -1,8 +1,9 @@
+use super::repository_hooks::{use_session, use_session_repository};
+use crate::repository::GameStatePersistenceImpl;
 use konnektoren_core::commands::CommandBus;
 use konnektoren_core::controller::GameController;
 use konnektoren_core::events::EventBus;
 use konnektoren_core::game::{Game, GameState};
-use konnektoren_core::persistence::MemoryPersistence;
 use std::sync::{Arc, Mutex};
 use yew::prelude::*;
 
@@ -48,8 +49,15 @@ pub struct GameControllerProviderProps {
 #[function_component(GameControllerProvider)]
 pub fn game_controller_provider(props: &GameControllerProviderProps) -> Html {
     let game = Game::default();
-    let persistence = Arc::new(MemoryPersistence::default());
+    let session_repository = use_session_repository();
+    let session = use_session();
+    let persistence = Arc::new(GameStatePersistenceImpl {
+        session_repository,
+        session,
+    });
     let controller = GameController::new(game, persistence).init();
+    controller.load_game_state().unwrap();
+
     let context = GameControllerContext::new(controller);
 
     html! {

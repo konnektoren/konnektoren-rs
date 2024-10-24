@@ -1,4 +1,5 @@
 mod certificate_repository;
+mod game_state_persistence_impl;
 mod inbox_repository;
 mod profile_repository;
 mod session_repository;
@@ -16,6 +17,7 @@ mod storage_error;
 pub use certificate_repository::{
     CertificateRepository, CertificateRepositoryTrait, CERTIFICATE_STORAGE_KEY,
 };
+pub use game_state_persistence_impl::GameStatePersistenceImpl;
 pub use inbox_repository::{InboxRepository, InboxRepositoryTrait, INBOX_STORAGE_KEY};
 pub use profile_repository::{ProfileRepository, ProfileRepositoryTrait, PROFILE_STORAGE_KEY};
 pub use session_repository::{SessionRepository, SessionRepositoryTrait, SESSION_STORAGE_KEY};
