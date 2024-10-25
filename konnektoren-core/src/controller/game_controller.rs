@@ -11,7 +11,7 @@ use std::sync::{Arc, Mutex};
 use mockall::{automock, predicate::*};
 
 #[cfg_attr(test, automock)]
-pub trait GameControllerTrait {
+pub trait GameControllerTrait: Send + Sync {
     fn save_game_state(&self) -> Result<()>;
     fn load_game_state(&self) -> Result<()>;
 
