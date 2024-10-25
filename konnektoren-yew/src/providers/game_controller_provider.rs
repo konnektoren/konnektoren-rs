@@ -1,7 +1,7 @@
 use super::repository_hooks::{use_session, use_session_repository};
 use crate::repository::GameStatePersistenceImpl;
 use konnektoren_core::commands::CommandBus;
-use konnektoren_core::controller::GameController;
+use konnektoren_core::controller::{GameController, GameControllerTrait};
 use konnektoren_core::events::EventBus;
 use konnektoren_core::game::{Game, GameState};
 use std::sync::{Arc, Mutex};
