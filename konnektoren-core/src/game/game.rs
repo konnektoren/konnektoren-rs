@@ -12,6 +12,7 @@ pub struct Game {
     pub game_paths: Vec<GamePath>,
     pub challenge_factory: ChallengeFactory,
     pub challenge_history: ChallengeHistory,
+    pub xp: Xp,
 }
 
 impl Default for Game {
@@ -21,6 +22,7 @@ impl Default for Game {
             game_paths: vec![game_path],
             challenge_factory: ChallengeFactory::default(),
             challenge_history: Default::default(),
+            xp: Default::default(),
         }
     }
 }
