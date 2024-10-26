@@ -340,7 +340,7 @@
             (ChallengeType::Custom(<span class="kw">_</span>), ChallengeResult::Custom(result)) =&gt; {
                 (<span class="number">100.0 </span>* result.performance) <span class="kw">as </span>u32
             }
-            <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Invalid challenge type"</span>),
+            <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Invalid challenge type {:?}"</span>, <span class="self">self</span>),
         }
     }
 }
