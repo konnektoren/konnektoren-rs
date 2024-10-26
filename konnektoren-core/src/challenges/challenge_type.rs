@@ -123,7 +123,7 @@ impl Performance for ChallengeType {
             (ChallengeType::Custom(_), ChallengeResult::Custom(result)) => {
                 (100.0 * result.performance) as u32
             }
-            _ => panic!("Invalid challenge type"),
+            _ => panic!("Invalid challenge type {:?}", self),
         }
     }
 }
