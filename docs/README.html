@@ -1329,24 +1329,170 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect4">
 <h5 id="_gamecontroller">GameController</h5>
 <div class="paragraph">
-<p>The GameController is a central component that manages the game state, handles commands, and coordinates events within the system.</p>
+<p>The central component managing game state and coordinating game operations:</p>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="images/game-controller-structure.png" alt="game controller structure" width="547" height="230">
+<div class="ulist">
+<ul>
+<li>
+<p>Maintains thread-safe game state using <code>Arc&lt;Mutex&lt;GameState&gt;&gt;</code></p>
+</li>
+<li>
+<p>Houses EventBus and CommandBus for communication</p>
+</li>
+<li>
+<p>Manages persistence of game state</p>
+</li>
+<li>
+<p>Coordinates plugin initialization and lifecycle</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Key Responsibilities</dt>
+</dl>
+</div>
+</li>
+<li>
+<p>Game state management</p>
+</li>
+<li>
+<p>Command handling and dispatch</p>
+</li>
+<li>
+<p>Event coordination</p>
+</li>
+<li>
+<p>Plugin management</p>
+</li>
+<li>
+<p>State persistence</p>
+</li>
+</ul>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_pluginmanager">PluginManager</h5>
 <div class="paragraph">
-<p>Key responsibilities:
-- Manages the game state
-- Handles and publishes commands
-- Coordinates events through the EventBus
-- Manages game state persistence</p>
+<p>Handles the registration and lifecycle of plugins:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Key Responsibilities</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Plugin registration and storage</p>
+</li>
+<li>
+<p>Plugin initialization sequence</p>
+</li>
+<li>
+<p>Plugin lifecycle management</p>
+</li>
+<li>
+<p>Plugin coordination</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_konnektorenjs">6.4.3. KonnektorenJs</h4>
+<h4 id="_built_in_plugins">6.4.3. Built-in Plugins</h4>
+<div class="sect4">
+<h5 id="_gamexpplugin">GameXpPlugin</h5>
+<div class="paragraph">
+<p>Manages experience points in the game:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Listens for challenge completion events</p>
+</li>
+<li>
+<p>Updates player XP based on performance</p>
+</li>
+<li>
+<p>Persists XP changes to game state</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_debugplugin">DebugPlugin</h5>
+<div class="paragraph">
+<p>Provides debugging capabilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Logs game and challenge commands</p>
+</li>
+<li>
+<p>Helps with development and troubleshooting</p>
+</li>
+<li>
+<p>Configurable logging levels</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_challengefinishplugin">ChallengeFinishPlugin</h5>
+<div class="paragraph">
+<p>Handles challenge completion:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Processes challenge completion events</p>
+</li>
+<li>
+<p>Updates game state accordingly</p>
+</li>
+<li>
+<p>Triggers relevant achievements</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_plugin_lifecycle">6.4.4. Plugin Lifecycle</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Registration</strong>: Plugins are registered with the GameController</p>
+</li>
+<li>
+<p><strong>Initialization</strong>: The PluginManager initializes all registered plugins</p>
+</li>
+<li>
+<p><strong>Loading</strong>: Plugins are loaded with a reference to the GameController</p>
+</li>
+<li>
+<p><strong>Operation</strong>: Plugins interact with the game through events and commands</p>
+</li>
+<li>
+<p><strong>Unloading</strong>: Plugins are unloaded when the game session ends</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_integration_with_event_and_command_system">6.4.5. Integration with Event and Command System</h4>
+<div class="paragraph">
+<p>The plugin system integrates closely with the Event and Command system:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/plugin-integration.png" alt="plugin integration" width="591" height="323">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_konnektorenjs">6.4.6. KonnektorenJs</h4>
 <div class="paragraph">
 <p>The <code>KonnektorenJs</code> struct provides a bridge between the Rust core functionality and JavaScript, enabling seamless integration of Konnektoren features in web applications.</p>
 </div>
@@ -1413,7 +1559,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect3">
-<h4 id="_konnektoren_yew">6.4.4. konnektoren-yew</h4>
+<h4 id="_konnektoren_yew">6.4.7. konnektoren-yew</h4>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Purpose/Responsibility</dt>
@@ -2809,7 +2955,7 @@ allowing for more concise and readable code when working with repository data.</
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2024-10-26 09:06:42 UTC
+Last updated 2024-10-26 16:04:06 UTC
 </div>
 </div>
 </body>
