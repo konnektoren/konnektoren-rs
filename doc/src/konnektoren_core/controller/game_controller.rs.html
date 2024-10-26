@@ -224,8 +224,11 @@
 <a href="#224" id="224">224</a>
 <a href="#225" id="225">225</a>
 <a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::ControllerPlugin;
 <span class="kw">use </span><span class="kw">crate</span>::commands::{Command, CommandBus, CommandTrait, CommandType};
+<span class="kw">use </span><span class="kw">crate</span>::controller::PluginManager;
 <span class="kw">use </span><span class="kw">crate</span>::events::EventBus;
 <span class="kw">use </span><span class="kw">crate</span>::game::Game;
 <span class="kw">use </span><span class="kw">crate</span>::game::GameState;
@@ -258,7 +261,7 @@
     event_bus: EventBus,
     command_bus: CommandBus,
     persistence: Arc&lt;<span class="kw">dyn </span>GameStatePersistence&gt;,
-    plugins: Vec&lt;Arc&lt;<span class="kw">dyn </span>ControllerPlugin&gt;&gt;,
+    plugin_manager: PluginManager,
 }
 
 <span class="kw">impl </span>PartialEq <span class="kw">for </span>GameController {
@@ -284,13 +287,23 @@
             event_bus,
             command_bus,
             persistence,
-            plugins: <span class="macro">vec!</span>[],
+            plugin_manager: PluginManager::new(),
         }
     }
 
+    <span class="kw">pub fn </span>register_plugin(<span class="kw-2">&amp;mut </span><span class="self">self</span>, plugin: Arc&lt;<span class="kw">dyn </span>ControllerPlugin&gt;) {
+        <span class="self">self</span>.plugin_manager.add_plugin(plugin);
+    }
+
     <span class="attr">#[must_use]
-    </span><span class="kw">pub fn </span>init(<span class="self">self</span>) -&gt; Arc&lt;<span class="self">Self</span>&gt; {
-        <span class="kw">let </span>controller = Arc::new(<span class="self">self</span>);
+    </span><span class="kw">pub fn </span>init(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; Arc&lt;<span class="self">Self</span>&gt; {
+        <span class="comment">// Initialize plugins before creating Arc
+        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.plugin_manager.init_plugins() {
+            <span class="macro">log::error!</span>(<span class="string">"Error initializing plugins: {:?}"</span>, e);
+        }
+
+        <span class="comment">// Create Arc after initialization
+        </span><span class="kw">let </span>controller = Arc::new(<span class="self">self</span>);
 
         <span class="kw">let </span>controller_clone = Arc::clone(<span class="kw-2">&amp;</span>controller);
         controller
@@ -306,24 +319,15 @@
                 controller_clone.handle_command(command);
             });
 
-        <span class="kw">for </span>plugin <span class="kw">in </span><span class="kw-2">&amp;</span>controller.plugins {
-            <span class="kw">match </span>plugin.init() {
-                <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
-                <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">log::error!</span>(<span class="string">"Error initializing plugin: {:?}"</span>, e),
-            }
-        }
+        <span class="comment">// Cast Arc&lt;GameController&gt; to Arc&lt;dyn GameControllerTrait&gt;
+        </span><span class="kw">let </span>controller_trait: Arc&lt;<span class="kw">dyn </span>GameControllerTrait&gt; = controller.clone();
 
-        <span class="kw">let </span>controller_clone = Arc::clone(<span class="kw-2">&amp;</span>controller);
-
-        <span class="kw">for </span>plugin <span class="kw">in </span><span class="kw-2">&amp;</span>controller.plugins {
-            plugin.load(controller_clone.clone()).unwrap();
+        <span class="comment">// Load plugins with the trait object - modify PluginManager to accept immutable reference
+        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = controller.plugin_manager.load_plugins(<span class="kw-2">&amp;</span>controller_trait) {
+            <span class="macro">log::error!</span>(<span class="string">"Error loading plugins: {:?}"</span>, e);
         }
 
         controller
-    }
-
-    <span class="kw">pub fn </span>register_plugin(<span class="kw-2">&amp;mut </span><span class="self">self</span>, plugin: Arc&lt;<span class="kw">dyn </span>ControllerPlugin&gt;) {
-        <span class="self">self</span>.plugins.push(plugin);
     }
 }
 
