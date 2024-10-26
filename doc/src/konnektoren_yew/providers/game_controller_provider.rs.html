@@ -79,6 +79,7 @@
 <a href="#79" id="79">79</a>
 <a href="#80" id="80">80</a>
 <a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::repository_hooks::{use_session, use_session_repository};
 <span class="kw">use </span><span class="kw">crate</span>::repository::GameStatePersistenceImpl;
 <span class="kw">use </span>konnektoren_core::commands::CommandBus;
@@ -152,6 +153,7 @@
         }
     };
 
+    controller.load_game_state().unwrap();
     <span class="kw">let </span>context = GameControllerContext::new(controller.clone());
 
     <span class="macro">html!</span> {
