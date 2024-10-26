@@ -286,33 +286,89 @@ Key responsibilities:
 - Provides a centralized way to execute game actions
 
 ===== GameController
+The central component managing game state and coordinating game operations:
 
-The GameController is a central component that manages the game state, handles commands, and coordinates events within the system.
+* Maintains thread-safe game state using `Arc<Mutex<GameState>>`
+* Houses EventBus and CommandBus for communication
+* Manages persistence of game state
+* Coordinates plugin initialization and lifecycle
 
-[plantuml, game-controller-structure, png]
+Key Responsibilities::
+* Game state management
+* Command handling and dispatch
+* Event coordination
+* Plugin management
+* State persistence
+
+
+===== PluginManager
+Handles the registration and lifecycle of plugins:
+
+Key Responsibilities::
+* Plugin registration and storage
+* Plugin initialization sequence
+* Plugin lifecycle management
+* Plugin coordination
+
+==== Built-in Plugins
+
+===== GameXpPlugin
+Manages experience points in the game:
+
+* Listens for challenge completion events
+* Updates player XP based on performance
+* Persists XP changes to game state
+
+===== DebugPlugin
+Provides debugging capabilities:
+
+* Logs game and challenge commands
+* Helps with development and troubleshooting
+* Configurable logging levels
+
+===== ChallengeFinishPlugin
+Handles challenge completion:
+
+* Processes challenge completion events
+* Updates game state accordingly
+* Triggers relevant achievements
+
+==== Plugin Lifecycle
+
+1. *Registration*: Plugins are registered with the GameController
+2. *Initialization*: The PluginManager initializes all registered plugins
+3. *Loading*: Plugins are loaded with a reference to the GameController
+4. *Operation*: Plugins interact with the game through events and commands
+5. *Unloading*: Plugins are unloaded when the game session ends
+
+==== Integration with Event and Command System
+
+The plugin system integrates closely with the Event and Command system:
+
+[plantuml, plugin-integration, png]
 ----
 @startuml
-class GameController {
-  -game_state: Arc<Mutex<GameState>>
-  -event_bus: EventBus
-  -command_bus: CommandBus
-  -persistence: Arc<dyn GameStatePersistence>
+participant GameController
+participant PluginManager
+participant Plugin
+participant EventBus
+participant CommandBus
 
-  +new(game: Game, persistence: Arc<dyn GameStatePersistence>): Self
-  +init(): Arc<Self>
-  +handle_command(command: Command)
-  +publish_command(command: Command)
-  +save_game_state(): Result<()>
-  +load_game_state(): Result<()>
-}
+GameController -> PluginManager: init_plugins()
+activate PluginManager
+  PluginManager -> Plugin: init()
+  Plugin --> PluginManager: Ok(())
+deactivate PluginManager
+
+GameController -> PluginManager: load_plugins()
+activate PluginManager
+  PluginManager -> Plugin: load(controller)
+  Plugin -> EventBus: subscribe()
+  Plugin -> CommandBus: subscribe()
+  Plugin --> PluginManager: Ok(())
+deactivate PluginManager
 @enduml
 ----
-
-Key responsibilities:
-- Manages the game state
-- Handles and publishes commands
-- Coordinates events through the EventBus
-- Manages game state persistence
 
 ==== KonnektorenJs
 
