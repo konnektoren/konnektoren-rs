@@ -3,7 +3,7 @@
 use super::command::CommandTrait;
 use super::command_type::CommandType;
 use crate::challenges::{
-    ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
+    Challenge, ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
 };
 use crate::game::GamePath;
 use crate::game::GameState;
@@ -12,6 +12,7 @@ use anyhow::{anyhow, Result};
 /// Represents challenge-level commands that can be executed on the game state.
 #[derive(Debug, Clone, PartialEq)]
 pub enum ChallengeCommand {
+    Start(Challenge),
     /// Command to move to the next task within a challenge.
     NextTask,
     /// Command to move to the previous task within a challenge.
@@ -34,6 +35,7 @@ impl CommandTrait for ChallengeCommand {
     /// A `Result` indicating success or containing an error if the command execution failed.
     fn execute(&self, state: &mut GameState) -> Result<()> {
         match self {
+            ChallengeCommand::Start(challenge_type) => Self::start_challenge(state, challenge_type),
             ChallengeCommand::NextTask => Self::next_task(state),
             ChallengeCommand::PreviousTask => Self::previous_task(state),
             ChallengeCommand::SolveOption(option_index) => Self::solve_option(state, *option_index),
@@ -48,6 +50,13 @@ impl CommandTrait for ChallengeCommand {
 }
 
 impl ChallengeCommand {
+    /// Starts a new challenge with the given challenge configuration.
+    fn start_challenge(state: &mut GameState, challenge: &Challenge) -> Result<()> {
+        state.challenge = challenge.clone();
+        state.current_task_index = 0;
+        Ok(())
+    }
+
     /// Moves the game state to the next task within the current challenge.
     ///
     /// # Arguments
