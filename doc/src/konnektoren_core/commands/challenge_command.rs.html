@@ -202,12 +202,21 @@
 <a href="#202" id="202">202</a>
 <a href="#203" id="203">203</a>
 <a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of challenge-level commands.
 
 </span><span class="kw">use </span><span class="kw">super</span>::command::CommandTrait;
 <span class="kw">use </span><span class="kw">super</span>::command_type::CommandType;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::{
-    ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
+    Challenge, ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
 };
 <span class="kw">use </span><span class="kw">crate</span>::game::GamePath;
 <span class="kw">use </span><span class="kw">crate</span>::game::GameState;
@@ -216,6 +225,7 @@
 <span class="doccomment">/// Represents challenge-level commands that can be executed on the game state.
 </span><span class="attr">#[derive(Debug, Clone, PartialEq)]
 </span><span class="kw">pub enum </span>ChallengeCommand {
+    Start(Challenge),
     <span class="doccomment">/// Command to move to the next task within a challenge.
     </span>NextTask,
     <span class="doccomment">/// Command to move to the previous task within a challenge.
@@ -238,6 +248,7 @@
     /// A `Result` indicating success or containing an error if the command execution failed.
     </span><span class="kw">fn </span>execute(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>GameState) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">match </span><span class="self">self </span>{
+            ChallengeCommand::Start(challenge_type) =&gt; <span class="self">Self</span>::start_challenge(state, challenge_type),
             ChallengeCommand::NextTask =&gt; <span class="self">Self</span>::next_task(state),
             ChallengeCommand::PreviousTask =&gt; <span class="self">Self</span>::previous_task(state),
             ChallengeCommand::SolveOption(option_index) =&gt; <span class="self">Self</span>::solve_option(state, <span class="kw-2">*</span>option_index),
@@ -252,6 +263,13 @@
 }
 
 <span class="kw">impl </span>ChallengeCommand {
+    <span class="doccomment">/// Starts a new challenge with the given challenge configuration.
+    </span><span class="kw">fn </span>start_challenge(state: <span class="kw-2">&amp;mut </span>GameState, challenge: <span class="kw-2">&amp;</span>Challenge) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        state.challenge = challenge.clone();
+        state.current_task_index = <span class="number">0</span>;
+        <span class="prelude-val">Ok</span>(())
+    }
+
     <span class="doccomment">/// Moves the game state to the next task within the current challenge.
     ///
     /// # Arguments
