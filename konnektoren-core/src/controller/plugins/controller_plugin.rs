@@ -6,6 +6,10 @@ pub enum ControllerPluginError {
     PluginError(String),
 }
 
+#[cfg(test)]
+use mockall::{automock, predicate::*};
+
+#[cfg_attr(test, automock)]
 pub trait ControllerPlugin: Send + Sync {
     fn name(&self) -> &str;
     fn init(&self) -> Result<(), ControllerPluginError>;
