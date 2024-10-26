@@ -14,7 +14,7 @@ impl PluginManager {
         }
     }
 
-    pub fn add_plugin(&mut self, plugin: Arc<impl ControllerPlugin + 'static>) {
+    pub fn add_plugin(&mut self, plugin: Arc<dyn ControllerPlugin>) {
         self.plugins.insert(plugin.name().to_string(), plugin);
     }
 
@@ -26,17 +26,17 @@ impl PluginManager {
     }
 
     pub fn load_plugins(
-        &mut self,
+        &self,
         game_controller: &Arc<dyn GameControllerTrait>,
     ) -> Result<(), ControllerPluginError> {
-        for (_, plugin) in self.plugins.iter() {
+        for plugin in self.plugins.values() {
             plugin.load(game_controller.clone())?;
         }
         Ok(())
     }
 
     pub fn unload_plugins(
-        &mut self,
+        &self,
         game_controller: &Arc<dyn GameControllerTrait>,
     ) -> Result<(), ControllerPluginError> {
         for (_, plugin) in self.plugins.iter() {
