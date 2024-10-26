@@ -1,4 +1,4 @@
-use super::GameControllerTrait;
+use crate::controller::GameControllerTrait;
 use std::sync::Arc;
 
 #[derive(Debug, PartialEq)]
