@@ -71,6 +71,7 @@ pub fn game_controller_provider(props: &GameControllerProviderProps) -> Html {
         }
     };
 
+    controller.load_game_state().unwrap();
     let context = GameControllerContext::new(controller.clone());
 
     html! {
