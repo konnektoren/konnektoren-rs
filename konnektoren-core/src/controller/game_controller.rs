@@ -1,3 +1,4 @@
+use super::ControllerPlugin;
 use crate::commands::{Command, CommandBus, CommandTrait, CommandType};
 use crate::events::EventBus;
 use crate::game::Game;
@@ -31,6 +32,7 @@ pub struct GameController {
     event_bus: EventBus,
     command_bus: CommandBus,
     persistence: Arc<dyn GameStatePersistence>,
+    plugins: Vec<Arc<dyn ControllerPlugin>>,
 }
 
 impl PartialEq for GameController {
@@ -56,6 +58,7 @@ impl GameController {
             event_bus,
             command_bus,
             persistence,
+            plugins: vec![],
         }
     }
 
@@ -77,7 +80,24 @@ impl GameController {
                 controller_clone.handle_command(command);
             });
 
+        for plugin in &controller.plugins {
+            match plugin.init() {
+                Ok(_) => {}
+                Err(e) => log::error!("Error initializing plugin: {:?}", e),
+            }
+        }
+
+        let controller_clone = Arc::clone(&controller);
+
+        for plugin in &controller.plugins {
+            plugin.load(controller_clone.clone()).unwrap();
+        }
+
         controller
+    }
+
+    pub fn register_plugin(&mut self, plugin: Arc<dyn ControllerPlugin>) {
+        self.plugins.push(plugin);
     }
 }
 

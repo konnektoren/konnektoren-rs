@@ -6,7 +6,7 @@ pub enum ControllerPluginError {
     PluginError(String),
 }
 
-pub trait ControllerPlugin {
+pub trait ControllerPlugin: Send + Sync {
     fn name(&self) -> &str;
     fn init(&self) -> Result<(), ControllerPluginError>;
     fn load(
