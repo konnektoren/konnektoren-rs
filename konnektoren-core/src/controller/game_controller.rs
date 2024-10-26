@@ -1,5 +1,6 @@
 use super::ControllerPlugin;
 use crate::commands::{Command, CommandBus, CommandTrait, CommandType};
+use crate::controller::PluginManager;
 use crate::events::EventBus;
 use crate::game::Game;
 use crate::game::GameState;
@@ -32,7 +33,7 @@ pub struct GameController {
     event_bus: EventBus,
     command_bus: CommandBus,
     persistence: Arc<dyn GameStatePersistence>,
-    plugins: Vec<Arc<dyn ControllerPlugin>>,
+    plugin_manager: PluginManager,
 }
 
 impl PartialEq for GameController {
@@ -58,12 +59,22 @@ impl GameController {
             event_bus,
             command_bus,
             persistence,
-            plugins: vec![],
+            plugin_manager: PluginManager::new(),
         }
     }
 
+    pub fn register_plugin(&mut self, plugin: Arc<dyn ControllerPlugin>) {
+        self.plugin_manager.add_plugin(plugin);
+    }
+
     #[must_use]
-    pub fn init(self) -> Arc<Self> {
+    pub fn init(mut self) -> Arc<Self> {
+        // Initialize plugins before creating Arc
+        if let Err(e) = self.plugin_manager.init_plugins() {
+            log::error!("Error initializing plugins: {:?}", e);
+        }
+
+        // Create Arc after initialization
         let controller = Arc::new(self);
 
         let controller_clone = Arc::clone(&controller);
@@ -80,24 +91,15 @@ impl GameController {
                 controller_clone.handle_command(command);
             });
 
-        for plugin in &controller.plugins {
-            match plugin.init() {
-                Ok(_) => {}
-                Err(e) => log::error!("Error initializing plugin: {:?}", e),
-            }
-        }
+        // Cast Arc<GameController> to Arc<dyn GameControllerTrait>
+        let controller_trait: Arc<dyn GameControllerTrait> = controller.clone();
 
-        let controller_clone = Arc::clone(&controller);
-
-        for plugin in &controller.plugins {
-            plugin.load(controller_clone.clone()).unwrap();
+        // Load plugins with the trait object - modify PluginManager to accept immutable reference
+        if let Err(e) = controller.plugin_manager.load_plugins(&controller_trait) {
+            log::error!("Error loading plugins: {:?}", e);
         }
 
         controller
-    }
-
-    pub fn register_plugin(&mut self, plugin: Arc<dyn ControllerPlugin>) {
-        self.plugins.push(plugin);
     }
 }
 
