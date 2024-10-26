@@ -1,7 +1,9 @@
 use super::repository_hooks::{use_session, use_session_repository};
 use crate::repository::GameStatePersistenceImpl;
 use konnektoren_core::commands::CommandBus;
-use konnektoren_core::controller::{GameController, GameControllerTrait};
+use konnektoren_core::controller::{
+    ChallengeFinishPlugin, ControllerPlugin, GameController, GameControllerTrait, GameXpPlugin,
+};
 use konnektoren_core::events::EventBus;
 use konnektoren_core::game::{Game, GameState};
 use std::sync::{Arc, Mutex};
@@ -44,21 +46,32 @@ pub fn use_command_bus() -> Arc<CommandBus> {
 #[derive(Properties, PartialEq)]
 pub struct GameControllerProviderProps {
     pub children: Children,
+    #[prop_or_default]
+    pub game_controller: Option<Arc<GameController>>,
 }
 
 #[function_component(GameControllerProvider)]
 pub fn game_controller_provider(props: &GameControllerProviderProps) -> Html {
-    let game = Game::default();
     let session_repository = use_session_repository();
     let session = use_session();
-    let persistence = Arc::new(GameStatePersistenceImpl {
-        session_repository,
-        session,
-    });
-    let controller = GameController::new(game, persistence).init();
-    controller.load_game_state().unwrap();
 
-    let context = GameControllerContext::new(controller);
+    let controller: Arc<GameController> = match &props.game_controller {
+        Some(controller) => controller.clone(),
+        None => {
+            let game = Game::default();
+
+            let persistence = Arc::new(GameStatePersistenceImpl {
+                session_repository,
+                session,
+            });
+            let mut controller = GameController::new(game, persistence);
+            controller.register_plugin(Arc::new(ChallengeFinishPlugin));
+            controller.register_plugin(Arc::new(GameXpPlugin));
+            controller.init()
+        }
+    };
+
+    let context = GameControllerContext::new(controller.clone());
 
     html! {
         <ContextProvider<GameControllerContext> context={context}>
