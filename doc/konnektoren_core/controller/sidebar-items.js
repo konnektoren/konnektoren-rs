@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["GameController"]};
+window.SIDEBAR_ITEMS = {"enum":["ControllerPluginError"],"struct":["ChallengeFinishPlugin","DebugPlugin","GameController","GameXpPlugin"],"trait":["ControllerPlugin","GameControllerTrait"]};

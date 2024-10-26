@@ -77,6 +77,8 @@
 <a href="#77" id="77">77</a>
 <a href="#78" id="78">78</a>
 <a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{
     Challenge, ChallengeConfig, ChallengeFactory, ChallengeHistory, Performance,
 };
@@ -91,6 +93,7 @@
     <span class="kw">pub </span>game_paths: Vec&lt;GamePath&gt;,
     <span class="kw">pub </span>challenge_factory: ChallengeFactory,
     <span class="kw">pub </span>challenge_history: ChallengeHistory,
+    <span class="kw">pub </span>xp: Xp,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Game {
@@ -100,6 +103,7 @@
             game_paths: <span class="macro">vec!</span>[game_path],
             challenge_factory: ChallengeFactory::default(),
             challenge_history: Default::default(),
+            xp: Default::default(),
         }
     }
 }
