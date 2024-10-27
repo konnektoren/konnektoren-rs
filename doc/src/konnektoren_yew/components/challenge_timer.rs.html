@@ -108,30 +108,8 @@
 <a href="#108" id="108">108</a>
 <a href="#109" id="109">109</a>
 <a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
-<a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a>
-<a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
-<a href="#116" id="116">116</a>
-<a href="#117" id="117">117</a>
-<a href="#118" id="118">118</a>
-<a href="#119" id="119">119</a>
-<a href="#120" id="120">120</a>
-<a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a>
-<a href="#123" id="123">123</a>
-<a href="#124" id="124">124</a>
-<a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
-<a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>chrono::Duration;
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::TimerComponent;
+<span class="kw">use </span>chrono::Duration;
 <span class="kw">use </span>konnektoren_core::challenges::{Challenge, Timed};
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
@@ -149,17 +127,16 @@
     <span class="kw">let </span>running = props.running;
     <span class="kw">let </span>challenge = props.challenge.clone();
     <span class="kw">let </span>show_milliseconds = props.show_milliseconds;
-    <span class="kw">let </span>timer_text =
-        use_state(|| get_timer_text(props.running, <span class="kw-2">&amp;</span>props.challenge, show_milliseconds));
+    <span class="kw">let </span>duration = use_state(|| get_duration(props.running, <span class="kw-2">&amp;</span>props.challenge));
 
     {
-        <span class="kw">let </span>timer_text = timer_text.clone();
+        <span class="kw">let </span>duration = duration.clone();
         use_effect_with(
             (props.running, props.challenge.clone(), show_milliseconds),
             <span class="kw">move </span>|<span class="kw">_</span>| {
                 <span class="kw">let </span>running = running;
                 <span class="kw">let </span>challenge = challenge;
-                <span class="kw">let </span>timer_text = timer_text.clone();
+                <span class="kw">let </span>duration = duration.clone();
                 <span class="kw">let </span>show_milliseconds = show_milliseconds;
                 <span class="kw">let </span>timeout = <span class="kw">match </span>show_milliseconds {
                     <span class="bool-val">true </span>=&gt; <span class="number">142</span>,
@@ -168,7 +145,7 @@
 
                 <span class="kw">if </span>running {
                     <span class="kw">let </span>interval = gloo::timers::callback::Interval::new(timeout, <span class="kw">move </span>|| {
-                        timer_text.set(get_timer_text(running, <span class="kw-2">&amp;</span>challenge, show_milliseconds));
+                        duration.set(get_duration(running, <span class="kw-2">&amp;</span>challenge));
                     });
                     interval.forget();
                 }
@@ -180,45 +157,22 @@
 
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"challenge-timer"</span>&gt;
-            &lt;div class=<span class="string">"challenge-timer__icon"</span>&gt;
-                &lt;i class=<span class="string">"fa-solid fa-clock"</span>&gt;&lt;/i&gt;
-            &lt;/div&gt;
-            &lt;div class=<span class="string">"challenge-timer__content"</span>&gt;
-                &lt;h2 class=<span class="string">"challenge-timer__title"</span>&gt;{ <span class="string">"Challenge Timer" </span>}&lt;/h2&gt;
-                &lt;p class=<span class="string">"challenge-timer__text"</span>&gt;{ (<span class="kw-2">*</span>timer_text).clone() }&lt;/p&gt;
-            &lt;/div&gt;
+        &lt;TimerComponent
+            milliseconds={duration.map(|d| d.num_milliseconds() <span class="kw">as </span>u64).unwrap_or_default()}
+            show_milliseconds={show_milliseconds}
+        /&gt;
         &lt;/div&gt;
     }
 }
 
-<span class="kw">fn </span>get_timer_text(running: bool, challenge: <span class="kw-2">&amp;</span>Challenge, show_milliseconds: bool) -&gt; String {
-    <span class="kw">let </span>elapsed_time = <span class="kw">match </span>running {
+<span class="kw">fn </span>get_duration(running: bool, challenge: <span class="kw-2">&amp;</span>Challenge) -&gt; <span class="prelude-ty">Option</span>&lt;Duration&gt; {
+    <span class="kw">match </span>running {
         <span class="bool-val">true </span>=&gt; {
             <span class="kw">let </span>end = chrono::Utc::now();
             <span class="kw">let </span>start = challenge.start_time().unwrap_or(end);
-            <span class="kw">let </span>duration = end - start;
-            <span class="prelude-val">Some</span>(format_duration(duration, show_milliseconds))
+            <span class="prelude-val">Some</span>(end - start)
         }
-        <span class="bool-val">false </span>=&gt; challenge
-            .elapsed_time()
-            .map(|duration| format_duration(duration, show_milliseconds)),
-    };
-
-    <span class="kw">match </span>elapsed_time {
-        <span class="prelude-val">Some</span>(time_string) =&gt; time_string,
-        <span class="prelude-val">None </span>=&gt; <span class="string">"Timer not started"</span>.to_string(),
-    }
-}
-
-<span class="kw">fn </span>format_duration(duration: Duration, show_milliseconds: bool) -&gt; String {
-    <span class="kw">let </span>milliseconds = duration.num_milliseconds() % <span class="number">1000</span>;
-    <span class="kw">let </span>seconds = duration.num_seconds() % <span class="number">60</span>;
-    <span class="kw">let </span>minutes = duration.num_minutes() % <span class="number">60</span>;
-
-    <span class="kw">if </span>show_milliseconds {
-        <span class="macro">format!</span>(<span class="string">"{:02}:{:02}:{:03}"</span>, minutes, seconds, milliseconds)
-    } <span class="kw">else </span>{
-        <span class="macro">format!</span>(<span class="string">"{:02}:{:02}"</span>, minutes, seconds)
+        <span class="bool-val">false </span>=&gt; challenge.elapsed_time(),
     }
 }
 
