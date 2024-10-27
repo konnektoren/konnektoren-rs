@@ -126,6 +126,11 @@
 <a href="#126" id="126">126</a>
 <a href="#127" id="127">127</a>
 <a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>chrono::Duration;
 <span class="kw">use </span>konnektoren_core::challenges::{Challenge, Timed};
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
@@ -175,8 +180,13 @@
 
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"challenge-timer"</span>&gt;
-            &lt;h2 class=<span class="string">"challenge-timer__title"</span>&gt;{ <span class="string">"Challenge Timer" </span>}&lt;/h2&gt;
-            &lt;p class=<span class="string">"challenge-timer__text"</span>&gt;{ (<span class="kw-2">*</span>timer_text).clone() }&lt;/p&gt;
+            &lt;div class=<span class="string">"challenge-timer__icon"</span>&gt;
+                &lt;i class=<span class="string">"fa-solid fa-clock"</span>&gt;&lt;/i&gt;
+            &lt;/div&gt;
+            &lt;div class=<span class="string">"challenge-timer__content"</span>&gt;
+                &lt;h2 class=<span class="string">"challenge-timer__title"</span>&gt;{ <span class="string">"Challenge Timer" </span>}&lt;/h2&gt;
+                &lt;p class=<span class="string">"challenge-timer__text"</span>&gt;{ (<span class="kw-2">*</span>timer_text).clone() }&lt;/p&gt;
+            &lt;/div&gt;
         &lt;/div&gt;
     }
 }
