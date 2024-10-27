@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["PerformanceRecord"]};
+window.SIDEBAR_ITEMS = {"struct":["PerformanceRecord"],"type":["ChallengeId","ChallengePercentage","ChallengePerformance","ChallengeTimeMilliseconds"]};
