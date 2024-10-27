@@ -147,10 +147,14 @@
 <a href="#147" id="147">147</a>
 <a href="#148" id="148">148</a>
 <a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of game-level commands.
 
 </span><span class="kw">use </span><span class="kw">super</span>::command::CommandTrait;
 <span class="kw">use </span><span class="kw">super</span>::command_type::CommandType;
+<span class="kw">use </span><span class="kw">crate</span>::challenges::Timed;
 <span class="kw">use </span><span class="kw">crate</span>::game::GamePath;
 <span class="kw">use </span><span class="kw">crate</span>::game::GameState;
 <span class="kw">use </span>anyhow::{anyhow, <span class="prelude-ty">Result</span>};
@@ -214,6 +218,7 @@
             .game
             .create_challenge(<span class="kw-2">&amp;</span>challenge_config.id)
             .unwrap_or_default();
+        state.challenge.start();
         state.current_task_index = <span class="number">0</span>;
 
         <span class="prelude-val">Ok</span>(())
@@ -243,6 +248,7 @@
             .game
             .create_challenge(<span class="kw-2">&amp;</span>challenge_config.id)
             .unwrap_or_default();
+        state.challenge.start();
         state.current_task_index = <span class="number">0</span>;
         <span class="prelude-val">Ok</span>(())
     }
