@@ -1,3 +1,4 @@
+use crate::components::TimerComponent;
 use chrono::Duration;
 use konnektoren_core::challenges::{Challenge, Timed};
 use yew::prelude::*;
@@ -16,17 +17,16 @@ pub fn challenge_timer_component(props: &ChallengeTimerProps) -> Html {
     let running = props.running;
     let challenge = props.challenge.clone();
     let show_milliseconds = props.show_milliseconds;
-    let timer_text =
-        use_state(|| get_timer_text(props.running, &props.challenge, show_milliseconds));
+    let duration = use_state(|| get_duration(props.running, &props.challenge));
 
     {
-        let timer_text = timer_text.clone();
+        let duration = duration.clone();
         use_effect_with(
             (props.running, props.challenge.clone(), show_milliseconds),
             move |_| {
                 let running = running;
                 let challenge = challenge;
-                let timer_text = timer_text.clone();
+                let duration = duration.clone();
                 let show_milliseconds = show_milliseconds;
                 let timeout = match show_milliseconds {
                     true => 142,
@@ -35,7 +35,7 @@ pub fn challenge_timer_component(props: &ChallengeTimerProps) -> Html {
 
                 if running {
                     let interval = gloo::timers::callback::Interval::new(timeout, move || {
-                        timer_text.set(get_timer_text(running, &challenge, show_milliseconds));
+                        duration.set(get_duration(running, &challenge));
                     });
                     interval.forget();
                 }
@@ -47,45 +47,22 @@ pub fn challenge_timer_component(props: &ChallengeTimerProps) -> Html {
 
     html! {
         <div class="challenge-timer">
-            <div class="challenge-timer__icon">
-                <i class="fa-solid fa-clock"></i>
-            </div>
-            <div class="challenge-timer__content">
-                <h2 class="challenge-timer__title">{ "Challenge Timer" }</h2>
-                <p class="challenge-timer__text">{ (*timer_text).clone() }</p>
-            </div>
+        <TimerComponent
+            milliseconds={duration.map(|d| d.num_milliseconds() as u64).unwrap_or_default()}
+            show_milliseconds={show_milliseconds}
+        />
         </div>
     }
 }
 
-fn get_timer_text(running: bool, challenge: &Challenge, show_milliseconds: bool) -> String {
-    let elapsed_time = match running {
+fn get_duration(running: bool, challenge: &Challenge) -> Option<Duration> {
+    match running {
         true => {
             let end = chrono::Utc::now();
             let start = challenge.start_time().unwrap_or(end);
-            let duration = end - start;
-            Some(format_duration(duration, show_milliseconds))
+            Some(end - start)
         }
-        false => challenge
-            .elapsed_time()
-            .map(|duration| format_duration(duration, show_milliseconds)),
-    };
-
-    match elapsed_time {
-        Some(time_string) => time_string,
-        None => "Timer not started".to_string(),
-    }
-}
-
-fn format_duration(duration: Duration, show_milliseconds: bool) -> String {
-    let milliseconds = duration.num_milliseconds() % 1000;
-    let seconds = duration.num_seconds() % 60;
-    let minutes = duration.num_minutes() % 60;
-
-    if show_milliseconds {
-        format!("{:02}:{:02}:{:03}", minutes, seconds, milliseconds)
-    } else {
-        format!("{:02}:{:02}", minutes, seconds)
+        false => challenge.elapsed_time(),
     }
 }
 
