@@ -2,6 +2,7 @@
 
 use super::command::CommandTrait;
 use super::command_type::CommandType;
+use crate::challenges::Timed;
 use crate::game::GamePath;
 use crate::game::GameState;
 use anyhow::{anyhow, Result};
@@ -65,6 +66,7 @@ impl GameCommand {
             .game
             .create_challenge(&challenge_config.id)
             .unwrap_or_default();
+        state.challenge.start();
         state.current_task_index = 0;
 
         Ok(())
@@ -94,6 +96,7 @@ impl GameCommand {
             .game
             .create_challenge(&challenge_config.id)
             .unwrap_or_default();
+        state.challenge.start();
         state.current_task_index = 0;
         Ok(())
     }
