@@ -34,7 +34,10 @@
 <a href="#34" id="34">34</a>
 <a href="#35" id="35">35</a>
 <a href="#36" id="36">36</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>konnektoren_core::challenges::{Challenge, ChallengeResult, Performance};
+<a href="#37" id="37">37</a>
+<a href="#38" id="38">38</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::ChallengeTimerComponent;
+<span class="kw">use </span>konnektoren_core::challenges::{Challenge, ChallengeResult, Performance};
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Properties, PartialEq)]
@@ -58,6 +61,7 @@
         &lt;section class=<span class="string">"result-summary material-card"</span>&gt;
             &lt;h2 class=<span class="string">"material-text--h4"</span>&gt;{<span class="string">"Challenge Result"</span>}&lt;/h2&gt;
             &lt;div class=<span class="string">"result-content"</span>&gt;
+                &lt;ChallengeTimerComponent challenge={props.challenge.clone()} show_milliseconds={<span class="bool-val">true</span>} /&gt;
                 <span class="kw">if </span>performance &gt; <span class="number">50 </span>{
                     &lt;p class=<span class="string">"congratulation material-text--body1"</span>&gt;{<span class="string">"Congratulations! You've completed the challenge successfully."</span>}&lt;/p&gt;
                 }
