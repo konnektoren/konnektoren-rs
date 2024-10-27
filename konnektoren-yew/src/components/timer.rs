@@ -29,10 +29,22 @@ fn format_duration(duration: Duration, show_milliseconds: bool) -> String {
     let milliseconds = duration.num_milliseconds() % 1000;
     let seconds = duration.num_seconds() % 60;
     let minutes = duration.num_minutes() % 60;
+    let hours = duration.num_hours();
 
     if show_milliseconds {
-        format!("{:02}:{:02}:{:03}", minutes, seconds, milliseconds)
+        if hours > 0 {
+            format!(
+                "{:02}:{:02}:{:02}:{:03}",
+                hours, minutes, seconds, milliseconds
+            )
+        } else {
+            format!("{:02}:{:02}:{:03}", minutes, seconds, milliseconds)
+        }
     } else {
-        format!("{:02}:{:02}", minutes, seconds)
+        if hours > 0 {
+            format!("{:02}:{:02}:{:02}", hours, minutes, seconds)
+        } else {
+            format!("{:02}:{:02}", minutes, seconds)
+        }
     }
 }
