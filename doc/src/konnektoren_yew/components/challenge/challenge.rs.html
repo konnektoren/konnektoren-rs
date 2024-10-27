@@ -260,7 +260,7 @@
                 &lt;/button&gt;
                 &lt;div class=<span class="string">"challenge-info" </span>style={<span class="kw">if </span>show_info { <span class="string">"display: block;" </span>} <span class="kw">else </span>{ <span class="string">"display: none;" </span>}}&gt;
                 &lt;ChallengeInfoComponent challenge_config={props.challenge.challenge_config.clone()} /&gt;
-                &lt;ChallengeTimerComponent challenge={props.challenge.clone()} /&gt;
+                &lt;ChallengeTimerComponent challenge={props.challenge.clone()} running={<span class="bool-val">true</span>} /&gt;
                 &lt;/div&gt;
             &lt;/&gt;
         }
