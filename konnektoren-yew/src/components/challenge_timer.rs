@@ -47,8 +47,13 @@ pub fn challenge_timer_component(props: &ChallengeTimerProps) -> Html {
 
     html! {
         <div class="challenge-timer">
-            <h2 class="challenge-timer__title">{ "Challenge Timer" }</h2>
-            <p class="challenge-timer__text">{ (*timer_text).clone() }</p>
+            <div class="challenge-timer__icon">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="challenge-timer__content">
+                <h2 class="challenge-timer__title">{ "Challenge Timer" }</h2>
+                <p class="challenge-timer__text">{ (*timer_text).clone() }</p>
+            </div>
         </div>
     }
 }
