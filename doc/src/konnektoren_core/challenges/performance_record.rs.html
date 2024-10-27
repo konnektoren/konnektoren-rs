@@ -195,8 +195,58 @@
 <a href="#195" id="195">195</a>
 <a href="#196" id="196">196</a>
 <a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeHistory, Performance, Timed};
-<span class="kw">use </span>chrono::{DateTime, Utc};
+<span class="kw">use </span>chrono::{DateTime, Duration, Utc};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>std::collections::HashMap;
 
@@ -288,6 +338,25 @@
             performance_percentage,
             date: Utc::now(),
         }
+    }
+}
+
+<span class="kw">impl </span>Timed <span class="kw">for </span>PerformanceRecord {
+    <span class="kw">fn </span>start(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {}
+    <span class="kw">fn </span>update_end_time(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {}
+    <span class="kw">fn </span>elapsed_time(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Duration&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>elapsed_time = Duration::zero();
+        <span class="kw">for </span>(<span class="kw">_</span>, <span class="kw">_</span>, time) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.challenges_performance {
+            elapsed_time = elapsed_time + Duration::milliseconds(<span class="kw-2">*</span>time <span class="kw">as </span>i64);
+        }
+        <span class="prelude-val">Some</span>(elapsed_time)
+    }
+    <span class="kw">fn </span>start_time(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DateTime&lt;Utc&gt;&gt; {
+        <span class="prelude-val">Some</span>(<span class="self">self</span>.date)
+    }
+    <span class="kw">fn </span>end_time(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DateTime&lt;Utc&gt;&gt; {
+        <span class="kw">let </span>end_time = <span class="self">self</span>.date + <span class="self">self</span>.elapsed_time().unwrap_or_default();
+        <span class="prelude-val">Some</span>(end_time)
     }
 }
 
@@ -390,6 +459,37 @@
         <span class="macro">assert_eq!</span>(performance_record.total_challenges, <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(performance_record.performance_percentage, <span class="number">100</span>);
         <span class="macro">assert_eq!</span>(performance_record.challenges_performance[<span class="number">0</span>].<span class="number">2</span>, <span class="number">10 </span>* <span class="number">1000</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>elapsed_time() {
+        <span class="kw">let </span>timestamp_0 = Utc.with_ymd_and_hms(<span class="number">1970</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>).unwrap();
+        <span class="kw">let </span>timestamp_10 = Utc.with_ymd_and_hms(<span class="number">1970</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">10</span>).unwrap();
+        <span class="kw">let </span>timestamp_20 = Utc.with_ymd_and_hms(<span class="number">1970</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">20</span>).unwrap();
+
+        <span class="kw">let </span><span class="kw-2">mut </span>challenge1 = Challenge::new(<span class="kw-2">&amp;</span>ChallengeType::default(), <span class="kw-2">&amp;</span>ChallengeConfig::default());
+        <span class="kw">let </span><span class="kw-2">mut </span>challenge2 = Challenge::new(<span class="kw-2">&amp;</span>ChallengeType::default(), <span class="kw-2">&amp;</span>ChallengeConfig::default());
+        challenge1.start_time = <span class="prelude-val">Some</span>(timestamp_0);
+        challenge1.end_time = <span class="prelude-val">Some</span>(timestamp_10);
+        challenge2.start_time = <span class="prelude-val">Some</span>(timestamp_0);
+        challenge2.end_time = <span class="prelude-val">Some</span>(timestamp_20);
+
+        <span class="kw">let </span><span class="kw-2">mut </span>challenge_history = ChallengeHistory::new();
+        challenge_history.add_challenge(challenge1);
+        challenge_history.add_challenge(challenge2);
+        <span class="kw">let </span>performance_record = PerformanceRecord::new_from_history(
+            <span class="string">"game_path_id"</span>.to_string(),
+            <span class="string">"profile_name"</span>.to_string(),
+            <span class="number">1</span>,
+            challenge_history,
+        );
+        <span class="macro">assert_eq!</span>(
+            performance_record
+                .elapsed_time()
+                .unwrap()
+                .num_milliseconds(),
+            <span class="number">10 </span>* <span class="number">1000
+        </span>);
     }
 }
 </code></pre></div></section></main></body></html>
