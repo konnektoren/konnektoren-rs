@@ -1,3 +1,4 @@
+use crate::components::ChallengeTimerComponent;
 use konnektoren_core::challenges::{Challenge, ChallengeResult, Performance};
 use yew::prelude::*;
 
@@ -22,6 +23,7 @@ pub fn result_summary_component(props: &ResultSummaryComponentProps) -> Html {
         <section class="result-summary material-card">
             <h2 class="material-text--h4">{"Challenge Result"}</h2>
             <div class="result-content">
+                <ChallengeTimerComponent challenge={props.challenge.clone()} show_milliseconds={true} />
                 if performance > 50 {
                     <p class="congratulation material-text--body1">{"Congratulations! You've completed the challenge successfully."}</p>
                 }
