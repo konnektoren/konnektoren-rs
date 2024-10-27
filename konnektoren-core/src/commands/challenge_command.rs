@@ -141,6 +141,7 @@ impl ChallengeCommand {
         state: &mut GameState,
         custom_result: &Option<ChallengeResult>,
     ) -> Result<()> {
+        state.challenge.update_end_time();
         // Logic to handle finishing the challenge
         if let Some(result) = custom_result {
             state.challenge.challenge_result = result.clone();

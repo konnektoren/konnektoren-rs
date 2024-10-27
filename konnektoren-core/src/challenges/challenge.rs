@@ -34,7 +34,7 @@ impl Challenge {
 
 impl Solvable for Challenge {
     fn solve(&mut self, input: super::ChallengeInput) -> anyhow::Result<bool> {
-        self.end_time = Some(Utc::now());
+        self.update_end_time();
 
         match self.challenge_result.add_input(input.clone()) {
             Ok(_) => {
@@ -98,6 +98,10 @@ impl Performance for Challenge {
 impl Timed for Challenge {
     fn start(&mut self) {
         self.start_time = Some(Utc::now());
+    }
+
+    fn update_end_time(&mut self) {
+        self.end_time = Some(Utc::now());
     }
 
     fn elapsed_time(&self) -> Option<Duration> {
