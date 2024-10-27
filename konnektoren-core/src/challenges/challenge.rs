@@ -1,6 +1,8 @@
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_result::ChallengeResult;
 use crate::challenges::challenge_type::ChallengeType;
+use crate::challenges::Timed;
+use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 
 use super::{Performance, Solvable};
@@ -10,6 +12,8 @@ pub struct Challenge {
     pub challenge_type: ChallengeType,
     pub challenge_config: ChallengeConfig,
     pub challenge_result: ChallengeResult,
+    pub start_time: Option<DateTime<Utc>>,
+    pub end_time: Option<DateTime<Utc>>,
 }
 
 impl Challenge {
@@ -18,6 +22,8 @@ impl Challenge {
             challenge_type: challenge_type.clone(),
             challenge_config: challenge_config.clone(),
             challenge_result: ChallengeResult::default(),
+            start_time: None,
+            end_time: None,
         }
     }
 
@@ -28,6 +34,8 @@ impl Challenge {
 
 impl Solvable for Challenge {
     fn solve(&mut self, input: super::ChallengeInput) -> anyhow::Result<bool> {
+        self.end_time = Some(Utc::now());
+
         match self.challenge_result.add_input(input.clone()) {
             Ok(_) => {
                 let index = self.challenge_result.len() - 1; // Adjust index to be 0-based
@@ -87,6 +95,28 @@ impl Performance for Challenge {
     }
 }
 
+impl Timed for Challenge {
+    fn start(&mut self) {
+        self.start_time = Some(Utc::now());
+    }
+
+    fn elapsed_time(&self) -> Option<Duration> {
+        if let (Some(start), Some(end)) = (self.start_time, self.end_time) {
+            Some(end - start)
+        } else {
+            None
+        }
+    }
+
+    fn start_time(&self) -> Option<DateTime<Utc>> {
+        self.start_time
+    }
+
+    fn end_time(&self) -> Option<DateTime<Utc>> {
+        self.end_time
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -112,5 +142,46 @@ mod tests {
         let result = challenge.solve(input);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), true);
+    }
+
+    #[test]
+    fn performance_with_timer() {
+        let challenge_type = ChallengeType::default();
+        let challenge_config = ChallengeConfig::default();
+        let mut challenge = Challenge::new(&challenge_type, &challenge_config);
+        challenge.start();
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
+        let result = challenge.solve(input).unwrap();
+        assert!(result);
+        let performance = challenge.performance(&challenge.challenge_result);
+        let time_difference = challenge.end_time.unwrap() - challenge.start_time.unwrap();
+        assert!(performance >= time_difference.num_seconds() as u32);
+    }
+
+    #[test]
+    fn elapsed_time() {
+        let challenge_type = ChallengeType::default();
+        let challenge_config = ChallengeConfig::default();
+        let mut challenge = Challenge::new(&challenge_type, &challenge_config);
+        challenge.start();
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
+        let result = challenge.solve(input).unwrap();
+        assert!(result);
+        let elapsed_time = challenge.elapsed_time().unwrap();
+        assert!(elapsed_time > Duration::zero());
+    }
+
+    #[test]
+    fn start_and_end_time() {
+        let challenge_type = ChallengeType::default();
+        let challenge_config = ChallengeConfig::default();
+        let mut challenge = Challenge::new(&challenge_type, &challenge_config);
+        challenge.start();
+        let start_time = challenge.start_time().unwrap();
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
+        let result = challenge.solve(input).unwrap();
+        assert!(result);
+        let end_time = challenge.end_time().unwrap();
+        assert!(end_time > start_time);
     }
 }

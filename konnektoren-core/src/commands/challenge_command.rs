@@ -2,6 +2,7 @@
 
 use super::command::CommandTrait;
 use super::command_type::CommandType;
+use crate::challenges::Timed;
 use crate::challenges::{
     Challenge, ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
 };
@@ -52,7 +53,9 @@ impl CommandTrait for ChallengeCommand {
 impl ChallengeCommand {
     /// Starts a new challenge with the given challenge configuration.
     fn start_challenge(state: &mut GameState, challenge: &Challenge) -> Result<()> {
-        state.challenge = challenge.clone();
+        let mut challenge = challenge.clone();
+        challenge.start();
+        state.challenge = challenge;
         state.current_task_index = 0;
         Ok(())
     }
