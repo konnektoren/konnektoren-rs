@@ -132,11 +132,11 @@
 
 <span class="attr">#[derive(Properties, Clone, PartialEq, Default)]
 </span><span class="kw">pub struct </span>ChallengeTimerProps {
-    challenge: Challenge,
+    <span class="kw">pub </span>challenge: Challenge,
     <span class="attr">#[prop_or_default]
-    </span>running: bool,
+    </span><span class="kw">pub </span>running: bool,
     <span class="attr">#[prop_or_default]
-    </span>show_milliseconds: bool,
+    </span><span class="kw">pub </span>show_milliseconds: bool,
 }
 
 <span class="attr">#[function_component(ChallengeTimerComponent)]

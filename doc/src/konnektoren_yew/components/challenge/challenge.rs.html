@@ -139,13 +139,14 @@
 <a href="#139" id="139">139</a>
 <a href="#140" id="140">140</a>
 <a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{
     ContextualChoiceComponent, ContextualChoiceResultComponent, CustomComponent,
     CustomPackageComponent, InformativeComponent, InformativeMarkdownComponent,
     MultipleChoiceCircleComponent, MultipleChoiceComponent, MultipleChoiceResultComponent,
     SortTableComponent,
 };
-<span class="kw">use </span><span class="kw">crate</span>::components::ChallengeInfoComponent;
+<span class="kw">use </span><span class="kw">crate</span>::components::{ChallengeInfoComponent, ChallengeTimerComponent};
 <span class="kw">use </span>konnektoren_core::challenges::ChallengeVariant;
 <span class="kw">use </span>konnektoren_core::commands::Command;
 <span class="kw">use </span>konnektoren_core::events::Event;
@@ -259,6 +260,7 @@
                 &lt;/button&gt;
                 &lt;div class=<span class="string">"challenge-info" </span>style={<span class="kw">if </span>show_info { <span class="string">"display: block;" </span>} <span class="kw">else </span>{ <span class="string">"display: none;" </span>}}&gt;
                 &lt;ChallengeInfoComponent challenge_config={props.challenge.challenge_config.clone()} /&gt;
+                &lt;ChallengeTimerComponent challenge={props.challenge.clone()} /&gt;
                 &lt;/div&gt;
             &lt;/&gt;
         }
