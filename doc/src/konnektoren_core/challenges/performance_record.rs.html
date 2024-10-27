@@ -453,7 +453,7 @@
                                 .map(|b_elapsed| a_elapsed.cmp(<span class="kw-2">&amp;</span>b_elapsed)) <span class="comment">// Reversed comparison
                         </span>})
                         .unwrap_or(std::cmp::Ordering::Equal)
-                        .then_with(|| <span class="self">self</span>.date.cmp(<span class="kw-2">&amp;</span>other.date)),
+                        .then_with(|| other.date.cmp(<span class="kw-2">&amp;</span><span class="self">self</span>.date)),
                 )
             }
             other =&gt; <span class="prelude-val">Some</span>(other),
@@ -641,9 +641,9 @@
         records.sort();
         <span class="macro">assert_eq!</span>(records[<span class="number">0</span>].profile_name, <span class="string">"c"</span>);
         <span class="macro">assert_eq!</span>(records[<span class="number">1</span>].profile_name, <span class="string">"b"</span>);
-        <span class="macro">assert_eq!</span>(records[<span class="number">2</span>].profile_name, <span class="string">"a"</span>);
-        <span class="macro">assert_eq!</span>(records[<span class="number">3</span>].profile_name, <span class="string">"d"</span>);
-        <span class="macro">assert_eq!</span>(records, <span class="macro">vec!</span>[c, b, a, d]);
+        <span class="macro">assert_eq!</span>(records[<span class="number">2</span>].profile_name, <span class="string">"d"</span>);
+        <span class="macro">assert_eq!</span>(records[<span class="number">3</span>].profile_name, <span class="string">"a"</span>);
+        <span class="macro">assert_eq!</span>(records, <span class="macro">vec!</span>[c, b, d, a]);
     }
 }
 </code></pre></div></section></main></body></html>
