@@ -27,7 +27,7 @@ impl Default for BddWorld {
         let game = Game {
             game_paths: vec![game_path.clone()],
             challenge_factory: factory.clone(),
-            challenge_history: Default::default(),
+            ..Default::default()
         };
 
         let world = Self {
