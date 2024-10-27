@@ -48,7 +48,7 @@ pub fn challenge_timer_component(props: &ChallengeTimerProps) -> Html {
     html! {
         <div class="challenge-timer">
         <TimerComponent
-            milliseconds={duration.map(|d| d.num_milliseconds() as u64).unwrap_or_default()}
+            milliseconds={duration.map(|d| d.num_milliseconds()).unwrap_or_default()}
             show_milliseconds={show_milliseconds}
         />
         </div>

@@ -3,14 +3,14 @@ use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct TimerProps {
-    pub milliseconds: u64,
+    pub milliseconds: i64,
     #[prop_or_default]
     pub show_milliseconds: bool,
 }
 
 #[function_component(TimerComponent)]
 pub fn timer_component(props: &TimerProps) -> Html {
-    let duration = Duration::milliseconds(props.milliseconds as i64);
+    let duration = Duration::milliseconds(props.milliseconds);
 
     html! {
         <div class="timer">
