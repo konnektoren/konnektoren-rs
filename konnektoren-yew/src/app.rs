@@ -1,7 +1,7 @@
 use crate::components::{
     challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
-    ChallengeInfoComponent, ContextualChoiceComponent, MusicComponent, ProgressBar,
-    SettingsComponent, TranslateComponent,
+    ChallengeInfoComponent, ChallengeTimerComponent, ContextualChoiceComponent, MusicComponent,
+    ProgressBar, SettingsComponent, TranslateComponent,
 };
 
 #[cfg(feature = "marketplace")]
@@ -155,6 +155,7 @@ pub fn App() -> Html {
         ChallengeInfoComponent::preview(),
         ChallengeReviewComponent::preview(),
         ChallengeRatingComponent::preview(),
+        ChallengeTimerComponent::preview(),
         InformativeComponent::preview(),
         InformativeMarkdownComponent::preview(),
         MapComponent::preview(),
