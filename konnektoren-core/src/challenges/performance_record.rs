@@ -1,5 +1,5 @@
 use crate::challenges::{ChallengeHistory, Performance, Timed};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -91,6 +91,25 @@ impl PerformanceRecord {
             performance_percentage,
             date: Utc::now(),
         }
+    }
+}
+
+impl Timed for PerformanceRecord {
+    fn start(&mut self) {}
+    fn update_end_time(&mut self) {}
+    fn elapsed_time(&self) -> Option<Duration> {
+        let mut elapsed_time = Duration::zero();
+        for (_, _, time) in &self.challenges_performance {
+            elapsed_time = elapsed_time + Duration::milliseconds(*time as i64);
+        }
+        Some(elapsed_time)
+    }
+    fn start_time(&self) -> Option<DateTime<Utc>> {
+        Some(self.date)
+    }
+    fn end_time(&self) -> Option<DateTime<Utc>> {
+        let end_time = self.date + self.elapsed_time().unwrap_or_default();
+        Some(end_time)
     }
 }
 
@@ -193,5 +212,36 @@ mod tests {
         assert_eq!(performance_record.total_challenges, 1);
         assert_eq!(performance_record.performance_percentage, 100);
         assert_eq!(performance_record.challenges_performance[0].2, 10 * 1000);
+    }
+
+    #[test]
+    fn elapsed_time() {
+        let timestamp_0 = Utc.with_ymd_and_hms(1970, 1, 1, 0, 0, 0).unwrap();
+        let timestamp_10 = Utc.with_ymd_and_hms(1970, 1, 1, 0, 0, 10).unwrap();
+        let timestamp_20 = Utc.with_ymd_and_hms(1970, 1, 1, 0, 0, 20).unwrap();
+
+        let mut challenge1 = Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
+        let mut challenge2 = Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
+        challenge1.start_time = Some(timestamp_0);
+        challenge1.end_time = Some(timestamp_10);
+        challenge2.start_time = Some(timestamp_0);
+        challenge2.end_time = Some(timestamp_20);
+
+        let mut challenge_history = ChallengeHistory::new();
+        challenge_history.add_challenge(challenge1);
+        challenge_history.add_challenge(challenge2);
+        let performance_record = PerformanceRecord::new_from_history(
+            "game_path_id".to_string(),
+            "profile_name".to_string(),
+            1,
+            challenge_history,
+        );
+        assert_eq!(
+            performance_record
+                .elapsed_time()
+                .unwrap()
+                .num_milliseconds(),
+            10 * 1000
+        );
     }
 }
