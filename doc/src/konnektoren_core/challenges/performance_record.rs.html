@@ -245,6 +245,83 @@
 <a href="#245" id="245">245</a>
 <a href="#246" id="246">246</a>
 <a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeHistory, Performance, Timed};
 <span class="kw">use </span>chrono::{DateTime, Duration, Utc};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
@@ -255,7 +332,7 @@
 <span class="kw">pub type </span>ChallengePercentage = u8;
 <span class="kw">pub type </span>ChallengePerformance = (ChallengeId, ChallengePercentage, ChallengeTimeMilliseconds);
 
-<span class="attr">#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Hash)]
+<span class="attr">#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>PerformanceRecord {
     <span class="kw">pub </span>game_path_id: String,
     <span class="kw">pub </span>profile_name: String,
@@ -357,6 +434,36 @@
     <span class="kw">fn </span>end_time(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DateTime&lt;Utc&gt;&gt; {
         <span class="kw">let </span>end_time = <span class="self">self</span>.date + <span class="self">self</span>.elapsed_time().unwrap_or_default();
         <span class="prelude-val">Some</span>(end_time)
+    }
+}
+
+<span class="kw">impl </span>PartialOrd <span class="kw">for </span>PerformanceRecord {
+    <span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;std::cmp::Ordering&gt; {
+        <span class="kw">match </span>other
+            .performance_percentage
+            .cmp(<span class="kw-2">&amp;</span><span class="self">self</span>.performance_percentage)
+        {
+            std::cmp::Ordering::Equal =&gt; {
+                <span class="comment">// If performance is equal, compare elapsed time
+                </span><span class="prelude-val">Some</span>(
+                    <span class="self">self</span>.elapsed_time()
+                        .and_then(|a_elapsed| {
+                            other
+                                .elapsed_time()
+                                .map(|b_elapsed| a_elapsed.cmp(<span class="kw-2">&amp;</span>b_elapsed)) <span class="comment">// Reversed comparison
+                        </span>})
+                        .unwrap_or(std::cmp::Ordering::Equal)
+                        .then_with(|| <span class="self">self</span>.date.cmp(<span class="kw-2">&amp;</span>other.date)),
+                )
+            }
+            other =&gt; <span class="prelude-val">Some</span>(other),
+        }
+    }
+}
+
+<span class="kw">impl </span>Ord <span class="kw">for </span>PerformanceRecord {
+    <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; std::cmp::Ordering {
+        <span class="self">self</span>.partial_cmp(other).unwrap()
     }
 }
 
@@ -490,6 +597,53 @@
                 .num_milliseconds(),
             <span class="number">10 </span>* <span class="number">1000
         </span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_sort_4_items() {
+        <span class="kw">let </span>a = PerformanceRecord {
+            game_path_id: <span class="string">""</span>.to_string(),
+            profile_name: <span class="string">"a"</span>.to_string(),
+            challenges_performance: <span class="macro">vec!</span>[(<span class="string">"challenge_id"</span>.to_string(), <span class="number">0</span>, <span class="number">10</span>)],
+            date: DateTime::from(DateTime::parse_from_rfc3339(<span class="string">"2021-08-01T00:00:00Z"</span>).unwrap()),
+            performance_percentage: <span class="number">90</span>,
+            total_challenges: <span class="number">0</span>,
+        };
+
+        <span class="kw">let </span>b = PerformanceRecord {
+            game_path_id: <span class="string">""</span>.to_string(),
+            profile_name: <span class="string">"b"</span>.to_string(),
+            challenges_performance: <span class="macro">vec!</span>[(<span class="string">"challenge_id"</span>.to_string(), <span class="number">0</span>, <span class="number">0</span>)],
+            date: DateTime::from(DateTime::parse_from_rfc3339(<span class="string">"2021-08-01T00:00:00Z"</span>).unwrap()),
+            performance_percentage: <span class="number">90</span>,
+            total_challenges: <span class="number">0</span>,
+        };
+
+        <span class="kw">let </span>c = PerformanceRecord {
+            game_path_id: <span class="string">""</span>.to_string(),
+            profile_name: <span class="string">"c"</span>.to_string(),
+            challenges_performance: <span class="macro">vec!</span>[(<span class="string">"challenge_id"</span>.to_string(), <span class="number">0</span>, <span class="number">10</span>)],
+            date: DateTime::from(DateTime::parse_from_rfc3339(<span class="string">"2021-08-02T00:00:00Z"</span>).unwrap()),
+            performance_percentage: <span class="number">100</span>,
+            total_challenges: <span class="number">0</span>,
+        };
+
+        <span class="kw">let </span>d = PerformanceRecord {
+            game_path_id: <span class="string">""</span>.to_string(),
+            profile_name: <span class="string">"d"</span>.to_string(),
+            challenges_performance: <span class="macro">vec!</span>[(<span class="string">"challenge_id"</span>.to_string(), <span class="number">0</span>, <span class="number">10</span>)],
+            date: DateTime::from(DateTime::parse_from_rfc3339(<span class="string">"2021-08-02T00:00:00Z"</span>).unwrap()),
+            performance_percentage: <span class="number">90</span>,
+            total_challenges: <span class="number">0</span>,
+        };
+
+        <span class="kw">let </span><span class="kw-2">mut </span>records = <span class="macro">vec!</span>[a.clone(), b.clone(), c.clone(), d.clone()];
+        records.sort();
+        <span class="macro">assert_eq!</span>(records[<span class="number">0</span>].profile_name, <span class="string">"c"</span>);
+        <span class="macro">assert_eq!</span>(records[<span class="number">1</span>].profile_name, <span class="string">"b"</span>);
+        <span class="macro">assert_eq!</span>(records[<span class="number">2</span>].profile_name, <span class="string">"a"</span>);
+        <span class="macro">assert_eq!</span>(records[<span class="number">3</span>].profile_name, <span class="string">"d"</span>);
+        <span class="macro">assert_eq!</span>(records, <span class="macro">vec!</span>[c, b, a, d]);
     }
 }
 </code></pre></div></section></main></body></html>
