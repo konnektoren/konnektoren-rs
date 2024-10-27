@@ -185,6 +185,10 @@
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_config::ChallengeConfig;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_result::ChallengeResult;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_type::ChallengeType;
@@ -221,7 +225,7 @@
 
 <span class="kw">impl </span>Solvable <span class="kw">for </span>Challenge {
     <span class="kw">fn </span>solve(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw">super</span>::ChallengeInput) -&gt; anyhow::Result&lt;bool&gt; {
-        <span class="self">self</span>.end_time = <span class="prelude-val">Some</span>(Utc::now());
+        <span class="self">self</span>.update_end_time();
 
         <span class="kw">match </span><span class="self">self</span>.challenge_result.add_input(input.clone()) {
             <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
@@ -285,6 +289,10 @@
 <span class="kw">impl </span>Timed <span class="kw">for </span>Challenge {
     <span class="kw">fn </span>start(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.start_time = <span class="prelude-val">Some</span>(Utc::now());
+    }
+
+    <span class="kw">fn </span>update_end_time(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.end_time = <span class="prelude-val">Some</span>(Utc::now());
     }
 
     <span class="kw">fn </span>elapsed_time(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Duration&gt; {

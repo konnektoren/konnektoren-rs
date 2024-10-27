@@ -6,10 +6,12 @@
 <a href="#6" id="6">6</a>
 <a href="#7" id="7">7</a>
 <a href="#8" id="8">8</a>
+<a href="#9" id="9">9</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>chrono::{DateTime, Duration, Utc};
 
 <span class="kw">pub trait </span>Timed {
     <span class="kw">fn </span>start(<span class="kw-2">&amp;mut </span><span class="self">self</span>);
+    <span class="kw">fn </span>update_end_time(<span class="kw-2">&amp;mut </span><span class="self">self</span>);
     <span class="kw">fn </span>elapsed_time(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Duration&gt;;
     <span class="kw">fn </span>start_time(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DateTime&lt;Utc&gt;&gt;;
     <span class="kw">fn </span>end_time(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DateTime&lt;Utc&gt;&gt;;
