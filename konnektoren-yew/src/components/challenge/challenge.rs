@@ -118,7 +118,7 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
                 </button>
                 <div class="challenge-info" style={if show_info { "display: block;" } else { "display: none;" }}>
                 <ChallengeInfoComponent challenge_config={props.challenge.challenge_config.clone()} />
-                <ChallengeTimerComponent challenge={props.challenge.clone()} />
+                <ChallengeTimerComponent challenge={props.challenge.clone()} running={true} />
                 </div>
             </>
         }
