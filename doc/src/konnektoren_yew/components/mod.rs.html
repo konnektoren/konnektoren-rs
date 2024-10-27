@@ -52,6 +52,8 @@
 <a href="#52" id="52">52</a>
 <a href="#53" id="53">53</a>
 <a href="#54" id="54">54</a>
+<a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! This module contains all the components that are used in the app.
 
 </span><span class="attr">#[cfg(feature = <span class="string">"certificates"</span>)]
@@ -61,6 +63,7 @@
 <span class="kw">pub mod </span>challenge_info;
 <span class="kw">pub mod </span>challenge_rating;
 <span class="kw">pub mod </span>challenge_review;
+<span class="kw">pub mod </span>challenge_timer;
 <span class="kw">pub mod </span>game_path;
 <span class="kw">pub mod </span>inbox;
 <span class="kw">mod </span>map;
@@ -82,6 +85,7 @@
 <span class="kw">pub use </span>challenge_info::ChallengeInfoComponent;
 <span class="kw">pub use </span>challenge_rating::ChallengeRatingComponent;
 <span class="kw">pub use </span>challenge_review::ChallengeReviewComponent;
+<span class="kw">pub use </span>challenge_timer::ChallengeTimerComponent;
 <span class="kw">pub use </span>game_path::GamePathComponent;
 <span class="kw">pub use </span>inbox::InboxComponent;
 <span class="kw">pub use </span>map::<span class="kw-2">*</span>;

@@ -211,10 +211,14 @@
 <a href="#211" id="211">211</a>
 <a href="#212" id="212">212</a>
 <a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of challenge-level commands.
 
 </span><span class="kw">use </span><span class="kw">super</span>::command::CommandTrait;
 <span class="kw">use </span><span class="kw">super</span>::command_type::CommandType;
+<span class="kw">use </span><span class="kw">crate</span>::challenges::Timed;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::{
     Challenge, ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
 };
@@ -265,7 +269,9 @@
 <span class="kw">impl </span>ChallengeCommand {
     <span class="doccomment">/// Starts a new challenge with the given challenge configuration.
     </span><span class="kw">fn </span>start_challenge(state: <span class="kw-2">&amp;mut </span>GameState, challenge: <span class="kw-2">&amp;</span>Challenge) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        state.challenge = challenge.clone();
+        <span class="kw">let </span><span class="kw-2">mut </span>challenge = challenge.clone();
+        challenge.start();
+        state.challenge = challenge;
         state.current_task_index = <span class="number">0</span>;
         <span class="prelude-val">Ok</span>(())
     }

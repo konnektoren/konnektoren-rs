@@ -190,10 +190,11 @@
 <a href="#190" id="190">190</a>
 <a href="#191" id="191">191</a>
 <a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{
     challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
-    ChallengeInfoComponent, ContextualChoiceComponent, MusicComponent, ProgressBar,
-    SettingsComponent, TranslateComponent,
+    ChallengeInfoComponent, ChallengeTimerComponent, ContextualChoiceComponent, MusicComponent,
+    ProgressBar, SettingsComponent, TranslateComponent,
 };
 
 <span class="attr">#[cfg(feature = <span class="string">"marketplace"</span>)]
@@ -347,6 +348,7 @@
         ChallengeInfoComponent::preview(),
         ChallengeReviewComponent::preview(),
         ChallengeRatingComponent::preview(),
+        ChallengeTimerComponent::preview(),
         InformativeComponent::preview(),
         InformativeMarkdownComponent::preview(),
         MapComponent::preview(),
