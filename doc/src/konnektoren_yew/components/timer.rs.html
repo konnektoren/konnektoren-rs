@@ -41,14 +41,14 @@
 
 <span class="attr">#[derive(Clone, PartialEq, Properties)]
 </span><span class="kw">pub struct </span>TimerProps {
-    <span class="kw">pub </span>milliseconds: u64,
+    <span class="kw">pub </span>milliseconds: i64,
     <span class="attr">#[prop_or_default]
     </span><span class="kw">pub </span>show_milliseconds: bool,
 }
 
 <span class="attr">#[function_component(TimerComponent)]
 </span><span class="kw">pub fn </span>timer_component(props: <span class="kw-2">&amp;</span>TimerProps) -&gt; Html {
-    <span class="kw">let </span>duration = Duration::milliseconds(props.milliseconds <span class="kw">as </span>i64);
+    <span class="kw">let </span>duration = Duration::milliseconds(props.milliseconds);
 
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"timer"</span>&gt;
