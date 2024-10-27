@@ -4,7 +4,7 @@ use super::{
     MultipleChoiceCircleComponent, MultipleChoiceComponent, MultipleChoiceResultComponent,
     SortTableComponent,
 };
-use crate::components::ChallengeInfoComponent;
+use crate::components::{ChallengeInfoComponent, ChallengeTimerComponent};
 use konnektoren_core::challenges::ChallengeVariant;
 use konnektoren_core::commands::Command;
 use konnektoren_core::events::Event;
@@ -118,6 +118,7 @@ pub fn challenge_component(props: &ChallengeComponentProps) -> Html {
                 </button>
                 <div class="challenge-info" style={if show_info { "display: block;" } else { "display: none;" }}>
                 <ChallengeInfoComponent challenge_config={props.challenge.challenge_config.clone()} />
+                <ChallengeTimerComponent challenge={props.challenge.clone()} />
                 </div>
             </>
         }
