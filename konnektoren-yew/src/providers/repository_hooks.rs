@@ -1,5 +1,5 @@
 use crate::model::{Inbox, Settings};
-use crate::providers::{ProfileContext, RepositoryContext};
+use crate::providers::{InboxContext, ProfileContext, RepositoryContext, SettingsContext};
 use crate::repository::{
     CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
     SessionRepositoryTrait, SettingsRepositoryTrait,
@@ -9,8 +9,6 @@ use konnektoren_core::prelude::{PlayerProfile, Session};
 use std::sync::{Arc, RwLock};
 use yew::prelude::*;
 use yew_hooks::use_effect_once;
-
-use super::InboxContext;
 
 #[hook]
 pub fn use_certificate_repository() -> Arc<dyn CertificateRepositoryTrait> {
@@ -77,17 +75,10 @@ pub fn use_inbox() -> UseStateHandle<Inbox> {
 }
 
 #[hook]
-pub fn use_settings() -> Arc<RwLock<Settings>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let settings = repository_context.settings.clone();
-
-    use_effect_once(move || {
-        repository_context.load_settings();
-        || {}
-    });
-
-    settings
+pub fn use_settings() -> UseStateHandle<Settings> {
+    use_context::<SettingsContext>()
+        .expect("SettingsContext not found")
+        .settings
 }
 
 #[hook]

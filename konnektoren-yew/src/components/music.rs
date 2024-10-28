@@ -27,7 +27,7 @@ impl Default for MusicComponentProps {
 
 #[function_component(MusicComponent)]
 pub fn music_component(props: &MusicComponentProps) -> Html {
-    let settings = use_settings().read().unwrap().clone();
+    let settings = use_settings();
 
     let audio_ref = use_node_ref();
 
