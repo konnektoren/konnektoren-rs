@@ -64,7 +64,16 @@
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::RepositoryContext;
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+</pre></div><pre class="rust"><code><span class="kw">use super</span>::{InboxProvider, ProfileProvider, RepositoryContext, SessionProvider, SettingsProvider};
 <span class="kw">use </span><span class="kw">crate</span>::model::SessionInitializer;
 <span class="kw">use </span><span class="kw">crate</span>::repository::{
     CertificateRepository, CertificateRepositoryTrait, InboxRepository, InboxRepositoryTrait,
@@ -95,23 +104,6 @@
     }
 }
 
-<span class="attr">#[derive(Properties, PartialEq, Clone)]
-</span><span class="kw">pub struct </span>RepositoryProviderProps {
-    <span class="kw">pub </span>children: Children,
-    <span class="kw">pub </span>config: RepositoryConfig,
-}
-
-<span class="attr">#[function_component(RepositoryProvider)]
-</span><span class="kw">pub fn </span>repository_provider(props: <span class="kw-2">&amp;</span>RepositoryProviderProps) -&gt; Html {
-    <span class="kw">let </span>context = RepositoryContext::new(props.config.clone());
-
-    <span class="macro">html!</span> {
-        &lt;ContextProvider&lt;RepositoryContext&gt; context={context}&gt;
-            { <span class="kw">for </span>props.children.iter() }
-        &lt;/ContextProvider&lt;RepositoryContext&gt;&gt;
-    }
-}
-
 <span class="kw">pub fn </span>create_repositories&lt;S: Storage + Send + Sync + <span class="lifetime">'static</span>&gt;(
     storage: S,
     session_initializer: Arc&lt;<span class="kw">dyn </span>SessionInitializer&gt;,
@@ -128,6 +120,32 @@
         session_repository: Arc::new(SessionRepository::new(storage))
             <span class="kw">as </span>Arc&lt;<span class="kw">dyn </span>SessionRepositoryTrait&gt;,
         session_initializer,
+    }
+}
+
+<span class="attr">#[derive(Properties, PartialEq, Clone)]
+</span><span class="kw">pub struct </span>RepositoryProviderProps {
+    <span class="kw">pub </span>children: Children,
+    <span class="kw">pub </span>config: RepositoryConfig,
+}
+
+<span class="attr">#[function_component(RepositoryProvider)]
+</span><span class="kw">pub fn </span>repository_provider(props: <span class="kw-2">&amp;</span>RepositoryProviderProps) -&gt; Html {
+    <span class="kw">let </span>context = RepositoryContext::new(props.config.clone());
+
+    <span class="macro">html!</span> {
+        &lt;ContextProvider&lt;RepositoryContext&gt; context={context.clone()}&gt;
+            &lt;SessionProvider session_repository={context.session_repository.clone()}
+                session_initializer={props.config.session_initializer.clone()}&gt;
+                &lt;ProfileProvider profile_repository={context.profile_repository}&gt;
+                    &lt;SettingsProvider settings_repository={context.settings_repository}&gt;
+                        &lt;InboxProvider inbox_repository={context.inbox_repository}&gt;
+                            { <span class="kw">for </span>props.children.iter() }
+                        &lt;/InboxProvider&gt;
+                    &lt;/SettingsProvider&gt;
+                &lt;/ProfileProvider&gt;
+            &lt;/SessionProvider&gt;
+        &lt;/ContextProvider&lt;RepositoryContext&gt;&gt;
     }
 }
 </code></pre></div></section></main></body></html>

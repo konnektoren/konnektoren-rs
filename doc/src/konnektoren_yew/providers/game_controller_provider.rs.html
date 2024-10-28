@@ -80,6 +80,7 @@
 <a href="#80" id="80">80</a>
 <a href="#81" id="81">81</a>
 <a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::repository_hooks::{use_session, use_session_repository};
 <span class="kw">use </span><span class="kw">crate</span>::repository::GameStatePersistenceImpl;
 <span class="kw">use </span>konnektoren_core::commands::CommandBus;
@@ -88,7 +89,7 @@
 };
 <span class="kw">use </span>konnektoren_core::events::EventBus;
 <span class="kw">use </span>konnektoren_core::game::{Game, GameState};
-<span class="kw">use </span>std::sync::{Arc, Mutex};
+<span class="kw">use </span>std::sync::{Arc, Mutex, RwLock};
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Clone, PartialEq)]
@@ -141,6 +142,7 @@
         <span class="prelude-val">Some</span>(controller) =&gt; controller.clone(),
         <span class="prelude-val">None </span>=&gt; {
             <span class="kw">let </span>game = Game::default();
+            <span class="kw">let </span>session = Arc::new(RwLock::new((<span class="kw-2">&amp;*</span>session).clone()));
 
             <span class="kw">let </span>persistence = Arc::new(GameStatePersistenceImpl {
                 session_repository,

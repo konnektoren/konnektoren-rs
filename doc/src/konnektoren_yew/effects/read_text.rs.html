@@ -81,7 +81,7 @@
 
 <span class="attr">#[function_component(ReadText)]
 </span><span class="kw">pub fn </span>read_text(props: <span class="kw-2">&amp;</span>ReadTextProps) -&gt; Html {
-    <span class="kw">let </span>settings = use_settings().read().unwrap().clone();
+    <span class="kw">let </span>settings = use_settings();
 
     <span class="kw">let </span>text_clone = props.text.clone();
     <span class="kw">let </span>lang_clone = props.lang.clone();

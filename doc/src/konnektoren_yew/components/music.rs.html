@@ -114,7 +114,7 @@
 
 <span class="attr">#[function_component(MusicComponent)]
 </span><span class="kw">pub fn </span>music_component(props: <span class="kw-2">&amp;</span>MusicComponentProps) -&gt; Html {
-    <span class="kw">let </span>settings = use_settings().read().unwrap().clone();
+    <span class="kw">let </span>settings = use_settings();
 
     <span class="kw">let </span>audio_ref = use_node_ref();
 
