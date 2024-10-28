@@ -18,7 +18,6 @@ pub struct RepositoryContext {
     pub session_repository: Arc<dyn SessionRepositoryTrait>,
     pub session_initializer: Arc<dyn SessionInitializer>,
     pub session: Arc<RwLock<Session>>,
-    pub profile: Arc<RwLock<PlayerProfile>>,
     pub inbox: Arc<RwLock<Inbox>>,
     pub settings: Arc<RwLock<Settings>>,
     pub certificates: Arc<RwLock<Vec<CertificateData>>>,
@@ -33,7 +32,6 @@ impl PartialEq for RepositoryContext {
             && Arc::ptr_eq(&self.session_repository, &other.session_repository)
             && Arc::ptr_eq(&self.session_initializer, &other.session_initializer)
             && Arc::ptr_eq(&self.session, &other.session)
-            && Arc::ptr_eq(&self.profile, &other.profile)
             && Arc::ptr_eq(&self.inbox, &other.inbox)
             && Arc::ptr_eq(&self.settings, &other.settings)
             && Arc::ptr_eq(&self.certificates, &other.certificates)
@@ -54,7 +52,6 @@ impl RepositoryContext {
             session_repository: config.session_repository,
             session_initializer: config.session_initializer,
             session: Arc::new(RwLock::new(session)),
-            profile: Arc::new(RwLock::new(PlayerProfile::default())),
             inbox: Arc::new(RwLock::new(Inbox::default())),
             settings: Arc::new(RwLock::new(Settings::default())),
             certificates: Arc::new(RwLock::new(Vec::new())),
@@ -73,20 +70,6 @@ impl RepositoryContext {
                 let initialized_session = session_initializer.initialize(&loaded_session).unwrap();
                 let mut session_guard = session.write().unwrap();
                 *session_guard = initialized_session;
-            }
-        });
-    }
-
-    pub fn load_profile(&self) {
-        let profile_repository = self.profile_repository.clone();
-        let profile = Arc::clone(&self.profile);
-
-        wasm_bindgen_futures::spawn_local(async move {
-            if let Ok(Some(loaded_profile)) =
-                profile_repository.get_profile(PROFILE_STORAGE_KEY).await
-            {
-                let mut profile_guard = profile.write().unwrap();
-                *profile_guard = loaded_profile;
             }
         });
     }

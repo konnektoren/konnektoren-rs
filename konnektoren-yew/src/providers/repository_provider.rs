@@ -1,4 +1,4 @@
-use super::RepositoryContext;
+use super::{ProfileProvider, RepositoryContext};
 use crate::model::SessionInitializer;
 use crate::repository::{
     CertificateRepository, CertificateRepositoryTrait, InboxRepository, InboxRepositoryTrait,
@@ -29,23 +29,6 @@ impl PartialEq for RepositoryConfig {
     }
 }
 
-#[derive(Properties, PartialEq, Clone)]
-pub struct RepositoryProviderProps {
-    pub children: Children,
-    pub config: RepositoryConfig,
-}
-
-#[function_component(RepositoryProvider)]
-pub fn repository_provider(props: &RepositoryProviderProps) -> Html {
-    let context = RepositoryContext::new(props.config.clone());
-
-    html! {
-        <ContextProvider<RepositoryContext> context={context}>
-            { for props.children.iter() }
-        </ContextProvider<RepositoryContext>>
-    }
-}
-
 pub fn create_repositories<S: Storage + Send + Sync + 'static>(
     storage: S,
     session_initializer: Arc<dyn SessionInitializer>,
@@ -62,5 +45,24 @@ pub fn create_repositories<S: Storage + Send + Sync + 'static>(
         session_repository: Arc::new(SessionRepository::new(storage))
             as Arc<dyn SessionRepositoryTrait>,
         session_initializer,
+    }
+}
+
+#[derive(Properties, PartialEq, Clone)]
+pub struct RepositoryProviderProps {
+    pub children: Children,
+    pub config: RepositoryConfig,
+}
+
+#[function_component(RepositoryProvider)]
+pub fn repository_provider(props: &RepositoryProviderProps) -> Html {
+    let context = RepositoryContext::new(props.config.clone());
+
+    html! {
+        <ContextProvider<RepositoryContext> context={context.clone()}>
+            <ProfileProvider profile_repository={context.profile_repository}>
+                { for props.children.iter() }
+            </ProfileProvider>
+        </ContextProvider<RepositoryContext>>
     }
 }

@@ -1,5 +1,5 @@
 use crate::model::{Inbox, Settings};
-use crate::providers::RepositoryContext;
+use crate::providers::{ProfileContext, RepositoryContext};
 use crate::repository::{
     CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
     SessionRepositoryTrait, SettingsRepositoryTrait,
@@ -61,17 +61,10 @@ pub fn use_session() -> Arc<RwLock<Session>> {
 }
 
 #[hook]
-pub fn use_profile() -> Arc<RwLock<PlayerProfile>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let profile = repository_context.profile.clone();
-
-    use_effect_once(move || {
-        repository_context.load_profile();
-        || {}
-    });
-
-    profile
+pub fn use_profile() -> UseStateHandle<PlayerProfile> {
+    use_context::<ProfileContext>()
+        .expect("ProfileContext not found")
+        .profile
 }
 
 #[hook]
