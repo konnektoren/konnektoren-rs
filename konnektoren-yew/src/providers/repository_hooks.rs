@@ -1,6 +1,7 @@
 use crate::model::{Inbox, Settings};
 use crate::providers::{
-    InboxContext, ProfileContext, RepositoryContext, SessionContext, SettingsContext,
+    CertificatesContext, InboxContext, ProfileContext, RepositoryContext, SessionContext,
+    SettingsContext,
 };
 use crate::repository::{
     CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
@@ -8,9 +9,8 @@ use crate::repository::{
 };
 use konnektoren_core::certificates::CertificateData;
 use konnektoren_core::prelude::{PlayerProfile, Session};
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 use yew::prelude::*;
-use yew_hooks::use_effect_once;
 
 #[hook]
 pub fn use_certificate_repository() -> Arc<dyn CertificateRepositoryTrait> {
@@ -77,14 +77,8 @@ pub fn use_settings() -> UseStateHandle<Settings> {
 }
 
 #[hook]
-pub fn use_certificates() -> Arc<RwLock<Vec<CertificateData>>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let certificates = repository_context.certificates.clone();
-
-    use_effect_once(move || {
-        repository_context.load_certificates();
-        || {}
-    });
-    certificates
+pub fn use_certificates() -> UseStateHandle<Vec<CertificateData>> {
+    use_context::<CertificatesContext>()
+        .expect("CertificatesContext not found")
+        .certificates
 }

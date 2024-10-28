@@ -38,19 +38,4 @@ impl RepositoryContext {
             certificates: Arc::new(RwLock::new(Vec::new())),
         }
     }
-
-    pub fn load_certificates(&self) {
-        let certificate_repository = self.certificate_repository.clone();
-        let certificates = Arc::clone(&self.certificates);
-
-        wasm_bindgen_futures::spawn_local(async move {
-            if let Ok(Some(loaded_certificates)) = certificate_repository
-                .get_certificates(CERTIFICATE_STORAGE_KEY)
-                .await
-            {
-                let mut certificates_guard = certificates.write().unwrap();
-                *certificates_guard = loaded_certificates;
-            }
-        });
-    }
 }
