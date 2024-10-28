@@ -1,7 +1,4 @@
-use crate::prelude::ProfilePointsComponent;
-use crate::providers::use_profile_repository;
-use crate::repository::PROFILE_STORAGE_KEY;
-use konnektoren_core::prelude::PlayerProfile;
+use crate::prelude::{use_profile, ProfilePointsComponent};
 use std::rc::Rc;
 use yew::prelude::*;
 
@@ -13,22 +10,7 @@ pub struct ProfilePointsManagerProps {
 
 #[function_component(ProfilePointsManager)]
 pub fn profile_manager(props: &ProfilePointsManagerProps) -> Html {
-    let profile_state = use_state(|| PlayerProfile::default());
-    let profile_repository = use_profile_repository();
-
-    {
-        let profile_state = profile_state.clone();
-        let profile_repository = profile_repository.clone();
-        use_effect_with((), move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(Some(loaded_profile)) =
-                    profile_repository.get_profile(PROFILE_STORAGE_KEY).await
-                {
-                    profile_state.set(loaded_profile);
-                }
-            });
-        });
-    }
+    let profile_state = use_profile();
 
     match &props.children {
         Some(children) => {

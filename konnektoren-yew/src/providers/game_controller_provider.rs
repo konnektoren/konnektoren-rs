@@ -6,7 +6,7 @@ use konnektoren_core::controller::{
 };
 use konnektoren_core::events::EventBus;
 use konnektoren_core::game::{Game, GameState};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, RwLock};
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
@@ -59,6 +59,7 @@ pub fn game_controller_provider(props: &GameControllerProviderProps) -> Html {
         Some(controller) => controller.clone(),
         None => {
             let game = Game::default();
+            let session = Arc::new(RwLock::new((&*session).clone()));
 
             let persistence = Arc::new(GameStatePersistenceImpl {
                 session_repository,

@@ -1,14 +1,16 @@
 use crate::model::{Inbox, Settings};
-use crate::providers::RepositoryContext;
+use crate::providers::{
+    CertificatesContext, InboxContext, ProfileContext, RepositoryContext, SessionContext,
+    SettingsContext,
+};
 use crate::repository::{
     CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
     SessionRepositoryTrait, SettingsRepositoryTrait,
 };
 use konnektoren_core::certificates::CertificateData;
 use konnektoren_core::prelude::{PlayerProfile, Session};
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 use yew::prelude::*;
-use yew_hooks::use_effect_once;
 
 #[hook]
 pub fn use_certificate_repository() -> Arc<dyn CertificateRepositoryTrait> {
@@ -47,70 +49,36 @@ pub fn use_session_repository() -> Arc<dyn SessionRepositoryTrait> {
 }
 
 #[hook]
-pub fn use_session() -> Arc<RwLock<Session>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let session = repository_context.session.clone();
-
-    use_effect_once(move || {
-        repository_context.load_session();
-        || {}
-    });
-
-    session
+pub fn use_session() -> UseStateHandle<Session> {
+    use_context::<SessionContext>()
+        .expect("RepositoryContext not found")
+        .session
 }
 
 #[hook]
-pub fn use_profile() -> Arc<RwLock<PlayerProfile>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let profile = repository_context.profile.clone();
-
-    use_effect_once(move || {
-        repository_context.load_profile();
-        || {}
-    });
-
-    profile
+pub fn use_profile() -> UseStateHandle<PlayerProfile> {
+    use_context::<ProfileContext>()
+        .expect("ProfileContext not found")
+        .profile
 }
 
 #[hook]
-pub fn use_inbox() -> Arc<RwLock<Inbox>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let inbox = repository_context.inbox.clone();
-
-    use_effect_once(move || {
-        repository_context.load_inbox();
-        || {}
-    });
-
-    inbox
+pub fn use_inbox() -> UseStateHandle<Inbox> {
+    use_context::<InboxContext>()
+        .expect("InboxContext not found")
+        .inbox
 }
 
 #[hook]
-pub fn use_settings() -> Arc<RwLock<Settings>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let settings = repository_context.settings.clone();
-
-    use_effect_once(move || {
-        repository_context.load_settings();
-        || {}
-    });
-
-    settings
+pub fn use_settings() -> UseStateHandle<Settings> {
+    use_context::<SettingsContext>()
+        .expect("SettingsContext not found")
+        .settings
 }
 
 #[hook]
-pub fn use_certificates() -> Arc<RwLock<Vec<CertificateData>>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let certificates = repository_context.certificates.clone();
-
-    use_effect_once(move || {
-        repository_context.load_certificates();
-        || {}
-    });
-    certificates
+pub fn use_certificates() -> UseStateHandle<Vec<CertificateData>> {
+    use_context::<CertificatesContext>()
+        .expect("CertificatesContext not found")
+        .certificates
 }
