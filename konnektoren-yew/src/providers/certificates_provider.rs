@@ -64,5 +64,11 @@ pub fn certificates_provider(props: &CertificatesProviderProps) -> Html {
         });
     }
 
-    html! { props.children.clone() }
+    let context = CertificatesContext { certificates };
+
+    html! {
+        <ContextProvider<CertificatesContext> {context}>
+            { for props.children.iter() }
+        </ContextProvider<CertificatesContext>>
+    }
 }

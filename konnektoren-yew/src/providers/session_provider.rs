@@ -27,13 +27,14 @@ impl PartialEq for SessionProviderProps {
 
 #[function_component(SessionProvider)]
 pub fn session_provider(props: &SessionProviderProps) -> Html {
-    let session = use_state(|| Session::default());
+    let session_initializer = props.session_initializer.clone();
+    let session = use_state(|| session_initializer.initialize(&Session::default()).unwrap());
 
     // Load session
     {
         let session = session.clone();
         let session_repository = props.session_repository.clone();
-        let session_initializer = props.session_initializer.clone();
+        let session_initializer = session_initializer.clone();
 
         use_effect_with((), move |_| {
             wasm_bindgen_futures::spawn_local(async move {
