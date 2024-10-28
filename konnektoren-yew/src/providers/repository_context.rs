@@ -74,18 +74,6 @@ impl RepositoryContext {
         });
     }
 
-    pub fn load_inbox(&self) {
-        let inbox_repository = self.inbox_repository.clone();
-        let inbox = Arc::clone(&self.inbox);
-
-        wasm_bindgen_futures::spawn_local(async move {
-            if let Ok(Some(loaded_inbox)) = inbox_repository.get_inbox(INBOX_STORAGE_KEY).await {
-                let mut inbox_guard = inbox.write().unwrap();
-                *inbox_guard = loaded_inbox;
-            }
-        });
-    }
-
     pub fn load_settings(&self) {
         let settings_repository = self.settings_repository.clone();
         let settings = Arc::clone(&self.settings);

@@ -1,4 +1,5 @@
 pub mod game_controller_provider;
+pub mod inbox_provider;
 pub mod profile_provider;
 mod repository_context;
 pub mod repository_hooks;
@@ -8,6 +9,7 @@ pub use game_controller_provider::{
     use_command_bus, use_event_bus, use_game_controller, use_game_state, GameControllerContext,
     GameControllerProvider, GameControllerProviderProps,
 };
+pub use inbox_provider::{InboxContext, InboxProvider};
 use profile_provider::{ProfileContext, ProfileProvider};
 pub use repository_context::RepositoryContext;
 pub use repository_hooks::{

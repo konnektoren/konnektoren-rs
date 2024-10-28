@@ -1,4 +1,4 @@
-use super::{ProfileProvider, RepositoryContext};
+use super::{InboxProvider, ProfileProvider, RepositoryContext};
 use crate::model::SessionInitializer;
 use crate::repository::{
     CertificateRepository, CertificateRepositoryTrait, InboxRepository, InboxRepositoryTrait,
@@ -61,7 +61,9 @@ pub fn repository_provider(props: &RepositoryProviderProps) -> Html {
     html! {
         <ContextProvider<RepositoryContext> context={context.clone()}>
             <ProfileProvider profile_repository={context.profile_repository}>
-                { for props.children.iter() }
+                <InboxProvider inbox_repository={context.inbox_repository}>
+                    { for props.children.iter() }
+                </InboxProvider>
             </ProfileProvider>
         </ContextProvider<RepositoryContext>>
     }

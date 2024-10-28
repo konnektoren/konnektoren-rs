@@ -10,6 +10,8 @@ use std::sync::{Arc, RwLock};
 use yew::prelude::*;
 use yew_hooks::use_effect_once;
 
+use super::InboxContext;
+
 #[hook]
 pub fn use_certificate_repository() -> Arc<dyn CertificateRepositoryTrait> {
     use_context::<RepositoryContext>()
@@ -68,17 +70,10 @@ pub fn use_profile() -> UseStateHandle<PlayerProfile> {
 }
 
 #[hook]
-pub fn use_inbox() -> Arc<RwLock<Inbox>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let inbox = repository_context.inbox.clone();
-
-    use_effect_once(move || {
-        repository_context.load_inbox();
-        || {}
-    });
-
-    inbox
+pub fn use_inbox() -> UseStateHandle<Inbox> {
+    use_context::<InboxContext>()
+        .expect("InboxContext not found")
+        .inbox
 }
 
 #[hook]
