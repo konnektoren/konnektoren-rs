@@ -76,6 +76,7 @@
 <a href="#76" id="76">76</a>
 <a href="#77" id="77">77</a>
 <a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     model::SessionInitializer,
     repository::{SessionRepositoryTrait, SESSION_STORAGE_KEY},
@@ -105,13 +106,14 @@
 
 <span class="attr">#[function_component(SessionProvider)]
 </span><span class="kw">pub fn </span>session_provider(props: <span class="kw-2">&amp;</span>SessionProviderProps) -&gt; Html {
-    <span class="kw">let </span>session = use_state(|| Session::default());
+    <span class="kw">let </span>session_initializer = props.session_initializer.clone();
+    <span class="kw">let </span>session = use_state(|| session_initializer.initialize(<span class="kw-2">&amp;</span>Session::default()).unwrap());
 
     <span class="comment">// Load session
     </span>{
         <span class="kw">let </span>session = session.clone();
         <span class="kw">let </span>session_repository = props.session_repository.clone();
-        <span class="kw">let </span>session_initializer = props.session_initializer.clone();
+        <span class="kw">let </span>session_initializer = session_initializer.clone();
 
         use_effect_with((), <span class="kw">move </span>|<span class="kw">_</span>| {
             wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
