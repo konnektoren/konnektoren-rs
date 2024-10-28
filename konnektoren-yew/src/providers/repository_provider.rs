@@ -1,4 +1,4 @@
-use super::{InboxProvider, ProfileProvider, RepositoryContext};
+use super::{InboxProvider, ProfileProvider, RepositoryContext, SessionProvider, SettingsProvider};
 use crate::model::SessionInitializer;
 use crate::repository::{
     CertificateRepository, CertificateRepositoryTrait, InboxRepository, InboxRepositoryTrait,
@@ -60,11 +60,16 @@ pub fn repository_provider(props: &RepositoryProviderProps) -> Html {
 
     html! {
         <ContextProvider<RepositoryContext> context={context.clone()}>
-            <ProfileProvider profile_repository={context.profile_repository}>
-                <InboxProvider inbox_repository={context.inbox_repository}>
-                    { for props.children.iter() }
-                </InboxProvider>
-            </ProfileProvider>
+            <SessionProvider session_repository={context.session_repository.clone()}
+                session_initializer={props.config.session_initializer.clone()}>
+                <ProfileProvider profile_repository={context.profile_repository}>
+                    <SettingsProvider settings_repository={context.settings_repository}>
+                        <InboxProvider inbox_repository={context.inbox_repository}>
+                            { for props.children.iter() }
+                        </InboxProvider>
+                    </SettingsProvider>
+                </ProfileProvider>
+            </SessionProvider>
         </ContextProvider<RepositoryContext>>
     }
 }

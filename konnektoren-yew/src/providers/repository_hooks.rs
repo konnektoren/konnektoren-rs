@@ -1,5 +1,7 @@
 use crate::model::{Inbox, Settings};
-use crate::providers::{InboxContext, ProfileContext, RepositoryContext, SettingsContext};
+use crate::providers::{
+    InboxContext, ProfileContext, RepositoryContext, SessionContext, SettingsContext,
+};
 use crate::repository::{
     CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
     SessionRepositoryTrait, SettingsRepositoryTrait,
@@ -47,17 +49,10 @@ pub fn use_session_repository() -> Arc<dyn SessionRepositoryTrait> {
 }
 
 #[hook]
-pub fn use_session() -> Arc<RwLock<Session>> {
-    let repository_context =
-        use_context::<RepositoryContext>().expect("RepositoryContext not found");
-    let session = repository_context.session.clone();
-
-    use_effect_once(move || {
-        repository_context.load_session();
-        || {}
-    });
-
-    session
+pub fn use_session() -> UseStateHandle<Session> {
+    use_context::<SessionContext>()
+        .expect("RepositoryContext not found")
+        .session
 }
 
 #[hook]

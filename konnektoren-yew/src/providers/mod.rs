@@ -4,6 +4,7 @@ pub mod profile_provider;
 mod repository_context;
 pub mod repository_hooks;
 pub mod repository_provider;
+pub mod session_provider;
 pub mod settings_provider;
 
 pub use game_controller_provider::{
@@ -19,4 +20,5 @@ pub use repository_hooks::{
     use_settings_repository,
 };
 pub use repository_provider::{RepositoryConfig, RepositoryProvider, RepositoryProviderProps};
+pub use session_provider::{SessionContext, SessionProvider};
 pub use settings_provider::{SettingsContext, SettingsProvider};
