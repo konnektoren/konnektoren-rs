@@ -2,11 +2,11 @@ use super::repository_hooks::{use_session, use_session_repository};
 use crate::repository::GameStatePersistenceImpl;
 use konnektoren_core::commands::CommandBus;
 use konnektoren_core::controller::{
-    ChallengeFinishPlugin, ControllerPlugin, GameController, GameControllerTrait, GameXpPlugin,
+    ChallengeFinishPlugin, GameController, GameControllerTrait, GameXpPlugin,
 };
 use konnektoren_core::events::EventBus;
 use konnektoren_core::game::{Game, GameState};
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, RwLock};
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
@@ -26,9 +26,30 @@ pub fn use_game_controller() -> GameControllerContext {
 }
 
 #[hook]
-pub fn use_game_state() -> Arc<Mutex<GameState>> {
-    let ctx = use_game_controller();
-    Arc::clone(ctx.controller.game_state())
+pub fn use_game_state() -> UseStateHandle<GameState> {
+    let session = use_session();
+    let session_state = use_state(|| session.game_state.clone());
+
+    {
+        let session = session.clone();
+        let session_state = session_state.clone();
+        use_effect_with((*session).clone(), move |_session| {
+            session_state.set(_session.game_state.clone());
+        });
+    }
+
+    // Update session when game state changes
+    {
+        let session = session.clone();
+        let session_state = session_state.clone();
+        use_effect_with((*session_state).clone(), move |game_state| {
+            let mut new_session = (*session).clone();
+            new_session.game_state = game_state.clone();
+            session.set(new_session);
+        });
+    }
+
+    session_state
 }
 
 #[hook]
