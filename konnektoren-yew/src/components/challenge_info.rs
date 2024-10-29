@@ -1,4 +1,4 @@
-use crate::components::ChallengeRatingComponent;
+use crate::components::{ChallengePresenceComponent, ChallengeRatingComponent};
 use crate::i18n::use_i18n;
 use konnektoren_core::prelude::*;
 use yew::prelude::*;
@@ -23,10 +23,20 @@ pub fn challenge_info(props: &ChallengeInfoProps) -> Html {
         None => html! {},
     };
 
+    let presence_component = match props.api_url {
+        Some(ref api_url) => html! {
+        <div class="challenge-info__presence">
+            <ChallengePresenceComponent api_url={api_url.clone()} challenge_id={props.challenge_config.id.clone()} read_only={true} />
+        </div>
+        },
+        None => html! {},
+    };
+
     html! {
         <div class="challenge-info">
             <h2 class="challenge-info__title">{&props.challenge_config.name}</h2>
             {rating_component}
+            {presence_component}
             <div class="challenge-info__description">
                 <p>{&props.challenge_config.description}</p>
             </div>
@@ -55,7 +65,7 @@ mod preview {
                 unlock_points: 10,
                 position: None,
             },
-            api_url: Some("https://api.example.com/reviews".to_string()),
+            api_url: Some("https://api.example.com".to_string()),
         },
     );
 }

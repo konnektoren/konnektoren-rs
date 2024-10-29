@@ -17,7 +17,7 @@ pub fn challenge_rating(props: &ChallengeRatingProps) -> Html {
 
         use_effect_with((), move |_| {
             wasm_bindgen_futures::spawn_local(async move {
-                let url = format!("{}/{}/average", api_url, challenge_id);
+                let url = format!("{}/reviews/{}/average", api_url, challenge_id);
                 let response = Request::get(&url).send().await;
 
                 match response {
