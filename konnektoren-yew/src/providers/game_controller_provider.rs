@@ -75,6 +75,14 @@ pub fn game_controller_provider(props: &GameControllerProviderProps) -> Html {
     controller.load_game_state().unwrap();
     let context = GameControllerContext::new(controller.clone());
 
+    {
+        let session = session.clone();
+        let controller = controller.clone();
+        use_effect_with(session, move |_| {
+            controller.load_game_state().unwrap();
+        })
+    }
+
     html! {
         <ContextProvider<GameControllerContext> context={context}>
             { for props.children.iter() }
