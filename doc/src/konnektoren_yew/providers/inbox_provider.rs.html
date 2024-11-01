@@ -64,10 +64,31 @@
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::model::Inbox;
 <span class="kw">use </span><span class="kw">crate</span>::repository::{InboxRepositoryTrait, INBOX_STORAGE_KEY};
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
+
+<span class="kw">const </span>INBOX_FILE: <span class="kw-2">&amp;</span>str = <span class="string">"/assets/inbox.yml"</span>;
 
 <span class="attr">#[derive(Clone, PartialEq)]
 </span><span class="kw">pub struct </span>InboxContext {
@@ -99,7 +120,24 @@
             wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
                 <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(loaded_inbox)) = inbox_repository.get_inbox(INBOX_STORAGE_KEY).<span class="kw">await
                 </span>{
-                    inbox.set(loaded_inbox);
+                    <span class="macro">log::info!</span>(<span class="string">"Loaded inbox: {:?}"</span>, loaded_inbox);
+                    inbox.set(loaded_inbox.clone());
+                    <span class="kw">match </span>gloo::net::http::Request::get(INBOX_FILE).send().<span class="kw">await </span>{
+                        <span class="prelude-val">Ok</span>(response) =&gt; <span class="kw">match </span>response.text().<span class="kw">await </span>{
+                            <span class="prelude-val">Ok</span>(text) =&gt; {
+                                <span class="kw">let </span><span class="kw-2">mut </span>new_inbox = loaded_inbox.clone();
+                                <span class="kw">let </span>loaded_inbox: Inbox = serde_yaml::from_str(<span class="kw-2">&amp;</span>text)
+                                    .unwrap_or_else(|e| {
+                                        <span class="macro">log::error!</span>(<span class="string">"Failed to parse inbox YAML: {:?}"</span>, e);
+                                        Inbox::default()
+                                    });
+                                new_inbox.merge(<span class="kw-2">&amp;</span>loaded_inbox);
+                                inbox.set(new_inbox);
+                            }
+                            <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">log::error!</span>(<span class="string">"Failed to get response text: {:?}"</span>, e),
+                        },
+                        <span class="prelude-val">Err</span>(e) =&gt; <span class="macro">log::error!</span>(<span class="string">"Failed to load inbox: {:?}"</span>, e),
+                    }
                 }
             });
             || ()
@@ -108,10 +146,10 @@
 
     {
         <span class="kw">let </span>inbox_repository = props.inbox_repository.clone();
-        <span class="kw">let </span>current_inbox = (<span class="kw-2">*</span>inbox).clone();
+        <span class="kw">let </span>inbox = inbox.clone();
 
-        use_effect_with(current_inbox.clone(), <span class="kw">move </span>|<span class="kw">_</span>| {
-            <span class="kw">let </span>inbox = current_inbox.clone();
+        use_effect_with(inbox.clone(), <span class="kw">move </span>|<span class="kw">_</span>| {
+            <span class="kw">let </span>inbox = inbox.clone();
             wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
                 <span class="kw">let </span>inbox = inbox.clone();
                 <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = inbox_repository.save_inbox(INBOX_STORAGE_KEY, <span class="kw-2">&amp;</span>inbox).<span class="kw">await </span>{

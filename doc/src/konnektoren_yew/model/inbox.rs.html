@@ -89,6 +89,53 @@
 <a href="#89" id="89">89</a>
 <a href="#90" id="90">90</a>
 <a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>yew_chat::prelude::Message;
 
@@ -119,6 +166,24 @@
             }
         }
 
+        <span class="self">self</span>.messages.sort_by(|a, b| b.timestamp.cmp(<span class="kw-2">&amp;</span>a.timestamp));
+    }
+
+    <span class="kw">pub fn </span>mark_as_read(<span class="kw-2">&amp;mut </span><span class="self">self</span>, message_id: String) {
+        <span class="kw">let </span>read_messages = <span class="self">self</span>.read_messages.get_or_insert_with(Vec::new);
+        <span class="kw">if </span>!read_messages.contains(<span class="kw-2">&amp;</span>message_id) {
+            read_messages.push(message_id);
+        }
+    }
+
+    <span class="kw">pub fn </span>add_uniquely(<span class="kw-2">&amp;mut </span><span class="self">self</span>, message: Message) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(id) = <span class="kw-2">&amp;</span>message.id {
+            <span class="kw">if </span>!<span class="self">self</span>.messages.iter().any(|m| m.id.as_ref() == <span class="prelude-val">Some</span>(id)) {
+                <span class="self">self</span>.messages.push(message);
+            }
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.messages.push(message);
+        }
         <span class="self">self</span>.messages.sort_by(|a, b| b.timestamp.cmp(<span class="kw-2">&amp;</span>a.timestamp));
     }
 }
@@ -178,6 +243,35 @@
         inbox.merge(<span class="kw-2">&amp;</span>other);
         <span class="macro">assert_eq!</span>(inbox.messages.len(), <span class="number">1</span>);
         <span class="macro">assert_eq!</span>(inbox.read_messages.as_ref().unwrap().len(), <span class="number">1</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>mark_as_read() {
+        <span class="kw">let </span><span class="kw-2">mut </span>inbox = Inbox {
+            messages: <span class="macro">vec!</span>[Message {
+                id: <span class="prelude-val">Some</span>(<span class="string">"1"</span>.to_string()),
+                ..Default::default()
+            }],
+            read_messages: <span class="prelude-val">Some</span>(<span class="macro">vec!</span>[]),
+        };
+        inbox.mark_as_read(<span class="string">"1"</span>.to_string());
+        <span class="macro">assert_eq!</span>(inbox.read_messages.as_ref().unwrap().len(), <span class="number">1</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>add_uniquely() {
+        <span class="kw">let </span><span class="kw-2">mut </span>inbox = Inbox {
+            messages: <span class="macro">vec!</span>[Message {
+                id: <span class="prelude-val">Some</span>(<span class="string">"1"</span>.to_string()),
+                ..Default::default()
+            }],
+            read_messages: <span class="prelude-val">Some</span>(<span class="macro">vec!</span>[]),
+        };
+        inbox.add_uniquely(Message {
+            id: <span class="prelude-val">Some</span>(<span class="string">"2"</span>.to_string()),
+            ..Default::default()
+        });
+        <span class="macro">assert_eq!</span>(inbox.messages.len(), <span class="number">2</span>);
     }
 }
 </code></pre></div></section></main></body></html>

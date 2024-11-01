@@ -56,6 +56,8 @@
 <a href="#56" id="56">56</a>
 <a href="#57" id="57">57</a>
 <a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! This module contains all the components that are used in the app.
 
 </span><span class="attr">#[cfg(feature = <span class="string">"certificates"</span>)]
@@ -63,6 +65,7 @@
 <span class="kw">pub mod </span>challenge;
 <span class="kw">pub mod </span>challenge_config;
 <span class="kw">pub mod </span>challenge_info;
+<span class="kw">pub mod </span>challenge_presence;
 <span class="kw">pub mod </span>challenge_rating;
 <span class="kw">pub mod </span>challenge_review;
 <span class="kw">pub mod </span>challenge_timer;
@@ -86,6 +89,7 @@
 <span class="kw">pub use </span>challenge::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>challenge_config::ChallengeConfigComponent;
 <span class="kw">pub use </span>challenge_info::ChallengeInfoComponent;
+<span class="kw">pub use </span>challenge_presence::ChallengePresenceComponent;
 <span class="kw">pub use </span>challenge_rating::ChallengeRatingComponent;
 <span class="kw">pub use </span>challenge_review::ChallengeReviewComponent;
 <span class="kw">pub use </span>challenge_timer::ChallengeTimerComponent;
