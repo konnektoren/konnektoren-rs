@@ -3,6 +3,8 @@ use crate::repository::{InboxRepositoryTrait, INBOX_STORAGE_KEY};
 use std::sync::Arc;
 use yew::prelude::*;
 
+const INBOX_FILE: &str = "/assets/inbox.yml";
+
 #[derive(Clone, PartialEq)]
 pub struct InboxContext {
     pub inbox: UseStateHandle<Inbox>,
@@ -33,7 +35,24 @@ pub fn inbox_provider(props: &InboxProviderProps) -> Html {
             wasm_bindgen_futures::spawn_local(async move {
                 if let Ok(Some(loaded_inbox)) = inbox_repository.get_inbox(INBOX_STORAGE_KEY).await
                 {
-                    inbox.set(loaded_inbox);
+                    log::info!("Loaded inbox: {:?}", loaded_inbox);
+                    inbox.set(loaded_inbox.clone());
+                    match gloo::net::http::Request::get(INBOX_FILE).send().await {
+                        Ok(response) => match response.text().await {
+                            Ok(text) => {
+                                let mut new_inbox = loaded_inbox.clone();
+                                let loaded_inbox: Inbox = serde_yaml::from_str(&text)
+                                    .unwrap_or_else(|e| {
+                                        log::error!("Failed to parse inbox YAML: {:?}", e);
+                                        Inbox::default()
+                                    });
+                                new_inbox.merge(&loaded_inbox);
+                                inbox.set(new_inbox);
+                            }
+                            Err(e) => log::error!("Failed to get response text: {:?}", e),
+                        },
+                        Err(e) => log::error!("Failed to load inbox: {:?}", e),
+                    }
                 }
             });
             || ()
@@ -42,10 +61,10 @@ pub fn inbox_provider(props: &InboxProviderProps) -> Html {
 
     {
         let inbox_repository = props.inbox_repository.clone();
-        let current_inbox = (*inbox).clone();
+        let inbox = inbox.clone();
 
-        use_effect_with(current_inbox.clone(), move |_| {
-            let inbox = current_inbox.clone();
+        use_effect_with(inbox.clone(), move |_| {
+            let inbox = inbox.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 let inbox = inbox.clone();
                 if let Err(e) = inbox_repository.save_inbox(INBOX_STORAGE_KEY, &inbox).await {
