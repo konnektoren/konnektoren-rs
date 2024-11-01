@@ -77,6 +77,7 @@ mod preview {
         ChallengePresenceProps {
             challenge_id: "123".to_string(),
             api_url: "https://api.example.com".to_string(),
+            read_only: true,
         },
     );
 }
