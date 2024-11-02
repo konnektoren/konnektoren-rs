@@ -65,6 +65,9 @@
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
@@ -78,6 +81,7 @@
     <span class="kw">pub </span>js: String,
     <span class="kw">pub </span>i18n: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>data: serde_json::Value,
+    <span class="kw">pub </span>task_ids: <span class="prelude-ty">Option</span>&lt;Vec&lt;usize&gt;&gt;,
     <span class="kw">pub </span>package_url: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
@@ -102,6 +106,7 @@
             js: <span class="string">""</span>.to_string(),
             i18n: <span class="prelude-val">None</span>,
             data: data.clone(),
+            task_ids: <span class="prelude-val">None</span>,
             package_url: <span class="prelude-val">None</span>,
         };
 
@@ -112,7 +117,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>serialize_dataset() {
-        <span class="kw">let </span>json_str = <span class="string">r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","i18n":null,"data":{"key":"value"},"package_url":null}"#</span>;
+        <span class="kw">let </span>json_str = <span class="string">r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","i18n":null,"data":{"key":"value"},"task_ids":null,"package_url":null}"#</span>;
         <span class="kw">let </span>dataset = Custom {
             id: <span class="string">"123"</span>.to_string(),
             name: <span class="string">"Test"</span>.to_string(),
@@ -125,6 +130,7 @@
             data: <span class="macro">serde_json::json!</span>({
                 <span class="string">"key"</span>: <span class="string">"value"
             </span>}),
+            task_ids: <span class="prelude-val">None</span>,
             package_url: <span class="prelude-val">None</span>,
         };
 
