@@ -152,7 +152,7 @@
     command: CommandHandler&lt;<span class="lifetime">'static</span>&gt;,
     event: EventHandler&lt;<span class="lifetime">'static</span>&gt;,
     i18n: I18nHandler&lt;<span class="lifetime">'static</span>&gt;,
-    js_executor: JsExecutor&lt;<span class="lifetime">'static</span>&gt;,
+    js_executor: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>JsExecutor&lt;<span class="lifetime">'static</span>&gt;,
     result: ResultHandler&lt;<span class="lifetime">'static</span>&gt;,
 }
 
@@ -172,18 +172,18 @@
     </span><span class="kw">pub fn </span>new(window: <span class="kw-2">&amp;</span>Window) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>window = window.clone();
         <span class="kw">let </span>static_window: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>Window = Box::leak(Box::new(window.clone()));
-        <span class="kw">let </span>challenge = ChallengeHandler::new(static_window);
-        <span class="kw">let </span>command = CommandHandler::new(static_window);
-        <span class="kw">let </span>event = EventHandler::new(static_window);
-        <span class="kw">let </span>i18n = I18nHandler::new(static_window);
-        <span class="kw">let </span>js_executor = JsExecutor::new(static_window);
-        <span class="kw">let </span>result = ResultHandler::new(static_window);
+        <span class="kw">let </span>js_executor: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>JsExecutor = Box::leak(Box::new(JsExecutor::new(static_window)));
 
         <span class="kw">let </span>konnektoren_obj = js_executor.get_or_create_konnektoren_object();
-
         <span class="kw">if </span>js_executor.is_konnektoren_object_empty(<span class="kw-2">&amp;</span>konnektoren_obj) {
             js_executor.create_konnektoren_object(<span class="kw-2">&amp;</span>konnektoren_obj);
         }
+
+        <span class="kw">let </span>challenge = ChallengeHandler::new(<span class="kw-2">&amp;</span>js_executor);
+        <span class="kw">let </span>command = CommandHandler::new(static_window);
+        <span class="kw">let </span>event = EventHandler::new(static_window);
+        <span class="kw">let </span>i18n = I18nHandler::new(static_window);
+        <span class="kw">let </span>result = ResultHandler::new(<span class="kw-2">&amp;</span>js_executor);
 
         <span class="self">Self </span>{
             challenge,

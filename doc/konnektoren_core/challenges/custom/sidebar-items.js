@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Custom","CustomChallengeResult"]};
+window.SIDEBAR_ITEMS = {"struct":["Custom","CustomChallengeResult","CustomChallengeState"]};
