@@ -26,6 +26,7 @@ fn test_set_challenge_data() {
         css: "".to_string(),
         js: "".to_string(),
         i18n: None,
+        task_ids: None,
         data: serde_json::json!({"key":"value"}),
         package_url: None,
     };

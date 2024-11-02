@@ -11,6 +11,7 @@ pub struct Custom {
     pub js: String,
     pub i18n: Option<String>,
     pub data: serde_json::Value,
+    pub task_ids: Option<Vec<usize>>,
     pub package_url: Option<String>,
 }
 
@@ -35,6 +36,7 @@ mod tests {
             js: "".to_string(),
             i18n: None,
             data: data.clone(),
+            task_ids: None,
             package_url: None,
         };
 
@@ -45,7 +47,7 @@ mod tests {
 
     #[test]
     fn serialize_dataset() {
-        let json_str = r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","i18n":null,"data":{"key":"value"},"package_url":null}"#;
+        let json_str = r#"{"id":"123","name":"Test","description":"","html":"","results_html":null,"css":"","js":"","i18n":null,"data":{"key":"value"},"task_ids":null,"package_url":null}"#;
         let dataset = Custom {
             id: "123".to_string(),
             name: "Test".to_string(),
@@ -58,6 +60,7 @@ mod tests {
             data: serde_json::json!({
                 "key": "value"
             }),
+            task_ids: None,
             package_url: None,
         };
 

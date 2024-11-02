@@ -48,7 +48,13 @@ impl ChallengeType {
                 ChallengeType::SortTable(new_dataset)
             }
             ChallengeType::Informative(dataset) => ChallengeType::Informative(dataset.clone()),
-            ChallengeType::Custom(dataset) => ChallengeType::Custom(dataset.clone()),
+            ChallengeType::Custom(dataset) => {
+                let mut dataset = dataset.clone();
+                let ids: Vec<_> = (0..100).collect();
+                let task_ids = task_pattern.select_items(&ids);
+                dataset.task_ids = Some(task_ids);
+                ChallengeType::Custom(dataset)
+            }
         }
     }
 
