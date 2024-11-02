@@ -51,6 +51,7 @@ pub mod prelude {
 }
 
 #[cfg(feature = "js")]
+#[cfg(target_arch = "wasm32")]
 #[cfg(test)]
 mod tests {
     wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);

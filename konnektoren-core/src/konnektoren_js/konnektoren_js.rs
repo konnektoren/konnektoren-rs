@@ -15,7 +15,7 @@ pub struct KonnektorenJs {
     command: CommandHandler<'static>,
     event: EventHandler<'static>,
     i18n: I18nHandler<'static>,
-    js_executor: JsExecutor<'static>,
+    js_executor: &'static JsExecutor<'static>,
     result: ResultHandler<'static>,
 }
 
@@ -35,18 +35,18 @@ impl KonnektorenJs {
     pub fn new(window: &Window) -> Self {
         let window = window.clone();
         let static_window: &'static Window = Box::leak(Box::new(window.clone()));
-        let challenge = ChallengeHandler::new(static_window);
-        let command = CommandHandler::new(static_window);
-        let event = EventHandler::new(static_window);
-        let i18n = I18nHandler::new(static_window);
-        let js_executor = JsExecutor::new(static_window);
-        let result = ResultHandler::new(static_window);
+        let js_executor: &'static JsExecutor = Box::leak(Box::new(JsExecutor::new(static_window)));
 
         let konnektoren_obj = js_executor.get_or_create_konnektoren_object();
-
         if js_executor.is_konnektoren_object_empty(&konnektoren_obj) {
             js_executor.create_konnektoren_object(&konnektoren_obj);
         }
+
+        let challenge = ChallengeHandler::new(&js_executor);
+        let command = CommandHandler::new(static_window);
+        let event = EventHandler::new(static_window);
+        let i18n = I18nHandler::new(static_window);
+        let result = ResultHandler::new(&js_executor);
 
         Self {
             challenge,
