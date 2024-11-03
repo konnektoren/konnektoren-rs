@@ -395,9 +395,6 @@
 <a href="#395" id="395">395</a>
 <a href="#396" id="396">396</a>
 <a href="#397" id="397">397</a>
-<a href="#398" id="398">398</a>
-<a href="#399" id="399">399</a>
-<a href="#400" id="400">400</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeHistory, Performance, Timed};
 <span class="kw">use </span>chrono::{DateTime, Duration, Utc};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
@@ -515,23 +512,20 @@
 
 <span class="kw">impl </span>PartialOrd <span class="kw">for </span>PerformanceRecord {
     <span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;std::cmp::Ordering&gt; {
-        <span class="kw">match </span>other
-            .performance_percentage
-            .cmp(<span class="kw-2">&amp;</span><span class="self">self</span>.performance_percentage)
+        <span class="kw">match </span><span class="self">self
+            </span>.performance_percentage
+            .cmp(<span class="kw-2">&amp;</span>other.performance_percentage)
         {
-            std::cmp::Ordering::Equal =&gt; {
-                <span class="comment">// If performance is equal, compare elapsed time
-                </span><span class="prelude-val">Some</span>(
-                    <span class="self">self</span>.elapsed_time()
-                        .and_then(|a_elapsed| {
-                            other
-                                .elapsed_time()
-                                .map(|b_elapsed| a_elapsed.cmp(<span class="kw-2">&amp;</span>b_elapsed)) <span class="comment">// Reversed comparison
-                        </span>})
-                        .unwrap_or(std::cmp::Ordering::Equal)
-                        .then_with(|| other.date.cmp(<span class="kw-2">&amp;</span><span class="self">self</span>.date)),
-                )
-            }
+            std::cmp::Ordering::Equal =&gt; <span class="prelude-val">Some</span>(
+                <span class="self">self</span>.elapsed_time()
+                    .and_then(|self_elapsed| {
+                        other
+                            .elapsed_time()
+                            .map(|other_elapsed| self_elapsed.cmp(<span class="kw-2">&amp;</span>other_elapsed))
+                    })
+                    .map(|time_ord| time_ord.then_with(|| other.date.cmp(<span class="kw-2">&amp;</span><span class="self">self</span>.date)))
+                    .unwrap_or(std::cmp::Ordering::Equal),
+            ),
             other =&gt; <span class="prelude-val">Some</span>(other),
         }
     }
@@ -715,11 +709,11 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>records = <span class="macro">vec!</span>[a.clone(), b.clone(), c.clone(), d.clone()];
         records.sort();
-        <span class="macro">assert_eq!</span>(records[<span class="number">0</span>].profile_name, <span class="string">"c"</span>);
-        <span class="macro">assert_eq!</span>(records[<span class="number">1</span>].profile_name, <span class="string">"b"</span>);
-        <span class="macro">assert_eq!</span>(records[<span class="number">2</span>].profile_name, <span class="string">"d"</span>);
-        <span class="macro">assert_eq!</span>(records[<span class="number">3</span>].profile_name, <span class="string">"a"</span>);
-        <span class="macro">assert_eq!</span>(records, <span class="macro">vec!</span>[c, b, d, a]);
+        <span class="macro">assert_eq!</span>(records[<span class="number">0</span>].profile_name, <span class="string">"b"</span>);
+        <span class="macro">assert_eq!</span>(records[<span class="number">1</span>].profile_name, <span class="string">"d"</span>);
+        <span class="macro">assert_eq!</span>(records[<span class="number">2</span>].profile_name, <span class="string">"a"</span>);
+        <span class="macro">assert_eq!</span>(records[<span class="number">3</span>].profile_name, <span class="string">"c"</span>);
+        <span class="macro">assert_eq!</span>(records, <span class="macro">vec!</span>[b, d, a, c]);
     }
 
     <span class="attr">#[test]
