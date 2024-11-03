@@ -8,7 +8,7 @@ pub type ChallengeId = String;
 pub type ChallengePercentage = u8;
 pub type ChallengePerformance = (ChallengeId, ChallengePercentage, ChallengeTimeMilliseconds);
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub struct PerformanceRecord {
     pub game_path_id: String,
     pub profile_name: String,
@@ -119,19 +119,16 @@ impl PartialOrd for PerformanceRecord {
             .performance_percentage
             .cmp(&self.performance_percentage)
         {
-            std::cmp::Ordering::Equal => {
-                // If performance is equal, compare elapsed time
-                Some(
-                    self.elapsed_time()
-                        .and_then(|a_elapsed| {
-                            other
-                                .elapsed_time()
-                                .map(|b_elapsed| a_elapsed.cmp(&b_elapsed)) // Reversed comparison
-                        })
-                        .unwrap_or(std::cmp::Ordering::Equal)
-                        .then_with(|| other.date.cmp(&self.date)),
-                )
-            }
+            std::cmp::Ordering::Equal => Some(
+                self.elapsed_time()
+                    .and_then(|self_elapsed| {
+                        other
+                            .elapsed_time()
+                            .map(|other_elapsed| self_elapsed.cmp(&other_elapsed))
+                    })
+                    .map(|time_ord| time_ord.then_with(|| other.date.cmp(&self.date)))
+                    .unwrap_or(std::cmp::Ordering::Equal),
+            ),
             other => Some(other),
         }
     }
@@ -320,5 +317,153 @@ mod tests {
         assert_eq!(records[2].profile_name, "d");
         assert_eq!(records[3].profile_name, "a");
         assert_eq!(records, vec![c, b, d, a]);
+    }
+
+    #[test]
+    fn test_by_timetaken() {
+        let a = PerformanceRecord {
+            profile_name: "a".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 100)],
+            ..Default::default()
+        };
+
+        let b = PerformanceRecord {
+            profile_name: "b".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 400)],
+            ..Default::default()
+        };
+
+        let c = PerformanceRecord {
+            profile_name: "c".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 300)],
+            ..Default::default()
+        };
+
+        let d = PerformanceRecord {
+            profile_name: "d".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 200)],
+            ..Default::default()
+        };
+
+        let mut records = vec![a.clone(), b.clone(), c.clone(), d.clone()];
+        records.sort();
+
+        assert_eq!(records[0].profile_name, "a");
+        assert_eq!(records[1].profile_name, "d");
+        assert_eq!(records[2].profile_name, "c");
+        assert_eq!(records[3].profile_name, "b");
+        assert_eq!(records, vec![a, d, c, b]);
+    }
+
+    #[test]
+    fn test_timetaken_over_date() {
+        let a = PerformanceRecord {
+            profile_name: "a".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 100)],
+            date: DateTime::from(DateTime::parse_from_rfc3339("2021-08-01T00:00:00Z").unwrap()),
+            ..Default::default()
+        };
+
+        let b = PerformanceRecord {
+            profile_name: "b".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 400)],
+            date: DateTime::from(DateTime::parse_from_rfc3339("2021-08-02T00:00:00Z").unwrap()),
+            ..Default::default()
+        };
+
+        let c = PerformanceRecord {
+            profile_name: "c".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 300)],
+            date: DateTime::from(DateTime::parse_from_rfc3339("2021-08-03T00:00:00Z").unwrap()),
+            ..Default::default()
+        };
+
+        let d = PerformanceRecord {
+            profile_name: "d".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 200)],
+            date: DateTime::from(DateTime::parse_from_rfc3339("2021-08-04T00:00:00Z").unwrap()),
+            ..Default::default()
+        };
+
+        let mut records = vec![a.clone(), b.clone(), c.clone(), d.clone()];
+        records.sort();
+
+        assert_eq!(records[0].profile_name, "a");
+        assert_eq!(records[1].profile_name, "d");
+        assert_eq!(records[2].profile_name, "c");
+        assert_eq!(records[3].profile_name, "b");
+        assert_eq!(records, vec![a, d, c, b]);
+    }
+
+    #[test]
+    fn test_by_performance() {
+        let a = PerformanceRecord {
+            profile_name: "a".to_string(),
+            performance_percentage: 100,
+            ..Default::default()
+        };
+
+        let b = PerformanceRecord {
+            profile_name: "b".to_string(),
+            performance_percentage: 90,
+            ..Default::default()
+        };
+
+        let c = PerformanceRecord {
+            profile_name: "c".to_string(),
+            performance_percentage: 80,
+            ..Default::default()
+        };
+
+        let d = PerformanceRecord {
+            profile_name: "d".to_string(),
+            performance_percentage: 70,
+            ..Default::default()
+        };
+
+        let mut records = vec![a.clone(), b.clone(), c.clone(), d.clone()];
+        records.sort();
+
+        assert_eq!(records[0].profile_name, "a");
+        assert_eq!(records[1].profile_name, "b");
+        assert_eq!(records[2].profile_name, "c");
+        assert_eq!(records[3].profile_name, "d");
+        assert_eq!(records, vec![a, b, c, d]);
+    }
+
+    #[test]
+    fn test_by_time_taken() {
+        let a = PerformanceRecord {
+            profile_name: "a".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 100)],
+            ..Default::default()
+        };
+
+        let b = PerformanceRecord {
+            profile_name: "b".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 400)],
+            ..Default::default()
+        };
+
+        let c = PerformanceRecord {
+            profile_name: "c".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 300)],
+            ..Default::default()
+        };
+
+        let d = PerformanceRecord {
+            profile_name: "d".to_string(),
+            challenges_performance: vec![("challenge_id".to_string(), 0, 200)],
+            ..Default::default()
+        };
+
+        let mut records = vec![a.clone(), b.clone(), c.clone(), d.clone()];
+        records.sort();
+
+        assert_eq!(records[0].profile_name, "a");
+        assert_eq!(records[1].profile_name, "d");
+        assert_eq!(records[2].profile_name, "c");
+        assert_eq!(records[3].profile_name, "b");
+        assert_eq!(records, vec![a, d, c, b]);
     }
 }
