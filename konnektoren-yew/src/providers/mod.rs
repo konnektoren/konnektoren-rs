@@ -8,6 +8,7 @@ pub mod repository_provider;
 pub mod session_provider;
 pub mod settings_provider;
 
+pub use crate::i18n::{use_i18n, use_selected_language, I18nProvider, I18nProviderProps};
 pub use certificates_provider::{CertificatesContext, CertificatesProvider};
 pub use game_controller_provider::{
     use_command_bus, use_event_bus, use_game_controller, use_game_state, GameControllerContext,

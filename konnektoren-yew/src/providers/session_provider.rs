@@ -52,10 +52,10 @@ pub fn session_provider(props: &SessionProviderProps) -> Html {
 
     {
         let session_repository = props.session_repository.clone();
-        let current_session = (*session).clone();
+        let session = session.clone();
 
-        use_effect_with(current_session.clone(), move |_| {
-            let session = current_session.clone();
+        use_effect_with(session.clone(), move |_| {
+            let session = session.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 let session = session.clone();
                 if let Err(e) = session_repository

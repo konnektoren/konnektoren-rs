@@ -1,7 +1,7 @@
 use super::RepositoryConfig;
 use crate::repository::{
     CertificateRepositoryTrait, InboxRepositoryTrait, ProfileRepositoryTrait,
-    SessionRepositoryTrait, SettingsRepositoryTrait, CERTIFICATE_STORAGE_KEY,
+    SessionRepositoryTrait, SettingsRepositoryTrait,
 };
 use konnektoren_core::certificates::CertificateData;
 use std::sync::{Arc, RwLock};

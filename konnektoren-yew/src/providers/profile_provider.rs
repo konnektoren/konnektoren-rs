@@ -43,10 +43,10 @@ pub fn profile_provider(props: &ProfileProviderProps) -> Html {
 
     {
         let profile_repository = props.profile_repository.clone();
-        let current_profile = (*profile).clone();
+        let profile = profile.clone();
 
-        use_effect_with(current_profile.clone(), move |_| {
-            let profile = current_profile.clone();
+        use_effect_with(profile.clone(), move |_| {
+            let profile = profile.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 let profile = profile.clone();
                 if let Err(e) = profile_repository

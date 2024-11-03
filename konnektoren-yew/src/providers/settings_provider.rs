@@ -42,10 +42,10 @@ pub fn settings_provider(props: &SettingsProviderProps) -> Html {
 
     {
         let settings_repository = props.settings_repository.clone();
-        let current_settings = (*settings).clone();
+        let settings = settings.clone();
 
-        use_effect_with(current_settings.clone(), move |_| {
-            let settings = current_settings.clone();
+        use_effect_with(settings.clone(), move |_| {
+            let settings = settings.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 let settings = settings.clone();
                 if let Err(e) = settings_repository
