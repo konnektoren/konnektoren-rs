@@ -139,9 +139,9 @@
 
     {
         <span class="kw">let </span>i18n_ctx = i18n_ctx.clone();
-        <span class="kw">let </span>current_settings = (<span class="kw-2">*</span>settings).clone();
+        <span class="kw">let </span>settings = settings.clone();
 
-        use_effect_with(current_settings.clone(), <span class="kw">move </span>|<span class="kw">_</span>| {
+        use_effect_with(settings.clone(), <span class="kw">move </span>|settings| {
             <span class="kw">let </span>settings = settings.clone();
             <span class="kw">let </span><span class="kw-2">mut </span>i18n = (<span class="kw-2">&amp;*</span>i18n_ctx).clone();
             i18n.set_translation_language(<span class="kw-2">&amp;</span>(<span class="kw-2">*</span>settings.language))
@@ -157,7 +157,7 @@
 
     <span class="macro">html!</span> {
         &lt;ContextProvider&lt;I18nContext&gt; {context}&gt;
-            { props.children.clone() }
+            { <span class="kw">for </span>props.children.iter() }
         &lt;/ContextProvider&lt;I18nContext&gt;&gt;
     }
 }
