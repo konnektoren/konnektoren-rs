@@ -113,10 +113,10 @@
 
     {
         <span class="kw">let </span>profile_repository = props.profile_repository.clone();
-        <span class="kw">let </span>current_profile = (<span class="kw-2">*</span>profile).clone();
+        <span class="kw">let </span>profile = profile.clone();
 
-        use_effect_with(current_profile.clone(), <span class="kw">move </span>|<span class="kw">_</span>| {
-            <span class="kw">let </span>profile = current_profile.clone();
+        use_effect_with(profile.clone(), <span class="kw">move </span>|<span class="kw">_</span>| {
+            <span class="kw">let </span>profile = profile.clone();
             wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
                 <span class="kw">let </span>profile = profile.clone();
                 <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = profile_repository

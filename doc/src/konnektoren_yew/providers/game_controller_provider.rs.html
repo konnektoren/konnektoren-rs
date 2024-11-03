@@ -140,28 +140,28 @@
 <span class="attr">#[hook]
 </span><span class="kw">pub fn </span>use_game_state() -&gt; UseStateHandle&lt;GameState&gt; {
     <span class="kw">let </span>session = use_session();
-    <span class="kw">let </span>session_state = use_state(|| session.game_state.clone());
+    <span class="kw">let </span>game_state = use_state(|| session.game_state.clone());
 
     {
         <span class="kw">let </span>session = session.clone();
-        <span class="kw">let </span>session_state = session_state.clone();
-        use_effect_with((<span class="kw-2">*</span>session).clone(), <span class="kw">move </span>|_session| {
-            session_state.set(_session.game_state.clone());
+        <span class="kw">let </span>game_state = game_state.clone();
+        use_effect_with(session.clone(), <span class="kw">move </span>|session| {
+            game_state.set(session.game_state.clone());
         });
     }
 
     <span class="comment">// Update session when game state changes
     </span>{
         <span class="kw">let </span>session = session.clone();
-        <span class="kw">let </span>session_state = session_state.clone();
-        use_effect_with((<span class="kw-2">*</span>session_state).clone(), <span class="kw">move </span>|game_state| {
+        <span class="kw">let </span>game_state = game_state.clone();
+        use_effect_with(game_state.clone(), <span class="kw">move </span>|game_state| {
             <span class="kw">let </span><span class="kw-2">mut </span>new_session = (<span class="kw-2">*</span>session).clone();
-            new_session.game_state = game_state.clone();
+            new_session.game_state = (<span class="kw-2">&amp;**</span>game_state).clone();
             session.set(new_session);
         });
     }
 
-    session_state
+    game_state
 }
 
 <span class="attr">#[hook]

@@ -131,10 +131,10 @@
 
     {
         <span class="kw">let </span>session_repository = props.session_repository.clone();
-        <span class="kw">let </span>current_session = (<span class="kw-2">*</span>session).clone();
+        <span class="kw">let </span>session = session.clone();
 
-        use_effect_with(current_session.clone(), <span class="kw">move </span>|<span class="kw">_</span>| {
-            <span class="kw">let </span>session = current_session.clone();
+        use_effect_with(session.clone(), <span class="kw">move </span>|<span class="kw">_</span>| {
+            <span class="kw">let </span>session = session.clone();
             wasm_bindgen_futures::spawn_local(<span class="kw">async move </span>{
                 <span class="kw">let </span>session = session.clone();
                 <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = session_repository
