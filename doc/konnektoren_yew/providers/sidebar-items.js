@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["certificates_provider","game_controller_provider","inbox_provider","profile_provider","repository_hooks","repository_provider","session_provider","settings_provider"],"struct":["RepositoryContext"]};
+window.SIDEBAR_ITEMS = {"mod":["certificates_provider","game_controller_provider","i18n_provider","inbox_provider","profile_provider","repository_hooks","repository_provider","session_provider","settings_provider"],"struct":["RepositoryContext"]};

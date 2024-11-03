@@ -166,6 +166,7 @@
 <a href="#166" id="166">166</a>
 <a href="#167" id="167">167</a>
 <a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! The `i18n` module contains the internationalization (i18n) functionality for the application.
 
 /// The `config` module contains the configuration for internationalization (i18n).
@@ -199,7 +200,8 @@
 /// - `use_selected_language`: A hook to get or set the selected language.
 /// - `I18nProvider`: A component that provides i18n context to the application.
 /// - `I18nProviderProps`: The properties for the `I18nProvider` component.
-</span><span class="kw">pub use </span>provider::{use_i18n, use_selected_language, I18nProvider, I18nProviderProps};
+</span><span class="comment">//pub use provider::{use_i18n, use_selected_language, I18nProvider, I18nProviderProps};
+</span><span class="kw">pub use </span><span class="kw">crate</span>::providers::{use_i18n, use_selected_language, I18nProvider, I18nProviderProps};
 
 <span class="doccomment">/// Re-export the `SelectedLanguage` type from the `selected_language` module.
 </span><span class="kw">pub use </span>selected_language::SelectedLanguage;

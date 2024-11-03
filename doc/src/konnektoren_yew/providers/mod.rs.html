@@ -24,8 +24,13 @@
 <a href="#24" id="24">24</a>
 <a href="#25" id="25">25</a>
 <a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
 </pre></div><pre class="rust"><code><span class="kw">pub mod </span>certificates_provider;
 <span class="kw">pub mod </span>game_controller_provider;
+<span class="kw">pub mod </span>i18n_provider;
 <span class="kw">pub mod </span>inbox_provider;
 <span class="kw">pub mod </span>profile_provider;
 <span class="kw">mod </span>repository_context;
@@ -38,6 +43,9 @@
 <span class="kw">pub use </span>game_controller_provider::{
     use_command_bus, use_event_bus, use_game_controller, use_game_state, GameControllerContext,
     GameControllerProvider, GameControllerProviderProps,
+};
+<span class="kw">pub use </span>i18n_provider::{
+    use_i18n, use_selected_language, I18nContext, I18nProvider, I18nProviderProps,
 };
 <span class="kw">pub use </span>inbox_provider::{InboxContext, InboxProvider};
 <span class="kw">use </span>profile_provider::{ProfileContext, ProfileProvider};

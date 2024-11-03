@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["use_i18n","use_selected_language"],"struct":["I18nContext","I18nProvider","I18nProviderProps"]};
