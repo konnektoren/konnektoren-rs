@@ -26,8 +26,13 @@
 <a href="#26" id="26">26</a>
 <a href="#27" id="27">27</a>
 <a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
+
+<span class="kw">pub const </span>BACKUP_KEY: <span class="kw-2">&amp;</span>str = <span class="string">"konnektoren_backup"</span>;
 
 <span class="attr">#[derive(Debug, Clone, PartialEq, thiserror::Error)]
 </span><span class="kw">pub enum </span>BackupError {
@@ -41,7 +46,8 @@
     </span>Unknown(String),
 }
 
-<span class="attr">#[async_trait]
+<span class="attr">#[cfg_attr(target_arch = <span class="string">"wasm32"</span>, async_trait(<span class="question-mark">?</span>Send))]
+#[cfg_attr(not(target_arch = <span class="string">"wasm32"</span>), async_trait)]
 </span><span class="kw">pub trait </span>Backup&lt;T: Serialize + <span class="kw">for</span>&lt;<span class="lifetime">'de</span>&gt; Deserialize&lt;<span class="lifetime">'de</span>&gt;&gt; {
     <span class="kw">async fn </span>list_backups(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;BackupInfo&gt;, BackupError&gt;;
     <span class="kw">async fn </span>backup(<span class="kw-2">&amp;</span><span class="self">self</span>, id: <span class="kw-2">&amp;</span>str, value: <span class="kw-2">&amp;</span>T) -&gt; <span class="prelude-ty">Result</span>&lt;BackupInfo, BackupError&gt;;
