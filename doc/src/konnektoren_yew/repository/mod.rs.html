@@ -31,7 +31,13 @@
 <a href="#31" id="31">31</a>
 <a href="#32" id="32">32</a>
 <a href="#33" id="33">33</a>
-</pre></div><pre class="rust"><code><span class="kw">mod </span>certificate_repository;
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
+<a href="#37" id="37">37</a>
+</pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">"backup"</span>)]
+</span><span class="kw">mod </span>backup;
+<span class="kw">mod </span>certificate_repository;
 <span class="kw">mod </span>game_state_persistence_impl;
 <span class="kw">mod </span>inbox_repository;
 <span class="kw">mod </span>profile_repository;
@@ -47,6 +53,8 @@
 <span class="kw">mod </span>storage;
 <span class="kw">mod </span>storage_error;
 
+<span class="attr">#[cfg(feature = <span class="string">"backup"</span>)]
+</span><span class="kw">pub use </span>backup::{Backup, BackupError, BackupInfo};
 <span class="kw">pub use </span>certificate_repository::{
     CertificateRepository, CertificateRepositoryTrait, CERTIFICATE_STORAGE_KEY,
 };
