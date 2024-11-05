@@ -35,5 +35,7 @@ pub use memory_storage::MemoryStorage;
 pub use repository::Repository;
 pub use repository_error::RepositoryError;
 
+#[cfg(feature = "gdrive")]
+pub use gdrive_backup::GDriveBackup;
 pub use storage::Storage;
 pub use storage_error::StorageError;

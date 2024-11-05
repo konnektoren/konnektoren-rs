@@ -10,6 +10,8 @@ pub mod challenge_rating;
 pub mod challenge_review;
 pub mod challenge_timer;
 pub mod game_path;
+#[cfg(feature = "gdrive")]
+pub mod gdrive_backup;
 pub mod inbox;
 mod map;
 #[cfg(feature = "music")]
@@ -34,6 +36,8 @@ pub use challenge_rating::ChallengeRatingComponent;
 pub use challenge_review::ChallengeReviewComponent;
 pub use challenge_timer::ChallengeTimerComponent;
 pub use game_path::GamePathComponent;
+#[cfg(feature = "gdrive")]
+pub use gdrive_backup::GDriveBackupComponent;
 pub use inbox::InboxComponent;
 pub use map::*;
 pub use progress_bar::ProgressBar;

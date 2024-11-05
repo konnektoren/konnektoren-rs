@@ -15,9 +15,10 @@ struct GoogleDriveFile {
     created_time: Option<String>,
 }
 
+#[derive(Debug, Clone)]
 pub struct GDriveBackup {
-    access_token: String,
-    client_id: String,
+    pub access_token: String,
+    pub client_id: String,
 }
 
 impl GDriveBackup {
