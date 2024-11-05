@@ -249,6 +249,7 @@
 <a href="#249" id="249">249</a>
 <a href="#250" id="250">250</a>
 <a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
 </pre></div><pre class="rust"><code><span class="attr">#![cfg_attr(not(target_arch = <span class="string">"wasm32"</span>), allow(unused))]
 
 </span><span class="kw">use super</span>::{Backup, BackupError, BackupInfo, BACKUP_KEY};
@@ -266,9 +267,10 @@
     </span>created_time: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
-<span class="kw">pub struct </span>GDriveBackup {
-    access_token: String,
-    client_id: String,
+<span class="attr">#[derive(Debug, Clone)]
+</span><span class="kw">pub struct </span>GDriveBackup {
+    <span class="kw">pub </span>access_token: String,
+    <span class="kw">pub </span>client_id: String,
 }
 
 <span class="kw">impl </span>GDriveBackup {

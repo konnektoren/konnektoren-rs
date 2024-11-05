@@ -58,6 +58,10 @@
 <a href="#58" id="58">58</a>
 <a href="#59" id="59">59</a>
 <a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! This module contains all the components that are used in the app.
 
 </span><span class="attr">#[cfg(feature = <span class="string">"certificates"</span>)]
@@ -70,6 +74,8 @@
 <span class="kw">pub mod </span>challenge_review;
 <span class="kw">pub mod </span>challenge_timer;
 <span class="kw">pub mod </span>game_path;
+<span class="attr">#[cfg(feature = <span class="string">"gdrive"</span>)]
+</span><span class="kw">pub mod </span>gdrive_backup;
 <span class="kw">pub mod </span>inbox;
 <span class="kw">mod </span>map;
 <span class="attr">#[cfg(feature = <span class="string">"music"</span>)]
@@ -94,6 +100,8 @@
 <span class="kw">pub use </span>challenge_review::ChallengeReviewComponent;
 <span class="kw">pub use </span>challenge_timer::ChallengeTimerComponent;
 <span class="kw">pub use </span>game_path::GamePathComponent;
+<span class="attr">#[cfg(feature = <span class="string">"gdrive"</span>)]
+</span><span class="kw">pub use </span>gdrive_backup::GDriveBackupComponent;
 <span class="kw">pub use </span>inbox::InboxComponent;
 <span class="kw">pub use </span>map::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>progress_bar::ProgressBar;
