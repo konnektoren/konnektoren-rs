@@ -1,3 +1,5 @@
+#[cfg(feature = "backup")]
+mod backup;
 mod certificate_repository;
 mod game_state_persistence_impl;
 mod inbox_repository;
@@ -14,6 +16,8 @@ mod repository_error;
 mod storage;
 mod storage_error;
 
+#[cfg(feature = "backup")]
+pub use backup::{Backup, BackupError, BackupInfo};
 pub use certificate_repository::{
     CertificateRepository, CertificateRepositoryTrait, CERTIFICATE_STORAGE_KEY,
 };

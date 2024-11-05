@@ -12,7 +12,15 @@ name = "konnektoren-yew-bin"
 path = "src/main.rs"
 
 [features]
-default = ["certificates", "effects", "marketplace", "music", "storage"]
+default = [
+    "certificates",
+    "effects",
+    "marketplace",
+    "music",
+    "storage",
+    "gdrive",
+]
+backup = []
 certificates = [
     "konnektoren-core/achievements",
     "konnektoren-core/certificates",
@@ -22,6 +30,7 @@ marketplace = ["konnektoren-core/marketplace"]
 music = []
 storage = ["gloo/storage"]
 yew-preview = ["dep:yew-preview"]
+gdrive = ["backup"]
 
 [dependencies]
 async-trait = "0.1.83"
