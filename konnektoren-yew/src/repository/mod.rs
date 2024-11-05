@@ -2,6 +2,8 @@
 mod backup;
 mod certificate_repository;
 mod game_state_persistence_impl;
+#[cfg(feature = "gdrive")]
+mod gdrive_backup;
 mod inbox_repository;
 mod profile_repository;
 mod session_repository;
@@ -17,7 +19,7 @@ mod storage;
 mod storage_error;
 
 #[cfg(feature = "backup")]
-pub use backup::{Backup, BackupError, BackupInfo};
+pub use backup::{Backup, BackupError, BackupInfo, BACKUP_KEY};
 pub use certificate_repository::{
     CertificateRepository, CertificateRepositoryTrait, CERTIFICATE_STORAGE_KEY,
 };
