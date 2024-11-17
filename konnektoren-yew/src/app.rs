@@ -1,7 +1,7 @@
 use crate::components::{
     challenge::ChallengeComponent, game_path::GamePathComponent, ChallengeConfigComponent,
     ChallengeInfoComponent, ChallengeTimerComponent, ContextualChoiceComponent, MusicComponent,
-    ProgressBar, SettingsComponent, TranslateComponent,
+    ProgressBar, SettingsComponent, SharePageComp, TranslateComponent,
 };
 
 #[cfg(feature = "marketplace")]
@@ -23,9 +23,9 @@ use crate::components::{AchievementsComponent, CertificateComponent, Certificate
 use crate::effects::BlinkAnimation;
 use crate::prelude::{
     BrowserCoordinate, ChallengeActionsComponent, ChallengeIndex, ChallengeRatingComponent,
-    ChallengeReviewComponent, InformativeComponent, InformativeMarkdownComponent, MapComponent,
-    OptionsComponent, ProfilePointsManager, QuestionComponent, ReadText, SelectLanguage,
-    SelectLevelComp,
+    ChallengeReviewComponent, GameControllerProvider, InformativeComponent,
+    InformativeMarkdownComponent, MapComponent, OptionsComponent, ProfilePointsManager,
+    QuestionComponent, ReadText, RepositoryProvider, SelectLanguage, SelectLevelComp,
 };
 
 use crate::i18n::{I18nConfig, I18nProvider};
@@ -177,14 +177,19 @@ pub fn App() -> Html {
         ShoppingCartComponent::preview(),
         CartBadgeComponent::preview(),
         TonWalletComponent::preview(),
+        SharePageComp::preview(),
         create_component_item!("Example", Example, vec![("default", ())]),
     ];
 
     #[cfg(feature = "yew-preview")]
     html! {
+        <RepositoryProvider>
         <I18nProvider config={i18n_config}>
-            <PreviewPage components={component_list} />
+            <GameControllerProvider>
+                <PreviewPage components={component_list} />
+            </GameControllerProvider>
         </I18nProvider>
+        </RepositoryProvider>
     }
     #[cfg(not(feature = "yew-preview"))]
     html! {

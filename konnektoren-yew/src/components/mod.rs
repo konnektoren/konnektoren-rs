@@ -21,6 +21,7 @@ pub mod progress_bar;
 pub mod select_language;
 mod select_level;
 mod settings;
+pub mod share_page;
 pub mod timer;
 pub mod translate;
 
@@ -43,6 +44,7 @@ pub use map::*;
 pub use progress_bar::ProgressBar;
 pub use select_language::SelectLanguage;
 pub use select_level::SelectLevelComp;
+pub use share_page::SharePageComp;
 pub use timer::TimerComponent;
 pub use translate::TranslateComponent;
 
