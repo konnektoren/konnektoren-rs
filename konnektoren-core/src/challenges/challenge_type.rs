@@ -125,7 +125,7 @@ impl Performance for ChallengeType {
                 }
                 100 * score / dataset.rows.len() as u32
             }
-            (ChallengeType::Informative(_), ChallengeResult::Informative) => 100,
+            (ChallengeType::Informative(_), _) => 100,
             (ChallengeType::Custom(_), ChallengeResult::Custom(result)) => {
                 (100.0 * result.performance) as u32
             }
