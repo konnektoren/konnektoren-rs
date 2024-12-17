@@ -1,6 +1,4 @@
 [workspace]
 resolver = "2"
 
-members = [
-    "konnektoren-core", "konnektoren-tests", "konnektoren-tui", "konnektoren-yew"
-]
+members = ["konnektoren-core", "konnektoren-tests", "konnektoren-tui"]
