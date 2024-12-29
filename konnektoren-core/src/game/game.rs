@@ -28,6 +28,14 @@ impl Default for Game {
 }
 
 impl Game {
+    pub fn find_game_path_index(&self, challenge_id: &str) -> Option<usize> {
+        self.game_paths.iter().position(|game_path| {
+            game_path
+                .challenge_ids()
+                .contains(&challenge_id.to_string())
+        })
+    }
+
     pub fn create_challenge(&self, challenge_config_id: &str) -> Result<Challenge> {
         let challenge_config: Option<ChallengeConfig> =
             self.get_challenge_config(challenge_config_id);
@@ -89,5 +97,12 @@ mod tests {
         let game = Game::default();
         let challenge_config = game.get_challenge_config("konnektoren-1");
         assert!(challenge_config.is_some());
+    }
+
+    #[test]
+    fn find_game_path_index() {
+        let game = Game::default();
+        let index = game.find_game_path_index("konnektoren-1");
+        assert_eq!(index, Some(0));
     }
 }
