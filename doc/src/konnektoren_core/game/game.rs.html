@@ -91,7 +91,22 @@
 <a href="#90" id="90">90</a>
 <a href="#91" id="91">91</a>
 <a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{
     Challenge, ChallengeConfig, ChallengeFactory, ChallengeHistory, Performance,
 };
 <span class="kw">use </span><span class="kw">crate</span>::Xp;
@@ -121,6 +136,14 @@
 }
 
 <span class="kw">impl </span>Game {
+    <span class="kw">pub fn </span>find_game_path_index(<span class="kw-2">&amp;</span><span class="self">self</span>, challenge_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+        <span class="self">self</span>.game_paths.iter().position(|game_path| {
+            game_path
+                .challenge_ids()
+                .contains(<span class="kw-2">&amp;</span>challenge_id.to_string())
+        })
+    }
+
     <span class="kw">pub fn </span>create_challenge(<span class="kw-2">&amp;</span><span class="self">self</span>, challenge_config_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Challenge&gt; {
         <span class="kw">let </span>challenge_config: <span class="prelude-ty">Option</span>&lt;ChallengeConfig&gt; =
             <span class="self">self</span>.get_challenge_config(challenge_config_id);
@@ -182,6 +205,13 @@
         <span class="kw">let </span>game = Game::default();
         <span class="kw">let </span>challenge_config = game.get_challenge_config(<span class="string">"konnektoren-1"</span>);
         <span class="macro">assert!</span>(challenge_config.is_some());
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>find_game_path_index() {
+        <span class="kw">let </span>game = Game::default();
+        <span class="kw">let </span>index = game.find_game_path_index(<span class="string">"konnektoren-1"</span>);
+        <span class="macro">assert_eq!</span>(index, <span class="prelude-val">Some</span>(<span class="number">0</span>));
     }
 }
 </code></pre></div></section></main></body></html>
