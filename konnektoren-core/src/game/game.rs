@@ -29,16 +29,21 @@ impl Default for Game {
 
 impl Game {
     pub fn create_challenge(&self, challenge_config_id: &str) -> Result<Challenge> {
-        let challenge_config: Option<&ChallengeConfig> = self
-            .game_paths
-            .iter()
-            .map(|game_path| game_path.get_challenge_config(challenge_config_id))
-            .find(|challenge_config| challenge_config.is_some())
-            .flatten();
+        let challenge_config: Option<ChallengeConfig> =
+            self.get_challenge_config(challenge_config_id);
 
         let challenge_config =
             challenge_config.ok_or_else(|| anyhow::anyhow!("Challenge config not found"))?;
-        self.challenge_factory.create_challenge(challenge_config)
+        self.challenge_factory.create_challenge(&challenge_config)
+    }
+
+    pub fn get_challenge_config(&self, challenge_config_id: &str) -> Option<ChallengeConfig> {
+        self.game_paths
+            .iter()
+            .map(|game_path| game_path.get_challenge_config(challenge_config_id))
+            .find(|challenge_config| challenge_config.is_some())
+            .flatten()
+            .cloned()
     }
 
     pub fn calculate_xp_reward(&self, challenge: &Challenge) -> Xp {
@@ -77,5 +82,12 @@ mod tests {
         let challenge = game.create_challenge("konnektoren-1").unwrap();
         let xp = game.calculate_xp_reward(&challenge);
         assert_eq!(xp, 0);
+    }
+
+    #[test]
+    fn get_challenge_config() {
+        let game = Game::default();
+        let challenge_config = game.get_challenge_config("konnektoren-1");
+        assert!(challenge_config.is_some());
     }
 }
