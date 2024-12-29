@@ -79,7 +79,19 @@
 <a href="#78" id="78">78</a>
 <a href="#79" id="79">79</a>
 <a href="#80" id="80">80</a>
-<a href="#81" id="81">81</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{
     Challenge, ChallengeConfig, ChallengeFactory, ChallengeHistory, Performance,
 };
 <span class="kw">use </span><span class="kw">crate</span>::Xp;
@@ -110,16 +122,21 @@
 
 <span class="kw">impl </span>Game {
     <span class="kw">pub fn </span>create_challenge(<span class="kw-2">&amp;</span><span class="self">self</span>, challenge_config_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Challenge&gt; {
-        <span class="kw">let </span>challenge_config: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>ChallengeConfig&gt; = <span class="self">self
-            </span>.game_paths
-            .iter()
-            .map(|game_path| game_path.get_challenge_config(challenge_config_id))
-            .find(|challenge_config| challenge_config.is_some())
-            .flatten();
+        <span class="kw">let </span>challenge_config: <span class="prelude-ty">Option</span>&lt;ChallengeConfig&gt; =
+            <span class="self">self</span>.get_challenge_config(challenge_config_id);
 
         <span class="kw">let </span>challenge_config =
             challenge_config.ok_or_else(|| <span class="macro">anyhow::anyhow!</span>(<span class="string">"Challenge config not found"</span>))<span class="question-mark">?</span>;
-        <span class="self">self</span>.challenge_factory.create_challenge(challenge_config)
+        <span class="self">self</span>.challenge_factory.create_challenge(<span class="kw-2">&amp;</span>challenge_config)
+    }
+
+    <span class="kw">pub fn </span>get_challenge_config(<span class="kw-2">&amp;</span><span class="self">self</span>, challenge_config_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;ChallengeConfig&gt; {
+        <span class="self">self</span>.game_paths
+            .iter()
+            .map(|game_path| game_path.get_challenge_config(challenge_config_id))
+            .find(|challenge_config| challenge_config.is_some())
+            .flatten()
+            .cloned()
     }
 
     <span class="kw">pub fn </span>calculate_xp_reward(<span class="kw-2">&amp;</span><span class="self">self</span>, challenge: <span class="kw-2">&amp;</span>Challenge) -&gt; Xp {
@@ -158,6 +175,13 @@
         <span class="kw">let </span>challenge = game.create_challenge(<span class="string">"konnektoren-1"</span>).unwrap();
         <span class="kw">let </span>xp = game.calculate_xp_reward(<span class="kw-2">&amp;</span>challenge);
         <span class="macro">assert_eq!</span>(xp, <span class="number">0</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>get_challenge_config() {
+        <span class="kw">let </span>game = Game::default();
+        <span class="kw">let </span>challenge_config = game.get_challenge_config(<span class="string">"konnektoren-1"</span>);
+        <span class="macro">assert!</span>(challenge_config.is_some());
     }
 }
 </code></pre></div></section></main></body></html>
