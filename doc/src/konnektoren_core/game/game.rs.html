@@ -106,7 +106,8 @@
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
 <a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::{
     Challenge, ChallengeConfig, ChallengeFactory, ChallengeHistory, Performance,
 };
 <span class="kw">use </span><span class="kw">crate</span>::Xp;
@@ -177,7 +178,7 @@
         <span class="kw">let </span>game = Game::default();
         <span class="kw">let </span>challenge = game.create_challenge(<span class="string">"unknown"</span>);
         <span class="macro">assert!</span>(challenge.is_err());
-        <span class="macro">assert_eq!</span>(game.game_paths[<span class="number">0</span>].challenge_ids().len(), <span class="number">5</span>);
+        <span class="macro">assert_eq!</span>(game.game_paths[<span class="number">0</span>].challenge_ids().len(), <span class="number">6</span>);
         <span class="macro">assert_eq!</span>(
             game.game_paths[<span class="number">0</span>].challenge_ids(),
             <span class="macro">vec!</span>[
@@ -185,7 +186,8 @@
                 <span class="string">"konnektoren-2"</span>,
                 <span class="string">"konnektoren-3"</span>,
                 <span class="string">"konnektoren-4"</span>,
-                <span class="string">"konnektoren-5"
+                <span class="string">"konnektoren-5"</span>,
+                <span class="string">"articles-1"
             </span>]
         );
         <span class="kw">let </span>challenge = game.create_challenge(<span class="string">"konnektoren-1"</span>);
