@@ -12,7 +12,10 @@ pub struct ChallengeFactory {
 impl Default for ChallengeFactory {
     fn default() -> Self {
         ChallengeFactory {
-            challenge_types: vec![ChallengeType::default()],
+            challenge_types: vec![
+                ChallengeType::default(),
+                serde_yaml::from_str(include_str!("../assets/articles-1.yml")).unwrap(),
+            ],
         }
     }
 }

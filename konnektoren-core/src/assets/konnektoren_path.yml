@@ -36,3 +36,10 @@ challenges:
     tasks: 25
     unlock_points: 40
     position: [5, 1]
+  - id: "articles-1"
+    name: "Artikel 1"
+    description: "Have a look at the first Artikel"
+    challenge: "articles"
+    tasks: 10
+    unlock_points: 0
+    position: [1, 1]
