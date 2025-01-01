@@ -64,7 +64,8 @@
 <a href="#63" id="63">63</a>
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
-<a href="#66" id="66">66</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::challenge::Challenge;
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::challenge::Challenge;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_config::ChallengeConfig;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_type::ChallengeType;
 <span class="kw">use </span>anyhow::Result;
@@ -81,6 +82,7 @@
             challenge_types: <span class="macro">vec!</span>[
                 ChallengeType::default(),
                 serde_yaml::from_str(<span class="macro">include_str!</span>(<span class="string">"../assets/articles-1.yml"</span>)).unwrap(),
+                serde_yaml::from_str(<span class="macro">include_str!</span>(<span class="string">"../assets/past-tense.yml"</span>)).unwrap(),
             ],
         }
     }

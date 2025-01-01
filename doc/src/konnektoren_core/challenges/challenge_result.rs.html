@@ -138,15 +138,30 @@
 <a href="#137" id="137">137</a>
 <a href="#138" id="138">138</a>
 <a href="#139" id="139">139</a>
-<a href="#140" id="140">140</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::multiple_choice::MultipleChoiceOption;
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::multiple_choice::MultipleChoiceOption;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::sort_table::SortTableRow;
-<span class="kw">use </span><span class="kw">crate</span>::challenges::{ChallengeInput, ContextItemChoiceAnswers, CustomChallengeResult};
+<span class="kw">use </span><span class="kw">crate</span>::challenges::{
+    ChallengeInput, ContextItemChoiceAnswers, CustomChallengeResult, GapFillAnswer,
+};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 </span><span class="kw">pub enum </span>ChallengeResult {
     MultipleChoice(Vec&lt;MultipleChoiceOption&gt;),
     ContextualChoice(Vec&lt;ContextItemChoiceAnswers&gt;),
+    GapFill(Vec&lt;GapFillAnswer&gt;),
     SortTable(Vec&lt;SortTableRow&gt;),
     Informative,
     Custom(CustomChallengeResult),
@@ -175,6 +190,13 @@
                 }
                 <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Invalid challenge input"</span>),
             },
+            ChallengeResult::GapFill(answers) =&gt; <span class="kw">match </span>input {
+                ChallengeInput::GapFill(answer) =&gt; {
+                    answers.push(answer);
+                    <span class="prelude-val">Ok</span>(())
+                }
+                <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Invalid challenge input"</span>),
+            },
             ChallengeResult::SortTable(rows) =&gt; <span class="kw">match </span>input {
                 ChallengeInput::SortTable(row) =&gt; {
                     rows.push(row);
@@ -191,6 +213,7 @@
         <span class="kw">match </span><span class="self">self </span>{
             ChallengeResult::MultipleChoice(options) =&gt; options.len(),
             ChallengeResult::ContextualChoice(items) =&gt; items.len(),
+            ChallengeResult::GapFill(answers) =&gt; answers.len(),
             ChallengeResult::SortTable(rows) =&gt; rows.len(),
             ChallengeResult::Informative =&gt; <span class="number">0</span>,
             ChallengeResult::Custom(<span class="kw">_</span>) =&gt; <span class="number">0</span>,
@@ -201,6 +224,7 @@
         <span class="kw">match </span><span class="self">self </span>{
             ChallengeResult::MultipleChoice(options) =&gt; options.is_empty(),
             ChallengeResult::ContextualChoice(items) =&gt; items.is_empty(),
+            ChallengeResult::GapFill(answers) =&gt; answers.is_empty(),
             ChallengeResult::SortTable(rows) =&gt; rows.is_empty(),
             ChallengeResult::Informative =&gt; <span class="bool-val">true</span>,
             ChallengeResult::Custom(<span class="kw">_</span>) =&gt; <span class="bool-val">true</span>,

@@ -43,7 +43,9 @@
 <a href="#42" id="42">42</a>
 <a href="#43" id="43">43</a>
 <a href="#44" id="44">44</a>
-<a href="#45" id="45">45</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains all the challenges that can be solved by the user.
+<a href="#45" id="45">45</a>
+<a href="#46" id="46">46</a>
+<a href="#47" id="47">47</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains all the challenges that can be solved by the user.
 </span><span class="kw">pub mod </span>challenge;
 <span class="kw">pub mod </span>challenge_config;
 <span class="kw">pub mod </span>challenge_factory;
@@ -55,6 +57,7 @@
 <span class="kw">pub mod </span>challenge_variant;
 <span class="kw">pub mod </span>contextual_choice;
 <span class="kw">pub mod </span>custom;
+<span class="kw">pub mod </span>gap_fill;
 <span class="kw">pub mod </span>informative;
 <span class="kw">pub mod </span>multiple_choice;
 <span class="attr">#[cfg(feature = <span class="string">"js"</span>)]
@@ -78,6 +81,7 @@
 <span class="kw">pub use </span>challenge_variant::ChallengeVariant;
 <span class="kw">pub use </span>contextual_choice::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>custom::<span class="kw-2">*</span>;
+<span class="kw">pub use </span>gap_fill::{Gap, GapFill, GapFillAnswer};
 <span class="kw">pub use </span>informative::{Informative, InformativeText};
 <span class="kw">pub use </span>multiple_choice::<span class="kw-2">*</span>;
 <span class="attr">#[cfg(feature = <span class="string">"js"</span>)]
