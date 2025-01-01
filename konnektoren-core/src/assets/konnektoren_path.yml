@@ -43,3 +43,10 @@ challenges:
     tasks: 10
     unlock_points: 0
     position: [1, 1]
+  - id: "past-tense-1"
+    name: "Past Tense 1"
+    description: "Have a look at the first Past Tense"
+    challenge: "past_tense"
+    tasks: 2
+    unlock_points: 0
+    position: [1, 1]

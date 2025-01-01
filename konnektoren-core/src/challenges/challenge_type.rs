@@ -1,4 +1,5 @@
 use super::{ChallengeResult, ContextualChoice, Custom, Performance};
+use crate::challenges::gap_fill::GapFill;
 use crate::challenges::informative::Informative;
 use crate::challenges::multiple_choice::MultipleChoice;
 use crate::challenges::sort_table::SortTable;
@@ -11,6 +12,8 @@ pub enum ChallengeType {
     MultipleChoice(MultipleChoice),
     #[serde(rename = "contextual-choice")]
     ContextualChoice(ContextualChoice),
+    #[serde(rename = "gap-fill")]
+    GapFill(GapFill),
     #[serde(rename = "sort-table")]
     SortTable(SortTable),
     #[serde(rename = "informative")]
@@ -41,6 +44,12 @@ impl ChallengeType {
                 new_dataset.items = selected_items;
                 ChallengeType::ContextualChoice(new_dataset)
             }
+            ChallengeType::GapFill(dataset) => {
+                let selected_questions = task_pattern.select_items(&dataset.questions);
+                let mut new_dataset = dataset.clone();
+                new_dataset.questions = selected_questions;
+                ChallengeType::GapFill(new_dataset)
+            }
             ChallengeType::SortTable(dataset) => {
                 let selected_rows = task_pattern.select_items(&dataset.rows);
                 let mut new_dataset = dataset.clone();
@@ -63,6 +72,7 @@ impl ChallengeType {
             ChallengeType::MultipleChoice(dataset) => &dataset.name,
             ChallengeType::ContextualChoice(dataset) => &dataset.name,
             ChallengeType::SortTable(dataset) => &dataset.name,
+            ChallengeType::GapFill(dataset) => &dataset.name,
             ChallengeType::Informative(dataset) => &dataset.name,
             ChallengeType::Custom(dataset) => &dataset.name,
         }
@@ -72,6 +82,7 @@ impl ChallengeType {
         match self {
             ChallengeType::MultipleChoice(dataset) => &dataset.id,
             ChallengeType::ContextualChoice(dataset) => &dataset.id,
+            ChallengeType::GapFill(dataset) => &dataset.id,
             ChallengeType::SortTable(dataset) => &dataset.id,
             ChallengeType::Informative(dataset) => &dataset.id,
             ChallengeType::Custom(dataset) => &dataset.id,
@@ -112,6 +123,23 @@ impl Performance for ChallengeType {
                     }
                 }
                 100 * score / dataset.items.len() as u32
+            }
+            (ChallengeType::GapFill(dataset), ChallengeResult::GapFill(answers)) => {
+                if dataset.questions.is_empty() {
+                    return 0;
+                }
+                let mut score = 0;
+                for (question, answer) in dataset.questions.iter().zip(answers.iter()) {
+                    if question
+                        .gaps
+                        .iter()
+                        .zip(answer.answers.iter())
+                        .all(|(gap, ans)| gap.correct == *ans)
+                    {
+                        score += 1;
+                    }
+                }
+                100 * score / dataset.questions.len() as u32
             }
             (ChallengeType::SortTable(dataset), ChallengeResult::SortTable(rows)) => {
                 if dataset.rows.is_empty() {

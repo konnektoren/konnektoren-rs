@@ -40,7 +40,7 @@ mod tests {
         assert_eq!(session.player_profile.id, id);
         assert_eq!(
             session.game_state.game.game_paths[0].challenge_ids().len(),
-            6
+            7
         );
     }
 }

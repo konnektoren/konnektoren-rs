@@ -1,12 +1,15 @@
 use crate::challenges::multiple_choice::MultipleChoiceOption;
 use crate::challenges::sort_table::SortTableRow;
-use crate::challenges::{ChallengeInput, ContextItemChoiceAnswers, CustomChallengeResult};
+use crate::challenges::{
+    ChallengeInput, ContextItemChoiceAnswers, CustomChallengeResult, GapFillAnswer,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ChallengeResult {
     MultipleChoice(Vec<MultipleChoiceOption>),
     ContextualChoice(Vec<ContextItemChoiceAnswers>),
+    GapFill(Vec<GapFillAnswer>),
     SortTable(Vec<SortTableRow>),
     Informative,
     Custom(CustomChallengeResult),
@@ -35,6 +38,13 @@ impl ChallengeResult {
                 }
                 _ => panic!("Invalid challenge input"),
             },
+            ChallengeResult::GapFill(answers) => match input {
+                ChallengeInput::GapFill(answer) => {
+                    answers.push(answer);
+                    Ok(())
+                }
+                _ => panic!("Invalid challenge input"),
+            },
             ChallengeResult::SortTable(rows) => match input {
                 ChallengeInput::SortTable(row) => {
                     rows.push(row);
@@ -51,6 +61,7 @@ impl ChallengeResult {
         match self {
             ChallengeResult::MultipleChoice(options) => options.len(),
             ChallengeResult::ContextualChoice(items) => items.len(),
+            ChallengeResult::GapFill(answers) => answers.len(),
             ChallengeResult::SortTable(rows) => rows.len(),
             ChallengeResult::Informative => 0,
             ChallengeResult::Custom(_) => 0,
@@ -61,6 +72,7 @@ impl ChallengeResult {
         match self {
             ChallengeResult::MultipleChoice(options) => options.is_empty(),
             ChallengeResult::ContextualChoice(items) => items.is_empty(),
+            ChallengeResult::GapFill(answers) => answers.is_empty(),
             ChallengeResult::SortTable(rows) => rows.is_empty(),
             ChallengeResult::Informative => true,
             ChallengeResult::Custom(_) => true,

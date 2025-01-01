@@ -68,6 +68,23 @@ impl Solvable for Challenge {
                             Ok(false)
                         }
                     }
+                    (ChallengeType::GapFill(gf), ChallengeResult::GapFill(results)) => {
+                        if let (Some(question), Some(answer)) =
+                            (gf.questions.get(index), results.get(index))
+                        {
+                            if question.gaps.len() != answer.answers.len() {
+                                return Ok(false);
+                            }
+
+                            Ok(question
+                                .gaps
+                                .iter()
+                                .zip(answer.answers.iter())
+                                .all(|(gap, ans)| gap.correct == *ans))
+                        } else {
+                            Ok(false)
+                        }
+                    }
                     (ChallengeType::SortTable(st), ChallengeResult::SortTable(results)) => {
                         if let (Some(row), Some(result)) = (st.rows.get(index), results.get(index))
                         {

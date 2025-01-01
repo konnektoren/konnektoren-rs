@@ -38,7 +38,7 @@ mod tests {
     #[test]
     fn new_state() {
         let state = GameState::default();
-        assert_eq!(state.game.game_paths[0].challenge_ids().len(), 6);
+        assert_eq!(state.game.game_paths[0].challenge_ids().len(), 7);
     }
 
     #[test]

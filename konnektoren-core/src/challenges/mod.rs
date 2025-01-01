@@ -10,6 +10,7 @@ pub mod challenge_type;
 pub mod challenge_variant;
 pub mod contextual_choice;
 pub mod custom;
+pub mod gap_fill;
 pub mod informative;
 pub mod multiple_choice;
 #[cfg(feature = "js")]
@@ -33,6 +34,7 @@ pub use challenge_type::ChallengeType;
 pub use challenge_variant::ChallengeVariant;
 pub use contextual_choice::*;
 pub use custom::*;
+pub use gap_fill::{Gap, GapFill, GapFillAnswer, GapFillQuestion};
 pub use informative::{Informative, InformativeText};
 pub use multiple_choice::*;
 #[cfg(feature = "js")]

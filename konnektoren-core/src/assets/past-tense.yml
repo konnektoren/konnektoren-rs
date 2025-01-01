@@ -1,0 +1,31 @@
+!gap-fill
+id: "past_tense"
+name: "Past Tense Exercise"
+description: "Fill in the correct past tense forms"
+questions:
+  - sentence: "Ich __ nach Berlin __ (fahren)."
+    gaps:
+      - position: 0
+        options: ["bin", "habe", "war"]
+        correct: "bin"
+      - position: 1
+        options: ["gefahren", "gefahrt", "fuhr"]
+        correct: "gefahren"
+    hints:
+      - "Movement verbs use 'sein' as auxiliary"
+      - "The past participle of 'fahren' is 'gefahren'"
+    translation: "I went to Berlin"
+    explanation: "We use 'sein' with verbs of movement and the past participle form"
+  - sentence: "Er __ gestern __ (kommen)."
+    gaps:
+      - position: 0
+        options: ["ist", "hat", "war"]
+        correct: "ist"
+      - position: 1
+        options: ["gekommen", "kam", "kommt"]
+        correct: "gekommen"
+    hints:
+      - "Movement verbs use 'sein' as auxiliary"
+      - "The past participle of 'kommen' is 'gekommen'"
+    translation: "He came yesterday"
+    explanation: "We use 'sein' with verbs of movement and the past participle form"

@@ -15,6 +15,7 @@ impl Default for ChallengeFactory {
             challenge_types: vec![
                 ChallengeType::default(),
                 serde_yaml::from_str(include_str!("../assets/articles-1.yml")).unwrap(),
+                serde_yaml::from_str(include_str!("../assets/past-tense.yml")).unwrap(),
             ],
         }
     }
