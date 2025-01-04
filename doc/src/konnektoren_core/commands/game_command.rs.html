@@ -152,7 +152,8 @@
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
 <a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of game-level commands.
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of game-level commands.
 
 </span><span class="kw">use </span><span class="kw">super</span>::command::CommandTrait;
 <span class="kw">use </span><span class="kw">super</span>::command_type::CommandType;
@@ -293,7 +294,8 @@
         <span class="kw">let _ </span>= command.execute(<span class="kw-2">&amp;mut </span>state).unwrap();
         <span class="kw">let _ </span>= command.execute(<span class="kw-2">&amp;mut </span>state).unwrap();
         <span class="kw">let _ </span>= command.execute(<span class="kw-2">&amp;mut </span>state).unwrap();
-        <span class="macro">assert_eq!</span>(state.current_challenge_index, <span class="number">6</span>);
+        <span class="kw">let _ </span>= command.execute(<span class="kw-2">&amp;mut </span>state).unwrap();
+        <span class="macro">assert_eq!</span>(state.current_challenge_index, <span class="number">7</span>);
         <span class="kw">let </span>result = command.execute(<span class="kw-2">&amp;mut </span>state);
         <span class="macro">assert!</span>(result.is_err());
     }
