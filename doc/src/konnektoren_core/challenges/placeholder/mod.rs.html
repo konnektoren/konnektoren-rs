@@ -42,7 +42,9 @@
 <a href="#41" id="41">41</a>
 <a href="#42" id="42">42</a>
 <a href="#43" id="43">43</a>
-<a href="#44" id="44">44</a></pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
+<a href="#44" id="44">44</a>
+<a href="#45" id="45">45</a>
+<a href="#46" id="46">46</a></pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 </span><span class="kw">pub struct </span>Placeholder {
@@ -51,6 +53,8 @@
     <span class="kw">pub </span>description: String,
     <span class="attr">#[serde(rename = <span class="string">"type"</span>)]
     </span><span class="kw">pub </span>type_: PlaceholderType,
+    <span class="kw">pub </span>image: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>estimated_time: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>text: Vec&lt;InformativeText&gt;,
 }
 
