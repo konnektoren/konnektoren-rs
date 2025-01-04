@@ -267,7 +267,13 @@
 <a href="#266" id="266">266</a>
 <a href="#267" id="267">267</a>
 <a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{ChallengeResult, ContextualChoice, Custom, Performance};
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{ChallengeResult, ContextualChoice, Custom, Performance, Placeholder};
 <span class="kw">use </span><span class="kw">crate</span>::challenges::gap_fill::GapFill;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::informative::Informative;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::multiple_choice::MultipleChoice;
@@ -288,10 +294,12 @@
     </span>SortTable(SortTable),
     <span class="attr">#[serde(rename = <span class="string">"informative"</span>)]
     </span>Informative(Informative),
-    <span class="attr">#[serde(rename = <span class="string">"custom"</span>)]
-    </span>Custom(Custom),
     <span class="attr">#[serde(rename = <span class="string">"ordering"</span>)]
     </span>Ordering(Ordering),
+    <span class="attr">#[serde(rename = <span class="string">"custom"</span>)]
+    </span>Custom(Custom),
+    <span class="attr">#[serde(rename = <span class="string">"placeholder"</span>)]
+    </span>Placeholder(Placeholder),
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>ChallengeType {
@@ -337,6 +345,7 @@
                 dataset.task_ids = <span class="prelude-val">Some</span>(task_ids);
                 ChallengeType::Custom(dataset)
             }
+            ChallengeType::Placeholder(dataset) =&gt; ChallengeType::Placeholder(dataset.clone()),
         }
     }
 
@@ -349,6 +358,7 @@
             ChallengeType::Informative(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
             ChallengeType::Ordering(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
             ChallengeType::Custom(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
+            ChallengeType::Placeholder(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.name,
         }
     }
 
@@ -361,6 +371,7 @@
             ChallengeType::Informative(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
             ChallengeType::Ordering(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
             ChallengeType::Custom(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
+            ChallengeType::Placeholder(dataset) =&gt; <span class="kw-2">&amp;</span>dataset.id,
         }
     }
 }
@@ -444,6 +455,7 @@
             (ChallengeType::Custom(<span class="kw">_</span>), ChallengeResult::Custom(result)) =&gt; {
                 (<span class="number">100.0 </span>* result.performance) <span class="kw">as </span>u32
             }
+            (ChallengeType::Placeholder(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="number">0</span>,
             <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"Invalid challenge type {:?}"</span>, <span class="self">self</span>),
         }
     }
