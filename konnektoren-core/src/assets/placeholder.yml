@@ -1,0 +1,12 @@
+!placeholder
+type: ComingSoon
+id: "placeholder-adjective-declension"
+name: "Coming Soon: Adjective Declension"
+description: "Master German adjective endings..."
+estimated_time: "Q4 2023"
+image: "fa-solid fa-circle-question"
+text:
+  - language: "de"
+    text: "# Adjektivdeklination - Demnächst verfügbar..."
+  - language: "en"
+    text: "# Adjective Declension - Coming Soon..."

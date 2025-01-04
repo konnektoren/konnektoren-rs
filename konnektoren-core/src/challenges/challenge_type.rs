@@ -1,4 +1,4 @@
-use super::{ChallengeResult, ContextualChoice, Custom, Performance};
+use super::{ChallengeResult, ContextualChoice, Custom, Performance, Placeholder};
 use crate::challenges::gap_fill::GapFill;
 use crate::challenges::informative::Informative;
 use crate::challenges::multiple_choice::MultipleChoice;
@@ -19,10 +19,12 @@ pub enum ChallengeType {
     SortTable(SortTable),
     #[serde(rename = "informative")]
     Informative(Informative),
-    #[serde(rename = "custom")]
-    Custom(Custom),
     #[serde(rename = "ordering")]
     Ordering(Ordering),
+    #[serde(rename = "custom")]
+    Custom(Custom),
+    #[serde(rename = "placeholder")]
+    Placeholder(Placeholder),
 }
 
 impl Default for ChallengeType {
@@ -68,6 +70,7 @@ impl ChallengeType {
                 dataset.task_ids = Some(task_ids);
                 ChallengeType::Custom(dataset)
             }
+            ChallengeType::Placeholder(dataset) => ChallengeType::Placeholder(dataset.clone()),
         }
     }
 
@@ -80,6 +83,7 @@ impl ChallengeType {
             ChallengeType::Informative(dataset) => &dataset.name,
             ChallengeType::Ordering(dataset) => &dataset.name,
             ChallengeType::Custom(dataset) => &dataset.name,
+            ChallengeType::Placeholder(dataset) => &dataset.name,
         }
     }
 
@@ -92,6 +96,7 @@ impl ChallengeType {
             ChallengeType::Informative(dataset) => &dataset.id,
             ChallengeType::Ordering(dataset) => &dataset.id,
             ChallengeType::Custom(dataset) => &dataset.id,
+            ChallengeType::Placeholder(dataset) => &dataset.id,
         }
     }
 }
@@ -175,6 +180,7 @@ impl Performance for ChallengeType {
             (ChallengeType::Custom(_), ChallengeResult::Custom(result)) => {
                 (100.0 * result.performance) as u32
             }
+            (ChallengeType::Placeholder(_), _) => 0,
             _ => panic!("Invalid challenge type {:?}", self),
         }
     }
