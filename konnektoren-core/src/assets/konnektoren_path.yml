@@ -50,3 +50,10 @@ challenges:
     tasks: 2
     unlock_points: 0
     position: [1, 1]
+  - id: "sentence-structure-1"
+    name: "Satzstellung 1"
+    description: "Ordnen Sie die Wörter zu einem korrekten deutschen Satz"
+    challenge: "sentence-structure-ordering"
+    tasks: 2
+    unlock_points: 0
+    position: [2, 3]

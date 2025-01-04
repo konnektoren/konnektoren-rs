@@ -16,6 +16,7 @@ impl Default for ChallengeFactory {
                 ChallengeType::default(),
                 serde_yaml::from_str(include_str!("../assets/articles-1.yml")).unwrap(),
                 serde_yaml::from_str(include_str!("../assets/past-tense.yml")).unwrap(),
+                serde_yaml::from_str(include_str!("../assets/sentence_structure.yml")).unwrap(),
             ],
         }
     }

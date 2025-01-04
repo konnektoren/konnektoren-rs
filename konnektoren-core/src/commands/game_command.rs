@@ -139,7 +139,8 @@ mod tests {
         let _ = command.execute(&mut state).unwrap();
         let _ = command.execute(&mut state).unwrap();
         let _ = command.execute(&mut state).unwrap();
-        assert_eq!(state.current_challenge_index, 6);
+        let _ = command.execute(&mut state).unwrap();
+        assert_eq!(state.current_challenge_index, 7);
         let result = command.execute(&mut state);
         assert!(result.is_err());
     }

@@ -1,0 +1,44 @@
+!ordering
+id: "sentence-structure-ordering"
+name: "German Sentence Structure"
+description: "Order the words to create correct German sentences"
+items:
+  - elements:
+      - "ich"
+      - "heute"
+      - "gehe"
+      - "in die Schule"
+    correct_order: [0, 2, 1, 3] # "ich gehe heute in die Schule"
+
+  - elements:
+      - "weil"
+      - "ich"
+      - "krank"
+      - "bin"
+    correct_order: [0, 1, 2, 3] # "weil ich krank bin"
+
+  - elements:
+      - "gestern"
+      - "habe"
+      - "ich"
+      - "einen Film"
+      - "gesehen"
+    correct_order: [0, 1, 2, 3, 4] # "gestern habe ich einen Film gesehen"
+
+  - elements:
+      - "der Mann"
+      - "in Berlin"
+      - "wohnt"
+      - "der"
+      - "dort arbeitet"
+    correct_order: [0, 1, 2, 3, 4] # "der Mann wohnt in Berlin, der dort arbeitet"
+
+  - elements:
+      - "nachdem"
+      - "ich"
+      - "gegessen"
+      - "hatte"
+      - "ging"
+      - "ich"
+      - "schlafen"
+    correct_order: [0, 1, 2, 3, 4, 5, 6] # "nachdem ich gegessen hatte, ging ich schlafen"
