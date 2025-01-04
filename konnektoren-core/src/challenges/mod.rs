@@ -13,6 +13,7 @@ pub mod custom;
 pub mod gap_fill;
 pub mod informative;
 pub mod multiple_choice;
+pub mod ordering;
 #[cfg(feature = "js")]
 pub mod package;
 pub mod performance;
@@ -37,6 +38,7 @@ pub use custom::*;
 pub use gap_fill::{Gap, GapFill, GapFillAnswer, GapFillQuestion};
 pub use informative::{Informative, InformativeText};
 pub use multiple_choice::*;
+pub use ordering::{Ordering, OrderingItem, OrderingResult};
 #[cfg(feature = "js")]
 pub use package::*;
 pub use performance::Performance;

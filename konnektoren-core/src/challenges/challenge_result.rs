@@ -1,7 +1,6 @@
-use crate::challenges::multiple_choice::MultipleChoiceOption;
-use crate::challenges::sort_table::SortTableRow;
 use crate::challenges::{
     ChallengeInput, ContextItemChoiceAnswers, CustomChallengeResult, GapFillAnswer,
+    MultipleChoiceOption, OrderingResult, SortTableRow,
 };
 use serde::{Deserialize, Serialize};
 
@@ -12,6 +11,7 @@ pub enum ChallengeResult {
     GapFill(Vec<GapFillAnswer>),
     SortTable(Vec<SortTableRow>),
     Informative,
+    Ordering(Vec<OrderingResult>),
     Custom(CustomChallengeResult),
 }
 
@@ -52,6 +52,13 @@ impl ChallengeResult {
                 }
                 _ => panic!("Invalid challenge input"),
             },
+            ChallengeResult::Ordering(results) => match input {
+                ChallengeInput::Ordering(result) => {
+                    results.push(result);
+                    Ok(())
+                }
+                _ => panic!("Invalid challenge input"),
+            },
             ChallengeResult::Informative => Ok(()),
             ChallengeResult::Custom(_) => Ok(()),
         }
@@ -63,6 +70,7 @@ impl ChallengeResult {
             ChallengeResult::ContextualChoice(items) => items.len(),
             ChallengeResult::GapFill(answers) => answers.len(),
             ChallengeResult::SortTable(rows) => rows.len(),
+            ChallengeResult::Ordering(results) => results.len(),
             ChallengeResult::Informative => 0,
             ChallengeResult::Custom(_) => 0,
         }
@@ -74,6 +82,7 @@ impl ChallengeResult {
             ChallengeResult::ContextualChoice(items) => items.is_empty(),
             ChallengeResult::GapFill(answers) => answers.is_empty(),
             ChallengeResult::SortTable(rows) => rows.is_empty(),
+            ChallengeResult::Ordering(results) => results.is_empty(),
             ChallengeResult::Informative => true,
             ChallengeResult::Custom(_) => true,
         }
@@ -148,5 +157,41 @@ mod tests {
             },
         ]);
         assert_eq!(challenge_result.len(), 2);
+    }
+
+    #[test]
+    fn add_ordering() {
+        let mut challenge_result = ChallengeResult::Ordering(Vec::new());
+        let input = ChallengeInput::Ordering(OrderingResult {
+            order: vec![2, 0, 1],
+        });
+        let result = challenge_result.add_input(input);
+        assert!(result.is_ok());
+        match challenge_result {
+            ChallengeResult::Ordering(results) => {
+                assert_eq!(results.len(), 1);
+                assert_eq!(results[0].order, vec![2, 0, 1]);
+            }
+            _ => panic!("Invalid challenge result"),
+        }
+    }
+
+    #[test]
+    fn test_ordering_len() {
+        let challenge_result = ChallengeResult::Ordering(vec![
+            OrderingResult {
+                order: vec![0, 1, 2],
+            },
+            OrderingResult {
+                order: vec![2, 1, 0],
+            },
+        ]);
+        assert_eq!(challenge_result.len(), 2);
+    }
+
+    #[test]
+    fn test_ordering_is_empty() {
+        let challenge_result = ChallengeResult::Ordering(Vec::new());
+        assert!(challenge_result.is_empty());
     }
 }

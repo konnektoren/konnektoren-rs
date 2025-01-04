@@ -2,6 +2,7 @@ use super::{ChallengeResult, ContextualChoice, Custom, Performance};
 use crate::challenges::gap_fill::GapFill;
 use crate::challenges::informative::Informative;
 use crate::challenges::multiple_choice::MultipleChoice;
+use crate::challenges::ordering::Ordering;
 use crate::challenges::sort_table::SortTable;
 use crate::challenges::task_pattern::TaskPattern;
 use serde::{Deserialize, Serialize};
@@ -20,6 +21,8 @@ pub enum ChallengeType {
     Informative(Informative),
     #[serde(rename = "custom")]
     Custom(Custom),
+    #[serde(rename = "ordering")]
+    Ordering(Ordering),
 }
 
 impl Default for ChallengeType {
@@ -57,6 +60,7 @@ impl ChallengeType {
                 ChallengeType::SortTable(new_dataset)
             }
             ChallengeType::Informative(dataset) => ChallengeType::Informative(dataset.clone()),
+            ChallengeType::Ordering(dataset) => ChallengeType::Ordering(dataset.clone()),
             ChallengeType::Custom(dataset) => {
                 let mut dataset = dataset.clone();
                 let ids: Vec<_> = (0..100).collect();
@@ -74,6 +78,7 @@ impl ChallengeType {
             ChallengeType::SortTable(dataset) => &dataset.name,
             ChallengeType::GapFill(dataset) => &dataset.name,
             ChallengeType::Informative(dataset) => &dataset.name,
+            ChallengeType::Ordering(dataset) => &dataset.name,
             ChallengeType::Custom(dataset) => &dataset.name,
         }
     }
@@ -85,6 +90,7 @@ impl ChallengeType {
             ChallengeType::GapFill(dataset) => &dataset.id,
             ChallengeType::SortTable(dataset) => &dataset.id,
             ChallengeType::Informative(dataset) => &dataset.id,
+            ChallengeType::Ordering(dataset) => &dataset.id,
             ChallengeType::Custom(dataset) => &dataset.id,
         }
     }
@@ -154,6 +160,18 @@ impl Performance for ChallengeType {
                 100 * score / dataset.rows.len() as u32
             }
             (ChallengeType::Informative(_), _) => 100,
+            (ChallengeType::Ordering(dataset), ChallengeResult::Ordering(results)) => {
+                if dataset.items.is_empty() {
+                    return 0;
+                }
+                let mut score = 0;
+                for (item, result) in dataset.items.iter().zip(results.iter()) {
+                    if item.correct_order == result.order {
+                        score += 1;
+                    }
+                }
+                100 * score / dataset.items.len() as u32
+            }
             (ChallengeType::Custom(_), ChallengeResult::Custom(result)) => {
                 (100.0 * result.performance) as u32
             }
