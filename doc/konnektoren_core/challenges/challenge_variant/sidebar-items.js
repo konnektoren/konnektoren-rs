@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ChallengeVariant"]};
+window.SIDEBAR_ITEMS = {"enum":["ChallengeVariant"],"struct":["ChallengeVariantIter"]};

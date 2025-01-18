@@ -1,5 +1,5 @@
 (function() {
-    var implementors = Object.fromEntries([["konnektoren_core",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.83.0/core/cmp/trait.Ord.html\" title=\"trait core::cmp::Ord\">Ord</a> for <a class=\"struct\" href=\"konnektoren_core/challenges/performance_record/struct.PerformanceRecord.html\" title=\"struct konnektoren_core::challenges::performance_record::PerformanceRecord\">PerformanceRecord</a>"]]]]);
+    var implementors = Object.fromEntries([["konnektoren_core",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.84.0/core/cmp/trait.Ord.html\" title=\"trait core::cmp::Ord\">Ord</a> for <a class=\"struct\" href=\"konnektoren_core/challenges/performance_record/struct.PerformanceRecord.html\" title=\"struct konnektoren_core::challenges::performance_record::PerformanceRecord\">PerformanceRecord</a>"]]]]);
     if (window.register_implementors) {
         window.register_implementors(implementors);
     } else {
