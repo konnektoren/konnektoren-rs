@@ -1,0 +1,53 @@
+!contextual-choice
+id: "contextual-choice-example" # Unique identifier for this challenge
+name: "German Conditional Forms" # Display name of the challenge
+description: "Practice using different forms in context. Fill in the blanks with the most appropriate option." # Challenge description
+
+items:
+  - template: "Wenn das Wetter schön {0}, {1} wir spazieren gehen." # Template with numbered placeholders
+    choices:
+      - id: 0 # First choice (matches {0} in template)
+        options: # List of possible answers
+          - "wäre" # Konjunktiv II of 'sein'
+          - "ist" # Present tense
+          - "würde sein" # Würde construction
+        correct_answer: "wäre" # The correct option
+
+      - id: 1 # Second choice (matches {1} in template)
+        options:
+          - "würden" # Correct conditional form
+          - "werden" # Present tense
+          - "wollen" # Modal verb
+        correct_answer: "würden" # The correct option
+
+  - template: "Sie {0} gerne Deutsch lernen, aber sie {1} keine Zeit."
+    choices:
+      - id: 0
+        options:
+          - "würde" # Würde construction
+          - "will" # Present tense
+          - "möchte" # Möchten form
+        correct_answer: "würde"
+
+      - id: 1
+        options:
+          - "hat" # Present tense
+          - "hätte" # Konjunktiv II
+          - "würde haben" # Alternative form
+        correct_answer: "hat"
+
+  - template: "{0} du mir bitte {1}, wo der Bahnhof ist?"
+    choices:
+      - id: 0
+        options:
+          - "Könntest" # Polite conditional
+          - "Kannst" # Present tense
+          - "Würdest" # Alternative form
+        correct_answer: "Könntest"
+
+      - id: 1
+        options:
+          - "sagen" # Infinitive
+          - "sagst" # Present tense
+          - "gesagt" # Past participle
+        correct_answer: "sagen"

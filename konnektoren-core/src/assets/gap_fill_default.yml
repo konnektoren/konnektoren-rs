@@ -1,0 +1,51 @@
+!gap-fill
+id: "gap-fill-example" # Unique identifier for this challenge
+name: "Gap Fill Exercise" # Display name of the challenge
+description: "Practice filling in the correct words in German sentences" # Challenge description
+
+questions:
+  - sentence: "Ich __ nach Berlin __ (fahren)." # The sentence with gaps marked by __
+    gaps:
+      - position: 0 # Position of the gap in the sentence (0-based)
+        options: # List of possible answers for this gap
+          - "bin" # First option
+          - "habe" # Second option
+          - "war" # Third option
+        correct: "bin" # The correct answer for this gap
+
+      - position: 1
+        options:
+          - "gefahren"
+          - "gefahrt"
+          - "fuhr"
+        correct: "gefahren"
+
+    hints: # Helpful hints for the user
+      - "Movement verbs use 'sein' as auxiliary"
+      - "The past participle of 'fahren' is 'gefahren'"
+
+    translation: "I went to Berlin" # English translation of the sentence
+    explanation: "We use 'sein' with verbs of movement and the past participle form" # Explanation of the grammar rule
+
+  - sentence: "Er __ gestern viel __ (arbeiten)."
+    gaps:
+      - position: 0
+        options:
+          - "hat"
+          - "ist"
+          - "wird"
+        correct: "hat"
+
+      - position: 1
+        options:
+          - "gearbeitet"
+          - "arbeitet"
+          - "arbeitete"
+        correct: "gearbeitet"
+
+    hints:
+      - "Regular verbs use 'haben' in perfect tense"
+      - "The past participle of regular verbs ends in '-et' or '-t'"
+
+    translation: "He worked a lot yesterday"
+    explanation: "Regular verbs form their perfect tense with 'haben' + past participle"

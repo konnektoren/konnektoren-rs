@@ -1,0 +1,101 @@
+!custom
+id: "custom-example" # Unique identifier for this challenge
+name: "Custom Challenge Example" # Display name of the challenge
+description: "An example of a custom challenge with HTML, CSS, and JavaScript" # Challenge description
+
+html: | # HTML template for the challenge
+  <div class="custom-challenge">
+    <h2>{{ challenge.name }}</h2>
+    <div class="challenge-content">
+      <div id="question-container"></div>
+      <button id="check-answer">Check Answer</button>
+      <div id="feedback"></div>
+    </div>
+  </div>
+
+results_html: | # Optional: HTML template for results view
+  <div class="results-view">
+    <h3>Results</h3>
+    <div id="results-container"></div>
+  </div>
+
+css: | # CSS styles for the challenge
+  .custom-challenge {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .challenge-content {
+    margin-top: 20px;
+  }
+
+  #check-answer {
+    margin-top: 15px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #feedback {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+  }
+
+js: | # JavaScript code for the challenge
+  document.getElementById('check-answer').addEventListener('click', function() {
+    const result = checkAnswer();
+    showFeedback(result);
+  });
+
+  function checkAnswer() {
+    // Implementation depends on challenge.data
+    return { correct: true, score: 100 };
+  }
+
+  function showFeedback(result) {
+    const feedback = document.getElementById('feedback');
+    feedback.textContent = result.correct ? 'Correct!' : 'Try again';
+    feedback.style.backgroundColor = result.correct ? '#d4edda' : '#f8d7da';
+  }
+
+i18n: | # Optional: Internationalization strings
+  {
+    "en": {
+      "check": "Check Answer",
+      "correct": "Correct!",
+      "incorrect": "Try again"
+    },
+    "de": {
+      "check": "Antwort überprüfen",
+      "correct": "Richtig!",
+      "incorrect": "Versuch es nochmal"
+    }
+  }
+
+data: # Custom data structure for the challenge
+  questions:
+    - id: 1
+      text: "Example question 1"
+      options:
+        - id: "a"
+          text: "Option A"
+        - id: "b"
+          text: "Option B"
+      correct: "a"
+    - id: 2
+      text: "Example question 2"
+      options:
+        - id: "a"
+          text: "Option A"
+        - id: "b"
+          text: "Option B"
+      correct: "b"
+
+task_ids: [1, 2, 3] # Optional: Specific task IDs to use
+
+package_url: "https://example.com/custom-challenge-package" # Optional: URL to additional resources

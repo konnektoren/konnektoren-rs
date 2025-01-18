@@ -1,0 +1,39 @@
+!ordering
+id: "sentence-ordering" # Unique identifier for this challenge
+name: "Sentence Structure" # Display name of the challenge
+description: "Order the words to create correct German sentences" # Challenge description
+
+items:
+  - elements: # First ordering task
+      - "ins" # List of elements to be ordered
+      - "Kino"
+      - "Ich"
+      - "gehe"
+      - "heute"
+    correct_order: [2, 3, 4, 0, 1] # Indexes representing correct order: "Ich gehe heute ins Kino"
+
+  - elements: # Second ordering task
+      - "Buch"
+      - "Das"
+      - "auf"
+      - "liegt"
+      - "dem"
+      - "Tisch"
+    correct_order: [1, 0, 3, 2, 4, 5] # Correct order: "Das Buch liegt auf dem Tisch"
+
+  - elements: # Third ordering task with time expressions
+      - "Morgen"
+      - "früh"
+      - "aufstehen"
+      - "muss"
+      - "ich"
+    correct_order: [0, 1, 4, 3, 2] # Correct order: "Morgen früh muss ich aufstehen"
+
+  - elements: # Fourth ordering task with subordinate clause
+      - "dass"
+      - "komme"
+      - "ich"
+      - "später"
+      - "Ich"
+      - "sage"
+    correct_order: [4, 5, 0, 2, 3, 1] # Correct order: "Ich sage dass ich später komme"

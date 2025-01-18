@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Custom {
     pub id: String,
     pub name: String,
@@ -13,6 +13,13 @@ pub struct Custom {
     pub data: serde_json::Value,
     pub task_ids: Option<Vec<usize>>,
     pub package_url: Option<String>,
+}
+
+impl Default for Custom {
+    fn default() -> Self {
+        let data = include_str!("../../assets/custom_default.yml");
+        serde_yaml::from_str(data).unwrap()
+    }
 }
 
 #[cfg(test)]

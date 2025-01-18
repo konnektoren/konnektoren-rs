@@ -1,11 +1,18 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct GapFill {
     pub id: String,
     pub name: String,
     pub description: String,
     pub questions: Vec<GapFillQuestion>,
+}
+
+impl Default for GapFill {
+    fn default() -> Self {
+        let data = include_str!("../../assets/gap_fill_default.yml");
+        serde_yaml::from_str(data).unwrap()
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]

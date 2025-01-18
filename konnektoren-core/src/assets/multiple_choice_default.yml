@@ -1,0 +1,29 @@
+!multiple-choice
+id: "multiple-choice-example" # Unique identifier for the challenge
+name: "Multiple Choice Example" # Display name of the challenge
+
+# List of available options that can be used in questions
+options:
+  - id: 0 # Unique numeric identifier for the option
+    name: "First Option" # Display text for the option
+  - id: 1
+    name: "Second Option"
+  - id: 2
+    name: "Third Option"
+
+# List of questions with their correct answers
+questions:
+  - question: "What is this?" # The question text
+    help: "This is a help text that provides additional context" # Help/hint text
+    option: 0 # ID of the correct option (references options above)
+    image: "fa-regular fa-question" # Optional: Font Awesome icon class or image path
+
+  - question: "Choose the correct answer"
+    help: "Think about the context carefully"
+    option: 1
+    image: "fa-regular fa-lightbulb" # Optional: Another example with different icon
+
+  - question: "Select the best option"
+    help: "Consider all possibilities"
+    option: 2
+    # No image specified for this question (demonstrates optional nature)

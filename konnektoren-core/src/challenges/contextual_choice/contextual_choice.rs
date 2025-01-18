@@ -1,11 +1,18 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct ContextualChoice {
     pub id: String,
     pub name: String,
     pub description: String,
     pub items: Vec<ContextItem>,
+}
+
+impl Default for ContextualChoice {
+    fn default() -> Self {
+        let data = include_str!("../../assets/contextual_choice_default.yml");
+        serde_yaml::from_str(data).unwrap()
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
