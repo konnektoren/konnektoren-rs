@@ -139,14 +139,28 @@
 <a href="#138" id="138">138</a>
 <a href="#139" id="139">139</a>
 <a href="#140" id="140">140</a>
-<a href="#141" id="141">141</a></pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a></pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+<span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 </span><span class="kw">pub struct </span>GapFill {
     <span class="kw">pub </span>id: String,
     <span class="kw">pub </span>name: String,
     <span class="kw">pub </span>description: String,
     <span class="kw">pub </span>questions: Vec&lt;GapFillQuestion&gt;,
+}
+
+<span class="kw">impl </span>Default <span class="kw">for </span>GapFill {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">"../../assets/gap_fill_default.yml"</span>);
+        serde_yaml::from_str(data).unwrap()
+    }
 }
 
 <span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]

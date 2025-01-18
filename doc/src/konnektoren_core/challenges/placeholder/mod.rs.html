@@ -60,7 +60,7 @@
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Placeholder {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">"../../assets/placeholder.yml"</span>);
+        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">"../../assets/placeholder_default.yml"</span>);
         serde_yaml::from_str(data).unwrap()
     }
 }
