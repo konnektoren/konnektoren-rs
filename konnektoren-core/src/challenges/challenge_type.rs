@@ -6,24 +6,19 @@ use crate::challenges::ordering::Ordering;
 use crate::challenges::sort_table::SortTable;
 use crate::challenges::task_pattern::TaskPattern;
 use serde::{Deserialize, Serialize};
+use strum_macros::{EnumIter, IntoStaticStr};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumIter, IntoStaticStr)]
+#[serde(rename_all = "kebab-case")]
+#[strum(serialize_all = "kebab-case")]
 pub enum ChallengeType {
-    #[serde(rename = "multiple-choice")]
     MultipleChoice(MultipleChoice),
-    #[serde(rename = "contextual-choice")]
     ContextualChoice(ContextualChoice),
-    #[serde(rename = "gap-fill")]
     GapFill(GapFill),
-    #[serde(rename = "sort-table")]
     SortTable(SortTable),
-    #[serde(rename = "informative")]
     Informative(Informative),
-    #[serde(rename = "ordering")]
     Ordering(Ordering),
-    #[serde(rename = "custom")]
     Custom(Custom),
-    #[serde(rename = "placeholder")]
     Placeholder(Placeholder),
 }
 
@@ -191,6 +186,7 @@ mod tests {
     use super::*;
     use crate::challenges::multiple_choice::MultipleChoiceOption;
     use crate::challenges::{ChallengeResult, ContextItemChoiceAnswers};
+    use strum::IntoEnumIterator;
 
     #[test]
     fn default_challenge() {
@@ -271,5 +267,51 @@ mod tests {
 
         let performance = ChallengeType::ContextualChoice(challenge).performance(&result);
         assert_eq!(performance, 100);
+    }
+
+    #[test]
+    fn test_strum_into_static_str() {
+        assert_eq!(
+            <ChallengeType as Into<&'static str>>::into(ChallengeType::MultipleChoice(
+                MultipleChoice::default()
+            )),
+            "multiple-choice"
+        );
+        assert_eq!(
+            <ChallengeType as Into<&'static str>>::into(ChallengeType::ContextualChoice(
+                ContextualChoice::default()
+            )),
+            "contextual-choice"
+        );
+    }
+
+    #[test]
+    fn test_variant_iteration() {
+        let variants: Vec<ChallengeType> = ChallengeType::iter()
+            .map(|v| match v {
+                ChallengeType::MultipleChoice(_) => {
+                    ChallengeType::MultipleChoice(MultipleChoice::default())
+                }
+                ChallengeType::ContextualChoice(_) => {
+                    ChallengeType::ContextualChoice(ContextualChoice::default())
+                }
+                _ => v,
+            })
+            .collect();
+
+        assert!(!variants.is_empty());
+        assert!(variants
+            .iter()
+            .any(|v| matches!(v, ChallengeType::MultipleChoice(_))));
+        assert!(variants
+            .iter()
+            .any(|v| matches!(v, ChallengeType::ContextualChoice(_))));
+    }
+
+    #[test]
+    fn test_serde_serialization() {
+        let challenge = ChallengeType::MultipleChoice(MultipleChoice::default());
+        let serialized = serde_yaml::to_string(&challenge).unwrap();
+        assert!(serialized.contains("multiple-choice"));
     }
 }
