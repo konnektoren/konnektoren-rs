@@ -1,6 +1,6 @@
 [package]
 name = "konnektoren-core"
-version = "0.4.4"
+version = "0.4.5"
 edition = "2021"
 description = "Core library for Konnektoren"
 license = "MIT"
@@ -42,7 +42,9 @@ js = [
 [dependencies]
 anyhow = "1.0"
 chrono = { version = "0.4.38", features = ["serde"] }
+country-emoji = "0.2.0"
 eval = { version = "0.4", optional = true }
+isolang = "2.4.0"
 log = { version = "0.4" }
 names = { version = "0.15.0-dev", git = "https://github.com/jakswa/names", default-features = false }
 serde = { version = "1.0", features = ["derive"] }
