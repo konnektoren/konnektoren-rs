@@ -1,0 +1,28 @@
+[package]
+name = "konnektoren-platform"
+version = "0.1.0"
+edition = "2021"
+description = "Platform library for Konnektoren"
+license = "MIT"
+repository = "https://github.com/Konnektoren/konnektoren-rs"
+readme = "../README.md"
+authors = ["Christian M <chriamue@gmail.com>"]
+
+[dependencies]
+konnektoren-core = { path = "../konnektoren-core" }
+
+# Common dependencies from workspace
+serde = { workspace = true }
+serde_json = { workspace = true }
+isolang = { workspace = true }
+log = { workspace = true }
+thiserror = { workspace = true }
+
+# Platform specific dependencies
+i18n-embed = { version = "0.14", features = ["fluent-system"] }
+rust-embed = "8.0"
+config = "0.13"
+
+[dev-dependencies]
+mockall = { workspace = true }
+env_logger = { workspace = true }

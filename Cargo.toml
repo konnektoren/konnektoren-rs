@@ -1,4 +1,18 @@
 [workspace]
 resolver = "2"
 
-members = ["konnektoren-core", "konnektoren-tests", "konnektoren-tui"]
+members = [
+    "konnektoren-core",
+    "konnektoren-platform",
+    "konnektoren-tests",
+    "konnektoren-tui",
+]
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+isolang = "2.4.0"
+log = "0.4"
+thiserror = "1.0"
+mockall = "0.13.0"
+env_logger = "0.10"

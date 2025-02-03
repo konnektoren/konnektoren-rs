@@ -3,7 +3,6 @@ pub mod commands;
 pub mod controller;
 pub mod events;
 pub mod game;
-pub mod i18n;
 pub mod persistence;
 pub mod player_profile;
 pub mod session;
@@ -37,7 +36,6 @@ pub mod prelude {
     pub use crate::challenges::Question;
     pub use crate::game::Game;
     pub use crate::game::GamePath;
-    pub use crate::i18n::Language;
     pub use crate::player_profile::PlayerProfile;
     pub use crate::session::Session;
     pub use crate::Xp;
