@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["language"]};
+window.SIDEBAR_ITEMS = {"mod":["i18n_config","language"]};
