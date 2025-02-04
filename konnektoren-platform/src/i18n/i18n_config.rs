@@ -1,4 +1,5 @@
 use super::language::Language;
+use super::translation_asset::TranslationAsset;
 use serde_json::Value;
 use std::collections::HashMap;
 
@@ -20,6 +21,23 @@ impl I18nConfig {
             default_language,
             additional_languages,
         }
+    }
+
+    pub fn with_assets<T: TranslationAsset>(asset: T) -> Self {
+        let mut config = Self::default();
+        let translations = asset.load_translations();
+
+        for (lang, trans) in translations {
+            config.merge_translation(
+                &Language::builtin()
+                    .into_iter()
+                    .find(|l| l.code() == lang)
+                    .unwrap_or_else(|| Language::default()),
+                trans,
+            );
+        }
+
+        config
     }
 
     pub fn supported_languages(&self) -> Vec<Language> {
