@@ -206,7 +206,9 @@
 <a href="#205" id="205">205</a>
 <a href="#206" id="206">206</a>
 <a href="#207" id="207">207</a>
-<a href="#208" id="208">208</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_config::ChallengeConfig;
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_config::ChallengeConfig;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_result::ChallengeResult;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::challenge_type::ChallengeType;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::Timed;
@@ -393,6 +395,7 @@
         <span class="kw">let </span>challenge_config = ChallengeConfig::default();
         <span class="kw">let </span><span class="kw-2">mut </span>challenge = Challenge::new(<span class="kw-2">&amp;</span>challenge_type, <span class="kw-2">&amp;</span>challenge_config);
         challenge.start();
+        std::thread::sleep(std::time::Duration::from_millis(<span class="number">1</span>));
         <span class="kw">let </span>input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
         <span class="kw">let </span>result = challenge.solve(input).unwrap();
         <span class="macro">assert!</span>(result);
@@ -407,6 +410,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>challenge = Challenge::new(<span class="kw-2">&amp;</span>challenge_type, <span class="kw-2">&amp;</span>challenge_config);
         challenge.start();
         <span class="kw">let </span>start_time = challenge.start_time().unwrap();
+        std::thread::sleep(std::time::Duration::from_millis(<span class="number">1</span>));
         <span class="kw">let </span>input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
         <span class="kw">let </span>result = challenge.solve(input).unwrap();
         <span class="macro">assert!</span>(result);
