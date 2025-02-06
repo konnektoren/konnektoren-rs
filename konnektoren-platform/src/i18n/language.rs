@@ -1,6 +1,7 @@
 use isolang::Language as IsoLanguage;
 use serde::{Deserialize, Serialize};
 use std::fmt;
+use std::str::FromStr;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Language {
@@ -64,6 +65,40 @@ impl<'de> Deserialize<'de> for Language {
                 })?;
                 Ok(Language::Other { iso, flag, rtl })
             }
+        }
+    }
+}
+
+impl From<&str> for Language {
+    fn from(code: &str) -> Self {
+        Self::from_code(code)
+    }
+}
+
+impl From<String> for Language {
+    fn from(code: String) -> Self {
+        Self::from_code(&code)
+    }
+}
+
+impl FromStr for Language {
+    type Err = String;
+
+    fn from_str(code: &str) -> Result<Self, Self::Err> {
+        if let Some(iso) = IsoLanguage::from_639_1(code) {
+            // Check if it's a builtin language
+            if Language::builtin().iter().any(|lang| lang.code() == code) {
+                Ok(Language::Builtin(iso))
+            } else {
+                // For non-builtin languages, create as Other with default flag
+                Ok(Language::Other {
+                    iso,
+                    flag: "🌐".to_string(),
+                    rtl: matches!(iso, IsoLanguage::Ara | IsoLanguage::Heb),
+                })
+            }
+        } else {
+            Err(format!("Invalid language code: {}", code))
         }
     }
 }
@@ -156,6 +191,14 @@ impl Language {
             rtl,
         })
     }
+
+    pub fn from_code(code: &str) -> Self {
+        Self::from_str(code).unwrap_or_else(|_| Self::default())
+    }
+
+    pub fn try_from_code(code: &str) -> Result<Self, String> {
+        Self::from_str(code)
+    }
 }
 
 impl Default for Language {
@@ -173,6 +216,36 @@ impl fmt::Display for Language {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_from_string() {
+        let lang = Language::from("de".to_string());
+        assert_eq!(lang, Language::Builtin(IsoLanguage::Deu));
+    }
+
+    #[test]
+    fn test_from_str_ref() {
+        let lang = Language::from("de");
+        assert_eq!(lang, Language::Builtin(IsoLanguage::Deu));
+    }
+
+    #[test]
+    fn test_default_fallback() {
+        let invalid_lang = Language::from("invalid");
+        assert_eq!(invalid_lang, Language::default());
+        assert_eq!(invalid_lang, Language::Builtin(IsoLanguage::Eng));
+    }
+
+    #[test]
+    fn test_language_equality() {
+        let lang1 = Language::from("de");
+        let lang2 = Language::Builtin(IsoLanguage::Deu);
+        let lang3 = Language::from_code("de");
+
+        assert_eq!(lang1, lang2);
+        assert_eq!(lang2, lang3);
+        assert_eq!(lang1, lang3);
+    }
 
     #[test]
     fn test_builtin_languages() {
@@ -239,5 +312,46 @@ mod tests {
         let serialized = serde_json::to_string(&french).unwrap();
         let deserialized: Language = serde_json::from_str(&serialized).unwrap();
         assert_eq!(french, deserialized);
+    }
+
+    #[test]
+    fn test_from_str() {
+        assert_eq!(
+            Language::from_str("en").unwrap(),
+            Language::Builtin(IsoLanguage::Eng)
+        );
+        assert_eq!(
+            Language::from_str("de").unwrap(),
+            Language::Builtin(IsoLanguage::Deu)
+        );
+        assert!(Language::from_str("xx").is_err());
+    }
+
+    #[test]
+    fn test_from_code() {
+        assert_eq!(
+            Language::from_code("en"),
+            Language::Builtin(IsoLanguage::Eng)
+        );
+        assert_eq!(
+            Language::from_code("de"),
+            Language::Builtin(IsoLanguage::Deu)
+        );
+        // Invalid code should return default language (English)
+        assert_eq!(Language::from_code("xx"), Language::default());
+    }
+
+    #[test]
+    fn test_try_from_code() {
+        assert!(Language::try_from_code("en").is_ok());
+        assert!(Language::try_from_code("xx").is_err());
+    }
+
+    #[test]
+    fn test_non_builtin_language() {
+        let french = Language::from_str("fr").unwrap();
+        assert_eq!(french.code(), "fr");
+        assert_eq!(french.flag(), "🌐");
+        assert!(!french.is_rtl());
     }
 }

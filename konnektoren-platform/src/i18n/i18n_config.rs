@@ -3,8 +3,7 @@ use super::translation_asset::TranslationAsset;
 use serde_json::Value;
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, PartialEq)]
-#[derive(Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct I18nConfig {
     pub translations: HashMap<String, Value>,
     pub default_language: Language,
@@ -79,7 +78,6 @@ impl I18nConfig {
             .collect()
     }
 }
-
 
 #[cfg(test)]
 mod tests {
