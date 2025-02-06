@@ -185,6 +185,7 @@ mod tests {
         let challenge_config = ChallengeConfig::default();
         let mut challenge = Challenge::new(&challenge_type, &challenge_config);
         challenge.start();
+        std::thread::sleep(std::time::Duration::from_millis(1));
         let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
         let result = challenge.solve(input).unwrap();
         assert!(result);
@@ -199,6 +200,7 @@ mod tests {
         let mut challenge = Challenge::new(&challenge_type, &challenge_config);
         challenge.start();
         let start_time = challenge.start_time().unwrap();
+        std::thread::sleep(std::time::Duration::from_millis(1));
         let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
         let result = challenge.solve(input).unwrap();
         assert!(result);
