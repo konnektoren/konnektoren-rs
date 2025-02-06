@@ -91,7 +91,13 @@
 <a href="#90" id="90">90</a>
 <a href="#91" id="91">91</a>
 <a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::language::Language;
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::language::Language;
 <span class="kw">use </span>serde_json::{json, Value};
 <span class="kw">use </span>std::collections::HashMap;
 
@@ -102,6 +108,12 @@
 <span class="comment">// Implementation for embedded JSON files
 </span><span class="kw">pub struct </span>JsonTranslationAsset&lt;T: rust_embed::RustEmbed&gt; {
     _marker: std::marker::PhantomData&lt;T&gt;,
+}
+
+<span class="kw">impl</span>&lt;T: rust_embed::RustEmbed&gt; Default <span class="kw">for </span>JsonTranslationAsset&lt;T&gt; {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new()
+    }
 }
 
 <span class="kw">impl</span>&lt;T: rust_embed::RustEmbed&gt; JsonTranslationAsset&lt;T&gt; {
@@ -165,7 +177,7 @@
 
                                 translations
                                     .entry(lang.to_string())
-                                    .or_insert_with(|| <span class="macro">json!</span>({}).into())
+                                    .or_insert_with(|| <span class="macro">json!</span>({}))
                                     .as_object_mut()
                                     .unwrap()
                                     .insert(key.to_string(), Value::String(trans.to_string()));
