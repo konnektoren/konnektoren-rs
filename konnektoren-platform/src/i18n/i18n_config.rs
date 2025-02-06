@@ -4,6 +4,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]
+#[derive(Default)]
 pub struct I18nConfig {
     pub translations: HashMap<String, Value>,
     pub default_language: Language,
@@ -32,7 +33,7 @@ impl I18nConfig {
                 &Language::builtin()
                     .into_iter()
                     .find(|l| l.code() == lang)
-                    .unwrap_or_else(|| Language::default()),
+                    .unwrap_or_else(Language::default),
                 trans,
             );
         }
@@ -79,15 +80,6 @@ impl I18nConfig {
     }
 }
 
-impl Default for I18nConfig {
-    fn default() -> Self {
-        Self {
-            translations: HashMap::new(),
-            default_language: Language::default(),
-            additional_languages: None,
-        }
-    }
-}
 
 #[cfg(test)]
 mod tests {

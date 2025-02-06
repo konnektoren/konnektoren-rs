@@ -11,6 +11,12 @@ pub struct JsonTranslationAsset<T: rust_embed::RustEmbed> {
     _marker: std::marker::PhantomData<T>,
 }
 
+impl<T: rust_embed::RustEmbed> Default for JsonTranslationAsset<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: rust_embed::RustEmbed> JsonTranslationAsset<T> {
     pub fn new() -> Self {
         Self {
@@ -72,7 +78,7 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for YamlTranslationAsset<T> {
 
                                 translations
                                     .entry(lang.to_string())
-                                    .or_insert_with(|| json!({}).into())
+                                    .or_insert_with(|| json!({}))
                                     .as_object_mut()
                                     .unwrap()
                                     .insert(key.to_string(), Value::String(trans.to_string()));
