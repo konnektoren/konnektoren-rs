@@ -5,7 +5,8 @@ pub mod translation_asset;
 pub use i18n_config::I18nConfig;
 pub use language::Language;
 pub use translation_asset::{
-    I18nAssets, JsonTranslationAsset, TranslationAsset, YamlTranslationAsset,
+    CombinedTranslationAsset, I18nAssets, JsonTranslationAsset, TranslationAsset,
+    YamlTranslationAsset,
 };
 
 #[cfg(test)]
