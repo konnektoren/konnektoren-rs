@@ -146,7 +146,7 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for CombinedTranslationAsset<T> 
 
 // Define the asset structure using rust-embed
 #[derive(rust_embed::RustEmbed)]
-#[folder = "assets/i18n/"]
+#[folder = "$CARGO_MANIFEST_DIR/assets/i18n/"]
 pub struct I18nAssets;
 
 #[cfg(test)]

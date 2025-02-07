@@ -21,7 +21,10 @@ thiserror = { workspace = true }
 
 # Platform specific dependencies
 i18n-embed = { version = "0.14", features = ["fluent-system"] }
-rust-embed = "8.5.0"
+rust-embed = { version = "8.5.0", features = [
+    "interpolate-folder-path",
+    "debug-embed",
+] }
 config = "0.13"
 
 [dev-dependencies]
