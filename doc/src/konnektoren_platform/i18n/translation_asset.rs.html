@@ -219,7 +219,8 @@
 <a href="#218" id="218">218</a>
 <a href="#219" id="219">219</a>
 <a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::language::Language;
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::language::Language;
 <span class="kw">use </span>serde_json::{json, Value};
 <span class="kw">use </span>std::collections::HashMap;
 
@@ -381,6 +382,7 @@
         <span class="macro">assert!</span>(translations.contains_key(<span class="string">"en"</span>));
         <span class="macro">assert!</span>(translations.contains_key(<span class="string">"de"</span>));
         <span class="macro">assert_eq!</span>(translations[<span class="string">"en"</span>][<span class="string">"Language"</span>], <span class="string">"Language"</span>);
+        <span class="macro">assert_eq!</span>(translations[<span class="string">"de"</span>][<span class="string">"Language"</span>], <span class="string">"Sprache"</span>);
     }
 
     <span class="attr">#[test]
