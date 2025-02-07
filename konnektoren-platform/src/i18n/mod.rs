@@ -1,9 +1,11 @@
 pub mod i18n_config;
 pub mod language;
+pub mod translation;
 pub mod translation_asset;
 
 pub use i18n_config::I18nConfig;
 pub use language::Language;
+pub use translation::Translation;
 pub use translation_asset::{
     CombinedTranslationAsset, I18nAssets, JsonTranslationAsset, TranslationAsset,
     YamlTranslationAsset,

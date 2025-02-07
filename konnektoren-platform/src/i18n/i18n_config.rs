@@ -1,5 +1,6 @@
 use super::language::Language;
 use super::translation_asset::TranslationAsset;
+use crate::i18n::Translation;
 use serde_json::Value;
 use std::collections::HashMap;
 
@@ -79,10 +80,45 @@ impl I18nConfig {
     }
 }
 
+impl I18nConfig {
+    pub fn t(&self, key: &str) -> String {
+        self.get_translation(key, None)
+    }
+
+    pub fn t_with_lang(&self, key: &str, lang: &Language) -> String {
+        self.get_translation(key, Some(lang))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use serde_json::json;
+
+    fn create_test_config() -> I18nConfig {
+        let mut config = I18nConfig::default();
+
+        // Add test translations
+        config.merge_translation(
+            &Language::from("en"),
+            json!({
+                "Language": "Language",
+                "Hello": "Hello",
+                "Test": "Test"
+            }),
+        );
+
+        config.merge_translation(
+            &Language::from("de"),
+            json!({
+                "Language": "Sprache",
+                "Hello": "Hallo",
+                "Test": "Test"
+            }),
+        );
+
+        config
+    }
 
     #[test]
     fn test_default() {
@@ -164,5 +200,26 @@ mod tests {
         assert!(codes.contains(&"en"));
         assert!(codes.contains(&"de"));
         assert_eq!(codes.len(), Language::builtin().len());
+    }
+
+    #[test]
+    fn test_t_method() {
+        let i18n = create_test_config();
+        assert_eq!(i18n.t("Test"), "Test");
+        assert_eq!(i18n.t("Hello"), "Hello");
+        assert_eq!(i18n.t("NonExistent"), "NonExistent");
+    }
+
+    #[test]
+    fn test_t_with_lang() {
+        let i18n = create_test_config();
+        assert_eq!(
+            i18n.t_with_lang("Language", &Language::from("de")),
+            "Sprache"
+        );
+        assert_eq!(
+            i18n.t_with_lang("Language", &Language::from("en")),
+            "Language"
+        );
     }
 }

@@ -160,6 +160,7 @@ mod tests {
         assert!(translations.contains_key("en"));
         assert!(translations.contains_key("de"));
         assert_eq!(translations["en"]["Language"], "Language");
+        assert_eq!(translations["de"]["Language"], "Sprache");
     }
 
     #[test]
