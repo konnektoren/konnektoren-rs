@@ -305,7 +305,7 @@
     }
 }
 
-<span class="kw">impl </span>Translation <span class="kw">for </span>I18nConfig {
+<span class="kw">impl </span>I18nConfig {
     <span class="kw">fn </span>t(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; String {
         <span class="self">self</span>.get_translation(key, <span class="prelude-val">None</span>)
     }
