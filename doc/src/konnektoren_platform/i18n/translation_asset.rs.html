@@ -368,7 +368,7 @@
 
 <span class="comment">// Define the asset structure using rust-embed
 </span><span class="attr">#[derive(rust_embed::RustEmbed)]
-#[folder = <span class="string">"assets/i18n/"</span>]
+#[folder = <span class="string">"$CARGO_MANIFEST_DIR/assets/i18n/"</span>]
 </span><span class="kw">pub struct </span>I18nAssets;
 
 <span class="attr">#[cfg(test)]
