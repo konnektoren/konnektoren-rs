@@ -97,7 +97,129 @@
 <a href="#96" id="96">96</a>
 <a href="#97" id="97">97</a>
 <a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::language::Language;
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::language::Language;
 <span class="kw">use </span>serde_json::{json, Value};
 <span class="kw">use </span>std::collections::HashMap;
 
@@ -159,32 +281,83 @@
             _marker: std::marker::PhantomData,
         }
     }
+
+    <span class="kw">fn </span>load_yaml(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;HashMap&lt;String, Value&gt;&gt; {
+        T::get(<span class="kw-2">&amp;</span><span class="self">self</span>.filename).and_then(|file| {
+            String::from_utf8(file.data.to_vec())
+                .ok()
+                .and_then(|content| {
+                    serde_yaml::from_str::&lt;serde_yaml::Value&gt;(<span class="kw-2">&amp;</span>content)
+                        .ok()
+                        .and_then(|yaml| {
+                            yaml.get(<span class="string">"i18n"</span>).map(|i18n| {
+                                <span class="kw">let </span><span class="kw-2">mut </span>translations = HashMap::new();
+                                <span class="kw">if let </span><span class="prelude-val">Some</span>(mapping) = i18n.as_mapping() {
+                                    <span class="kw">for </span>(key, translations_map) <span class="kw">in </span>mapping {
+                                        <span class="kw">let </span>key = key.as_str().unwrap_or_default();
+                                        <span class="kw">if let </span><span class="prelude-val">Some</span>(trans_map) = translations_map.as_mapping() {
+                                            <span class="kw">for </span>(lang, trans) <span class="kw">in </span>trans_map {
+                                                <span class="kw">let </span>lang = lang.as_str().unwrap_or_default();
+                                                <span class="kw">let </span>trans = trans.as_str().unwrap_or_default();
+
+                                                translations
+                                                    .entry(lang.to_string())
+                                                    .or_insert_with(|| <span class="macro">json!</span>({}))
+                                                    .as_object_mut()
+                                                    .unwrap()
+                                                    .insert(
+                                                        key.to_string(),
+                                                        Value::String(trans.to_string()),
+                                                    );
+                                            }
+                                        }
+                                    }
+                                }
+                                translations
+                            })
+                        })
+                })
+        })
+    }
 }
 
 <span class="kw">impl</span>&lt;T: rust_embed::RustEmbed&gt; TranslationAsset <span class="kw">for </span>YamlTranslationAsset&lt;T&gt; {
     <span class="kw">fn </span>load_translations(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; HashMap&lt;String, Value&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>translations: HashMap&lt;String, Value&gt; = HashMap::new();
+        <span class="self">self</span>.load_yaml().unwrap_or_default()
+    }
+}
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(file) = T::get(<span class="kw-2">&amp;</span><span class="self">self</span>.filename) {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(content) = String::from_utf8(file.data.to_vec()) {
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>(yaml) = serde_yaml::from_str::&lt;serde_yaml::Value&gt;(<span class="kw-2">&amp;</span>content) {
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(i18n) = yaml.get(<span class="string">"i18n"</span>) {
-                        <span class="kw">for </span>(key, translations_map) <span class="kw">in </span>i18n.as_mapping().unwrap() {
-                            <span class="kw">let </span>key = key.as_str().unwrap();
-                            <span class="kw">for </span>(lang, trans) <span class="kw">in </span>translations_map.as_mapping().unwrap() {
-                                <span class="kw">let </span>lang = lang.as_str().unwrap();
-                                <span class="kw">let </span>trans = trans.as_str().unwrap();
+<span class="comment">// Combined asset loader
+</span><span class="kw">pub struct </span>CombinedTranslationAsset&lt;T: rust_embed::RustEmbed&gt; {
+    json_loader: JsonTranslationAsset&lt;T&gt;,
+    yaml_loader: YamlTranslationAsset&lt;T&gt;,
+}
 
-                                translations
-                                    .entry(lang.to_string())
-                                    .or_insert_with(|| <span class="macro">json!</span>({}))
-                                    .as_object_mut()
-                                    .unwrap()
-                                    .insert(key.to_string(), Value::String(trans.to_string()));
+<span class="kw">impl</span>&lt;T: rust_embed::RustEmbed&gt; CombinedTranslationAsset&lt;T&gt; {
+    <span class="kw">pub fn </span>new(yaml_filename: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            json_loader: JsonTranslationAsset::new(),
+            yaml_loader: YamlTranslationAsset::new(yaml_filename),
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;T: rust_embed::RustEmbed&gt; TranslationAsset <span class="kw">for </span>CombinedTranslationAsset&lt;T&gt; {
+    <span class="kw">fn </span>load_translations(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; HashMap&lt;String, Value&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>translations = <span class="self">self</span>.json_loader.load_translations();
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(yaml_translations) = <span class="self">self</span>.yaml_loader.load_yaml() {
+            <span class="kw">for </span>(lang, trans) <span class="kw">in </span>yaml_translations {
+                translations
+                    .entry(lang)
+                    .and_modify(|e| {
+                        <span class="kw">if let </span><span class="prelude-val">Some</span>(obj) = e.as_object_mut() {
+                            <span class="kw">if let </span><span class="prelude-val">Some</span>(new_obj) = trans.as_object() {
+                                obj.extend(new_obj.clone());
                             }
                         }
-                    }
-                }
+                    })
+                    .or_insert(trans);
             }
         }
 
@@ -196,4 +369,75 @@
 </span><span class="attr">#[derive(rust_embed::RustEmbed)]
 #[folder = <span class="string">"assets/i18n/"</span>]
 </span><span class="kw">pub struct </span>I18nAssets;
+
+<span class="attr">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_json_asset_loading() {
+        <span class="kw">let </span>asset = JsonTranslationAsset::&lt;I18nAssets&gt;::new();
+        <span class="kw">let </span>translations = asset.load_translations();
+        <span class="macro">assert!</span>(translations.contains_key(<span class="string">"en"</span>));
+        <span class="macro">assert!</span>(translations.contains_key(<span class="string">"de"</span>));
+        <span class="macro">assert_eq!</span>(translations[<span class="string">"en"</span>][<span class="string">"Language"</span>], <span class="string">"Language"</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_yaml_asset_loading() {
+        <span class="kw">let </span>asset = YamlTranslationAsset::&lt;I18nAssets&gt;::new(<span class="string">"i18n.yml"</span>);
+        <span class="kw">let </span>translations = asset.load_translations();
+        <span class="macro">assert!</span>(translations.contains_key(<span class="string">"en"</span>));
+        <span class="macro">assert!</span>(translations.contains_key(<span class="string">"de"</span>));
+        <span class="macro">assert_eq!</span>(translations[<span class="string">"en"</span>][<span class="string">"Description"</span>], <span class="string">"Description"</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_combined_asset_loading() {
+        <span class="kw">let </span>asset = CombinedTranslationAsset::&lt;I18nAssets&gt;::new(<span class="string">"i18n.yml"</span>);
+        <span class="kw">let </span>translations = asset.load_translations();
+
+        <span class="comment">// Test JSON translations
+        </span><span class="macro">assert!</span>(translations.contains_key(<span class="string">"en"</span>));
+        <span class="macro">assert!</span>(translations.contains_key(<span class="string">"de"</span>));
+        <span class="macro">assert_eq!</span>(translations[<span class="string">"en"</span>][<span class="string">"Language"</span>], <span class="string">"Language"</span>);
+
+        <span class="comment">// Test YAML translations
+        </span><span class="macro">assert_eq!</span>(translations[<span class="string">"en"</span>][<span class="string">"Description"</span>], <span class="string">"Description"</span>);
+
+        <span class="comment">// Test that both formats are merged correctly
+        </span><span class="macro">assert!</span>(translations[<span class="string">"en"</span>]
+            .as_object()
+            .unwrap()
+            .contains_key(<span class="string">"Language"</span>));
+        <span class="macro">assert!</span>(translations[<span class="string">"en"</span>]
+            .as_object()
+            .unwrap()
+            .contains_key(<span class="string">"Description"</span>));
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_missing_files() {
+        <span class="kw">let </span>asset = CombinedTranslationAsset::&lt;I18nAssets&gt;::new(<span class="string">"non_existent.yml"</span>);
+        <span class="kw">let </span>translations = asset.load_translations();
+
+        <span class="comment">// Should still load JSON files even if YAML file is missing
+        </span><span class="macro">assert!</span>(!translations.is_empty());
+        <span class="macro">assert!</span>(translations.contains_key(<span class="string">"en"</span>));
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_merge_behavior() {
+        <span class="kw">let </span>asset = CombinedTranslationAsset::&lt;I18nAssets&gt;::new(<span class="string">"i18n.yml"</span>);
+        <span class="kw">let </span>translations = asset.load_translations();
+
+        <span class="comment">// Test that YAML translations don't override JSON translations
+        </span><span class="macro">assert_eq!</span>(translations[<span class="string">"en"</span>][<span class="string">"Language"</span>], <span class="string">"Language"</span>);
+
+        <span class="comment">// Test that both sources contribute to the final translations
+        </span><span class="kw">let </span>en_trans = translations[<span class="string">"en"</span>].as_object().unwrap();
+        <span class="macro">assert!</span>(en_trans.contains_key(<span class="string">"Language"</span>)); <span class="comment">// From JSON
+        </span><span class="macro">assert!</span>(en_trans.contains_key(<span class="string">"Description"</span>)); <span class="comment">// From YAML
+    </span>}
+}
 </code></pre></div></section></main></body></html>
