@@ -306,11 +306,11 @@
 }
 
 <span class="kw">impl </span>I18nConfig {
-    <span class="kw">fn </span>t(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; String {
+    <span class="kw">pub fn </span>t(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; String {
         <span class="self">self</span>.get_translation(key, <span class="prelude-val">None</span>)
     }
 
-    <span class="kw">fn </span>t_with_lang(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str, lang: <span class="kw-2">&amp;</span>Language) -&gt; String {
+    <span class="kw">pub fn </span>t_with_lang(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str, lang: <span class="kw-2">&amp;</span>Language) -&gt; String {
         <span class="self">self</span>.get_translation(key, <span class="prelude-val">Some</span>(lang))
     }
 }
