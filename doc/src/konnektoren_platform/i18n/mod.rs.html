@@ -36,14 +36,16 @@
 <a href="#35" id="35">35</a>
 <a href="#36" id="36">36</a>
 <a href="#37" id="37">37</a>
-<a href="#38" id="38">38</a></pre></div><pre class="rust"><code><span class="kw">pub mod </span>i18n_config;
+<a href="#38" id="38">38</a>
+<a href="#39" id="39">39</a></pre></div><pre class="rust"><code><span class="kw">pub mod </span>i18n_config;
 <span class="kw">pub mod </span>language;
 <span class="kw">pub mod </span>translation_asset;
 
 <span class="kw">pub use </span>i18n_config::I18nConfig;
 <span class="kw">pub use </span>language::Language;
 <span class="kw">pub use </span>translation_asset::{
-    I18nAssets, JsonTranslationAsset, TranslationAsset, YamlTranslationAsset,
+    CombinedTranslationAsset, I18nAssets, JsonTranslationAsset, TranslationAsset,
+    YamlTranslationAsset,
 };
 
 <span class="attr">#[cfg(test)]
