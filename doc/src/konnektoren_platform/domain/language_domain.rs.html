@@ -171,16 +171,76 @@
 <a href="#170" id="170">170</a>
 <a href="#171" id="171">171</a>
 <a href="#172" id="172">172</a>
-<a href="#173" id="173">173</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{Domain, DomainConfig};
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{Domain, DomainConfig};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="doccomment">/// Example implementation for language learning domains
 </span><span class="attr">#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 </span><span class="kw">pub struct </span>LanguageDomainConfig {
     code: String,
     name: String,
     base_path: String,
     locale: String,
+    icon: String,
 }
 
 <span class="kw">impl </span>DomainConfig <span class="kw">for </span>LanguageDomainConfig {
@@ -194,6 +254,10 @@
 
     <span class="kw">fn </span>base_path(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
         <span class="kw-2">&amp;</span><span class="self">self</span>.base_path
+    }
+
+    <span class="kw">fn </span>icon(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.icon
     }
 }
 
@@ -210,6 +274,24 @@
                 name: name.to_string(),
                 base_path: <span class="macro">format!</span>(<span class="string">"/{}"</span>, code),
                 locale: locale.to_string(),
+                icon: <span class="kw">match </span>code {
+                    <span class="string">"de" </span>=&gt; <span class="string">"🇩🇪"</span>.to_string(),
+                    <span class="string">"en" </span>=&gt; <span class="string">"🇬🇧"</span>.to_string(),
+                    <span class="string">"es" </span>=&gt; <span class="string">"🇪🇸"</span>.to_string(),
+                    <span class="kw">_ </span>=&gt; <span class="string">"🌐"</span>.to_string(),
+                },
+            },
+        }
+    }
+
+    <span class="kw">pub fn </span>with_icon(code: <span class="kw-2">&amp;</span>str, name: <span class="kw-2">&amp;</span>str, locale: <span class="kw-2">&amp;</span>str, icon: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            config: LanguageDomainConfig {
+                code: code.to_string(),
+                name: name.to_string(),
+                base_path: <span class="macro">format!</span>(<span class="string">"/{}"</span>, code),
+                locale: locale.to_string(),
+                icon: icon.to_string(),
             },
         }
     }
@@ -244,6 +326,7 @@
             name: <span class="string">"Learn German"</span>.to_string(),
             base_path: <span class="string">"/de"</span>.to_string(),
             locale: <span class="string">"de-DE"</span>.to_string(),
+            icon: <span class="string">"🇩🇪"</span>.to_string(),
         };
 
         <span class="comment">// Serialize to JSON
@@ -251,7 +334,7 @@
 
         <span class="comment">// Expected JSON structure
         </span><span class="kw">let </span>expected_json =
-            <span class="string">r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE"}"#</span>;
+            <span class="string">r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE","icon":"🇩🇪"}"#</span>;
         <span class="macro">assert_eq!</span>(json, expected_json);
 
         <span class="comment">// Deserialize from JSON
@@ -267,15 +350,17 @@
 
         <span class="comment">// Create YAML string with multiple domains
         </span><span class="kw">let </span>yaml = <span class="string">r#"
-- code: en
-  name: Learn English
-  base_path: /en
-  locale: en-US
-- code: de
-  name: Learn German
-  base_path: /de
-  locale: de-DE
-"#</span>;
+    - code: en
+      name: Learn English
+      base_path: /en
+      locale: en-US
+      icon: "🇬🇧"
+    - code: de
+      name: Learn German
+      base_path: /de
+      locale: de-DE
+      icon: "🇩🇪"
+    "#</span>;
 
         <span class="comment">// Deserialize YAML to vec of configs
         </span><span class="kw">let </span>configs: Vec&lt;LanguageDomainConfig&gt; =
@@ -286,12 +371,20 @@
         <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].name, domain.config().name);
         <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].base_path, domain.config().base_path);
         <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].locale, domain.config().locale);
+        <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].icon, domain.config().icon);
 
         <span class="comment">// Test serializing back to YAML
         </span><span class="kw">let </span>serialized = serde_yaml::to_string(<span class="kw-2">&amp;</span>configs).expect(<span class="string">"Failed to serialize to YAML"</span>);
         <span class="kw">let </span>deserialized: Vec&lt;LanguageDomainConfig&gt; =
             serde_yaml::from_str(<span class="kw-2">&amp;</span>serialized).expect(<span class="string">"Failed to deserialize YAML"</span>);
         <span class="macro">assert_eq!</span>(configs, deserialized);
+
+        <span class="comment">// Additional test to verify full domain creation from YAML
+        </span><span class="kw">let </span>english_domain = LanguageDomain::from(configs[<span class="number">0</span>].clone());
+        <span class="macro">assert_eq!</span>(english_domain.icon(), <span class="string">"🇬🇧"</span>);
+
+        <span class="kw">let </span>german_domain = LanguageDomain::from(configs[<span class="number">1</span>].clone());
+        <span class="macro">assert_eq!</span>(german_domain.icon(), <span class="string">"🇩🇪"</span>);
     }
 
     <span class="attr">#[test]
@@ -302,6 +395,7 @@
             name: <span class="string">"Learn Spanish"</span>.to_string(),
             base_path: <span class="string">"/es"</span>.to_string(),
             locale: <span class="string">"es-ES"</span>.to_string(),
+            icon: <span class="string">"🇪🇸"</span>.to_string(),
         };
 
         <span class="kw">let </span>domain = LanguageDomain::from(config.clone());
@@ -313,10 +407,11 @@
         <span class="comment">// Test with invalid YAML syntax (broken structure)
         </span><span class="kw">let </span>invalid_yaml = <span class="string">r#"
     - code: en
-    name: Learn English  # Missing proper indentation
+      name: Learn English  # Missing proper indentation
       base_path: /en
-        locale: en-US    # Wrong indentation
-          - invalid:     # Invalid nesting
+      locale: en-US
+      icon: "🇬🇧"
+      - invalid:     # Invalid nesting
     "#</span>;
 
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;Vec&lt;LanguageDomainConfig&gt;, <span class="kw">_</span>&gt; = serde_yaml::from_str(invalid_yaml);
@@ -327,6 +422,8 @@
     - code: en
       name: Learn English
       base_path: /en
+      locale: en-US
+      # icon is missing
     "#</span>;
 
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;Vec&lt;LanguageDomainConfig&gt;, <span class="kw">_</span>&gt; = serde_yaml::from_str(missing_field_yaml);
@@ -338,10 +435,29 @@
       name: Learn English
       base_path: /en
       locale: en-US
+      icon: "🇬🇧"
     "#</span>;
 
         <span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;Vec&lt;LanguageDomainConfig&gt;, <span class="kw">_</span>&gt; = serde_yaml::from_str(invalid_type_yaml);
         <span class="macro">assert!</span>(result.is_err(), <span class="string">"Should fail with invalid type"</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_language_domain_icons() {
+        <span class="kw">let </span>german = LanguageDomain::new(<span class="string">"de"</span>, <span class="string">"Learn German"</span>, <span class="string">"de-DE"</span>);
+        <span class="macro">assert_eq!</span>(german.icon(), <span class="string">"🇩🇪"</span>);
+
+        <span class="kw">let </span>english = LanguageDomain::new(<span class="string">"en"</span>, <span class="string">"Learn English"</span>, <span class="string">"en-US"</span>);
+        <span class="macro">assert_eq!</span>(english.icon(), <span class="string">"🇬🇧"</span>);
+
+        <span class="kw">let </span>spanish = LanguageDomain::new(<span class="string">"es"</span>, <span class="string">"Learn Spanish"</span>, <span class="string">"es-ES"</span>);
+        <span class="macro">assert_eq!</span>(spanish.icon(), <span class="string">"🇪🇸"</span>);
+
+        <span class="kw">let </span>other = LanguageDomain::new(<span class="string">"fr"</span>, <span class="string">"Learn French"</span>, <span class="string">"fr-FR"</span>);
+        <span class="macro">assert_eq!</span>(other.icon(), <span class="string">"🌐"</span>);
+
+        <span class="kw">let </span>custom = LanguageDomain::with_icon(<span class="string">"fr"</span>, <span class="string">"Learn French"</span>, <span class="string">"fr-FR"</span>, <span class="string">"🇫🇷"</span>);
+        <span class="macro">assert_eq!</span>(custom.icon(), <span class="string">"🇫🇷"</span>);
     }
 }
 </code></pre></div></section></main></body></html>

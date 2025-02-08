@@ -23,7 +23,12 @@
 <a href="#22" id="22">22</a>
 <a href="#23" id="23">23</a>
 <a href="#24" id="24">24</a>
-<a href="#25" id="25">25</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::DomainConfig;
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::DomainConfig;
 
 <span class="doccomment">/// Generic domain trait
 </span><span class="kw">pub trait </span>Domain {
@@ -46,6 +51,11 @@
     <span class="doccomment">/// Get the domain base path
     </span><span class="kw">fn </span>base_path(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
         <span class="self">self</span>.config().base_path()
+    }
+
+    <span class="doccomment">/// Get the domain icon
+    </span><span class="kw">fn </span>icon(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="self">self</span>.config().icon()
     }
 }
 </code></pre></div></section></main></body></html>
