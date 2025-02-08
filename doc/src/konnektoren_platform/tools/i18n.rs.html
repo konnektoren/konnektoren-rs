@@ -181,11 +181,153 @@
 <a href="#180" id="180">180</a>
 <a href="#181" id="181">181</a>
 <a href="#182" id="182">182</a>
-<a href="#183" id="183">183</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nConfig, Language};
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::i18n::{I18nConfig, Language};
 <span class="kw">use </span>regex::Regex;
 <span class="kw">use </span>std::collections::{HashMap, HashSet};
 <span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>walkdir::WalkDir;
+
+<span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span>LanguageStats {
+    <span class="kw">pub </span>total_keys: usize,
+    <span class="kw">pub </span>missing_keys: usize,
+    <span class="kw">pub </span>coverage_percentage: f64,
+}
 
 <span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>I18nReport {
@@ -193,39 +335,108 @@
     <span class="kw">pub </span>translation_keys: HashMap&lt;String, HashSet&lt;String&gt;&gt;,
     <span class="kw">pub </span>missing_translations: HashMap&lt;String, Vec&lt;String&gt;&gt;,
     <span class="kw">pub </span>unused_translations: HashSet&lt;String&gt;,
+    <span class="kw">pub </span>language_stats: HashMap&lt;String, LanguageStats&gt;,
     <span class="kw">pub </span>has_errors: bool,
+    <span class="kw">pub </span>translations: HashMap&lt;String, serde_json::Value&gt;,
 }
 
 <span class="kw">impl </span>I18nReport {
     <span class="kw">pub fn </span>print_report(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+        <span class="macro">log::info!</span>(<span class="string">"\nTranslation Report"</span>);
+        <span class="macro">log::info!</span>(<span class="string">"================="</span>);
+        <span class="macro">log::info!</span>(<span class="string">"Source keys found: {}"</span>, <span class="self">self</span>.source_keys.len());
+
+        <span class="comment">// Print statistics for each language
+        </span><span class="macro">log::info!</span>(<span class="string">"\nLanguage Statistics:"</span>);
+        <span class="macro">log::info!</span>(<span class="string">"-------------------"</span>);
+        <span class="kw">for </span>lang <span class="kw">in </span>Language::builtin() {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(stats) = <span class="self">self</span>.language_stats.get(lang.code()) {
+                <span class="macro">log::info!</span>(
+                    <span class="string">"{} ({}): {}/{} keys ({:.1}% coverage)"</span>,
+                    lang.native_name(),
+                    lang.code(),
+                    stats.total_keys - stats.missing_keys,
+                    stats.total_keys,
+                    stats.coverage_percentage
+                );
+            }
+        }
+
         <span class="comment">// Print missing translations by language
-        </span><span class="kw">for </span>(lang, missing) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.missing_translations {
-            <span class="kw">if </span>!missing.is_empty() {
-                <span class="macro">log::warn!</span>(<span class="string">"Missing translations in {}: "</span>, lang);
-                <span class="kw">for </span>key <span class="kw">in </span>missing {
-                    <span class="macro">log::warn!</span>(<span class="string">"  - {}"</span>, key);
+        </span><span class="kw">if </span>!<span class="self">self</span>.missing_translations.is_empty() {
+            <span class="macro">log::warn!</span>(<span class="string">"\nMissing Translations:"</span>);
+            <span class="macro">log::warn!</span>(<span class="string">"-------------------"</span>);
+            <span class="kw">for </span>lang <span class="kw">in </span>Language::builtin() {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(missing) = <span class="self">self</span>.missing_translations.get(lang.code()) {
+                    <span class="kw">if </span>!missing.is_empty() {
+                        <span class="macro">log::warn!</span>(
+                            <span class="string">"{} ({}) - {} missing:"</span>,
+                            lang.native_name(),
+                            lang.code(),
+                            missing.len()
+                        );
+                        <span class="kw">for </span>key <span class="kw">in </span>missing {
+                            <span class="comment">// Show the English translation as reference if available
+                            </span><span class="kw">if let </span><span class="prelude-val">Some</span>(en_trans) = <span class="self">self
+                                </span>.translations
+                                .get(<span class="string">"en"</span>)
+                                .and_then(|t| t.get(key))
+                                .and_then(|v| v.as_str())
+                            {
+                                <span class="macro">log::warn!</span>(<span class="string">"  - {}: \"{}\""</span>, key, en_trans);
+                            } <span class="kw">else </span>{
+                                <span class="macro">log::warn!</span>(<span class="string">"  - {}"</span>, key);
+                            }
+                        }
+                    }
                 }
             }
         }
 
         <span class="comment">// Print unused translations
         </span><span class="kw">if </span>!<span class="self">self</span>.unused_translations.is_empty() {
-            <span class="macro">log::warn!</span>(<span class="string">"\nUnused translations:"</span>);
+            <span class="macro">log::warn!</span>(<span class="string">"\nUnused Translations:"</span>);
+            <span class="macro">log::warn!</span>(<span class="string">"-------------------"</span>);
             <span class="kw">for </span>key <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.unused_translations {
                 <span class="macro">log::warn!</span>(<span class="string">"  - {}"</span>, key);
+                <span class="comment">// Show translations in all languages
+                </span><span class="kw">for </span>lang <span class="kw">in </span>Language::builtin() {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(trans) = <span class="self">self
+                        </span>.translations
+                        .get(lang.code())
+                        .and_then(|t| t.get(key))
+                        .and_then(|v| v.as_str())
+                    {
+                        <span class="macro">log::info!</span>(
+                            <span class="string">"    {} ({}): \"{}\""</span>,
+                            lang.native_name(),
+                            lang.code(),
+                            trans
+                        );
+                    }
+                }
             }
         }
 
         <span class="comment">// Print summary
-        </span><span class="macro">log::info!</span>(<span class="string">"\nTranslation Summary:"</span>);
-        <span class="macro">log::info!</span>(<span class="string">"Total keys in source: {}"</span>, <span class="self">self</span>.source_keys.len());
+        </span><span class="macro">log::info!</span>(<span class="string">"\nSummary:"</span>);
+        <span class="macro">log::info!</span>(<span class="string">"--------"</span>);
+        <span class="macro">log::info!</span>(<span class="string">"Total source keys: {}"</span>, <span class="self">self</span>.source_keys.len());
         <span class="macro">log::info!</span>(
-            <span class="string">"Total unique translations: {}"</span>,
-            <span class="self">self</span>.translation_keys
-                .values()
-                .next()
-                .map(|v| v.len())
-                .unwrap_or(<span class="number">0</span>)
+            <span class="string">"Languages: {}"</span>,
+            Language::builtin()
+                .iter()
+                .map(|l| l.code())
+                .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;()
+                .join(<span class="string">", "</span>)
+        );
+        <span class="macro">log::info!</span>(
+            <span class="string">"Overall status: {}"</span>,
+            <span class="kw">if </span><span class="self">self</span>.has_errors {
+                <span class="string">"❌ Missing translations"
+            </span>} <span class="kw">else </span>{
+                <span class="string">"✅ All translations complete"
+            </span>}
         );
     }
 }
@@ -248,6 +459,7 @@
         <span class="kw">let </span>translation_keys = <span class="self">self</span>.collect_translation_keys();
         <span class="kw">let </span>missing_translations = <span class="self">self</span>.find_missing_translations(<span class="kw-2">&amp;</span>source_keys, <span class="kw-2">&amp;</span>translation_keys);
         <span class="kw">let </span>unused_translations = <span class="self">self</span>.find_unused_translations(<span class="kw-2">&amp;</span>source_keys, <span class="kw-2">&amp;</span>translation_keys);
+        <span class="kw">let </span>language_stats = <span class="self">self</span>.calculate_language_stats(<span class="kw-2">&amp;</span>source_keys, <span class="kw-2">&amp;</span>translation_keys);
         <span class="kw">let </span>has_errors = missing_translations.values().any(|v| !v.is_empty());
 
         I18nReport {
@@ -255,7 +467,9 @@
             translation_keys,
             missing_translations,
             unused_translations,
+            language_stats,
             has_errors,
+            translations: <span class="self">self</span>.config.translations.clone(),
         }
     }
 
@@ -302,9 +516,11 @@
 
         <span class="kw">for </span>lang <span class="kw">in </span>Language::builtin() {
             <span class="kw">let </span>lang_code = lang.code().to_string();
-            <span class="comment">// Create a reference to an empty HashSet if the language is not found
+
+            <span class="comment">// Create the empty set first and bind it to a variable
             </span><span class="kw">let </span>empty_set = HashSet::new();
-            <span class="kw">let </span>keys = translation_keys.get(<span class="kw-2">&amp;</span>lang_code).unwrap_or(<span class="kw-2">&amp;</span>empty_set);
+            <span class="comment">// Get the reference to either the existing keys or the empty set
+            </span><span class="kw">let </span>keys = translation_keys.get(<span class="kw-2">&amp;</span>lang_code).unwrap_or(<span class="kw-2">&amp;</span>empty_set);
 
             <span class="kw">let </span>missing_keys: Vec&lt;<span class="kw">_</span>&gt; = source_keys
                 .iter()
@@ -337,6 +553,41 @@
 
         unused
     }
+
+    <span class="kw">fn </span>calculate_language_stats(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        source_keys: <span class="kw-2">&amp;</span>HashSet&lt;String&gt;,
+        translation_keys: <span class="kw-2">&amp;</span>HashMap&lt;String, HashSet&lt;String&gt;&gt;,
+    ) -&gt; HashMap&lt;String, LanguageStats&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>stats = HashMap::new();
+
+        <span class="kw">for </span>lang <span class="kw">in </span>Language::builtin() {
+            <span class="kw">let </span>lang_code = lang.code().to_string();
+            <span class="kw">let </span>total_keys = source_keys.len();
+            <span class="kw">let </span>empty_set = HashSet::new();
+            <span class="kw">let </span>keys = translation_keys.get(<span class="kw-2">&amp;</span>lang_code).unwrap_or(<span class="kw-2">&amp;</span>empty_set);
+            <span class="kw">let </span>missing_keys = source_keys
+                .iter()
+                .filter(|key| !keys.contains(<span class="kw-2">*</span>key))
+                .count();
+            <span class="kw">let </span>coverage_percentage = <span class="kw">if </span>total_keys &gt; <span class="number">0 </span>{
+                ((total_keys - missing_keys) <span class="kw">as </span>f64 / total_keys <span class="kw">as </span>f64) * <span class="number">100.0
+            </span>} <span class="kw">else </span>{
+                <span class="number">100.0
+            </span>};
+
+            stats.insert(
+                lang_code,
+                LanguageStats {
+                    total_keys,
+                    missing_keys,
+                    coverage_percentage,
+                },
+            );
+        }
+
+        stats
+    }
 }
 
 <span class="attr">#[cfg(test)]
@@ -346,6 +597,11 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_i18n_checker() {
+        <span class="kw">let _ </span>= env_logger::builder()
+            .filter_level(log::LevelFilter::Info)
+            .is_test(<span class="bool-val">true</span>)
+            .try_init();
+
         <span class="kw">let </span><span class="kw-2">mut </span>config = I18nConfig::default();
         config.merge_translation(
             <span class="kw-2">&amp;</span>Language::from(<span class="string">"en"</span>),
@@ -353,15 +609,29 @@
                 <span class="string">"Hello"</span>: <span class="string">"Hello"</span>,
                 <span class="string">"Unused"</span>: <span class="string">"Unused"</span>,
                 <span class="string">"Test"</span>: <span class="string">"Test"</span>,
-                <span class="string">"NonExistent"</span>: <span class="string">"NonExistent"</span>,
+            }),
+        );
+        config.merge_translation(
+            <span class="kw-2">&amp;</span>Language::from(<span class="string">"de"</span>),
+            <span class="macro">json!</span>({
+                <span class="string">"Hello"</span>: <span class="string">"Hallo"</span>,
+                <span class="string">"Test"</span>: <span class="string">"Test"</span>,
             }),
         );
 
         <span class="kw">let </span>checker = I18nChecker::new(config);
         <span class="kw">let </span>report = checker.check_directory(<span class="string">"src/tools"</span>);
 
-        <span class="macro">assert!</span>(report.source_keys.is_empty());
+        <span class="comment">// Verify statistics
+        </span><span class="macro">assert_eq!</span>(report.source_keys.len(), <span class="number">0</span>);
         <span class="macro">assert!</span>(!report.translation_keys.is_empty());
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(en_stats) = report.language_stats.get(<span class="string">"en"</span>) {
+            <span class="macro">assert_eq!</span>(en_stats.total_keys, <span class="number">0</span>);
+            <span class="macro">assert_eq!</span>(en_stats.coverage_percentage, <span class="number">100.0</span>);
+        }
+
+        report.print_report();
     }
 }
 </code></pre></div></section></main></body></html>
