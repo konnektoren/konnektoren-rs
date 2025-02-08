@@ -5,12 +5,12 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct LanguageDomainConfig {
-    code: String,
-    name: String,
-    base_path: String,
-    locale: String,
-    icon: String,
-    hostname: String,
+    pub code: String,
+    pub name: String,
+    pub base_path: String,
+    pub locale: String,
+    pub icon: String,
+    pub hostname: String,
 }
 
 impl DomainConfig for LanguageDomainConfig {
