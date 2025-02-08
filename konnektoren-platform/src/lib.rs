@@ -1,3 +1,4 @@
+pub mod domain;
 pub mod i18n;
 
 #[cfg(feature = "tools")]
