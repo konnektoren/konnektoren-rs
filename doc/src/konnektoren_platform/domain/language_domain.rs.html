@@ -246,12 +246,12 @@
 </span><span class="attr">#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 </span><span class="kw">pub struct </span>LanguageDomainConfig {
-    code: String,
-    name: String,
-    base_path: String,
-    locale: String,
-    icon: String,
-    hostname: String,
+    <span class="kw">pub </span>code: String,
+    <span class="kw">pub </span>name: String,
+    <span class="kw">pub </span>base_path: String,
+    <span class="kw">pub </span>locale: String,
+    <span class="kw">pub </span>icon: String,
+    <span class="kw">pub </span>hostname: String,
 }
 
 <span class="kw">impl </span>DomainConfig <span class="kw">for </span>LanguageDomainConfig {
