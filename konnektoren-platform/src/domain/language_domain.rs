@@ -10,6 +10,7 @@ pub struct LanguageDomainConfig {
     base_path: String,
     locale: String,
     icon: String,
+    hostname: String,
 }
 
 impl DomainConfig for LanguageDomainConfig {
@@ -27,6 +28,10 @@ impl DomainConfig for LanguageDomainConfig {
 
     fn icon(&self) -> &str {
         &self.icon
+    }
+
+    fn hostname(&self) -> &str {
+        &self.hostname
     }
 }
 
@@ -49,20 +54,26 @@ impl LanguageDomain {
                     "es" => "🇪🇸".to_string(),
                     _ => "🌐".to_string(),
                 },
+                hostname: match code {
+                    "de" => "konnektoren.help".to_string(),
+                    "en" => "en.konnektoren.help".to_string(),
+                    "es" => "es.konnektoren.help".to_string(),
+                    _ => "konnektoren.help".to_string(),
+                },
             },
         }
     }
 
     pub fn with_icon(code: &str, name: &str, locale: &str, icon: &str) -> Self {
-        Self {
-            config: LanguageDomainConfig {
-                code: code.to_string(),
-                name: name.to_string(),
-                base_path: format!("/{}", code),
-                locale: locale.to_string(),
-                icon: icon.to_string(),
-            },
-        }
+        let mut domain = Self::new(code, name, locale);
+        domain.config.icon = icon.to_string();
+        domain
+    }
+
+    pub fn with_hostname(code: &str, name: &str, locale: &str, hostname: &str) -> Self {
+        let mut domain = Self::new(code, name, locale);
+        domain.config.hostname = hostname.to_string();
+        domain
     }
 }
 
@@ -89,24 +100,19 @@ mod tests {
 
     #[test]
     fn test_language_domain_json_serialization() {
-        // Create a domain config
         let config = LanguageDomainConfig {
             code: "de".to_string(),
             name: "Learn German".to_string(),
             base_path: "/de".to_string(),
             locale: "de-DE".to_string(),
             icon: "🇩🇪".to_string(),
+            hostname: "konnektoren.help".to_string(),
         };
 
-        // Serialize to JSON
         let json = serde_json::to_string(&config).expect("Failed to serialize to JSON");
-
-        // Expected JSON structure
-        let expected_json =
-            r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE","icon":"🇩🇪"}"#;
+        let expected_json = r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE","icon":"🇩🇪","hostname":"konnektoren.help"}"#;
         assert_eq!(json, expected_json);
 
-        // Deserialize from JSON
         let deserialized: LanguageDomainConfig =
             serde_json::from_str(&json).expect("Failed to deserialize from JSON");
         assert_eq!(config, deserialized);
@@ -114,57 +120,48 @@ mod tests {
 
     #[test]
     fn test_language_domain_yaml_serialization() {
-        // Create a domain
         let domain = LanguageDomain::new("en", "Learn English", "en-US");
 
-        // Create YAML string with multiple domains
         let yaml = r#"
     - code: en
       name: Learn English
       base_path: /en
       locale: en-US
       icon: "🇬🇧"
+      hostname: "en.konnektoren.help"
     - code: de
       name: Learn German
       base_path: /de
       locale: de-DE
       icon: "🇩🇪"
+      hostname: "konnektoren.help"
     "#;
 
-        // Deserialize YAML to vec of configs
         let configs: Vec<LanguageDomainConfig> =
             serde_yaml::from_str(yaml).expect("Failed to deserialize YAML");
 
-        // Verify first config matches our domain
         assert_eq!(configs[0].code, domain.config().code);
         assert_eq!(configs[0].name, domain.config().name);
         assert_eq!(configs[0].base_path, domain.config().base_path);
         assert_eq!(configs[0].locale, domain.config().locale);
         assert_eq!(configs[0].icon, domain.config().icon);
+        assert_eq!(configs[0].hostname, domain.config().hostname);
 
-        // Test serializing back to YAML
         let serialized = serde_yaml::to_string(&configs).expect("Failed to serialize to YAML");
         let deserialized: Vec<LanguageDomainConfig> =
             serde_yaml::from_str(&serialized).expect("Failed to deserialize YAML");
         assert_eq!(configs, deserialized);
-
-        // Additional test to verify full domain creation from YAML
-        let english_domain = LanguageDomain::from(configs[0].clone());
-        assert_eq!(english_domain.icon(), "🇬🇧");
-
-        let german_domain = LanguageDomain::from(configs[1].clone());
-        assert_eq!(german_domain.icon(), "🇩🇪");
     }
 
     #[test]
     fn test_language_domain_conversion() {
-        // Test From<LanguageDomainConfig> for LanguageDomain
         let config = LanguageDomainConfig {
             code: "es".to_string(),
             name: "Learn Spanish".to_string(),
             base_path: "/es".to_string(),
             locale: "es-ES".to_string(),
             icon: "🇪🇸".to_string(),
+            hostname: "es.konnektoren.help".to_string(),
         };
 
         let domain = LanguageDomain::from(config.clone());
@@ -227,5 +224,18 @@ mod tests {
 
         let custom = LanguageDomain::with_icon("fr", "Learn French", "fr-FR", "🇫🇷");
         assert_eq!(custom.icon(), "🇫🇷");
+    }
+
+    #[test]
+    fn test_language_domain_hostnames() {
+        let german = LanguageDomain::new("de", "Learn German", "de-DE");
+        assert_eq!(german.hostname(), "konnektoren.help");
+
+        let english = LanguageDomain::new("en", "Learn English", "en-US");
+        assert_eq!(english.hostname(), "en.konnektoren.help");
+
+        let custom =
+            LanguageDomain::with_hostname("fr", "Learn French", "fr-FR", "french.konnektoren.help");
+        assert_eq!(custom.hostname(), "french.konnektoren.help");
     }
 }

@@ -13,4 +13,7 @@ pub trait DomainConfig: Debug + Clone + PartialEq {
 
     /// Visual representation of the domain
     fn icon(&self) -> &str;
+
+    /// Hostname of the domain
+    fn hostname(&self) -> &str;
 }

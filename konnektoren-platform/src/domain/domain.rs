@@ -27,4 +27,10 @@ pub trait Domain {
     fn icon(&self) -> &str {
         self.config().icon()
     }
+
+    /// Get the domain hostname
+    fn hostname(&self) -> &str {
+        // or host
+        self.config().hostname()
+    }
 }
