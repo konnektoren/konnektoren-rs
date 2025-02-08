@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["i18n","prelude"]};
+window.SIDEBAR_ITEMS = {"mod":["i18n","prelude","tools"]};
