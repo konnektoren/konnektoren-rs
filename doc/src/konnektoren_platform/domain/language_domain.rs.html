@@ -229,7 +229,17 @@
 <a href="#228" id="228">228</a>
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{Domain, DomainConfig};
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{Domain, DomainConfig};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="doccomment">/// Example implementation for language learning domains
@@ -241,6 +251,7 @@
     base_path: String,
     locale: String,
     icon: String,
+    hostname: String,
 }
 
 <span class="kw">impl </span>DomainConfig <span class="kw">for </span>LanguageDomainConfig {
@@ -258,6 +269,10 @@
 
     <span class="kw">fn </span>icon(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
         <span class="kw-2">&amp;</span><span class="self">self</span>.icon
+    }
+
+    <span class="kw">fn </span>hostname(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.hostname
     }
 }
 
@@ -280,20 +295,26 @@
                     <span class="string">"es" </span>=&gt; <span class="string">"🇪🇸"</span>.to_string(),
                     <span class="kw">_ </span>=&gt; <span class="string">"🌐"</span>.to_string(),
                 },
+                hostname: <span class="kw">match </span>code {
+                    <span class="string">"de" </span>=&gt; <span class="string">"konnektoren.help"</span>.to_string(),
+                    <span class="string">"en" </span>=&gt; <span class="string">"en.konnektoren.help"</span>.to_string(),
+                    <span class="string">"es" </span>=&gt; <span class="string">"es.konnektoren.help"</span>.to_string(),
+                    <span class="kw">_ </span>=&gt; <span class="string">"konnektoren.help"</span>.to_string(),
+                },
             },
         }
     }
 
     <span class="kw">pub fn </span>with_icon(code: <span class="kw-2">&amp;</span>str, name: <span class="kw-2">&amp;</span>str, locale: <span class="kw-2">&amp;</span>str, icon: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            config: LanguageDomainConfig {
-                code: code.to_string(),
-                name: name.to_string(),
-                base_path: <span class="macro">format!</span>(<span class="string">"/{}"</span>, code),
-                locale: locale.to_string(),
-                icon: icon.to_string(),
-            },
-        }
+        <span class="kw">let </span><span class="kw-2">mut </span>domain = <span class="self">Self</span>::new(code, name, locale);
+        domain.config.icon = icon.to_string();
+        domain
+    }
+
+    <span class="kw">pub fn </span>with_hostname(code: <span class="kw-2">&amp;</span>str, name: <span class="kw-2">&amp;</span>str, locale: <span class="kw-2">&amp;</span>str, hostname: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>domain = <span class="self">Self</span>::new(code, name, locale);
+        domain.config.hostname = hostname.to_string();
+        domain
     }
 }
 
@@ -320,82 +341,68 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_language_domain_json_serialization() {
-        <span class="comment">// Create a domain config
-        </span><span class="kw">let </span>config = LanguageDomainConfig {
+        <span class="kw">let </span>config = LanguageDomainConfig {
             code: <span class="string">"de"</span>.to_string(),
             name: <span class="string">"Learn German"</span>.to_string(),
             base_path: <span class="string">"/de"</span>.to_string(),
             locale: <span class="string">"de-DE"</span>.to_string(),
             icon: <span class="string">"🇩🇪"</span>.to_string(),
+            hostname: <span class="string">"konnektoren.help"</span>.to_string(),
         };
 
-        <span class="comment">// Serialize to JSON
-        </span><span class="kw">let </span>json = serde_json::to_string(<span class="kw-2">&amp;</span>config).expect(<span class="string">"Failed to serialize to JSON"</span>);
-
-        <span class="comment">// Expected JSON structure
-        </span><span class="kw">let </span>expected_json =
-            <span class="string">r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE","icon":"🇩🇪"}"#</span>;
+        <span class="kw">let </span>json = serde_json::to_string(<span class="kw-2">&amp;</span>config).expect(<span class="string">"Failed to serialize to JSON"</span>);
+        <span class="kw">let </span>expected_json = <span class="string">r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE","icon":"🇩🇪","hostname":"konnektoren.help"}"#</span>;
         <span class="macro">assert_eq!</span>(json, expected_json);
 
-        <span class="comment">// Deserialize from JSON
-        </span><span class="kw">let </span>deserialized: LanguageDomainConfig =
+        <span class="kw">let </span>deserialized: LanguageDomainConfig =
             serde_json::from_str(<span class="kw-2">&amp;</span>json).expect(<span class="string">"Failed to deserialize from JSON"</span>);
         <span class="macro">assert_eq!</span>(config, deserialized);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_language_domain_yaml_serialization() {
-        <span class="comment">// Create a domain
-        </span><span class="kw">let </span>domain = LanguageDomain::new(<span class="string">"en"</span>, <span class="string">"Learn English"</span>, <span class="string">"en-US"</span>);
+        <span class="kw">let </span>domain = LanguageDomain::new(<span class="string">"en"</span>, <span class="string">"Learn English"</span>, <span class="string">"en-US"</span>);
 
-        <span class="comment">// Create YAML string with multiple domains
-        </span><span class="kw">let </span>yaml = <span class="string">r#"
+        <span class="kw">let </span>yaml = <span class="string">r#"
     - code: en
       name: Learn English
       base_path: /en
       locale: en-US
       icon: "🇬🇧"
+      hostname: "en.konnektoren.help"
     - code: de
       name: Learn German
       base_path: /de
       locale: de-DE
       icon: "🇩🇪"
+      hostname: "konnektoren.help"
     "#</span>;
 
-        <span class="comment">// Deserialize YAML to vec of configs
-        </span><span class="kw">let </span>configs: Vec&lt;LanguageDomainConfig&gt; =
+        <span class="kw">let </span>configs: Vec&lt;LanguageDomainConfig&gt; =
             serde_yaml::from_str(yaml).expect(<span class="string">"Failed to deserialize YAML"</span>);
 
-        <span class="comment">// Verify first config matches our domain
-        </span><span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].code, domain.config().code);
+        <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].code, domain.config().code);
         <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].name, domain.config().name);
         <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].base_path, domain.config().base_path);
         <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].locale, domain.config().locale);
         <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].icon, domain.config().icon);
+        <span class="macro">assert_eq!</span>(configs[<span class="number">0</span>].hostname, domain.config().hostname);
 
-        <span class="comment">// Test serializing back to YAML
-        </span><span class="kw">let </span>serialized = serde_yaml::to_string(<span class="kw-2">&amp;</span>configs).expect(<span class="string">"Failed to serialize to YAML"</span>);
+        <span class="kw">let </span>serialized = serde_yaml::to_string(<span class="kw-2">&amp;</span>configs).expect(<span class="string">"Failed to serialize to YAML"</span>);
         <span class="kw">let </span>deserialized: Vec&lt;LanguageDomainConfig&gt; =
             serde_yaml::from_str(<span class="kw-2">&amp;</span>serialized).expect(<span class="string">"Failed to deserialize YAML"</span>);
         <span class="macro">assert_eq!</span>(configs, deserialized);
-
-        <span class="comment">// Additional test to verify full domain creation from YAML
-        </span><span class="kw">let </span>english_domain = LanguageDomain::from(configs[<span class="number">0</span>].clone());
-        <span class="macro">assert_eq!</span>(english_domain.icon(), <span class="string">"🇬🇧"</span>);
-
-        <span class="kw">let </span>german_domain = LanguageDomain::from(configs[<span class="number">1</span>].clone());
-        <span class="macro">assert_eq!</span>(german_domain.icon(), <span class="string">"🇩🇪"</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_language_domain_conversion() {
-        <span class="comment">// Test From&lt;LanguageDomainConfig&gt; for LanguageDomain
-        </span><span class="kw">let </span>config = LanguageDomainConfig {
+        <span class="kw">let </span>config = LanguageDomainConfig {
             code: <span class="string">"es"</span>.to_string(),
             name: <span class="string">"Learn Spanish"</span>.to_string(),
             base_path: <span class="string">"/es"</span>.to_string(),
             locale: <span class="string">"es-ES"</span>.to_string(),
             icon: <span class="string">"🇪🇸"</span>.to_string(),
+            hostname: <span class="string">"es.konnektoren.help"</span>.to_string(),
         };
 
         <span class="kw">let </span>domain = LanguageDomain::from(config.clone());
@@ -458,6 +465,19 @@
 
         <span class="kw">let </span>custom = LanguageDomain::with_icon(<span class="string">"fr"</span>, <span class="string">"Learn French"</span>, <span class="string">"fr-FR"</span>, <span class="string">"🇫🇷"</span>);
         <span class="macro">assert_eq!</span>(custom.icon(), <span class="string">"🇫🇷"</span>);
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_language_domain_hostnames() {
+        <span class="kw">let </span>german = LanguageDomain::new(<span class="string">"de"</span>, <span class="string">"Learn German"</span>, <span class="string">"de-DE"</span>);
+        <span class="macro">assert_eq!</span>(german.hostname(), <span class="string">"konnektoren.help"</span>);
+
+        <span class="kw">let </span>english = LanguageDomain::new(<span class="string">"en"</span>, <span class="string">"Learn English"</span>, <span class="string">"en-US"</span>);
+        <span class="macro">assert_eq!</span>(english.hostname(), <span class="string">"en.konnektoren.help"</span>);
+
+        <span class="kw">let </span>custom =
+            LanguageDomain::with_hostname(<span class="string">"fr"</span>, <span class="string">"Learn French"</span>, <span class="string">"fr-FR"</span>, <span class="string">"french.konnektoren.help"</span>);
+        <span class="macro">assert_eq!</span>(custom.hostname(), <span class="string">"french.konnektoren.help"</span>);
     }
 }
 </code></pre></div></section></main></body></html>
