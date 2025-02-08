@@ -22,4 +22,9 @@ pub trait Domain {
     fn base_path(&self) -> &str {
         self.config().base_path()
     }
+
+    /// Get the domain icon
+    fn icon(&self) -> &str {
+        self.config().icon()
+    }
 }

@@ -3,11 +3,13 @@ use serde::{Deserialize, Serialize};
 
 /// Example implementation for language learning domains
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct LanguageDomainConfig {
     code: String,
     name: String,
     base_path: String,
     locale: String,
+    icon: String,
 }
 
 impl DomainConfig for LanguageDomainConfig {
@@ -21,6 +23,10 @@ impl DomainConfig for LanguageDomainConfig {
 
     fn base_path(&self) -> &str {
         &self.base_path
+    }
+
+    fn icon(&self) -> &str {
+        &self.icon
     }
 }
 
@@ -37,6 +43,24 @@ impl LanguageDomain {
                 name: name.to_string(),
                 base_path: format!("/{}", code),
                 locale: locale.to_string(),
+                icon: match code {
+                    "de" => "🇩🇪".to_string(),
+                    "en" => "🇬🇧".to_string(),
+                    "es" => "🇪🇸".to_string(),
+                    _ => "🌐".to_string(),
+                },
+            },
+        }
+    }
+
+    pub fn with_icon(code: &str, name: &str, locale: &str, icon: &str) -> Self {
+        Self {
+            config: LanguageDomainConfig {
+                code: code.to_string(),
+                name: name.to_string(),
+                base_path: format!("/{}", code),
+                locale: locale.to_string(),
+                icon: icon.to_string(),
             },
         }
     }
@@ -71,6 +95,7 @@ mod tests {
             name: "Learn German".to_string(),
             base_path: "/de".to_string(),
             locale: "de-DE".to_string(),
+            icon: "🇩🇪".to_string(),
         };
 
         // Serialize to JSON
@@ -78,7 +103,7 @@ mod tests {
 
         // Expected JSON structure
         let expected_json =
-            r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE"}"#;
+            r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE","icon":"🇩🇪"}"#;
         assert_eq!(json, expected_json);
 
         // Deserialize from JSON
@@ -94,15 +119,17 @@ mod tests {
 
         // Create YAML string with multiple domains
         let yaml = r#"
-- code: en
-  name: Learn English
-  base_path: /en
-  locale: en-US
-- code: de
-  name: Learn German
-  base_path: /de
-  locale: de-DE
-"#;
+    - code: en
+      name: Learn English
+      base_path: /en
+      locale: en-US
+      icon: "🇬🇧"
+    - code: de
+      name: Learn German
+      base_path: /de
+      locale: de-DE
+      icon: "🇩🇪"
+    "#;
 
         // Deserialize YAML to vec of configs
         let configs: Vec<LanguageDomainConfig> =
@@ -113,12 +140,20 @@ mod tests {
         assert_eq!(configs[0].name, domain.config().name);
         assert_eq!(configs[0].base_path, domain.config().base_path);
         assert_eq!(configs[0].locale, domain.config().locale);
+        assert_eq!(configs[0].icon, domain.config().icon);
 
         // Test serializing back to YAML
         let serialized = serde_yaml::to_string(&configs).expect("Failed to serialize to YAML");
         let deserialized: Vec<LanguageDomainConfig> =
             serde_yaml::from_str(&serialized).expect("Failed to deserialize YAML");
         assert_eq!(configs, deserialized);
+
+        // Additional test to verify full domain creation from YAML
+        let english_domain = LanguageDomain::from(configs[0].clone());
+        assert_eq!(english_domain.icon(), "🇬🇧");
+
+        let german_domain = LanguageDomain::from(configs[1].clone());
+        assert_eq!(german_domain.icon(), "🇩🇪");
     }
 
     #[test]
@@ -129,6 +164,7 @@ mod tests {
             name: "Learn Spanish".to_string(),
             base_path: "/es".to_string(),
             locale: "es-ES".to_string(),
+            icon: "🇪🇸".to_string(),
         };
 
         let domain = LanguageDomain::from(config.clone());
@@ -140,10 +176,11 @@ mod tests {
         // Test with invalid YAML syntax (broken structure)
         let invalid_yaml = r#"
     - code: en
-    name: Learn English  # Missing proper indentation
+      name: Learn English  # Missing proper indentation
       base_path: /en
-        locale: en-US    # Wrong indentation
-          - invalid:     # Invalid nesting
+      locale: en-US
+      icon: "🇬🇧"
+      - invalid:     # Invalid nesting
     "#;
 
         let result: Result<Vec<LanguageDomainConfig>, _> = serde_yaml::from_str(invalid_yaml);
@@ -154,6 +191,8 @@ mod tests {
     - code: en
       name: Learn English
       base_path: /en
+      locale: en-US
+      # icon is missing
     "#;
 
         let result: Result<Vec<LanguageDomainConfig>, _> = serde_yaml::from_str(missing_field_yaml);
@@ -165,9 +204,28 @@ mod tests {
       name: Learn English
       base_path: /en
       locale: en-US
+      icon: "🇬🇧"
     "#;
 
         let result: Result<Vec<LanguageDomainConfig>, _> = serde_yaml::from_str(invalid_type_yaml);
         assert!(result.is_err(), "Should fail with invalid type");
+    }
+
+    #[test]
+    fn test_language_domain_icons() {
+        let german = LanguageDomain::new("de", "Learn German", "de-DE");
+        assert_eq!(german.icon(), "🇩🇪");
+
+        let english = LanguageDomain::new("en", "Learn English", "en-US");
+        assert_eq!(english.icon(), "🇬🇧");
+
+        let spanish = LanguageDomain::new("es", "Learn Spanish", "es-ES");
+        assert_eq!(spanish.icon(), "🇪🇸");
+
+        let other = LanguageDomain::new("fr", "Learn French", "fr-FR");
+        assert_eq!(other.icon(), "🌐");
+
+        let custom = LanguageDomain::with_icon("fr", "Learn French", "fr-FR", "🇫🇷");
+        assert_eq!(custom.icon(), "🇫🇷");
     }
 }
