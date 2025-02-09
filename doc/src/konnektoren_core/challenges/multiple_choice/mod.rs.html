@@ -72,12 +72,16 @@
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
-<a href="#74" id="74">74</a></pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a></pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 </span><span class="kw">pub struct </span>MultipleChoice {
     <span class="kw">pub </span>id: String,
     <span class="kw">pub </span>name: String,
+    <span class="kw">pub </span>lang: String,
     <span class="kw">pub </span>options: Vec&lt;MultipleChoiceOption&gt;,
     <span class="kw">pub </span>questions: Vec&lt;Question&gt;,
 }
@@ -111,6 +115,7 @@
     </span><span class="kw">fn </span>new_dataset() {
         <span class="kw">let </span>id = <span class="string">"123"</span>.to_string();
         <span class="kw">let </span>name = <span class="string">"Test"</span>.to_string();
+        <span class="kw">let </span>lang = <span class="string">"de"</span>.to_string();
         <span class="kw">let </span>options = <span class="macro">vec!</span>[
             MultipleChoiceOption {
                 id: <span class="number">1</span>,
@@ -138,6 +143,7 @@
         <span class="kw">let </span>dataset = MultipleChoice {
             id,
             name,
+            lang,
             options,
             questions,
         };
