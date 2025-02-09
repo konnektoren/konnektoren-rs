@@ -1,340 +1,341 @@
 !multiple-choice
-  id: "konnektoren"
-  name: "Konnektoren"
-  options:
-    - id: 0
-      name: "Konnektoren mit Infinitivgruppe"
-    - id: 1
-      name: "Konnektoren mit besonderer Position"
-    - id: 2
-      name: "Konnektoren mit Nebensatz (Verb am Ende) (= Subjunktionen)"
-    - id: 3
-      name: "Konnektoren mit Hauptsatz (Position 0) (= Konjunktionen)"
-    - id: 4
-      name: "Konnektoren mit Hauptsatz (Position 1) (= Konjunktionaladverbien)"
+id: "konnektoren"
+name: "Konnektoren"
+lang: "de"
+options:
+  - id: 0
+    name: "Konnektoren mit Infinitivgruppe"
+  - id: 1
+    name: "Konnektoren mit besonderer Position"
+  - id: 2
+    name: "Konnektoren mit Nebensatz (Verb am Ende) (= Subjunktionen)"
+  - id: 3
+    name: "Konnektoren mit Hauptsatz (Position 0) (= Konjunktionen)"
+  - id: 4
+    name: "Konnektoren mit Hauptsatz (Position 1) (= Konjunktionaladverbien)"
 
-  questions:
-    - question: "anstatt zu"
-      help: "Anstatt etwas zu essen, gehe ich heute hungrig schlafen."
-      option: 0
-    - question: "außer zu"
-      help: "Außer zu lernen, habe ich heute nichts gemacht."
-      option: 0
-    - question: "ohne zu"
-      help: "Ich kann nicht losfahren, ohne dich nochmals zu treffen."
-      option: 0
-    - question: "um zu"
-      help: "Ich gehe ins Fitnessstudio, um fit zu bleiben."
-      option: 0
-    - question: "nämlich"
-      help: "Honolulu hat ein angenehmes Klima, es ist nämlich meist sonnig oder frühlingshaft dort."
-      option: 1
-    - question: "nicht nur, sondern auch"
-      help: "Ich habe morgen nicht nur Arbeit, sondern ich muss auch zum Deutschkurs."
-      option: 1
-    - question: "sowohl als auch"
-      help: "Ich möchte sowohl Deutsch als auch Französisch lernen."
-      option: 1
-    - question: "als"
-      help: "Als ich ein Kind war, fuhr ich einmal nach Frankreich."
-      option: 2
-    - question: "als dass"
-      help: "Das Problem ist zu komplex, als dass es schnell gelöst werden könnte."
-      option: 2
-    - question: "als ob"
-      help: "Ich habe so großen Hunger, als ob ich für drei Tagen nichts gegessen hätte."
-      option: 2
-    - question: "als ob"
-      help: "Meine Kollegin benimmt sich manchmal so, als ob sie hier die Chefin wäre."
-      option: 2
-    - question: "als wenn"
-      help: "Sie ignoriert ihre ehemalige Chefin, als wenn sie einander niemals getroffen hätten."
-      option: 2
-    - question: "anstatt dass"
-      help: "Er macht lieber eine Ausbildung, anstatt dass er sich um einen Studienplatz bewirbt."
-      option: 2
-    - question: "auch wenn"
-      help: "Auch wenn die Grafik nicht aktuell ist, lassen sich doch wichtige Informationen entnehmen."
-      option: 2
-    - question: "außer dass"
-      help: "Derzeit ist eigentlich alles in Ordnung, außer dass ich mich ein wenig krank fühle."
-      option: 2
-    - question: "außer wenn"
-      help: "Ich gehe heute nicht aus, außer wenn das Wetter besser wird."
-      option: 2
-    - question: "bevor"
-      help: "Bevor die Probleme gelöst werden konnten, waren sie eskaliert."
-      option: 2
-    - question: "bis"
-      help: "Sie müssen die Straße weiterfahren, bis Sie die Linden auf der rechten Seite sehen können."
-      option: 2
-    - question: "da"
-      help: "Ich war gestern beim Arzt, da ich starke Kopfschmerzen hatte."
-      option: 2
-    - question: "dadurch dass"
-      help: "Sie können das Video dadurch starten, dass sie auf “Play” klicken."
-      option: 2
-    - question: "damit"
-      help: "Bitte lassen Sie mich wissen, wie der aktuelle Stand der Dinge ist, damit ich eine Entscheidung treffen kann."
-      option: 2
-    - question: "dass"
-      help: "Ich habe gehört, dass du in den Urlaub fährst."
-      option: 2
-    - question: "ehe"
-      help: "Ehe ich mich entscheide, möchte ich noch ein paar Informationen einholen."
-      option: 2
-    - question: "es sei denn, dass"
-      help: "Wir können den Abgabetermin einhalten, es sei denn, dass noch etwas Unvorhergesehenes passiert."
-      option: 2
-    - question: "falls"
-      help: "Falls ich mal in Hamburg bin, melde ich mich bei dir."
-      option: 2
-    - question: "indem"
-      help: "Ich vergrößere meinen Wortschatz, indem ich viel deutsche Zeitungen lese."
-      option: 2
-    - question: "je"
-      help: "Je öfter ich mich mit diesem Thema beschäftige, desto klarer wird es mir."
-      option: 2
-    - question: "nachdem"
-      help: "Nachdem ich gefrühstückt habe, fahre ich zur Arbeit."
-      option: 2
-    - question: "ob"
-      help: "Ich bin mir nicht sicher, ob ich heute entweder die roten oder die grünen Medikamente einnehmen muss."
-      option: 2
-    - question: "obgleich"
-      help: "Obgleich sie einige Zweifel hatte, nahm sie das Angebot an."
-      option: 2
-    - question: "obschon"
-      help: "Sie baden gerne im See, obschon die Temperatur nur 10°C beträgt."
-      option: 2
-    - question: "obwohl"
-      help: "Obwohl das Feld gut bewässert wird, wächst hier keine einzige Pflanze."
-      option: 2
-    - question: "obzwar"
-      help: "Obzwar ich die Prüfung bestanden habe, bin ich nicht zufrieden."
-      option: 2
-    - question: "ohne dass"
-      help: "Ich bin zum Kurs gekommen, ohne dass ich meine Hausaufgaben gemacht habe."
-      option: 2
-    - question: "sei es, dass"
-      help: "Sei es, dass du dich entscheidest oder nicht, ich werde dich unterstützen."
-      option: 2
-    - question: "seit(dem)"
-      help: "Seit(dem) ich die Weiterbildung gemacht habe, bekomme ich viele Einladungen zu Vorstellungsgesprächen."
-      option: 2
-    - question: "sobald"
-      help: "Sobald die ganze Welt geimpft ist, wird Corona vorbei sein, hoffe ich."
-      option: 2
-    - question: "sodass"
-      help: "Am Morgen bin ich sehr früh aufgestanden, sodass ich meine Hausaufgaben erledigen konnte."
-      option: 2
-    - question: "sofern"
-      help: "Sie können auf diesen Link zugreifen, sofern Sie sich registriert haben."
-      option: 2
-    - question: "solange"
-      help: "Solange ich noch Zeit habe, werde ich noch ein paar Übungen machen."
-      option: 2
-    - question: "sooft"
-      help: "Du wirst dein Deutsch Schritt für Schritt verbessern, sooft du deinen deutschen Freund besuchst."
-      option: 2
-    - question: "soviel"
-      help: "Soviel wir auch versucht haben, wir konnten das Problem nicht lösen."
-      option: 2
-    - question: "soweit"
-      help: "Soweit niemand etwas dagegen hat, werden wir das Projekt so durchführen."
-      option: 2
-    - question: "während"
-      help: "Ich habe mich sehr gut unterhalten, während er sich gelangweilt hat."
-      option: 2
-    - question: "weil"
-      help: "Sie ließ das Auto hier und nahm ein Taxi, weil sie viel getronken hatte."
-      option: 2
-    - question: "wenn"
-      help: "Ich wäre Ihnen sehr dankbar, wenn Sie mir schriftlich antworten könnten."
-      option: 2
-    - question: "wenngleich"
-      help: "Wenngleich sie einige Zweifel hatte, nahm sie das Angebot an."
-      option: 2
-    - question: "wie"
-      help: "Du musst mir bitte erzählen, wie du das gemacht hast."
-      option: 2
-    - question: "wiewohl"
-      help: "Wir müssen uns vorbereiten, wiewohl noch nicht klar ist, ob er überhaupt kommt."
-      option: 2
-    - question: "aber"
-      help: "Er hat sich viel Mühe für sie gegeben, aber sie ignoriert ihn."
-      option: 3
-    - question: "denn"
-      help: "Ich habe Hunger, denn ich habe heute noch nichts gegessen."
-      option: 3
-    - question: "desto/umso"
-      help: "Je mehr ich lerne, desto/umso sicherer bestehe ich die Prüfung."
-      option: 3
-    - question: "doch"
-      help: "Ich wollte noch einkaufen, doch jetzt ist es zu spät."
-      option: 3
-    - question: "oder"
-      help: "Ich gehe allein, oder ich gehe mit dir."
-      option: 3
-    - question: "sondern"
-      help: "Er besucht uns nicht heute, sondern er kommt erst am Donnerstag."
-      option: 3
-    - question: "und"
-      help: "Ich beschäftige mich mit dem Thema und du hilfst mir bitte dabei."
-      option: 3
-    - question: "allerdings"
-      help: "Die Reise war schön, allerdings fanden wir sie auch ziemlich ermüdend."
-      option: 4
-    - question: "also"
-      help: "Der Junge lernte, also bestand er die Prüfung."
-      option: 4
-    - question: "andererseits"
-      help: "Es könnte regnen, andererseits scheint vielleicht auch die Sonne."
-      option: 4
-    - question: "andernfalls"
-      help: "Du musst rechtzeitig losgehen, andernfalls kommst du zu spät."
-      option: 4
-    - question: "anschließend"
-      help: "Der Lehrer sprach erst mit dem Kind, anschließend lud er die Eltern zu einem Gespräch ein."
-      option: 4
-    - question: "ansonsten"
-      help: "Nimm den Regenschirm mit, ansonsten werden wir nass."
-      option: 4
-    - question: "aus diesem Grund"
-      help: "Ich mag meinen alten Beruf nicht, aus diesem Grund mache ich eine Umschulung."
-      option: 4
-    - question: "außerdem"
-      help: "Heutzutage ist es sehr wichtig, eine Fremdsprache zu lernen, außerdem braucht man PC-Kenntnisse."
-      option: 4
-    - question: "bis dahin"
-      help: "Bald habe ich eine Prüfung, bis dahin werde ich fleißig lernen."
-      option: 4
-    - question: "da"
-      help: "Wir schlafen in der Küche, da ist es viel wärmer als in unserem Zimmer."
-      option: 4
-    - question: "dadurch"
-      help: "Er lebte viele Jahre in Japan, dadurch konnte er fast fehlerfrei Japanisch."
-      option: 4
-    - question: "dafür"
-      help: "Sie dürfen das Gebäude betreten, dafür brauchen Sie aber Ihren Ausweis."
-      option: 4
-    - question: "dagegen"
-      help: "Es ist schon warm in Spanien, dagegen schneit es bei uns noch."
-      option: 4
-    - question: "daher"
-      help: "Peter hat viel geübt, daher hat er die Prüfung bestanden."
-      option: 4
-    - question: "damit"
-      help: "Das ist mein neues Fahrrad, damit kann man schnell fahren."
-      option: 4
-    - question: "danach"
-      help: "Zuerst treffen wir uns bei uns zu Hause, danach besuchen wir die Nachbarn."
-      option: 4
-    - question: "dann"
-      help: "Wir übernachten in diesem Hotel, dann fahren wir weiter zu unserem Ziel."
-      option: 4
-    - question: "darauf"
-      help: "In meinem Zimmer gibt es einen Tisch, darauf findest du deine Jacke."
-      option: 4
-    - question: "daraufhin"
-      help: "Die Klamotten werden bestellt, daraufhin sehen wir uns an, ob die Größe passt oder nicht."
-      option: 4
-    - question: "darum"
-      help: "Dieser Wald ist gefährlich, darum solltest du vorsichtig sein."
-      option: 4
-    - question: "darüber"
-      help: "Er muss immer pünktlich sein, darüber haben wir ausführlich gesprochen."
-      option: 4
-    - question: "davon"
-      help: "Unser Gericht besteht aus verschiedenen Zutaten, davon sind 10 g Zucker."
-      option: 4
-    - question: "davor"
-      help: "Wir fahren bald in Urlaub, davor müssen wir unser Auto kontrollieren."
-      option: 4
-    - question: "dazu"
-      help: "Ich hätte gerne ein Brot, dazu nehme ich Käse und Butter."
-      option: 4
-    - question: "demgegenüber"
-      help: "Die Regierung verschwendet viel Geld im Krieg, demgegenüber zwingt sie die Journalisten zu schweigen."
-      option: 4
-    - question: "demnach"
-      help: "Ich habe einen Brief bekommen, demnach ist das Bürgeramt morgen geschlossen."
-      option: 4
-    - question: "demzufolge"
-      help: "Wir sind mit der Besprechung fertig, demzufolge können wir jetzt nach Hause gehen."
-      option: 4
-    - question: "dennoch"
-      help: "Sie haben so viele Übungen im Unterricht gemacht, dennoch hat sie das Thema nicht verstanden."
-      option: 4
-    - question: "deshalb"
-      help: "Er schaut gerne Filme, deshalb kauft er sich einen großen Fernseher."
-      option: 4
-    - question: "deswegen"
-      help: "Sie hat sich von Ihrem Mann getrennt, deswegen geht sie zu einem Psychologen."
-      option: 4
-    - question: "einerseits"
-      help: "Einerseits möchte Ella Deutsch lernen, andererseits möchte sie ins Kino gehen."
-      option: 4
-    - question: "ferner"
-      help: "Er hat viel gelernt, ferner hat er sich auch gut vorbereitet."
-      option: 4
-    - question: "folglich"
-      help: "Ihr Chef hat die Dienstreise nicht bewilligt, folglich konnte sie nicht verreisen."
-      option: 4
-    - question: "gleichzeitig"
-      help: "Er hat sich auf die Prüfung vorbereitet, gleichzeitig hat er viel gearbeitet."
-      option: 4
-    - question: "immerhin"
-      help: "Wir haben kein Geld, immerhin haben wir einander."
-      option: 4
-    - question: "infolgedessen"
-      help: "Katja hat viel geübt, infolgedessen hat sie die Prüfung bestanden."
-      option: 4
-    - question: "inzwischen"
-      help: "Warten Sie bitte im Wartezimmer, inzwischen können Sie unsere bunten Broschüren durchlesen."
-      option: 4
-    - question: "jedoch"
-      help: "Der Baum im Hof der Schule kriegt wenig Wasser, jedoch ist er groß geworden und immerhin ist er grün."
-      option: 4
-    - question: "mittlerweile"
-      help: "Früher lebte er in Norwegen, mittlerweile hat er aber auch in seiner neuen Heimat Frankreich Freunde gefunden."
-      option: 4
-    - question: "schließlich"
-      help: "Im Film begegnet die Schauspielerin vielen Schwierigkeiten, schließlich überwindet sie alle."
-      option: 4
-    - question: "seitdem"
-      help: "Bei uns ist eingebrochen worden, seitdem haben wir mehr Sicherungsmaßnahmen installiert."
-      option: 4
-    - question: "somit"
-      help: "Er hat sich immer nur Serien angeschaut, somit konnte er die Prüfung nicht schaffen."
-      option: 4
-    - question: "sonst"
-      help: "Menschen sollten sich impfen lassen, sonst können sie krank werden."
-      option: 4
-    - question: "später"
-      help: "Am Anfang war er so motiviert, später kam er mit weinenden Augen zurück."
-      option: 4
-    - question: "stattdessen"
-      help: "Die Bibliothek ist heute geschlossen, stattdessen können wir im Cafe lernen."
-      option: 4
-    - question: "trotzdem"
-      help: "Es regnet, trotzdem gehe ich spazieren."
-      option: 4
-    - question: "vorher"
-      help: "Die Hochzeit meines Freundes ist am Samstag, vorher muss ich zum Friseur."
-      option: 4
-    - question: "währenddessen"
-      help: "Ich esse jetzt, währenddessen kannst du ja fernsehen."
-      option: 4
-    - question: "weder … noch"
-      help: "Ich bin böse auf dich; weder warst du pünktlich, noch hast du mir eine Nachricht geschickt."
-      option: 4
-    - question: "zudem"
-      help: "Der Supermarkt war weit weg, zudem hatte ich kein Geld."
-      option: 4
-    - question: "zuvor"
-      help: "Später besprechen wir die Hausaufgaben, zuvor wiederholen wir den Wortschatz."
-      option: 4
-    - question: "zwar"
-      help: "Zwar habe ich eine neue Stelle gefunden, aber ich kann erst nächsten Monat dort anfangen zu arbeiten."
-      option: 4
+questions:
+  - question: "anstatt zu"
+    help: "Anstatt etwas zu essen, gehe ich heute hungrig schlafen."
+    option: 0
+  - question: "außer zu"
+    help: "Außer zu lernen, habe ich heute nichts gemacht."
+    option: 0
+  - question: "ohne zu"
+    help: "Ich kann nicht losfahren, ohne dich nochmals zu treffen."
+    option: 0
+  - question: "um zu"
+    help: "Ich gehe ins Fitnessstudio, um fit zu bleiben."
+    option: 0
+  - question: "nämlich"
+    help: "Honolulu hat ein angenehmes Klima, es ist nämlich meist sonnig oder frühlingshaft dort."
+    option: 1
+  - question: "nicht nur, sondern auch"
+    help: "Ich habe morgen nicht nur Arbeit, sondern ich muss auch zum Deutschkurs."
+    option: 1
+  - question: "sowohl als auch"
+    help: "Ich möchte sowohl Deutsch als auch Französisch lernen."
+    option: 1
+  - question: "als"
+    help: "Als ich ein Kind war, fuhr ich einmal nach Frankreich."
+    option: 2
+  - question: "als dass"
+    help: "Das Problem ist zu komplex, als dass es schnell gelöst werden könnte."
+    option: 2
+  - question: "als ob"
+    help: "Ich habe so großen Hunger, als ob ich für drei Tagen nichts gegessen hätte."
+    option: 2
+  - question: "als ob"
+    help: "Meine Kollegin benimmt sich manchmal so, als ob sie hier die Chefin wäre."
+    option: 2
+  - question: "als wenn"
+    help: "Sie ignoriert ihre ehemalige Chefin, als wenn sie einander niemals getroffen hätten."
+    option: 2
+  - question: "anstatt dass"
+    help: "Er macht lieber eine Ausbildung, anstatt dass er sich um einen Studienplatz bewirbt."
+    option: 2
+  - question: "auch wenn"
+    help: "Auch wenn die Grafik nicht aktuell ist, lassen sich doch wichtige Informationen entnehmen."
+    option: 2
+  - question: "außer dass"
+    help: "Derzeit ist eigentlich alles in Ordnung, außer dass ich mich ein wenig krank fühle."
+    option: 2
+  - question: "außer wenn"
+    help: "Ich gehe heute nicht aus, außer wenn das Wetter besser wird."
+    option: 2
+  - question: "bevor"
+    help: "Bevor die Probleme gelöst werden konnten, waren sie eskaliert."
+    option: 2
+  - question: "bis"
+    help: "Sie müssen die Straße weiterfahren, bis Sie die Linden auf der rechten Seite sehen können."
+    option: 2
+  - question: "da"
+    help: "Ich war gestern beim Arzt, da ich starke Kopfschmerzen hatte."
+    option: 2
+  - question: "dadurch dass"
+    help: "Sie können das Video dadurch starten, dass sie auf “Play” klicken."
+    option: 2
+  - question: "damit"
+    help: "Bitte lassen Sie mich wissen, wie der aktuelle Stand der Dinge ist, damit ich eine Entscheidung treffen kann."
+    option: 2
+  - question: "dass"
+    help: "Ich habe gehört, dass du in den Urlaub fährst."
+    option: 2
+  - question: "ehe"
+    help: "Ehe ich mich entscheide, möchte ich noch ein paar Informationen einholen."
+    option: 2
+  - question: "es sei denn, dass"
+    help: "Wir können den Abgabetermin einhalten, es sei denn, dass noch etwas Unvorhergesehenes passiert."
+    option: 2
+  - question: "falls"
+    help: "Falls ich mal in Hamburg bin, melde ich mich bei dir."
+    option: 2
+  - question: "indem"
+    help: "Ich vergrößere meinen Wortschatz, indem ich viel deutsche Zeitungen lese."
+    option: 2
+  - question: "je"
+    help: "Je öfter ich mich mit diesem Thema beschäftige, desto klarer wird es mir."
+    option: 2
+  - question: "nachdem"
+    help: "Nachdem ich gefrühstückt habe, fahre ich zur Arbeit."
+    option: 2
+  - question: "ob"
+    help: "Ich bin mir nicht sicher, ob ich heute entweder die roten oder die grünen Medikamente einnehmen muss."
+    option: 2
+  - question: "obgleich"
+    help: "Obgleich sie einige Zweifel hatte, nahm sie das Angebot an."
+    option: 2
+  - question: "obschon"
+    help: "Sie baden gerne im See, obschon die Temperatur nur 10°C beträgt."
+    option: 2
+  - question: "obwohl"
+    help: "Obwohl das Feld gut bewässert wird, wächst hier keine einzige Pflanze."
+    option: 2
+  - question: "obzwar"
+    help: "Obzwar ich die Prüfung bestanden habe, bin ich nicht zufrieden."
+    option: 2
+  - question: "ohne dass"
+    help: "Ich bin zum Kurs gekommen, ohne dass ich meine Hausaufgaben gemacht habe."
+    option: 2
+  - question: "sei es, dass"
+    help: "Sei es, dass du dich entscheidest oder nicht, ich werde dich unterstützen."
+    option: 2
+  - question: "seit(dem)"
+    help: "Seit(dem) ich die Weiterbildung gemacht habe, bekomme ich viele Einladungen zu Vorstellungsgesprächen."
+    option: 2
+  - question: "sobald"
+    help: "Sobald die ganze Welt geimpft ist, wird Corona vorbei sein, hoffe ich."
+    option: 2
+  - question: "sodass"
+    help: "Am Morgen bin ich sehr früh aufgestanden, sodass ich meine Hausaufgaben erledigen konnte."
+    option: 2
+  - question: "sofern"
+    help: "Sie können auf diesen Link zugreifen, sofern Sie sich registriert haben."
+    option: 2
+  - question: "solange"
+    help: "Solange ich noch Zeit habe, werde ich noch ein paar Übungen machen."
+    option: 2
+  - question: "sooft"
+    help: "Du wirst dein Deutsch Schritt für Schritt verbessern, sooft du deinen deutschen Freund besuchst."
+    option: 2
+  - question: "soviel"
+    help: "Soviel wir auch versucht haben, wir konnten das Problem nicht lösen."
+    option: 2
+  - question: "soweit"
+    help: "Soweit niemand etwas dagegen hat, werden wir das Projekt so durchführen."
+    option: 2
+  - question: "während"
+    help: "Ich habe mich sehr gut unterhalten, während er sich gelangweilt hat."
+    option: 2
+  - question: "weil"
+    help: "Sie ließ das Auto hier und nahm ein Taxi, weil sie viel getronken hatte."
+    option: 2
+  - question: "wenn"
+    help: "Ich wäre Ihnen sehr dankbar, wenn Sie mir schriftlich antworten könnten."
+    option: 2
+  - question: "wenngleich"
+    help: "Wenngleich sie einige Zweifel hatte, nahm sie das Angebot an."
+    option: 2
+  - question: "wie"
+    help: "Du musst mir bitte erzählen, wie du das gemacht hast."
+    option: 2
+  - question: "wiewohl"
+    help: "Wir müssen uns vorbereiten, wiewohl noch nicht klar ist, ob er überhaupt kommt."
+    option: 2
+  - question: "aber"
+    help: "Er hat sich viel Mühe für sie gegeben, aber sie ignoriert ihn."
+    option: 3
+  - question: "denn"
+    help: "Ich habe Hunger, denn ich habe heute noch nichts gegessen."
+    option: 3
+  - question: "desto/umso"
+    help: "Je mehr ich lerne, desto/umso sicherer bestehe ich die Prüfung."
+    option: 3
+  - question: "doch"
+    help: "Ich wollte noch einkaufen, doch jetzt ist es zu spät."
+    option: 3
+  - question: "oder"
+    help: "Ich gehe allein, oder ich gehe mit dir."
+    option: 3
+  - question: "sondern"
+    help: "Er besucht uns nicht heute, sondern er kommt erst am Donnerstag."
+    option: 3
+  - question: "und"
+    help: "Ich beschäftige mich mit dem Thema und du hilfst mir bitte dabei."
+    option: 3
+  - question: "allerdings"
+    help: "Die Reise war schön, allerdings fanden wir sie auch ziemlich ermüdend."
+    option: 4
+  - question: "also"
+    help: "Der Junge lernte, also bestand er die Prüfung."
+    option: 4
+  - question: "andererseits"
+    help: "Es könnte regnen, andererseits scheint vielleicht auch die Sonne."
+    option: 4
+  - question: "andernfalls"
+    help: "Du musst rechtzeitig losgehen, andernfalls kommst du zu spät."
+    option: 4
+  - question: "anschließend"
+    help: "Der Lehrer sprach erst mit dem Kind, anschließend lud er die Eltern zu einem Gespräch ein."
+    option: 4
+  - question: "ansonsten"
+    help: "Nimm den Regenschirm mit, ansonsten werden wir nass."
+    option: 4
+  - question: "aus diesem Grund"
+    help: "Ich mag meinen alten Beruf nicht, aus diesem Grund mache ich eine Umschulung."
+    option: 4
+  - question: "außerdem"
+    help: "Heutzutage ist es sehr wichtig, eine Fremdsprache zu lernen, außerdem braucht man PC-Kenntnisse."
+    option: 4
+  - question: "bis dahin"
+    help: "Bald habe ich eine Prüfung, bis dahin werde ich fleißig lernen."
+    option: 4
+  - question: "da"
+    help: "Wir schlafen in der Küche, da ist es viel wärmer als in unserem Zimmer."
+    option: 4
+  - question: "dadurch"
+    help: "Er lebte viele Jahre in Japan, dadurch konnte er fast fehlerfrei Japanisch."
+    option: 4
+  - question: "dafür"
+    help: "Sie dürfen das Gebäude betreten, dafür brauchen Sie aber Ihren Ausweis."
+    option: 4
+  - question: "dagegen"
+    help: "Es ist schon warm in Spanien, dagegen schneit es bei uns noch."
+    option: 4
+  - question: "daher"
+    help: "Peter hat viel geübt, daher hat er die Prüfung bestanden."
+    option: 4
+  - question: "damit"
+    help: "Das ist mein neues Fahrrad, damit kann man schnell fahren."
+    option: 4
+  - question: "danach"
+    help: "Zuerst treffen wir uns bei uns zu Hause, danach besuchen wir die Nachbarn."
+    option: 4
+  - question: "dann"
+    help: "Wir übernachten in diesem Hotel, dann fahren wir weiter zu unserem Ziel."
+    option: 4
+  - question: "darauf"
+    help: "In meinem Zimmer gibt es einen Tisch, darauf findest du deine Jacke."
+    option: 4
+  - question: "daraufhin"
+    help: "Die Klamotten werden bestellt, daraufhin sehen wir uns an, ob die Größe passt oder nicht."
+    option: 4
+  - question: "darum"
+    help: "Dieser Wald ist gefährlich, darum solltest du vorsichtig sein."
+    option: 4
+  - question: "darüber"
+    help: "Er muss immer pünktlich sein, darüber haben wir ausführlich gesprochen."
+    option: 4
+  - question: "davon"
+    help: "Unser Gericht besteht aus verschiedenen Zutaten, davon sind 10 g Zucker."
+    option: 4
+  - question: "davor"
+    help: "Wir fahren bald in Urlaub, davor müssen wir unser Auto kontrollieren."
+    option: 4
+  - question: "dazu"
+    help: "Ich hätte gerne ein Brot, dazu nehme ich Käse und Butter."
+    option: 4
+  - question: "demgegenüber"
+    help: "Die Regierung verschwendet viel Geld im Krieg, demgegenüber zwingt sie die Journalisten zu schweigen."
+    option: 4
+  - question: "demnach"
+    help: "Ich habe einen Brief bekommen, demnach ist das Bürgeramt morgen geschlossen."
+    option: 4
+  - question: "demzufolge"
+    help: "Wir sind mit der Besprechung fertig, demzufolge können wir jetzt nach Hause gehen."
+    option: 4
+  - question: "dennoch"
+    help: "Sie haben so viele Übungen im Unterricht gemacht, dennoch hat sie das Thema nicht verstanden."
+    option: 4
+  - question: "deshalb"
+    help: "Er schaut gerne Filme, deshalb kauft er sich einen großen Fernseher."
+    option: 4
+  - question: "deswegen"
+    help: "Sie hat sich von Ihrem Mann getrennt, deswegen geht sie zu einem Psychologen."
+    option: 4
+  - question: "einerseits"
+    help: "Einerseits möchte Ella Deutsch lernen, andererseits möchte sie ins Kino gehen."
+    option: 4
+  - question: "ferner"
+    help: "Er hat viel gelernt, ferner hat er sich auch gut vorbereitet."
+    option: 4
+  - question: "folglich"
+    help: "Ihr Chef hat die Dienstreise nicht bewilligt, folglich konnte sie nicht verreisen."
+    option: 4
+  - question: "gleichzeitig"
+    help: "Er hat sich auf die Prüfung vorbereitet, gleichzeitig hat er viel gearbeitet."
+    option: 4
+  - question: "immerhin"
+    help: "Wir haben kein Geld, immerhin haben wir einander."
+    option: 4
+  - question: "infolgedessen"
+    help: "Katja hat viel geübt, infolgedessen hat sie die Prüfung bestanden."
+    option: 4
+  - question: "inzwischen"
+    help: "Warten Sie bitte im Wartezimmer, inzwischen können Sie unsere bunten Broschüren durchlesen."
+    option: 4
+  - question: "jedoch"
+    help: "Der Baum im Hof der Schule kriegt wenig Wasser, jedoch ist er groß geworden und immerhin ist er grün."
+    option: 4
+  - question: "mittlerweile"
+    help: "Früher lebte er in Norwegen, mittlerweile hat er aber auch in seiner neuen Heimat Frankreich Freunde gefunden."
+    option: 4
+  - question: "schließlich"
+    help: "Im Film begegnet die Schauspielerin vielen Schwierigkeiten, schließlich überwindet sie alle."
+    option: 4
+  - question: "seitdem"
+    help: "Bei uns ist eingebrochen worden, seitdem haben wir mehr Sicherungsmaßnahmen installiert."
+    option: 4
+  - question: "somit"
+    help: "Er hat sich immer nur Serien angeschaut, somit konnte er die Prüfung nicht schaffen."
+    option: 4
+  - question: "sonst"
+    help: "Menschen sollten sich impfen lassen, sonst können sie krank werden."
+    option: 4
+  - question: "später"
+    help: "Am Anfang war er so motiviert, später kam er mit weinenden Augen zurück."
+    option: 4
+  - question: "stattdessen"
+    help: "Die Bibliothek ist heute geschlossen, stattdessen können wir im Cafe lernen."
+    option: 4
+  - question: "trotzdem"
+    help: "Es regnet, trotzdem gehe ich spazieren."
+    option: 4
+  - question: "vorher"
+    help: "Die Hochzeit meines Freundes ist am Samstag, vorher muss ich zum Friseur."
+    option: 4
+  - question: "währenddessen"
+    help: "Ich esse jetzt, währenddessen kannst du ja fernsehen."
+    option: 4
+  - question: "weder … noch"
+    help: "Ich bin böse auf dich; weder warst du pünktlich, noch hast du mir eine Nachricht geschickt."
+    option: 4
+  - question: "zudem"
+    help: "Der Supermarkt war weit weg, zudem hatte ich kein Geld."
+    option: 4
+  - question: "zuvor"
+    help: "Später besprechen wir die Hausaufgaben, zuvor wiederholen wir den Wortschatz."
+    option: 4
+  - question: "zwar"
+    help: "Zwar habe ich eine neue Stelle gefunden, aber ich kann erst nächsten Monat dort anfangen zu arbeiten."
+    option: 4

@@ -95,6 +95,7 @@ async fn a_multiple_choice_challenge_is_set_up_with_a_question_of_option(
 ) {
     let id = "123".to_string();
     let name = "Test".to_string();
+    let lang = "en".to_string();
     let options = vec![MultipleChoiceOption {
         id: option,
         name: "Option".to_string(),
@@ -108,6 +109,7 @@ async fn a_multiple_choice_challenge_is_set_up_with_a_question_of_option(
     let dataset = MultipleChoice {
         id,
         name,
+        lang,
         options,
         questions,
     };

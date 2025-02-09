@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 pub struct MultipleChoice {
     pub id: String,
     pub name: String,
+    pub lang: String,
     pub options: Vec<MultipleChoiceOption>,
     pub questions: Vec<Question>,
 }
@@ -37,6 +38,7 @@ mod tests {
     fn new_dataset() {
         let id = "123".to_string();
         let name = "Test".to_string();
+        let lang = "de".to_string();
         let options = vec![
             MultipleChoiceOption {
                 id: 1,
@@ -64,6 +66,7 @@ mod tests {
         let dataset = MultipleChoice {
             id,
             name,
+            lang,
             options,
             questions,
         };

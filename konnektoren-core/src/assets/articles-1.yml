@@ -1,6 +1,7 @@
 !multiple-choice
 id: "articles"
 name: "Artikel"
+lang: "de"
 options:
   - id: 0
     name: "der"

@@ -1,6 +1,7 @@
 !multiple-choice
 id: "multiple-choice-example" # Unique identifier for the challenge
 name: "Multiple Choice Example" # Display name of the challenge
+lang: "de" # Language code for the challenge
 
 # List of available options that can be used in questions
 options:
