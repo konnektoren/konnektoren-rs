@@ -2,7 +2,9 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum_macros::{EnumIter, IntoStaticStr};
 
-#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, EnumIter, IntoStaticStr)]
+#[derive(
+    Default, Debug, Serialize, Deserialize, Clone, PartialEq, EnumIter, IntoStaticStr, Eq, Hash,
+)]
 #[serde(rename_all = "kebab-case")]
 #[strum(serialize_all = "kebab-case")]
 pub enum ChallengeVariant {

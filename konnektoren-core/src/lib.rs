@@ -31,6 +31,7 @@ pub mod prelude {
     pub use crate::challenges::ChallengeInput;
     pub use crate::challenges::ChallengeResult;
     pub use crate::challenges::ChallengeType;
+    pub use crate::challenges::ChallengeVariant;
     pub use crate::challenges::MultipleChoice;
     pub use crate::challenges::MultipleChoiceOption;
     pub use crate::challenges::Performance;
