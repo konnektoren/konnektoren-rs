@@ -1,3 +1,4 @@
+pub mod analytics;
 pub mod challenges;
 pub mod commands;
 pub mod controller;
@@ -39,6 +40,8 @@ pub mod prelude {
     pub use crate::player_profile::PlayerProfile;
     pub use crate::session::Session;
     pub use crate::Xp;
+
+    pub use crate::analytics::metrics::Metric;
 
     #[cfg(feature = "achievements")]
     pub use crate::achievements::*;

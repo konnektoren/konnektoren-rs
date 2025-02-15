@@ -1,4 +1,5 @@
 use super::achievement_statistic::*;
+use crate::analytics::Metric;
 use crate::challenges::performance::Performance;
 use crate::game::{Game, GamePath};
 use std::collections::HashSet;
@@ -91,8 +92,8 @@ impl<'a> DifferentChallengeTypesCompleted for GameStatistics<'a> {
     }
 }
 
-// Implement AchievementStatistic for GameStatistics
-impl<'a> AchievementStatistic for GameStatistics<'a> {
+// Implement Metric for GameStatistics
+impl<'a> Metric for GameStatistics<'a> {
     fn name(&self) -> &str {
         "game_statistics"
     }
@@ -100,7 +101,14 @@ impl<'a> AchievementStatistic for GameStatistics<'a> {
     fn value(&self) -> f64 {
         0.0
     }
+
+    fn description(&self) -> &str {
+        "Overall game statistics and metrics"
+    }
 }
+
+// Implement AchievementStatistic for GameStatistics
+impl<'a> AchievementStatistic for GameStatistics<'a> {}
 
 #[cfg(test)]
 mod tests {
