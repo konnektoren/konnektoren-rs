@@ -299,11 +299,7 @@
 <a href="#298" id="298">298</a>
 <a href="#299" id="299">299</a>
 <a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::Trend;
+<a href="#301" id="301">301</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::Trend;
 <span class="kw">use </span><span class="kw">super</span>::metric::Metric;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::ChallengeHistory;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::Performance;
@@ -311,8 +307,6 @@
 <span class="kw">use </span>std::cell::RefCell;
 
 <span class="kw">pub struct </span>SuccessRateMetric {
-    name: String,
-    description: String,
     history: ChallengeHistory,
     cached_state: RefCell&lt;CachedState&gt;,
     reference_time: DateTime&lt;Utc&gt;,
@@ -334,8 +328,6 @@
             .unwrap_or_else(|| Utc::now());
 
         <span class="self">Self </span>{
-            name: <span class="string">"Success Rate"</span>.to_string(),
-            description: <span class="string">"Percentage of correctly solved challenges"</span>.to_string(),
             history,
             cached_state: RefCell::new(CachedState {
                 last_calculated: <span class="prelude-val">None</span>,
@@ -405,8 +397,8 @@
 
 <span class="kw">impl </span>Metric <span class="kw">for </span>SuccessRateMetric {
     <span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.name
-    }
+        <span class="string">"Success Rate"
+    </span>}
 
     <span class="kw">fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f64 {
         <span class="kw">let </span><span class="kw-2">mut </span>cached_state = <span class="self">self</span>.cached_state.borrow_mut();
@@ -418,8 +410,8 @@
     }
 
     <span class="kw">fn </span>description(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.description
-    }
+        <span class="string">"The percentage of successful challenges out of all completed challenges."
+    </span>}
 }
 
 <span class="attr">#[cfg(test)]
