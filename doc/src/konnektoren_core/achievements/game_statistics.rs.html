@@ -227,7 +227,16 @@
 <a href="#226" id="226">226</a>
 <a href="#227" id="227">227</a>
 <a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::achievement_statistic::<span class="kw-2">*</span>;
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::achievement_statistic::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::analytics::Metric;
 <span class="kw">use </span><span class="kw">crate</span>::challenges::performance::Performance;
 <span class="kw">use </span><span class="kw">crate</span>::game::{Game, GamePath};
 <span class="kw">use </span>std::collections::HashSet;
@@ -320,8 +329,8 @@
     }
 }
 
-<span class="comment">// Implement AchievementStatistic for GameStatistics
-</span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AchievementStatistic <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {
+<span class="comment">// Implement Metric for GameStatistics
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Metric <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
         <span class="string">"game_statistics"
     </span>}
@@ -329,7 +338,14 @@
     <span class="kw">fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f64 {
         <span class="number">0.0
     </span>}
+
+    <span class="kw">fn </span>description(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="string">"Overall game statistics and metrics"
+    </span>}
 }
+
+<span class="comment">// Implement AchievementStatistic for GameStatistics
+</span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AchievementStatistic <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {}
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {

@@ -56,7 +56,11 @@
 <a href="#55" id="55">55</a>
 <a href="#56" id="56">56</a>
 <a href="#57" id="57">57</a>
-<a href="#58" id="58">58</a></pre></div><pre class="rust"><code><span class="kw">pub mod </span>challenges;
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a></pre></div><pre class="rust"><code><span class="kw">pub mod </span>analytics;
+<span class="kw">pub mod </span>challenges;
 <span class="kw">pub mod </span>commands;
 <span class="kw">pub mod </span>controller;
 <span class="kw">pub mod </span>events;
@@ -97,6 +101,8 @@
     <span class="kw">pub use </span><span class="kw">crate</span>::player_profile::PlayerProfile;
     <span class="kw">pub use </span><span class="kw">crate</span>::session::Session;
     <span class="kw">pub use </span><span class="kw">crate</span>::Xp;
+
+    <span class="kw">pub use </span><span class="kw">crate</span>::analytics::metrics::Metric;
 
     <span class="attr">#[cfg(feature = <span class="string">"achievements"</span>)]
     </span><span class="kw">pub use </span><span class="kw">crate</span>::achievements::<span class="kw-2">*</span>;
