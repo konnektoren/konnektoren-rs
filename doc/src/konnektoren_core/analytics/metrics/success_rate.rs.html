@@ -290,7 +290,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::challenges::Performance;
 <span class="kw">use </span>chrono::{DateTime, Duration, Utc};
 
-<span class="attr">#[derive(Clone, PartialEq)]
+<span class="attr">#[derive(Clone, PartialEq, Default)]
 </span><span class="kw">pub struct </span>SuccessRateMetric {
     history: ChallengeHistory,
     reference_time: DateTime&lt;Utc&gt;,
