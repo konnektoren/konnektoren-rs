@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Hash)]
+use strum_macros::Display;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Hash, Display)]
 pub enum Trend {
     Improving,
     #[default]
@@ -7,10 +9,12 @@ pub enum Trend {
 }
 
 impl Trend {
+    const EPSILON: f64 = 0.0001;
+
     pub fn from_value(value: f64) -> Self {
-        if value > 0.0 {
+        if value > Self::EPSILON {
             Trend::Improving
-        } else if value < 0.0 {
+        } else if value < -Self::EPSILON {
             Trend::Declining
         } else {
             Trend::Stable

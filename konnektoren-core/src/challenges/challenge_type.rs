@@ -182,11 +182,115 @@ impl Performance for ChallengeType {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use super::*;
-    use crate::challenges::multiple_choice::MultipleChoiceOption;
-    use crate::challenges::{ChallengeResult, ContextItemChoiceAnswers};
+    use crate::challenges::{
+        Challenge, ChallengeConfig, ChallengeResult, ContextItemChoiceAnswers,
+        MultipleChoiceOption, Question,
+    };
     use strum::IntoEnumIterator;
+
+    use chrono::{TimeZone, Utc};
+
+    // Base timestamp for tests
+    pub const BASE_TIMESTAMP: i64 = 1700000000;
+
+    // Helper functions for test challenges
+    pub fn create_successful_challenge() -> Challenge {
+        let challenge_type = ChallengeType::MultipleChoice(MultipleChoice {
+            id: "test".to_string(),
+            name: "Test".to_string(),
+            lang: "en".to_string(),
+            options: vec![
+                MultipleChoiceOption {
+                    id: 0,
+                    name: "Correct".to_string(),
+                },
+                MultipleChoiceOption {
+                    id: 1,
+                    name: "Wrong".to_string(),
+                },
+            ],
+            questions: vec![Question {
+                question: "Test Question".to_string(),
+                help: "Test Help".to_string(),
+                option: 0,
+                image: None,
+            }],
+        });
+
+        let mut challenge = Challenge::new(&challenge_type, &ChallengeConfig::default());
+
+        // Set fixed timestamps
+        challenge.start_time = Some(Utc.timestamp_opt(BASE_TIMESTAMP, 0).unwrap());
+
+        // Add correct answer (id: 0)
+        challenge.challenge_result = ChallengeResult::MultipleChoice(vec![MultipleChoiceOption {
+            id: 0,
+            name: "Correct".to_string(),
+        }]);
+
+        challenge.end_time = Some(Utc.timestamp_opt(BASE_TIMESTAMP + 3600, 0).unwrap()); // 1 hour later
+        challenge
+    }
+
+    pub fn create_unsuccessful_challenge() -> Challenge {
+        let challenge_type = ChallengeType::MultipleChoice(MultipleChoice {
+            id: "test".to_string(),
+            name: "Test".to_string(),
+            lang: "en".to_string(),
+            options: vec![
+                MultipleChoiceOption {
+                    id: 0,
+                    name: "Correct".to_string(),
+                },
+                MultipleChoiceOption {
+                    id: 1,
+                    name: "Wrong".to_string(),
+                },
+            ],
+            questions: vec![Question {
+                question: "Test Question".to_string(),
+                help: "Test Help".to_string(),
+                option: 0,
+                image: None,
+            }],
+        });
+
+        let mut challenge = Challenge::new(&challenge_type, &ChallengeConfig::default());
+
+        // Set fixed timestamps
+        challenge.start_time = Some(Utc.timestamp_opt(BASE_TIMESTAMP + 7200, 0).unwrap()); // 2 hours after base
+
+        // Add wrong answer (id: 1)
+        challenge.challenge_result = ChallengeResult::MultipleChoice(vec![MultipleChoiceOption {
+            id: 1,
+            name: "Wrong".to_string(),
+        }]);
+
+        challenge.end_time = Some(Utc.timestamp_opt(BASE_TIMESTAMP + 10800, 0).unwrap()); // 3 hours after base
+        challenge
+    }
+
+    #[test]
+    fn test_successful_challenge_performance() {
+        let challenge = create_successful_challenge();
+        assert_eq!(
+            challenge.performance(&challenge.challenge_result),
+            100,
+            "Successful challenge should have 100% performance"
+        );
+    }
+
+    #[test]
+    fn test_unsuccessful_challenge_performance() {
+        let challenge = create_unsuccessful_challenge();
+        assert_eq!(
+            challenge.performance(&challenge.challenge_result),
+            0,
+            "Unsuccessful challenge should have 0% performance"
+        );
+    }
 
     #[test]
     fn default_challenge() {
