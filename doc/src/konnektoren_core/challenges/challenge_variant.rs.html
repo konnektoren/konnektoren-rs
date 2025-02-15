@@ -98,11 +98,15 @@
 <a href="#97" id="97">97</a>
 <a href="#98" id="98">98</a>
 <a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a></pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a></pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>std::fmt;
 <span class="kw">use </span>strum_macros::{EnumIter, IntoStaticStr};
 
-<span class="attr">#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, EnumIter, IntoStaticStr)]
+<span class="attr">#[derive(
+    Default, Debug, Serialize, Deserialize, Clone, PartialEq, EnumIter, IntoStaticStr, Eq, Hash,
+)]
 #[serde(rename_all = <span class="string">"kebab-case"</span>)]
 #[strum(serialize_all = <span class="string">"kebab-case"</span>)]
 </span><span class="kw">pub enum </span>ChallengeVariant {
