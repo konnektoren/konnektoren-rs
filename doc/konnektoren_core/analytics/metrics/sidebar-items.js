@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["metric","success_rate"]};
+window.SIDEBAR_ITEMS = {"mod":["average_time_taken","metric","success_rate"]};
