@@ -27,6 +27,10 @@ impl Challenge {
         }
     }
 
+    pub fn get_id(&self) -> String {
+        self.challenge_config.id.clone()
+    }
+
     pub fn solved(&self) -> bool {
         self.challenge_result.len() > 0
     }
