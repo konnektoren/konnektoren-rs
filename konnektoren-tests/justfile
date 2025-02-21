@@ -1,0 +1,35 @@
+# Default recipe
+default:
+    @just --list
+
+# Build the tests package
+build:
+    cargo build -p konnektoren-tests
+
+# Run all tests
+test:
+    cargo test -p konnektoren-tests
+
+# Run BDD/cucumber tests specifically
+bdd:
+    cargo test --test bdd_tests
+
+# Run linter
+lint:
+    cargo clippy -p konnektoren-tests -- -D warnings
+
+# Generate documentation
+doc:
+    cargo doc -p konnektoren-tests --no-deps
+
+# Run coverage analysis
+coverage:
+    cargo tarpaulin -p konnektoren-tests --ignore-tests
+
+# Clean build artifacts
+clean:
+    cargo clean -p konnektoren-tests
+
+# Run tests with output
+test-verbose:
+    cargo test -p konnektoren-tests -- --nocapture

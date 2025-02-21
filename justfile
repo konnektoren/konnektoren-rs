@@ -4,23 +4,19 @@ default:
 
 # Core package commands
 core +COMMAND="build":
-    @case "{{COMMAND}}" in \
-        "build") cargo build -p konnektoren-core ;; \
-        "test") cargo test -p konnektoren-core ;; \
-        "doc") cargo doc -p konnektoren-core --no-deps ;; \
-        "lint") cargo clippy -p konnektoren-core -- -D warnings ;; \
-        *) echo "Invalid command. Use build, test, doc, or lint" ;; \
-    esac
+    @just -f konnektoren-core/justfile {{COMMAND}}
 
 # Platform package commands
 platform +COMMAND="build":
-    @case "{{COMMAND}}" in \
-        "build") cargo build -p konnektoren-platform ;; \
-        "test") cargo test -p konnektoren-platform ;; \
-        "doc") cargo doc -p konnektoren-platform --no-deps ;; \
-        "lint") cargo clippy -p konnektoren-platform -- -D warnings ;; \
-        *) echo "Invalid command. Use build, test, doc, or lint" ;; \
-    esac
+    @just -f konnektoren-platform/justfile {{COMMAND}}
+
+# Tests package commands
+tests +COMMAND="test":
+    @just -f konnektoren-tests/justfile {{COMMAND}}
+
+# Add this to run BDD tests specifically
+bdd:
+    @just -f konnektoren-tests/justfile bdd
 
 # Workspace-wide commands
 build:

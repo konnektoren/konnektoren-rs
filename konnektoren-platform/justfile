@@ -1,0 +1,27 @@
+# Default recipe
+default:
+    @just --list
+
+# Build the platform package
+build:
+    cargo build -p konnektoren-platform
+
+# Run tests
+test:
+    cargo test -p konnektoren-platform
+
+# Generate documentation
+doc:
+    cargo doc -p konnektoren-platform --no-deps
+
+# Run linter
+lint:
+    cargo clippy -p konnektoren-platform -- -D warnings
+
+# Run coverage analysis
+coverage:
+    cargo tarpaulin -p konnektoren-platform --ignore-tests
+
+# Clean build artifacts
+clean:
+    cargo clean -p konnektoren-platform

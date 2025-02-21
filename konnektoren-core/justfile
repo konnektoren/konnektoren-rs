@@ -1,0 +1,27 @@
+# Default recipe
+default:
+    @just --list
+
+# Build the core package
+build:
+    cargo build -p konnektoren-core
+
+# Run tests
+test:
+    cargo test -p konnektoren-core
+
+# Generate documentation
+doc:
+    cargo doc -p konnektoren-core --no-deps
+
+# Run linter
+lint:
+    cargo clippy -p konnektoren-core -- -D warnings
+
+# Run coverage analysis
+coverage:
+    cargo tarpaulin -p konnektoren-core --ignore-tests
+
+# Clean build artifacts
+clean:
+    cargo clean -p konnektoren-core
