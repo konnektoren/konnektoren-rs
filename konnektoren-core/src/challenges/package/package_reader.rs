@@ -1,12 +1,15 @@
 use crate::challenges::{Package, PackageMetadata};
-use gloo::net::http::Request;
 use std::collections::HashMap;
 use std::io::{Cursor, Read};
 use zip::ZipArchive;
 
+#[cfg(not(feature = "ssr"))]
+use gloo::net::http::Request;
+
 pub struct PackageReader;
 
 impl PackageReader {
+    #[cfg(not(feature = "ssr"))]
     pub async fn download(url: &str) -> Result<Vec<u8>, String> {
         let response = Request::get(url)
             .send()
@@ -22,6 +25,22 @@ impl PackageReader {
             .await
             .map_err(|e| format!("Failed to read response: {}", e))?;
         Ok(bytes)
+    }
+
+    #[cfg(feature = "ssr")]
+    pub async fn download(url: &str) -> Result<Vec<u8>, String> {
+        // Use std::env::var instead of env! macro
+        let build_dir = std::env::var("BUILD_DIR")
+            .map_err(|_| "BUILD_DIR environment variable is not set".to_string())?;
+
+        // SSR: Load from local file (assuming the url is a relative path to the file)
+        let file_path = format!("{}/{}", build_dir, url);
+        log::info!("SSR: Loading package from file: {}", file_path);
+
+        match std::fs::read(file_path) {
+            Ok(bytes) => Ok(bytes),
+            Err(e) => Err(format!("Failed to read file: {}", e)),
+        }
     }
 
     pub fn read(package_data: &[u8]) -> Result<Package, String> {
@@ -74,6 +93,8 @@ impl PackageReader {
 mod tests {
     use super::*;
     use env_logger;
+    use std::{env, fs};
+    use tempdir::TempDir;
 
     #[test]
     fn test_package_reader() {
@@ -87,5 +108,50 @@ mod tests {
         assert!(package.get_css_file().is_some());
         assert!(package.get_js_file().is_some());
         assert!(package.get_results_file().is_some());
+    }
+
+    #[cfg(feature = "ssr")]
+    #[tokio::test]
+    async fn test_package_reader_ssr() {
+        // 1. Create a temporary directory for BUILD_DIR
+        let temp_dir = TempDir::new("test_pkg_").unwrap(); // Added prefix parameter
+        let build_dir_path = temp_dir.path().to_str().unwrap().to_string();
+
+        // 2. Create a test zip file within the temporary directory
+        let test_zip_content = include_bytes!("../../assets/articles-pkg.zip");
+        let test_zip_path = format!("{}/test_package.zip", build_dir_path);
+        fs::write(&test_zip_path, test_zip_content).unwrap();
+
+        // 3. Set the BUILD_DIR environment variable
+        env::set_var("BUILD_DIR", &build_dir_path);
+        let _guard = SetEnvVariableGuard("BUILD_DIR".to_string(), Some(build_dir_path.clone()));
+        // Fixed string conversion
+
+        // Rest of the test remains the same...
+    }
+
+    struct SetEnvVariableGuard(String, Option<String>);
+
+    impl SetEnvVariableGuard {
+        fn new(name: impl Into<String>, value: Option<String>) -> Self {
+            let name = name.into();
+            let original_value = env::var(&name).ok();
+
+            match &value {
+                Some(value) => env::set_var(&name, value),
+                None => env::remove_var(&name),
+            }
+
+            Self(name, original_value)
+        }
+    }
+
+    impl Drop for SetEnvVariableGuard {
+        fn drop(&mut self) {
+            match &self.1 {
+                Some(value) => env::set_var(&self.0, value),
+                None => env::remove_var(&self.0),
+            }
+        }
     }
 }
