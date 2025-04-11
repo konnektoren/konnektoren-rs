@@ -10,7 +10,7 @@ pub struct Informative {
 
 impl Default for Informative {
     fn default() -> Self {
-        let data = include_str!("../../assets/personal_pronouns_info.yml");
+        let data = include_str!("../../../assets/personal_pronouns_info.yml");
         serde_yaml::from_str(data).unwrap()
     }
 }
@@ -27,7 +27,7 @@ mod tests {
 
     #[test]
     fn from_yaml() {
-        let yaml_data = include_str!("../../assets/personal_pronouns_info.yml");
+        let yaml_data = include_str!("../../../assets/personal_pronouns_info.yml");
         let dataset: Informative = serde_yaml::from_str(yaml_data).unwrap();
         assert_eq!(dataset.id, "personal_pronouns_info");
         assert_eq!(dataset.name, "Personal Pronouns Info");

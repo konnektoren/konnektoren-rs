@@ -24,7 +24,7 @@ pub enum ChallengeType {
 
 impl Default for ChallengeType {
     fn default() -> Self {
-        let data = include_str!("../assets/konnektoren.yml");
+        let data = include_str!("../../assets/konnektoren.yml");
         serde_yaml::from_str(data).unwrap()
     }
 }
@@ -363,7 +363,7 @@ pub mod tests {
     #[test]
     fn contextual_choice_performance() {
         let challenge: ContextualChoice =
-            serde_yaml::from_str(include_str!("../assets/konjunktiv-2.yml")).unwrap();
+            serde_yaml::from_str(include_str!("../../assets/konjunktiv-2.yml")).unwrap();
         let result = ChallengeResult::ContextualChoice(vec![
             ContextItemChoiceAnswers { ids: vec![0, 0] },
             ContextItemChoiceAnswers { ids: vec![1, 0] },

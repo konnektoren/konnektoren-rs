@@ -1,4 +1,5 @@
 pub mod analytics;
+pub mod asset_loader;
 pub mod challenges;
 pub mod commands;
 pub mod controller;
