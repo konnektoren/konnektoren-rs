@@ -33,7 +33,7 @@ impl Default for AssetLoader {
 
             // Add current directory and public directory as fallbacks
             base_dirs.push(PathBuf::from("./"));
-            base_dirs.push(PathBuf::from("public"));
+            base_dirs.push(PathBuf::from("assets"));
 
             AssetLoader::File { base_dirs }
         }
@@ -143,7 +143,7 @@ mod tests {
     #[cfg(feature = "csr")]
     wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 
-    const KONNEKTOREN_YAML_CONTENT: &str = include_str!("assets/konnektoren.yml");
+    const KONNEKTOREN_YAML_CONTENT: &str = include_str!("../assets/konnektoren.yml");
 
     // Test for SSR environment
     #[cfg(all(test, feature = "ssr", not(feature = "csr")))]

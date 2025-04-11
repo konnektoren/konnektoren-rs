@@ -11,7 +11,7 @@ pub struct MultipleChoice {
 
 impl Default for MultipleChoice {
     fn default() -> Self {
-        let data = include_str!("../../assets/multiple_choice_default.yml");
+        let data = include_str!("../../../assets/multiple_choice_default.yml");
         serde_yaml::from_str(data).unwrap()
     }
 }

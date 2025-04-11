@@ -1,46 +1,15 @@
+use crate::asset_loader::AssetLoader;
 use crate::challenges::{Package, PackageMetadata};
 use std::collections::HashMap;
 use std::io::{Cursor, Read};
 use zip::ZipArchive;
 
-#[cfg(not(feature = "ssr"))]
-use gloo::net::http::Request;
-
 pub struct PackageReader;
 
 impl PackageReader {
-    #[cfg(not(feature = "ssr"))]
     pub async fn download(url: &str) -> Result<Vec<u8>, String> {
-        let response = Request::get(url)
-            .send()
-            .await
-            .map_err(|e| format!("Failed to send request: {}", e))?;
-
-        if response.status() != 200 {
-            return Err(format!("Failed to download package: {}", response.status()));
-        }
-
-        let bytes = response
-            .binary()
-            .await
-            .map_err(|e| format!("Failed to read response: {}", e))?;
-        Ok(bytes)
-    }
-
-    #[cfg(feature = "ssr")]
-    pub async fn download(url: &str) -> Result<Vec<u8>, String> {
-        // Use std::env::var instead of env! macro
-        let build_dir = std::env::var("BUILD_DIR")
-            .map_err(|_| "BUILD_DIR environment variable is not set".to_string())?;
-
-        // SSR: Load from local file (assuming the url is a relative path to the file)
-        let file_path = format!("{}/{}", build_dir, url);
-        log::info!("SSR: Loading package from file: {}", file_path);
-
-        match std::fs::read(file_path) {
-            Ok(bytes) => Ok(bytes),
-            Err(e) => Err(format!("Failed to read file: {}", e)),
-        }
+        let loader = AssetLoader::default();
+        loader.load_binary(url).await
     }
 
     pub fn read(package_data: &[u8]) -> Result<Package, String> {
@@ -99,7 +68,7 @@ mod tests {
     #[test]
     fn test_package_reader() {
         env_logger::init();
-        let package_data = include_bytes!("../../assets/articles-pkg.zip");
+        let package_data = include_bytes!("../../../assets/articles-pkg.zip");
         let package = PackageReader::read(package_data).unwrap();
 
         assert_eq!(package.files.len(), 5);
