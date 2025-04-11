@@ -29,6 +29,7 @@ certificates = [
     "lazy_static",
 ]
 marketplace = []
+csr = ["js"]
 ssr = []
 js = [
     "serde-wasm-bindgen",
@@ -83,6 +84,7 @@ rand = "0.8.5"
 
 [dev-dependencies]
 tempdir = "0.3.7"
+tempfile = "3.19.1"
 mockall = "0.13.0"
 env_logger = "0.10"
 wasm-bindgen-test = { version = "0.3.43" }
