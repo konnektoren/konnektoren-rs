@@ -24,9 +24,9 @@
 <a href=#24 id=24 data-nosnippet>24</a>
 <a href=#25 id=25 data-nosnippet>25</a><span class="macro">lazy_static!</span> {
 <a href=#26 id=26 data-nosnippet>26</a>    <span class="kw">static </span><span class="kw-2">ref </span>TITLE_FONT: FontRef&lt;<span class="lifetime">'static</span>&gt; =
-<a href=#27 id=27 data-nosnippet>27</a>        FontRef::try_from_slice(<span class="macro">include_bytes!</span>(<span class="string">"../assets/Montserrat-Bold.ttf"</span>)).unwrap();
+<a href=#27 id=27 data-nosnippet>27</a>        FontRef::try_from_slice(<span class="macro">include_bytes!</span>(<span class="string">"../../assets/Montserrat-Bold.ttf"</span>)).unwrap();
 <a href=#28 id=28 data-nosnippet>28</a>    <span class="kw">static </span><span class="kw-2">ref </span>BODY_FONT: FontRef&lt;<span class="lifetime">'static</span>&gt; =
-<a href=#29 id=29 data-nosnippet>29</a>        FontRef::try_from_slice(<span class="macro">include_bytes!</span>(<span class="string">"../assets/Lora-Regular.ttf"</span>)).unwrap();
+<a href=#29 id=29 data-nosnippet>29</a>        FontRef::try_from_slice(<span class="macro">include_bytes!</span>(<span class="string">"../../assets/Lora-Regular.ttf"</span>)).unwrap();
 <a href=#30 id=30 data-nosnippet>30</a>}
 <a href=#31 id=31 data-nosnippet>31</a>
 <a href=#32 id=32 data-nosnippet>32</a><span class="kw">pub fn </span>create_certificate(
@@ -77,7 +77,7 @@
 <a href=#77 id=77 data-nosnippet>77</a>    );
 <a href=#78 id=78 data-nosnippet>78</a>
 <a href=#79 id=79 data-nosnippet>79</a>    <span class="comment">// Load and draw logo
-<a href=#80 id=80 data-nosnippet>80</a>    </span><span class="kw">let </span>logo_bytes = <span class="macro">include_bytes!</span>(<span class="string">"../assets/favicon.png"</span>);
+<a href=#80 id=80 data-nosnippet>80</a>    </span><span class="kw">let </span>logo_bytes = <span class="macro">include_bytes!</span>(<span class="string">"../../assets/favicon.png"</span>);
 <a href=#81 id=81 data-nosnippet>81</a>    <span class="kw">let </span>logo_image = ImageReader::new(Cursor::new(logo_bytes))
 <a href=#82 id=82 data-nosnippet>82</a>        .with_guessed_format()
 <a href=#83 id=83 data-nosnippet>83</a>        .expect(<span class="string">"Failed to guess image format"</span>)

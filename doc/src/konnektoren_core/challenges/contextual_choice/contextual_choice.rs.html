@@ -10,7 +10,7 @@
 <a href=#10 id=10 data-nosnippet>10</a>
 <a href=#11 id=11 data-nosnippet>11</a><span class="kw">impl </span>Default <span class="kw">for </span>ContextualChoice {
 <a href=#12 id=12 data-nosnippet>12</a>    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-<a href=#13 id=13 data-nosnippet>13</a>        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">"../../assets/contextual_choice_default.yml"</span>);
+<a href=#13 id=13 data-nosnippet>13</a>        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">"../../../assets/contextual_choice_default.yml"</span>);
 <a href=#14 id=14 data-nosnippet>14</a>        serde_yaml::from_str(data).unwrap()
 <a href=#15 id=15 data-nosnippet>15</a>    }
 <a href=#16 id=16 data-nosnippet>16</a>}
@@ -114,7 +114,7 @@
 <a href=#114 id=114 data-nosnippet>114</a>
 <a href=#115 id=115 data-nosnippet>115</a>    <span class="attr">#[test]
 <a href=#116 id=116 data-nosnippet>116</a>    </span><span class="kw">fn </span>test_contextual_choice_file_deserialization() {
-<a href=#117 id=117 data-nosnippet>117</a>        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">"../../assets/konjunktiv-2.yml"</span>);
+<a href=#117 id=117 data-nosnippet>117</a>        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">"../../../assets/konjunktiv-2.yml"</span>);
 <a href=#118 id=118 data-nosnippet>118</a>        <span class="kw">let </span>contextual_choice: ContextualChoice = serde_yaml::from_str(data).unwrap();
 <a href=#119 id=119 data-nosnippet>119</a>
 <a href=#120 id=120 data-nosnippet>120</a>        <span class="macro">assert_eq!</span>(contextual_choice.id, <span class="string">"konjunktiv-2"</span>);

@@ -24,7 +24,7 @@
 <a href=#24 id=24 data-nosnippet>24</a>
 <a href=#25 id=25 data-nosnippet>25</a><span class="kw">impl </span>Default <span class="kw">for </span>ChallengeType {
 <a href=#26 id=26 data-nosnippet>26</a>    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-<a href=#27 id=27 data-nosnippet>27</a>        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">"../assets/konnektoren.yml"</span>);
+<a href=#27 id=27 data-nosnippet>27</a>        <span class="kw">let </span>data = <span class="macro">include_str!</span>(<span class="string">"../../assets/konnektoren.yml"</span>);
 <a href=#28 id=28 data-nosnippet>28</a>        serde_yaml::from_str(data).unwrap()
 <a href=#29 id=29 data-nosnippet>29</a>    }
 <a href=#30 id=30 data-nosnippet>30</a>}
@@ -363,7 +363,7 @@
 <a href=#363 id=363 data-nosnippet>363</a>    <span class="attr">#[test]
 <a href=#364 id=364 data-nosnippet>364</a>    </span><span class="kw">fn </span>contextual_choice_performance() {
 <a href=#365 id=365 data-nosnippet>365</a>        <span class="kw">let </span>challenge: ContextualChoice =
-<a href=#366 id=366 data-nosnippet>366</a>            serde_yaml::from_str(<span class="macro">include_str!</span>(<span class="string">"../assets/konjunktiv-2.yml"</span>)).unwrap();
+<a href=#366 id=366 data-nosnippet>366</a>            serde_yaml::from_str(<span class="macro">include_str!</span>(<span class="string">"../../assets/konjunktiv-2.yml"</span>)).unwrap();
 <a href=#367 id=367 data-nosnippet>367</a>        <span class="kw">let </span>result = ChallengeResult::ContextualChoice(<span class="macro">vec!</span>[
 <a href=#368 id=368 data-nosnippet>368</a>            ContextItemChoiceAnswers { ids: <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">0</span>] },
 <a href=#369 id=369 data-nosnippet>369</a>            ContextItemChoiceAnswers { ids: <span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">0</span>] },
