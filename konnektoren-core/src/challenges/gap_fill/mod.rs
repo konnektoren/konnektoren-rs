@@ -5,6 +5,7 @@ pub struct GapFill {
     pub id: String,
     pub name: String,
     pub description: String,
+    pub lang: String,
     pub questions: Vec<GapFillQuestion>,
 }
 
@@ -81,6 +82,7 @@ mod tests {
         id: "past-tense"
         name: "Past Tense Exercise"
         description: "Fill in the correct past tense forms"
+        lang: "de"
         questions:
           - sentence: "Ich __ nach Berlin __ (fahren)."
             gaps:
@@ -112,6 +114,7 @@ mod tests {
             id: "test".to_string(),
             name: "Test".to_string(),
             description: "Test".to_string(),
+            lang: "de".to_string(),
             questions: vec![GapFillQuestion {
                 sentence: "Ich __ nach Berlin __ (fahren).".to_string(),
                 gaps: vec![

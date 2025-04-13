@@ -2,6 +2,7 @@
 id: "gap-fill-example" # Unique identifier for this challenge
 name: "Gap Fill Exercise" # Display name of the challenge
 description: "Practice filling in the correct words in German sentences" # Challenge description
+lang: "de" # Language of the challenge
 
 questions:
   - sentence: "Ich __ nach Berlin __ (fahren)." # The sentence with gaps marked by __
