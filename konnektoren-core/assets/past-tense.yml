@@ -2,6 +2,7 @@
 id: "past_tense"
 name: "Past Tense Exercise"
 description: "Fill in the correct past tense forms"
+lang: "de"
 questions:
   - sentence: "Ich __ nach Berlin __ (fahren)."
     gaps:
