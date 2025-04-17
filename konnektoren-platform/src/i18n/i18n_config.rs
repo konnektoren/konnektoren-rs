@@ -51,7 +51,22 @@ impl I18nConfig {
 
         let translation = self.translations.get(&language).unwrap_or(&Value::Null);
 
-        translation[text].as_str().unwrap_or(text).to_string()
+        // Check if translation exists
+        let result = translation[text].as_str().unwrap_or(text).to_string();
+
+        // Log a warning if the translation is missing (i.e., returns the original text)
+        if result == text {
+            // Truncate the text for logging if it's too long
+            let truncated_text = if text.len() > 20 {
+                format!("{}...", &text[..17])
+            } else {
+                text.to_string()
+            };
+
+            log::warn!("⚠️ no '{}' in '{}'", truncated_text, language);
+        }
+
+        result
     }
 
     pub fn merge_translation(&mut self, lang: &Language, translation: Value) {
