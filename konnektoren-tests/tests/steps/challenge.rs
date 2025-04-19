@@ -141,7 +141,7 @@ async fn the_multiple_choice_challenge_is_solved_with_option(world: &mut BddWorl
 async fn the_result_performance_should_be_at_least(world: &mut BddWorld, performance: u32) {
     let challenge_result = world.challenge_result.as_ref().unwrap();
     let challenge = &world.challenge;
-    let score = challenge.as_ref().unwrap().performance(&challenge_result);
+    let score = challenge.as_ref().unwrap().performance(challenge_result);
     assert!(score >= performance);
 }
 

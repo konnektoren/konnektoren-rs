@@ -30,7 +30,7 @@ impl Default for BddWorld {
             ..Default::default()
         };
 
-        let world = Self {
+        Self {
             session,
             challenge: None,
             challenge_type,
@@ -39,8 +39,7 @@ impl Default for BddWorld {
             factory: Some(factory),
             last_command_result: Ok(()),
             game,
-        };
-        world
+        }
     }
 }
 
