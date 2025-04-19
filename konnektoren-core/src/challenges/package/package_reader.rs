@@ -120,8 +120,8 @@ mod tests {
             let original_value = env::var(&name).ok();
 
             match &value {
-                Some(value) => env::set_var(&name, value),
-                None => env::remove_var(&name),
+                Some(value) => unsafe { env::set_var(&name, value) },
+                None => unsafe { env::remove_var(&name) },
             }
 
             Self {
@@ -134,8 +134,8 @@ mod tests {
     impl Drop for SetEnvVariableGuard {
         fn drop(&mut self) {
             match &self.original_value {
-                Some(value) => env::set_var(&self.name, value),
-                None => env::remove_var(&self.name),
+                Some(value) => unsafe { env::set_var(&self.name, value) },
+                None => unsafe { env::remove_var(&self.name) },
             }
         }
     }
