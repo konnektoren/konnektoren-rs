@@ -20,7 +20,7 @@ impl<'a> ChallengeTabs<'a> {
     }
 }
 
-impl<'a> Widget for ChallengeTabs<'a> {
+impl Widget for ChallengeTabs<'_> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let titles = self.game_path.challenge_ids();
         let highlight_style = (Color::default(), Color::Red);

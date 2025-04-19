@@ -19,7 +19,7 @@ impl<'a> ResultsWidget<'a> {
     }
 }
 
-impl<'a> Widget for ResultsWidget<'a> {
+impl Widget for ResultsWidget<'_> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let layout = layout::Layout::default()
             .direction(layout::Direction::Vertical)

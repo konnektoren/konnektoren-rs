@@ -107,7 +107,7 @@ impl<'a> MapWidget<'a> {
     }
 }
 
-impl<'a> Widget for MapWidget<'a> {
+impl Widget for MapWidget<'_> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let canvas = Canvas::default()
             .block(Block::bordered().title("World"))

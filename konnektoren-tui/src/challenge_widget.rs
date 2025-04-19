@@ -12,7 +12,7 @@ pub struct ChallengeWidget<'a> {
     pub current_question: usize,
 }
 
-impl<'a> Widget for ChallengeWidget<'a> {
+impl Widget for ChallengeWidget<'_> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         match self.challenge.challenge_type {
             ChallengeType::MultipleChoice(ref dataset) => {

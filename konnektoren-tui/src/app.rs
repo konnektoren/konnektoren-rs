@@ -211,7 +211,7 @@ mod tests {
     fn handle_key_event() -> anyhow::Result<()> {
         let mut app = App::default();
         app.handle_key_event(KeyCode::Char('q').into()).unwrap();
-        assert_eq!(app.exit, true);
+        assert!(app.exit);
 
         Ok(())
     }
