@@ -1,9 +1,9 @@
 use super::keypair_from_static_str;
 use crate::challenges::PerformanceRecord;
-use anyhow::{anyhow, Result};
-use base64::{engine::general_purpose, Engine as _};
+use anyhow::{Result, anyhow};
+use base64::{Engine as _, engine::general_purpose};
 use chrono::{DateTime, Utc};
-use ed25519_dalek::{ed25519::SignatureBytes, Signature, Signer, Verifier};
+use ed25519_dalek::{Signature, Signer, Verifier, ed25519::SignatureBytes};
 use serde::{Deserialize, Serialize};
 use sha2::Digest;
 use sha2::Sha256;

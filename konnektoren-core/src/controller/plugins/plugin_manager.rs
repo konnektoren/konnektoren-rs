@@ -55,9 +55,9 @@ impl PluginManager {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::controller::plugins::controller_plugin::MockControllerPlugin;
     use crate::controller::GameController;
     use crate::controller::GameControllerTrait;
+    use crate::controller::plugins::controller_plugin::MockControllerPlugin;
     use crate::game::Game;
     use crate::persistence::MemoryPersistence;
 

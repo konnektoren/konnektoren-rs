@@ -24,9 +24,9 @@ pub trait Performance {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::challenges::multiple_choice::MultipleChoiceOption;
     use crate::challenges::ChallengeResult;
     use crate::challenges::ChallengeType;
+    use crate::challenges::multiple_choice::MultipleChoiceOption;
 
     #[test]
     fn test_performance() {

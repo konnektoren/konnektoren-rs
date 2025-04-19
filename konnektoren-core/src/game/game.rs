@@ -1,7 +1,7 @@
+use crate::Xp;
 use crate::challenges::{
     Challenge, ChallengeConfig, ChallengeFactory, ChallengeHistory, Performance,
 };
-use crate::Xp;
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 

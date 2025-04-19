@@ -26,6 +26,7 @@ pub type Xp = u32;
 
 /// This is a prelude module that re-exports the most important types and traits.
 pub mod prelude {
+    pub use crate::Xp;
     pub use crate::challenges::Challenge;
     pub use crate::challenges::ChallengeConfig;
     pub use crate::challenges::ChallengeFactory;
@@ -41,7 +42,6 @@ pub mod prelude {
     pub use crate::game::GamePath;
     pub use crate::player_profile::PlayerProfile;
     pub use crate::session::Session;
-    pub use crate::Xp;
 
     pub use crate::analytics::metrics::Metric;
 

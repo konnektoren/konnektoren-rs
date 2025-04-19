@@ -1,4 +1,4 @@
-use super::{event::EventTrait, EventType};
+use super::{EventType, event::EventTrait};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]

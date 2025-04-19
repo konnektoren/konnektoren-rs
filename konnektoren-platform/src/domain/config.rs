@@ -16,4 +16,9 @@ pub trait DomainConfig: Debug + Clone + PartialEq {
 
     /// Hostname of the domain
     fn hostname(&self) -> &str;
+
+    /// Optional description of the domain
+    fn description(&self) -> Option<&str> {
+        None
+    }
 }

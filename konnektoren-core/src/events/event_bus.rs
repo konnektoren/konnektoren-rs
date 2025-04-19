@@ -1,6 +1,6 @@
 use super::{
-    event::{Event, EventTrait},
     EventType,
+    event::{Event, EventTrait},
 };
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -40,10 +40,10 @@ impl EventBus {
 
 #[cfg(test)]
 mod tests {
-    use super::super::{event::Event, GameEvent};
+    use super::super::{GameEvent, event::Event};
     use super::*;
-    use std::sync::atomic::{AtomicUsize, Ordering};
     use std::sync::Arc;
+    use std::sync::atomic::{AtomicUsize, Ordering};
 
     #[test]
     fn test_event_bus() {

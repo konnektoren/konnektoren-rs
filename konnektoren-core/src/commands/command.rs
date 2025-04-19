@@ -1,8 +1,8 @@
 //! This module defines the core command structure and traits for the game.
 
+use super::CommandType;
 use super::challenge_command::ChallengeCommand;
 use super::game_command::GameCommand;
-use super::CommandType;
 use crate::game::GameState;
 use anyhow::Result;
 

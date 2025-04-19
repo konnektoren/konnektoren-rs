@@ -41,8 +41,8 @@ mod tests {
 
     use super::super::{Command, CommandType};
     use super::*;
-    use std::sync::atomic::{AtomicUsize, Ordering};
     use std::sync::Arc;
+    use std::sync::atomic::{AtomicUsize, Ordering};
 
     #[test]
     fn test_command_bus() {

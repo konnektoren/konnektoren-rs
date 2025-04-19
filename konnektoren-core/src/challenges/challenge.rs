@@ -1,7 +1,7 @@
+use crate::challenges::Timed;
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_result::ChallengeResult;
 use crate::challenges::challenge_type::ChallengeType;
-use crate::challenges::Timed;
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -145,8 +145,8 @@ impl Timed for Challenge {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::challenges::challenge_input::ChallengeInput;
     use crate::challenges::MultipleChoiceOption;
+    use crate::challenges::challenge_input::ChallengeInput;
 
     #[test]
     fn new_challenge() {

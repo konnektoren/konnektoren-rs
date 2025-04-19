@@ -102,7 +102,7 @@ impl Metric for SuccessRateMetric {
 mod tests {
     use super::*;
     use crate::challenges::challenge_type::tests::{
-        create_successful_challenge, create_unsuccessful_challenge, BASE_TIMESTAMP,
+        BASE_TIMESTAMP, create_successful_challenge, create_unsuccessful_challenge,
     };
     use chrono::{Duration, TimeZone, Utc};
 

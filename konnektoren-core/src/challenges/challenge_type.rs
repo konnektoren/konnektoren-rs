@@ -404,12 +404,16 @@ pub mod tests {
             .collect();
 
         assert!(!variants.is_empty());
-        assert!(variants
-            .iter()
-            .any(|v| matches!(v, ChallengeType::MultipleChoice(_))));
-        assert!(variants
-            .iter()
-            .any(|v| matches!(v, ChallengeType::ContextualChoice(_))));
+        assert!(
+            variants
+                .iter()
+                .any(|v| matches!(v, ChallengeType::MultipleChoice(_)))
+        );
+        assert!(
+            variants
+                .iter()
+                .any(|v| matches!(v, ChallengeType::ContextualChoice(_)))
+        );
     }
 
     #[test]

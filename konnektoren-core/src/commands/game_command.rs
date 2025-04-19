@@ -5,7 +5,7 @@ use super::command_type::CommandType;
 use crate::challenges::Timed;
 use crate::game::GamePath;
 use crate::game::GameState;
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 
 /// Represents game-level commands that can be executed on the game state.
 #[derive(Debug, Clone, PartialEq)]

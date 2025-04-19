@@ -11,6 +11,8 @@ pub struct LanguageDomainConfig {
     pub locale: String,
     pub icon: String,
     pub hostname: String,
+    #[serde(default)]
+    pub description: Option<String>,
 }
 
 impl DomainConfig for LanguageDomainConfig {
@@ -32,6 +34,10 @@ impl DomainConfig for LanguageDomainConfig {
 
     fn hostname(&self) -> &str {
         &self.hostname
+    }
+
+    fn description(&self) -> Option<&str> {
+        self.description.as_deref()
     }
 }
 
@@ -59,6 +65,12 @@ impl LanguageDomain {
                     "en" => "en.konnektoren.help".to_string(),
                     "es" => "es.konnektoren.help".to_string(),
                     _ => "konnektoren.help".to_string(),
+                },
+                description: match code {
+                    "de" => Some("Master German grammar from A1 to C1".to_string()),
+                    "en" => Some("Practice English grammar with interactive exercises".to_string()),
+                    "es" => Some("Learn Spanish grammar through engaging activities".to_string()),
+                    _ => None,
                 },
             },
         }
@@ -107,10 +119,11 @@ mod tests {
             locale: "de-DE".to_string(),
             icon: "🇩🇪".to_string(),
             hostname: "konnektoren.help".to_string(),
+            description: Some("Master German grammar from A1 to C1".to_string()),
         };
 
         let json = serde_json::to_string(&config).expect("Failed to serialize to JSON");
-        let expected_json = r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE","icon":"🇩🇪","hostname":"konnektoren.help"}"#;
+        let expected_json = r#"{"code":"de","name":"Learn German","base_path":"/de","locale":"de-DE","icon":"🇩🇪","hostname":"konnektoren.help","description":"Master German grammar from A1 to C1"}"#;
         assert_eq!(json, expected_json);
 
         let deserialized: LanguageDomainConfig =
@@ -162,6 +175,7 @@ mod tests {
             locale: "es-ES".to_string(),
             icon: "🇪🇸".to_string(),
             hostname: "es.konnektoren.help".to_string(),
+            description: Some("Learn Spanish grammar through engaging activities".to_string()),
         };
 
         let domain = LanguageDomain::from(config.clone());

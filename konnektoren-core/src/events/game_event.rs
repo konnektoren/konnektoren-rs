@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{event::EventTrait, EventType};
+use super::{EventType, event::EventTrait};
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]
 pub enum GameEvent {

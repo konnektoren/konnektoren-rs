@@ -1,9 +1,9 @@
 use super::CertificateData;
 use ab_glyph::{Font, FontRef, PxScale, ScaleFont};
 use anyhow::Result;
-use base64::engine::general_purpose;
 use base64::Engine as _;
-use image::{imageops, DynamicImage, ImageBuffer, ImageFormat, ImageReader, Luma, Rgba, RgbaImage};
+use base64::engine::general_purpose;
+use image::{DynamicImage, ImageBuffer, ImageFormat, ImageReader, Luma, Rgba, RgbaImage, imageops};
 use imageproc::drawing::draw_text_mut;
 use imageproc::rect::Rect;
 use lazy_static::lazy_static;
