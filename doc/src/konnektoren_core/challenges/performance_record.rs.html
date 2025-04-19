@@ -100,7 +100,7 @@
 <a href=#100 id=100 data-nosnippet>100</a>    <span class="kw">fn </span>elapsed_time(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Duration&gt; {
 <a href=#101 id=101 data-nosnippet>101</a>        <span class="kw">let </span><span class="kw-2">mut </span>elapsed_time = Duration::zero();
 <a href=#102 id=102 data-nosnippet>102</a>        <span class="kw">for </span>(<span class="kw">_</span>, <span class="kw">_</span>, time) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.challenges_performance {
-<a href=#103 id=103 data-nosnippet>103</a>            elapsed_time = elapsed_time + Duration::milliseconds(<span class="kw-2">*</span>time <span class="kw">as </span>i64);
+<a href=#103 id=103 data-nosnippet>103</a>            elapsed_time += Duration::milliseconds(<span class="kw-2">*</span>time <span class="kw">as </span>i64);
 <a href=#104 id=104 data-nosnippet>104</a>        }
 <a href=#105 id=105 data-nosnippet>105</a>        <span class="prelude-val">Some</span>(elapsed_time)
 <a href=#106 id=106 data-nosnippet>106</a>    }

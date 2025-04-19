@@ -40,7 +40,7 @@
 <a href=#40 id=40 data-nosnippet>40</a>            ChallengeCommand::NextTask =&gt; <span class="self">Self</span>::next_task(state),
 <a href=#41 id=41 data-nosnippet>41</a>            ChallengeCommand::PreviousTask =&gt; <span class="self">Self</span>::previous_task(state),
 <a href=#42 id=42 data-nosnippet>42</a>            ChallengeCommand::SolveOption(option_index) =&gt; <span class="self">Self</span>::solve_option(state, <span class="kw-2">*</span>option_index),
-<a href=#43 id=43 data-nosnippet>43</a>            ChallengeCommand::Finish(result) =&gt; <span class="self">Self</span>::finish_challenge(state, <span class="kw-2">&amp;</span>result),
+<a href=#43 id=43 data-nosnippet>43</a>            ChallengeCommand::Finish(result) =&gt; <span class="self">Self</span>::finish_challenge(state, result),
 <a href=#44 id=44 data-nosnippet>44</a>        }
 <a href=#45 id=45 data-nosnippet>45</a>    }
 <a href=#46 id=46 data-nosnippet>46</a>
@@ -70,7 +70,7 @@
 <a href=#70 id=70 data-nosnippet>70</a>    ///
 <a href=#71 id=71 data-nosnippet>71</a>    /// A `Result` indicating success or containing an error if there are no more tasks.
 <a href=#72 id=72 data-nosnippet>72</a>    </span><span class="kw">fn </span>next_task(state: <span class="kw-2">&amp;mut </span>GameState) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-<a href=#73 id=73 data-nosnippet>73</a>        <span class="kw">let </span>current_game_path: <span class="kw-2">&amp;</span>GamePath = <span class="kw-2">&amp;</span>state
+<a href=#73 id=73 data-nosnippet>73</a>        <span class="kw">let </span>current_game_path: <span class="kw-2">&amp;</span>GamePath = state
 <a href=#74 id=74 data-nosnippet>74</a>            .game
 <a href=#75 id=75 data-nosnippet>75</a>            .game_paths
 <a href=#76 id=76 data-nosnippet>76</a>            .get(state.current_game_path)

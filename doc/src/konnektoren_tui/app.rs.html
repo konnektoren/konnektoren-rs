@@ -211,7 +211,7 @@
 <a href=#211 id=211 data-nosnippet>211</a>    </span><span class="kw">fn </span>handle_key_event() -&gt; anyhow::Result&lt;()&gt; {
 <a href=#212 id=212 data-nosnippet>212</a>        <span class="kw">let </span><span class="kw-2">mut </span>app = App::default();
 <a href=#213 id=213 data-nosnippet>213</a>        app.handle_key_event(KeyCode::Char(<span class="string">'q'</span>).into()).unwrap();
-<a href=#214 id=214 data-nosnippet>214</a>        <span class="macro">assert_eq!</span>(app.exit, <span class="bool-val">true</span>);
+<a href=#214 id=214 data-nosnippet>214</a>        <span class="macro">assert!</span>(app.exit);
 <a href=#215 id=215 data-nosnippet>215</a>
 <a href=#216 id=216 data-nosnippet>216</a>        <span class="prelude-val">Ok</span>(())
 <a href=#217 id=217 data-nosnippet>217</a>    }

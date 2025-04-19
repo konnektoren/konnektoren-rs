@@ -32,8 +32,8 @@
 <a href=#32 id=32 data-nosnippet>32</a>    }
 <a href=#33 id=33 data-nosnippet>33</a>
 <a href=#34 id=34 data-nosnippet>34</a>    <span class="kw">pub fn </span>solved(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-<a href=#35 id=35 data-nosnippet>35</a>        <span class="self">self</span>.challenge_result.len() &gt; <span class="number">0
-<a href=#36 id=36 data-nosnippet>36</a>    </span>}
+<a href=#35 id=35 data-nosnippet>35</a>        !<span class="self">self</span>.challenge_result.is_empty()
+<a href=#36 id=36 data-nosnippet>36</a>    }
 <a href=#37 id=37 data-nosnippet>37</a>}
 <a href=#38 id=38 data-nosnippet>38</a>
 <a href=#39 id=39 data-nosnippet>39</a><span class="kw">impl </span>Solvable <span class="kw">for </span>Challenge {
@@ -66,7 +66,7 @@
 <a href=#66 id=66 data-nosnippet>66</a>                            <span class="prelude-val">Ok</span>(item.choices.iter().zip(<span class="kw-2">&amp;</span>choice.ids).all(|(c, <span class="kw-2">&amp;</span>id)| {
 <a href=#67 id=67 data-nosnippet>67</a>                                c.options
 <a href=#68 id=68 data-nosnippet>68</a>                                    .get(id)
-<a href=#69 id=69 data-nosnippet>69</a>                                    .map_or(<span class="bool-val">false</span>, |selected| <span class="kw-2">*</span>selected == c.correct_answer)
+<a href=#69 id=69 data-nosnippet>69</a>                                    .is_some_and(|selected| <span class="kw-2">*</span>selected == c.correct_answer)
 <a href=#70 id=70 data-nosnippet>70</a>                            }))
 <a href=#71 id=71 data-nosnippet>71</a>                        } <span class="kw">else </span>{
 <a href=#72 id=72 data-nosnippet>72</a>                            <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>)
@@ -166,7 +166,7 @@
 <a href=#166 id=166 data-nosnippet>166</a>        <span class="kw">let </span>input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
 <a href=#167 id=167 data-nosnippet>167</a>        <span class="kw">let </span>result = challenge.solve(input);
 <a href=#168 id=168 data-nosnippet>168</a>        <span class="macro">assert!</span>(result.is_ok());
-<a href=#169 id=169 data-nosnippet>169</a>        <span class="macro">assert_eq!</span>(result.unwrap(), <span class="bool-val">true</span>);
+<a href=#169 id=169 data-nosnippet>169</a>        <span class="macro">assert!</span>(result.unwrap());
 <a href=#170 id=170 data-nosnippet>170</a>    }
 <a href=#171 id=171 data-nosnippet>171</a>
 <a href=#172 id=172 data-nosnippet>172</a>    <span class="attr">#[test]

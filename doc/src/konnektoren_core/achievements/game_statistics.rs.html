@@ -14,13 +14,13 @@
 <a href=#14 id=14 data-nosnippet>14</a>    }
 <a href=#15 id=15 data-nosnippet>15</a>}
 <a href=#16 id=16 data-nosnippet>16</a>
-<a href=#17 id=17 data-nosnippet>17</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; TotalChallenges <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#17 id=17 data-nosnippet>17</a><span class="kw">impl </span>TotalChallenges <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'_</span>&gt; {
 <a href=#18 id=18 data-nosnippet>18</a>    <span class="kw">fn </span>total_challenges(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
 <a href=#19 id=19 data-nosnippet>19</a>        <span class="self">self</span>.game.challenge_history.len() <span class="kw">as </span>u32
 <a href=#20 id=20 data-nosnippet>20</a>    }
 <a href=#21 id=21 data-nosnippet>21</a>}
 <a href=#22 id=22 data-nosnippet>22</a>
-<a href=#23 id=23 data-nosnippet>23</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AveragePerformance <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#23 id=23 data-nosnippet>23</a><span class="kw">impl </span>AveragePerformance <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'_</span>&gt; {
 <a href=#24 id=24 data-nosnippet>24</a>    <span class="kw">fn </span>average_performance(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f64 {
 <a href=#25 id=25 data-nosnippet>25</a>        <span class="kw">if </span><span class="self">self</span>.game.challenge_history.is_empty() {
 <a href=#26 id=26 data-nosnippet>26</a>            <span class="kw">return </span><span class="number">0.0</span>;
@@ -36,7 +36,7 @@
 <a href=#36 id=36 data-nosnippet>36</a>    }
 <a href=#37 id=37 data-nosnippet>37</a>}
 <a href=#38 id=38 data-nosnippet>38</a>
-<a href=#39 id=39 data-nosnippet>39</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; TotalXp <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#39 id=39 data-nosnippet>39</a><span class="kw">impl </span>TotalXp <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'_</span>&gt; {
 <a href=#40 id=40 data-nosnippet>40</a>    <span class="kw">fn </span>total_xp(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
 <a href=#41 id=41 data-nosnippet>41</a>        <span class="self">self</span>.game
 <a href=#42 id=42 data-nosnippet>42</a>            .challenge_history
@@ -47,7 +47,7 @@
 <a href=#47 id=47 data-nosnippet>47</a>    }
 <a href=#48 id=48 data-nosnippet>48</a>}
 <a href=#49 id=49 data-nosnippet>49</a>
-<a href=#50 id=50 data-nosnippet>50</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; CompletedGamePaths <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#50 id=50 data-nosnippet>50</a><span class="kw">impl </span>CompletedGamePaths <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'_</span>&gt; {
 <a href=#51 id=51 data-nosnippet>51</a>    <span class="kw">fn </span>completed_game_paths(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
 <a href=#52 id=52 data-nosnippet>52</a>        <span class="kw">fn </span>is_game_path_completed(game: <span class="kw-2">&amp;</span>Game, path: <span class="kw-2">&amp;</span>GamePath) -&gt; bool {
 <a href=#53 id=53 data-nosnippet>53</a>            path.challenges.iter().all(|challenge_config| {
@@ -68,7 +68,7 @@
 <a href=#68 id=68 data-nosnippet>68</a>    }
 <a href=#69 id=69 data-nosnippet>69</a>}
 <a href=#70 id=70 data-nosnippet>70</a>
-<a href=#71 id=71 data-nosnippet>71</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; PerfectChallenges <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#71 id=71 data-nosnippet>71</a><span class="kw">impl </span>PerfectChallenges <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'_</span>&gt; {
 <a href=#72 id=72 data-nosnippet>72</a>    <span class="kw">fn </span>perfect_challenges(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
 <a href=#73 id=73 data-nosnippet>73</a>        <span class="self">self</span>.game
 <a href=#74 id=74 data-nosnippet>74</a>            .challenge_history
@@ -79,7 +79,7 @@
 <a href=#79 id=79 data-nosnippet>79</a>    }
 <a href=#80 id=80 data-nosnippet>80</a>}
 <a href=#81 id=81 data-nosnippet>81</a>
-<a href=#82 id=82 data-nosnippet>82</a><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; DifferentChallengeTypesCompleted <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#82 id=82 data-nosnippet>82</a><span class="kw">impl </span>DifferentChallengeTypesCompleted <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'_</span>&gt; {
 <a href=#83 id=83 data-nosnippet>83</a>    <span class="kw">fn </span>different_challenge_types_completed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
 <a href=#84 id=84 data-nosnippet>84</a>        <span class="kw">let </span>unique_types: HashSet&lt;<span class="kw">_</span>&gt; = <span class="self">self
 <a href=#85 id=85 data-nosnippet>85</a>            </span>.game
@@ -93,7 +93,7 @@
 <a href=#93 id=93 data-nosnippet>93</a>}
 <a href=#94 id=94 data-nosnippet>94</a>
 <a href=#95 id=95 data-nosnippet>95</a><span class="comment">// Implement Metric for GameStatistics
-<a href=#96 id=96 data-nosnippet>96</a></span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Metric <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {
+<a href=#96 id=96 data-nosnippet>96</a></span><span class="kw">impl </span>Metric <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'_</span>&gt; {
 <a href=#97 id=97 data-nosnippet>97</a>    <span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
 <a href=#98 id=98 data-nosnippet>98</a>        <span class="string">"game_statistics"
 <a href=#99 id=99 data-nosnippet>99</a>    </span>}
@@ -108,7 +108,7 @@
 <a href=#108 id=108 data-nosnippet>108</a>}
 <a href=#109 id=109 data-nosnippet>109</a>
 <a href=#110 id=110 data-nosnippet>110</a><span class="comment">// Implement AchievementStatistic for GameStatistics
-<a href=#111 id=111 data-nosnippet>111</a></span><span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; AchievementStatistic <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'a</span>&gt; {}
+<a href=#111 id=111 data-nosnippet>111</a></span><span class="kw">impl </span>AchievementStatistic <span class="kw">for </span>GameStatistics&lt;<span class="lifetime">'_</span>&gt; {}
 <a href=#112 id=112 data-nosnippet>112</a>
 <a href=#113 id=113 data-nosnippet>113</a><span class="attr">#[cfg(test)]
 <a href=#114 id=114 data-nosnippet>114</a></span><span class="kw">mod </span>tests {

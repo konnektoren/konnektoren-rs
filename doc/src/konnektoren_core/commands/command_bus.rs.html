@@ -21,7 +21,7 @@
 <a href=#21 id=21 data-nosnippet>21</a>        <span class="kw">let </span><span class="kw-2">mut </span>listeners = <span class="self">self</span>.listeners.lock().unwrap();
 <a href=#22 id=22 data-nosnippet>22</a>        listeners
 <a href=#23 id=23 data-nosnippet>23</a>            .entry(command_type)
-<a href=#24 id=24 data-nosnippet>24</a>            .or_insert_with(Vec::new)
+<a href=#24 id=24 data-nosnippet>24</a>            .or_default()
 <a href=#25 id=25 data-nosnippet>25</a>            .push(Arc::new(callback));
 <a href=#26 id=26 data-nosnippet>26</a>    }
 <a href=#27 id=27 data-nosnippet>27</a>
