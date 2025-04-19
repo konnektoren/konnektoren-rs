@@ -159,13 +159,13 @@ impl From<usize> for TaskPattern {
 
 impl From<String> for TaskPattern {
     fn from(s: String) -> Self {
-        TaskPattern::parse(&s).unwrap_or_else(|_| TaskPattern::Exact(0))
+        TaskPattern::parse(&s).unwrap_or(TaskPattern::Exact(0))
     }
 }
 
 impl<'a> From<&'a str> for TaskPattern {
     fn from(s: &'a str) -> Self {
-        TaskPattern::parse(s).unwrap_or_else(|_| TaskPattern::Exact(0))
+        TaskPattern::parse(s).unwrap_or(TaskPattern::Exact(0))
     }
 }
 
@@ -222,7 +222,7 @@ mod tests {
         let pattern = TaskPattern::Random(5, Some(1..=10));
         let selected = pattern.select_items(&items);
         assert_eq!(selected.len(), 5);
-        assert!(selected.iter().all(|&x| x >= 2 && x <= 11));
+        assert!(selected.iter().all(|&x| (2..=11).contains(&x)));
     }
 
     #[test]

@@ -15,7 +15,7 @@ impl AchievementEvaluator {
         })
     }
 
-    pub fn evaluate<'a>(&self, game: &'a Game) -> Vec<&AchievementDefinition> {
+    pub fn evaluate(&self, game: &Game) -> Vec<&AchievementDefinition> {
         let statistics = GameStatistics::new(game);
         self.definitions
             .iter()

@@ -50,7 +50,7 @@ impl GameCommand {
     ///
     /// A `Result` indicating success or containing an error if there are no more challenges.
     pub fn next_challenge(state: &mut GameState) -> Result<()> {
-        let current_game_path: &GamePath = &state
+        let current_game_path: &GamePath = state
             .game
             .game_paths
             .get(state.current_game_path)
@@ -86,7 +86,7 @@ impl GameCommand {
             return Err(anyhow!("No previous challenges"));
         }
         state.current_challenge_index -= 1;
-        let current_game_path: &GamePath = &state
+        let current_game_path: &GamePath = state
             .game
             .game_paths
             .get(state.current_game_path)
@@ -133,13 +133,13 @@ mod tests {
     fn next_challenge_no_more() {
         let mut state = GameState::default();
         let command = GameCommand::NextChallenge;
-        let _ = command.execute(&mut state).unwrap();
-        let _ = command.execute(&mut state).unwrap();
-        let _ = command.execute(&mut state).unwrap();
-        let _ = command.execute(&mut state).unwrap();
-        let _ = command.execute(&mut state).unwrap();
-        let _ = command.execute(&mut state).unwrap();
-        let _ = command.execute(&mut state).unwrap();
+        command.execute(&mut state).unwrap();
+        command.execute(&mut state).unwrap();
+        command.execute(&mut state).unwrap();
+        command.execute(&mut state).unwrap();
+        command.execute(&mut state).unwrap();
+        command.execute(&mut state).unwrap();
+        command.execute(&mut state).unwrap();
         assert_eq!(state.current_challenge_index, 7);
         let result = command.execute(&mut state);
         assert!(result.is_err());

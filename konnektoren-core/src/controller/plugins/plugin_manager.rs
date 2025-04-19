@@ -7,6 +7,12 @@ pub struct PluginManager {
     plugins: HashMap<String, Arc<dyn ControllerPlugin>>,
 }
 
+impl Default for PluginManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PluginManager {
     pub fn new() -> Self {
         Self {
@@ -74,11 +80,8 @@ mod tests {
 
         let game_controller = controller as Arc<dyn GameControllerTrait>;
 
-        assert_eq!(plugin_manager.init_plugins().is_ok(), true);
-        assert_eq!(plugin_manager.load_plugins(&game_controller).is_ok(), true);
-        assert_eq!(
-            plugin_manager.unload_plugins(&game_controller).is_ok(),
-            true
-        );
+        assert!(plugin_manager.init_plugins().is_ok());
+        assert!(plugin_manager.load_plugins(&game_controller).is_ok());
+        assert!(plugin_manager.unload_plugins(&game_controller).is_ok());
     }
 }

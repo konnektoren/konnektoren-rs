@@ -100,7 +100,7 @@ impl Timed for PerformanceRecord {
     fn elapsed_time(&self) -> Option<Duration> {
         let mut elapsed_time = Duration::zero();
         for (_, _, time) in &self.challenges_performance {
-            elapsed_time = elapsed_time + Duration::milliseconds(*time as i64);
+            elapsed_time += Duration::milliseconds(*time as i64);
         }
         Some(elapsed_time)
     }

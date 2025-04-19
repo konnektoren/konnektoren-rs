@@ -123,7 +123,7 @@ impl Performance for ChallengeType {
                     if item.choices.iter().zip(&choice.ids).all(|(c, &id)| {
                         c.options
                             .get(id)
-                            .map_or(false, |selected| *selected == c.correct_answer)
+                            .is_some_and(|selected| *selected == c.correct_answer)
                     }) {
                         score += 1;
                     }

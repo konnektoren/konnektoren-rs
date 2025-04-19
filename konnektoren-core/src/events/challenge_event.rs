@@ -1,18 +1,13 @@
 use super::{event::EventTrait, EventType};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]
 pub enum ChallengeEvent {
     SolvedCorrect(usize),
     SolvedIncorrect(usize),
+    #[default]
     Started,
     Completed,
-}
-
-impl Default for ChallengeEvent {
-    fn default() -> Self {
-        ChallengeEvent::Started
-    }
 }
 
 impl EventTrait for ChallengeEvent {

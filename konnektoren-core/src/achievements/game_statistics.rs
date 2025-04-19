@@ -14,13 +14,13 @@ impl<'a> GameStatistics<'a> {
     }
 }
 
-impl<'a> TotalChallenges for GameStatistics<'a> {
+impl TotalChallenges for GameStatistics<'_> {
     fn total_challenges(&self) -> u32 {
         self.game.challenge_history.len() as u32
     }
 }
 
-impl<'a> AveragePerformance for GameStatistics<'a> {
+impl AveragePerformance for GameStatistics<'_> {
     fn average_performance(&self) -> f64 {
         if self.game.challenge_history.is_empty() {
             return 0.0;
@@ -36,7 +36,7 @@ impl<'a> AveragePerformance for GameStatistics<'a> {
     }
 }
 
-impl<'a> TotalXp for GameStatistics<'a> {
+impl TotalXp for GameStatistics<'_> {
     fn total_xp(&self) -> u32 {
         self.game
             .challenge_history
@@ -47,7 +47,7 @@ impl<'a> TotalXp for GameStatistics<'a> {
     }
 }
 
-impl<'a> CompletedGamePaths for GameStatistics<'a> {
+impl CompletedGamePaths for GameStatistics<'_> {
     fn completed_game_paths(&self) -> u32 {
         fn is_game_path_completed(game: &Game, path: &GamePath) -> bool {
             path.challenges.iter().all(|challenge_config| {
@@ -68,7 +68,7 @@ impl<'a> CompletedGamePaths for GameStatistics<'a> {
     }
 }
 
-impl<'a> PerfectChallenges for GameStatistics<'a> {
+impl PerfectChallenges for GameStatistics<'_> {
     fn perfect_challenges(&self) -> u32 {
         self.game
             .challenge_history
@@ -79,7 +79,7 @@ impl<'a> PerfectChallenges for GameStatistics<'a> {
     }
 }
 
-impl<'a> DifferentChallengeTypesCompleted for GameStatistics<'a> {
+impl DifferentChallengeTypesCompleted for GameStatistics<'_> {
     fn different_challenge_types_completed(&self) -> u32 {
         let unique_types: HashSet<_> = self
             .game
@@ -93,7 +93,7 @@ impl<'a> DifferentChallengeTypesCompleted for GameStatistics<'a> {
 }
 
 // Implement Metric for GameStatistics
-impl<'a> Metric for GameStatistics<'a> {
+impl Metric for GameStatistics<'_> {
     fn name(&self) -> &str {
         "game_statistics"
     }
@@ -108,7 +108,7 @@ impl<'a> Metric for GameStatistics<'a> {
 }
 
 // Implement AchievementStatistic for GameStatistics
-impl<'a> AchievementStatistic for GameStatistics<'a> {}
+impl AchievementStatistic for GameStatistics<'_> {}
 
 #[cfg(test)]
 mod tests {

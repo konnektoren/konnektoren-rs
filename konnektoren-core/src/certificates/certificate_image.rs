@@ -107,7 +107,7 @@ pub fn create_certificate(
         &mut cert_image,
         &TITLE_FONT,
         TITLE_FONT_SIZE,
-        &title,
+        title,
         120,
         HIGHLIGHT_COLOR,
     );
@@ -249,6 +249,6 @@ mod tests {
 
         let data_url = create_certificate_data_url(&certificate_data, url, issuer).unwrap();
 
-        assert_eq!(data_url.starts_with("data:image/png;base64,"), true);
+        assert!(data_url.starts_with("data:image/png;base64,"));
     }
 }

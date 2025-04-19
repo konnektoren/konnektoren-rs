@@ -40,7 +40,7 @@ impl CommandTrait for ChallengeCommand {
             ChallengeCommand::NextTask => Self::next_task(state),
             ChallengeCommand::PreviousTask => Self::previous_task(state),
             ChallengeCommand::SolveOption(option_index) => Self::solve_option(state, *option_index),
-            ChallengeCommand::Finish(result) => Self::finish_challenge(state, &result),
+            ChallengeCommand::Finish(result) => Self::finish_challenge(state, result),
         }
     }
 
@@ -70,7 +70,7 @@ impl ChallengeCommand {
     ///
     /// A `Result` indicating success or containing an error if there are no more tasks.
     fn next_task(state: &mut GameState) -> Result<()> {
-        let current_game_path: &GamePath = &state
+        let current_game_path: &GamePath = state
             .game
             .game_paths
             .get(state.current_game_path)

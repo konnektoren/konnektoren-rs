@@ -132,10 +132,6 @@ impl AssetLoader {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::fs;
-    use std::io::Write;
-    use tempfile::TempDir;
 
     #[cfg(feature = "csr")]
     use wasm_bindgen_test::*;
@@ -149,16 +145,19 @@ mod tests {
     #[cfg(all(test, feature = "ssr", not(feature = "csr")))]
     #[tokio::test]
     async fn test_load_konnektoren_yaml_ssr() {
+        use crate::asset_loader::AssetLoader;
+        use std::io::Write;
+        use tempfile::TempDir;
         // Create a temporary directory for testing
         let temp_dir = TempDir::new().unwrap();
 
         // Create the assets directory inside the temp dir
         let assets_dir = temp_dir.path().join("assets");
-        fs::create_dir_all(&assets_dir).unwrap();
+        std::fs::create_dir_all(&assets_dir).unwrap();
 
         // Write the konnektoren.yml file to the assets directory
         let yaml_path = assets_dir.join("konnektoren.yml");
-        let mut file = fs::File::create(&yaml_path).unwrap();
+        let mut file = std::fs::File::create(&yaml_path).unwrap();
         file.write_all(KONNEKTOREN_YAML_CONTENT.as_bytes()).unwrap();
 
         // Set the BUILD_DIR environment variable to the temp directory
@@ -184,16 +183,20 @@ mod tests {
     #[cfg(all(test, feature = "ssr", not(feature = "csr")))]
     #[tokio::test]
     async fn test_load_konnektoren_yaml_file_loader() {
+        use crate::asset_loader::AssetLoader;
+        use std::io::Write;
+        use tempfile::TempDir;
+
         // Create a temporary directory for testing
         let temp_dir = TempDir::new().unwrap();
 
         // Create the assets directory inside the temp dir
         let assets_dir = temp_dir.path().join("assets");
-        fs::create_dir_all(&assets_dir).unwrap();
+        std::fs::create_dir_all(&assets_dir).unwrap();
 
         // Write the konnektoren.yml file to the assets directory
         let yaml_path = assets_dir.join("konnektoren.yml");
-        let mut file = fs::File::create(&yaml_path).unwrap();
+        let mut file = std::fs::File::create(&yaml_path).unwrap();
         file.write_all(KONNEKTOREN_YAML_CONTENT.as_bytes()).unwrap();
 
         // Create asset loader with specific directory

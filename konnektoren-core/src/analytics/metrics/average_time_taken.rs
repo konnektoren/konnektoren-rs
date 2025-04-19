@@ -17,7 +17,7 @@ impl AverageTimeTakenMetric {
             .iter()
             .filter_map(|c| c.end_time())
             .max()
-            .unwrap_or_else(|| Utc::now());
+            .unwrap_or_else(Utc::now);
 
         AverageTimeTakenMetric {
             history,
@@ -56,7 +56,7 @@ impl AverageTimeTakenMetric {
 
         let (older_challenges, recent_challenges): (Vec<_>, Vec<_>) = challenges
             .into_iter()
-            .partition(|c| c.start_time().map_or(true, |t| t < window_start));
+            .partition(|c| c.start_time().is_none_or(|t| t < window_start));
 
         // If no recent challenges, return Stable
         if recent_challenges.is_empty() {

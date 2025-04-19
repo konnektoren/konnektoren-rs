@@ -109,7 +109,7 @@ mod tests {
     #[test]
     fn test_trend_clone_and_copy() {
         let trend = Trend::Improving;
-        let cloned = trend.clone();
+        let cloned = trend;
         assert_eq!(trend, cloned);
 
         let copied = trend;

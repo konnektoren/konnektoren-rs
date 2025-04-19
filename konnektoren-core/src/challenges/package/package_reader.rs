@@ -62,8 +62,7 @@ impl PackageReader {
 mod tests {
     use super::*;
     use env_logger;
-    use std::{env, fs};
-    use tempdir::TempDir;
+    use std::env;
 
     #[test]
     fn test_package_reader() {
@@ -82,24 +81,38 @@ mod tests {
     #[cfg(feature = "ssr")]
     #[tokio::test]
     async fn test_package_reader_ssr() {
+        use std::fs;
+        use tempfile::TempDir;
+
         // 1. Create a temporary directory for BUILD_DIR
-        let temp_dir = TempDir::new("test_pkg_").unwrap(); // Added prefix parameter
+        let temp_dir = TempDir::new().unwrap();
         let build_dir_path = temp_dir.path().to_str().unwrap().to_string();
 
         // 2. Create a test zip file within the temporary directory
-        let test_zip_content = include_bytes!("../../assets/articles-pkg.zip");
+        let test_zip_content = include_bytes!("../../../assets/articles-pkg.zip");
         let test_zip_path = format!("{}/test_package.zip", build_dir_path);
         fs::write(&test_zip_path, test_zip_content).unwrap();
 
         // 3. Set the BUILD_DIR environment variable
-        env::set_var("BUILD_DIR", &build_dir_path);
-        let _guard = SetEnvVariableGuard("BUILD_DIR".to_string(), Some(build_dir_path.clone()));
-        // Fixed string conversion
+        let _guard = SetEnvVariableGuard::new("BUILD_DIR", Some(build_dir_path.clone()));
 
-        // Rest of the test remains the same...
+        // 4. Instead of using the file:// protocol, read the file directly
+        // since we're testing the read functionality more than the download part
+        let package_data = fs::read(&test_zip_path).unwrap();
+        let package = PackageReader::read(&package_data).unwrap();
+
+        // 5. Verify the package contents
+        assert_eq!(package.files.len(), 5);
+        assert!(package.get_html_file().is_some());
+        assert!(package.get_css_file().is_some());
+        assert!(package.get_js_file().is_some());
+        assert!(package.get_results_file().is_some());
     }
 
-    struct SetEnvVariableGuard(String, Option<String>);
+    struct SetEnvVariableGuard {
+        name: String,
+        original_value: Option<String>,
+    }
 
     impl SetEnvVariableGuard {
         fn new(name: impl Into<String>, value: Option<String>) -> Self {
@@ -111,15 +124,18 @@ mod tests {
                 None => env::remove_var(&name),
             }
 
-            Self(name, original_value)
+            Self {
+                name,
+                original_value,
+            }
         }
     }
 
     impl Drop for SetEnvVariableGuard {
         fn drop(&mut self) {
-            match &self.1 {
-                Some(value) => env::set_var(&self.0, value),
-                None => env::remove_var(&self.0),
+            match &self.original_value {
+                Some(value) => env::set_var(&self.name, value),
+                None => env::remove_var(&self.name),
             }
         }
     }

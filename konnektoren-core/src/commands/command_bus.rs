@@ -21,7 +21,7 @@ impl CommandBus {
         let mut listeners = self.listeners.lock().unwrap();
         listeners
             .entry(command_type)
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(Arc::new(callback));
     }
 

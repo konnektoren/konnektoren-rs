@@ -42,11 +42,11 @@ impl KonnektorenJs {
             js_executor.create_konnektoren_object(&konnektoren_obj);
         }
 
-        let challenge = ChallengeHandler::new(&js_executor);
+        let challenge = ChallengeHandler::new(js_executor);
         let command = CommandHandler::new(static_window);
         let event = EventHandler::new(static_window);
         let i18n = I18nHandler::new(static_window);
-        let result = ResultHandler::new(&js_executor);
+        let result = ResultHandler::new(js_executor);
 
         Self {
             challenge,

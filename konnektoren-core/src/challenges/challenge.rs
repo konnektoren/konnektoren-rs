@@ -32,7 +32,7 @@ impl Challenge {
     }
 
     pub fn solved(&self) -> bool {
-        self.challenge_result.len() > 0
+        !self.challenge_result.is_empty()
     }
 }
 
@@ -66,7 +66,7 @@ impl Solvable for Challenge {
                             Ok(item.choices.iter().zip(&choice.ids).all(|(c, &id)| {
                                 c.options
                                     .get(id)
-                                    .map_or(false, |selected| *selected == c.correct_answer)
+                                    .is_some_and(|selected| *selected == c.correct_answer)
                             }))
                         } else {
                             Ok(false)
@@ -166,7 +166,7 @@ mod tests {
         let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
         let result = challenge.solve(input);
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), true);
+        assert!(result.unwrap());
     }
 
     #[test]
