@@ -44,6 +44,24 @@ impl I18nConfig {
         Language::all(self.additional_languages.clone())
     }
 
+    // Safely truncate a UTF-8 string to a maximum character count
+    fn safe_truncate(s: &str, max_chars: usize) -> String {
+        if s.chars().count() <= max_chars {
+            return s.to_string();
+        }
+
+        let mut result = String::with_capacity(max_chars);
+        for (i, c) in s.chars().enumerate() {
+            if i >= max_chars {
+                break;
+            }
+            result.push(c);
+        }
+
+        result.push_str("...");
+        result
+    }
+
     pub fn get_translation(&self, text: &str, lang: Option<&Language>) -> String {
         let language = lang
             .map(|l| l.code().to_string())
@@ -56,9 +74,9 @@ impl I18nConfig {
 
         // Log a warning if the translation is missing (i.e., returns the original text)
         if result == text {
-            // Truncate the text for logging if it's too long
-            let truncated_text = if text.len() > 20 {
-                format!("{}...", &text[..17])
+            // Safely truncate the text for logging if it's too long
+            let truncated_text = if text.chars().count() > 20 {
+                Self::safe_truncate(text, 17)
             } else {
                 text.to_string()
             };
@@ -118,7 +136,8 @@ mod tests {
             json!({
                 "Language": "Language",
                 "Hello": "Hello",
-                "Test": "Test"
+                "Test": "Test",
+                "Umlauts Test": "With umlauts"
             }),
         );
 
@@ -127,7 +146,8 @@ mod tests {
             json!({
                 "Language": "Sprache",
                 "Hello": "Hallo",
-                "Test": "Test"
+                "Test": "Test",
+                "Umlauts Test": "Mit Umlauten: äöüß"
             }),
         );
 
@@ -234,6 +254,75 @@ mod tests {
         assert_eq!(
             i18n.t_with_lang("Language", &Language::from("en")),
             "Language"
+        );
+    }
+
+    #[test]
+    fn test_safe_truncate() {
+        // Test regular ASCII strings
+        assert_eq!(I18nConfig::safe_truncate("Hello World", 5), "Hello...");
+        assert_eq!(I18nConfig::safe_truncate("Short", 10), "Short");
+
+        // Test UTF-8 characters
+        assert_eq!(I18nConfig::safe_truncate("äöüß", 2), "äö...");
+
+        // Test string with UTF-8 characters at the truncation boundary
+        assert_eq!(
+            I18nConfig::safe_truncate(
+                "Ordnen Sie die Wörter zu einem korrekten deutschen Satz",
+                17
+            ),
+            "Ordnen Sie die Wö..."
+        );
+
+        // Test empty string
+        assert_eq!(I18nConfig::safe_truncate("", 5), "");
+
+        // Test mixed ASCII and UTF-8
+        assert_eq!(I18nConfig::safe_truncate("Hello 世界", 6), "Hello ...");
+
+        // Test string with emoji
+        assert_eq!(I18nConfig::safe_truncate("Hello 🌍🌎🌏", 7), "Hello 🌍...");
+    }
+
+    #[test]
+    fn test_unicode_translations() {
+        let mut config = I18nConfig::default();
+        let lang = Language::from("de");
+
+        // Add a translation with Unicode characters
+        config.merge_translation(
+            &lang,
+            json!({
+                "German with Umlauts": "Deutsch mit Umlauten: äöüß",
+                "Long Unicode": "Eine sehr lange Zeichenkette mit Umlauten äöüß und mehr Text, der abgeschnitten werden müsste"
+            }),
+        );
+
+        // Test retrieval of the Unicode text
+        assert_eq!(
+            config.get_translation("German with Umlauts", Some(&lang)),
+            "Deutsch mit Umlauten: äöüß"
+        );
+
+        // Test that warning truncation works with Unicode
+        // This should not panic when truncating for logging
+        let _ = config.get_translation(
+            "Long Unicode and more text that isn't in the translations",
+            Some(&lang),
+        );
+
+        // Test keys with Unicode characters
+        config.merge_translation(
+            &lang,
+            json!({
+                "Schlüssel mit Umlauten": "Value with key containing umlauts"
+            }),
+        );
+
+        assert_eq!(
+            config.get_translation("Schlüssel mit Umlauten", Some(&lang)),
+            "Value with key containing umlauts"
         );
     }
 }
