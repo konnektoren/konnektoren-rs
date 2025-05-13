@@ -139,6 +139,7 @@ mod tests {
     #[cfg(feature = "csr")]
     wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 
+    #[cfg(all(test, feature = "ssr", not(feature = "csr")))]
     const KONNEKTOREN_YAML_CONTENT: &str = include_str!("../assets/konnektoren.yml");
 
     // Test for SSR environment

@@ -62,6 +62,7 @@ impl PackageReader {
 mod tests {
     use super::*;
     use env_logger;
+    #[cfg(feature = "ssr")]
     use std::env;
 
     #[test]
@@ -109,11 +110,13 @@ mod tests {
         assert!(package.get_results_file().is_some());
     }
 
+    #[cfg(feature = "ssr")]
     struct SetEnvVariableGuard {
         name: String,
         original_value: Option<String>,
     }
 
+    #[cfg(feature = "ssr")]
     impl SetEnvVariableGuard {
         fn new(name: impl Into<String>, value: Option<String>) -> Self {
             let name = name.into();
@@ -131,6 +134,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "ssr")]
     impl Drop for SetEnvVariableGuard {
         fn drop(&mut self) {
             match &self.original_value {
