@@ -15,6 +15,9 @@ pub struct BddWorld {
     pub factory: Option<ChallengeFactory>,
     pub last_command_result: Result<()>,
     pub game: Game,
+    // Change these to owned values instead of references
+    pub unlocked_achievements: Vec<AchievementDefinition>,
+    pub achievement_notification: Option<AchievementDefinition>,
 }
 
 impl Default for BddWorld {
@@ -39,6 +42,8 @@ impl Default for BddWorld {
             factory: Some(factory),
             last_command_result: Ok(()),
             game,
+            unlocked_achievements: Vec::new(),
+            achievement_notification: None,
         }
     }
 }

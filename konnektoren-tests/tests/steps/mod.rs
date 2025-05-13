@@ -1,3 +1,4 @@
+pub mod achievement;
 pub mod challenge;
 pub mod commands;
 pub mod game;
