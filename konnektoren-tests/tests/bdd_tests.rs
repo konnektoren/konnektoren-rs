@@ -4,7 +4,6 @@ pub mod steps;
 use cucumber::WriterExt;
 use konnektoren_core::prelude::*;
 use std::boxed::Box;
-
 #[derive(Debug, World)]
 pub struct BddWorld {
     pub session: Session,
