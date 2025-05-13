@@ -2,8 +2,11 @@ use anyhow::Result;
 use cucumber::World;
 pub mod steps;
 use cucumber::WriterExt;
+use konnektoren_core::controller::GameController;
 use konnektoren_core::prelude::*;
 use std::boxed::Box;
+use std::sync::Arc;
+
 #[derive(Debug, World)]
 pub struct BddWorld {
     pub session: Session,
@@ -17,6 +20,8 @@ pub struct BddWorld {
     // Change these to owned values instead of references
     pub unlocked_achievements: Vec<AchievementDefinition>,
     pub achievement_notification: Option<AchievementDefinition>,
+    // Add controller field
+    pub controller: Option<Arc<GameController>>,
 }
 
 impl Default for BddWorld {
@@ -43,6 +48,7 @@ impl Default for BddWorld {
             game,
             unlocked_achievements: Vec::new(),
             achievement_notification: None,
+            controller: None, // Initialize controller as None
         }
     }
 }

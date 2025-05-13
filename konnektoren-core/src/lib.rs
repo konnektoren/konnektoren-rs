@@ -38,6 +38,7 @@ pub mod prelude {
     pub use crate::challenges::MultipleChoiceOption;
     pub use crate::challenges::Performance;
     pub use crate::challenges::Question;
+    pub use crate::controller::GameController;
     pub use crate::game::Game;
     pub use crate::game::GamePath;
     pub use crate::player_profile::PlayerProfile;
