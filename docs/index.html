@@ -854,9 +854,34 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_system_overview">4.1. System Overview</h3>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/system-overview-c4.png" alt="system overview c4" width="648" height="1018">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "User", "A learner using the Konnektoren platform")
+
+System_Boundary(konnektoren, "Konnektoren System") {
+    System(frontend, "Frontend", "Web-based UI built with Yew and WebAssembly")
+    System(core, "Konnektoren Core", "Core business logic and game mechanics")
+    System(leaderboard, "Leaderboard Service", "Manages user rankings and scores (Docker Container)")
+}
+
+System_Ext(github_pages, "GitHub Pages", "Hosts static frontend content")
+System_Ext(cloudflare, "Cloudflare", "CDN and proxy service")
+System_Ext(vc_issuer, "vc.konnektoren.help", "Verifiable Credential Issuer")
+
+Rel(user, cloudflare, "Interacts with", "HTTPS")
+Rel(cloudflare, github_pages, "Retrieves static content", "HTTPS")
+Rel(cloudflare, leaderboard, "Proxies API requests", "HTTPS")
+Rel(frontend, core, "Uses")
+Rel(frontend, leaderboard, "Queries/Updates", "REST API")
+Rel(core, leaderboard, "Updates scores")
+Rel(frontend, vc_issuer, "Requests credential issuance", "HTTPS")
+Rel(vc_issuer, user, "Issues verifiable credentials", "OpenID4VC")
+
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1084,9 +1109,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The Konnektoren project is organized into a workspace containing multiple crates, each representing a different part of the system&#8217;s functionality. The following PlantUML diagram provides an overview of the top-level building blocks and their dependencies.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/konnektoren-building-blocks-c4.png" alt="konnektoren building blocks c4" width="684" height="438">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(konnektoren_workspace, "Konnektoren Workspace") {
+    Container(core, "konnektoren-core", "Rust Crate", "Contains the core logic and functionalities of the Konnektoren project")
+    Container(tests, "konnektoren-tests", "Rust Crate", "Contains tests for the core functionalities and other crates")
+    Container(tui, "konnektoren-tui", "Rust Crate", "Provides a text user interface for the Konnektoren project")
+    Container(yew, "konnektoren-yew", "Rust Crate", "Provides a web frontend using the Yew framework")
+}
+
+Rel(tests, core, "Uses")
+Rel(tui, core, "Uses")
+Rel(yew, core, "Uses")
+
+@enduml</pre>
 </div>
 </div>
 <div class="dlist">
@@ -1136,9 +1176,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </dd>
 </dl>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/konnektoren-core-structure-c4.png" alt="konnektoren core structure c4" width="439" height="1008">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(konnektoren_core, "konnektoren-core") {
+    Container(challenges, "Challenges", "Rust Module", "Manages different types of grammar challenges and their evaluation")
+    Container(game, "Game", "Rust Module", "Handles game logic, including paths and states")
+    Container(player_profile, "Player Profile", "Rust Module", "Manages user profiles and progress")
+    Container(session, "Session", "Rust Module", "Handles user sessions and state management")
+    Container(certificates, "Certificates", "Rust Module", "Manages the creation and verification of achievement certificates")
+}
+
+Rel(challenges, game, "Uses")
+Rel(game, player_profile, "Uses")
+Rel(game, session, "Uses")
+Rel(session, player_profile, "Uses")
+Rel(certificates, challenges, "Uses")
+Rel(certificates, player_profile, "Uses")
+
+@enduml</pre>
 </div>
 </div>
 </div>
@@ -1147,9 +1206,54 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The <code>konnektoren-core</code> crate is composed of several modules, each responsible for a specific aspect of the core functionality. Here&#8217;s a more detailed diagram of its internal structure:</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/konnektoren-core-detailed-structure.png" alt="konnektoren core detailed structure" width="1495" height="794">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+package "konnektorencore" {
+    package "challenges" {
+        [challenge]
+        [challenge_config]
+        [challenge_factory]
+        [challenge_history]
+        [challenge_input]
+        [challenge_result]
+        [challenge_type]
+        [custom]
+        [events]
+        [informative]
+        [multiple_choice]
+        [performance]
+        [performance_record]
+        [review]
+        [solvable]
+        [sort_table]
+    }
+
+    package "game_module" {
+        [game_logic]
+        [game_path]
+        [game_state]
+        [map]
+    }
+
+    package "certificates" {
+        [certificate_data]
+        [certificate_image]
+    }
+
+    [player_profile]
+    [session]
+    [commands]
+}
+
+challenges ..&gt; game_module : uses
+game_module ..&gt; player_profile : uses
+game_module ..&gt; session : uses
+certificates ..&gt; challenges : uses
+certificates ..&gt; player_profile : uses
+commands ..&gt; game_module : uses
+@enduml</pre>
 </div>
 </div>
 <div class="dlist">
@@ -1203,9 +1307,33 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The command structure in konnektoren-core is designed to handle various actions within the game. It consists of the following main components:</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/command-structure.png" alt="command structure" width="473" height="441">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+package "commands" {
+    interface CommandTrait {
+        +execute(state: &amp;mut GameState) -&gt; Result&lt;()&gt;
+    }
+    enum Command {
+        Game(GameCommand)
+        Challenge(ChallengeCommand)
+    }
+    enum GameCommand {
+        NextChallenge
+        PreviousChallenge
+    }
+    enum ChallengeCommand {
+        NextTask
+        PreviousTask
+        SolveOption(usize)
+        Finish(Option&lt;ChallengeResult&gt;)
+    }
+    CommandTrait &lt;|.. Command
+    Command *-- GameCommand
+    Command *-- ChallengeCommand
+}
+@enduml</pre>
 </div>
 </div>
 <div class="ulist">
@@ -1233,9 +1361,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The event structure in konnektoren-core is designed to handle various occurrences within the game. It consists of the following main components:</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/event-structure.png" alt="event structure" width="362" height="317">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+package "events" {
+    enum Event {
+        Game(GameEvent)
+        Challenge(ChallengeEvent)
+    }
+    enum GameEvent {
+        Started
+    }
+    enum ChallengeEvent {
+        SolvedCorrect(usize)
+        SolvedIncorrect(usize)
+        Started
+        Completed
+    }
+    Event *-- GameEvent
+    Event *-- ChallengeEvent
+}
+@enduml</pre>
 </div>
 </div>
 <div class="ulist">
@@ -1298,9 +1445,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The EventBus is a central component for handling events in the Konnektoren system. It allows for decoupled communication between different parts of the application.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/eventbus-structure.png" alt="eventbus structure" width="422" height="392">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+class EventBus {
+  +subscribe(event_type: EventType, callback: Fn(Event))
+  +publish(event: Event)
+}
+
+enum EventType {
+  Game
+  Challenge
+}
+
+class Event {
+  +get_type(): EventType
+}
+
+EventBus --&gt; "*" Event : publishes
+EventBus --&gt; EventType : uses
+Event --&gt; EventType : has
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1315,9 +1481,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The CommandBus is responsible for handling and executing commands in the Konnektoren system. It centralizes command processing and allows for separation of command dispatch and execution.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/commandbus-structure.png" alt="commandbus structure" width="525" height="409">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+class CommandBus {
+  +subscribe(command_type: CommandType, handler: Fn(Command))
+  +publish(command: Command)
+}
+
+enum CommandType {
+  Game
+  Challenge
+}
+
+class Command {
+  +get_type(): CommandType
+  +execute(state: &amp;mut GameState)
+}
+
+CommandBus --&gt; "*" Command : executes
+CommandBus --&gt; CommandType : uses
+Command --&gt; CommandType : has
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1485,9 +1671,30 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The plugin system integrates closely with the Event and Command system:</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/plugin-integration.png" alt="plugin integration" width="591" height="323">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+participant GameController
+participant PluginManager
+participant Plugin
+participant EventBus
+participant CommandBus
+
+GameController -&gt; PluginManager: init_plugins()
+activate PluginManager
+  PluginManager -&gt; Plugin: init()
+  Plugin --&gt; PluginManager: Ok(())
+deactivate PluginManager
+
+GameController -&gt; PluginManager: load_plugins()
+activate PluginManager
+  PluginManager -&gt; Plugin: load(controller)
+  Plugin -&gt; EventBus: subscribe()
+  Plugin -&gt; CommandBus: subscribe()
+  Plugin --&gt; PluginManager: Ok(())
+deactivate PluginManager
+@enduml</pre>
 </div>
 </div>
 </div>
@@ -1496,9 +1703,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The <code>KonnektorenJs</code> struct provides a bridge between the Rust core functionality and JavaScript, enabling seamless integration of Konnektoren features in web applications.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/konnektoren-js-structure.png" alt="konnektoren js structure" width="987" height="299">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+class KonnektorenJs {
+  +new(window: &amp;Window): KonnektorenJs
+  +set_challenge_data(challenge_data: Custom)
+  +set_result_data(result_data: CustomChallengeResult)
+  +expose_send_event(on_event: F)
+  +expose_execute_command(on_command: F)
+  +execute_js(js_code: &amp;str)
+  +set_i18n_data(i18n_data: serde_json::Value)
+  +finish_challenge(result: Option&lt;CustomChallengeResult&gt;)
+}
+
+KonnektorenJs *-- ChallengeHandler
+KonnektorenJs *-- CommandHandler
+KonnektorenJs *-- EventHandler
+KonnektorenJs *-- I18nHandler
+KonnektorenJs *-- JsExecutor
+KonnektorenJs *-- ResultHandler
+
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1568,9 +1795,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </dd>
 </dl>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/konnektoren-yew-structure-c4.png" alt="konnektoren yew structure c4" width="621" height="807">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(konnektoren_yew, "konnektoren-yew") {
+    Container(app, "App", "Yew Root Component", "Main application component that sets up routing and global state")
+    Container(components, "Components", "Yew UI Components", "Reusable UI components used across different pages")
+    Container(pages, "Pages", "Yew Page Components", "Individual page components for different views in the application")
+    Container(services, "Services", "Rust Modules", "Interfaces with konnektoren-core and handles API calls")
+    Container(managers, "Managers", "Yew Components", "Manage state and data flow for specific features or parts of the UI")
+}
+
+System_Ext(konnektoren_core, "konnektoren-core", "Core library containing business logic")
+
+Rel(app, components, "Uses")
+Rel(app, pages, "Uses")
+Rel(pages, components, "Uses")
+Rel(pages, services, "Uses")
+Rel(components, konnektoren_core, "Uses")
+Rel(services, konnektoren_core, "Uses")
+Rel(managers, components, "Uses")
+Rel(managers, services, "Uses")
+
+@enduml</pre>
 </div>
 </div>
 <div class="dlist">
@@ -1617,9 +1867,25 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The challenge rating system is a crucial part of the Konnektoren project, allowing users to provide feedback on challenges and view aggregate ratings.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/challenge-rating-system.png" alt="challenge rating system" width="598" height="740">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "A user of the Konnektoren system")
+
+System_Boundary(konnektoren, "Konnektoren System") {
+    Container(frontend, "Frontend", "Rust, Yew", "Provides the user interface for interacting with challenges and submitting ratings")
+    Container(backend, "Backend API", "Rust, Axum", "Handles API requests and manages data")
+    ContainerDb(database, "Database", "Redis", "Stores challenge data, user ratings, and reviews")
+}
+
+Rel(user, frontend, "Views challenges, submits ratings and reviews")
+Rel(frontend, backend, "Sends ratings/reviews, requests average ratings", "HTTP/JSON")
+Rel_Neighbor(backend, database, "Reads from and writes to")
+Rel_Back(frontend, user, "Displays average ratings")
+@enduml</pre>
 </div>
 </div>
 <div class="dlist">
@@ -1661,9 +1927,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>This level provides a more detailed view of the frontend components in the Konnektoren Yew application.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/frontend-components-c4.png" alt="frontend components c4" width="668" height="804">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "A user of the Konnektoren system")
+
+System_Boundary(frontend, "Frontend") {
+    Container(cl, "Challenge List", "Yew Component", "Displays available challenges")
+    Container(cd, "Challenge Detail", "Yew Component", "Shows specific challenge information")
+    Container(rf, "Rating Form", "Yew Component", "Allows users to rate challenges")
+    Container(lb, "Leaderboard", "Yew Component", "Displays top-performing users")
+    Container(up, "User Profile", "Yew Component", "Shows user information and progress")
+}
+
+Rel(user, up, "Views profile")
+Rel(user, cl, "Browses challenges")
+Rel(user, lb, "Views leaderboard")
+Rel(cl, cd, "Navigates to")
+Rel(cd, rf, "Includes")
+
+@enduml</pre>
 </div>
 </div>
 <div class="dlist">
@@ -1709,9 +1995,49 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>The Game Controller Provider and Repository Provider are crucial components in the Konnektoren Yew frontend application. They manage the game state, repository access, and provide these services throughout the component tree.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/game-controller-and-repository-providers.png" alt="game controller and repository providers" width="956" height="355">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+package "Frontend" {
+  [GameControllerProvider] as GCP
+  [RepositoryProvider] as RP
+  [GameController] as GC
+  [Repositories] as R
+  [Child Components] as CC
+}
+
+GCP --&gt; GC : Creates and manages
+RP --&gt; R : Creates and manages
+CC --&gt; GCP : Consumes context
+CC --&gt; RP : Consumes context
+
+note right of GCP
+  Yew Component
+  Provides GameController context
+end note
+
+note right of RP
+  Yew Component
+  Provides Repository context
+end note
+
+note right of GC
+  Rust Struct
+  Manages game state and logic
+end note
+
+note right of R
+  Rust Structs
+  Manage data access
+end note
+
+note right of CC
+  Yew Components
+  Various child components in the app
+end note
+
+@enduml</pre>
 </div>
 </div>
 <div class="sect3">
@@ -1989,9 +2315,54 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>The data model is a crucial part of the Konnektoren system, defining the structure and relationships of the core entities. Understanding this model is essential for developers working on the system and for maintaining data integrity across different components.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/data-model.png" alt="data model" width="726" height="423">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+!define TABLE(name,desc) class name as "desc" &lt;&lt; (T,#FFAAAA) &gt;&gt;
+!define PK(x) &lt;u&gt;x&lt;/u&gt;
+!define FK(x) #x
+
+TABLE(PlayerProfile, "PlayerProfile") {
+  PK(id): String
+  name: String
+  xp: Xp
+}
+
+TABLE(Challenge, "Challenge") {
+  PK(id): String
+  challenge_type: ChallengeType
+  challenge_config: ChallengeConfig
+  challenge_result: ChallengeResult
+}
+
+TABLE(GamePath, "GamePath") {
+  PK(id): String
+  name: String
+  challenges: Vec&lt;ChallengeConfig&gt;
+  map: Option&lt;Map&gt;
+}
+
+TABLE(GameState, "GameState") {
+  game: Game
+  challenge: Challenge
+  current_game_path: usize
+  current_challenge_index: usize
+  current_task_index: usize
+}
+
+TABLE(Session, "Session") {
+  PK(id): String
+  FK(player_profile_id): String
+  FK(game_state_id): String
+}
+
+PlayerProfile "1" -- "1" Session
+GameState "1" -- "1" Session
+GamePath "1" *-- "many" Challenge
+Challenge "1" *-- "1" ChallengeConfig
+Challenge "1" *-- "1" ChallengeResult
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2041,9 +2412,23 @@ allowing for more concise and readable code when working with repository data.</
 </li>
 </ul>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/diag-plantuml-md5-825feddd9a1a4d437a7325ed2291e0df.png" alt="Diagram" width="461" height="393">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+package "Achievement System" {
+  [Achievement Configuration] as AC
+  [Achievement Evaluator] as AE
+  [Game Statistics] as GS
+  [Achievement Display] as AD
+}
+
+[Challenge History] --&gt; GS
+AC --&gt; AE
+GS --&gt; AE
+AE --&gt; AD
+
+@enduml</pre>
 </div>
 </div>
 <div style="page-break-after: always;"></div>
@@ -2058,9 +2443,20 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>This scenario describes the process of a user updating their profile name in the <code>konnektoren</code> system. The user&#8217;s name is stored in the browser&#8217;s local storage.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/profile-update.png" alt="profile update" width="428" height="326">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+actor User
+participant WebApp as "Konnektoren Yew"
+participant LocalStorage
+
+User -&gt; WebApp : Open Profile Page
+User -&gt; WebApp : Update Name
+WebApp -&gt; LocalStorage : Save Updated Name
+LocalStorage --&gt; WebApp : Acknowledge Save
+WebApp -&gt; User : Display Success Message
+@enduml</pre>
 </div>
 </div>
 <div class="ulist">
@@ -2088,9 +2484,35 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>This scenario describes the process of a user selecting a challenge on the map in the <code>konnektoren</code> system. The user can view information about the challenge and start it, or encounter an error if they do not have enough points to unlock the challenge.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/user-selects-challenge.png" alt="user selects challenge" width="875" height="664">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+actor User
+participant WebApp as "Konnektoren Yew"
+participant Core as "Konnektoren Core"
+participant LocalStorage
+
+User -&gt; WebApp : Open Map Page
+WebApp -&gt; Core : Load User Profile
+WebApp -&gt; Core : Load Game State
+Core -&gt; LocalStorage : Retrieve User Profile and Game State
+LocalStorage --&gt; Core : Send Profile and Game State Data
+Core --&gt; WebApp : Send Loaded Data
+WebApp -&gt; User : Display Map with Challenges
+
+User -&gt; WebApp : Select Challenge on Map
+WebApp -&gt; Core : Check Challenge Requirements
+alt Challenge Locked
+    Core -&gt; WebApp : Send Error Response
+    WebApp -&gt; User : Display Error Dialog (Challenge Locked)
+else Challenge Unlocked
+    Core -&gt; WebApp : Send Challenge Info
+    WebApp -&gt; User : Display Challenge Info Dialog
+    User -&gt; WebApp : Start Challenge
+    WebApp -&gt; User : Redirect to Challenge URL
+end
+@enduml</pre>
 </div>
 </div>
 <div class="ulist">
@@ -2139,9 +2561,36 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>This scenario describes the process of a user participating in a grammar challenge.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/challenge-participation.png" alt="challenge participation" width="942" height="676">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+actor User
+participant WebApp as "Konnektoren Yew"
+participant Core as "Konnektoren Core"
+participant ChallengeConfig as "Challenge Config"
+participant ChallengeModule as "Challenge Module"
+
+User -&gt; WebApp : Start Challenge
+WebApp -&gt; Core : Request Challenge Data
+Core -&gt; ChallengeConfig : Get Challenge Questions
+ChallengeConfig --&gt; Core : Return Challenge Questions
+Core -&gt; WebApp : Send Challenge Data
+WebApp -&gt; User : Display Challenge Questions
+
+User -&gt; WebApp : Submit Answers
+WebApp -&gt; Core : Send Answers
+Core -&gt; ChallengeModule : Evaluate Answers
+ChallengeModule --&gt; Core : Return Results
+Core -&gt; WebApp : Send Results
+WebApp -&gt; User : Display Results
+
+WebApp -&gt; Core : Award Points
+Core -&gt; UserProfile : Update Points
+UserProfile --&gt; Core : Acknowledge Update
+Core -&gt; WebApp : Confirm Points Awarded
+WebApp -&gt; User : Display Points Awarded
+@enduml</pre>
 </div>
 </div>
 <div class="ulist">
@@ -2205,9 +2654,39 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>This scenario describes the process of a user obtaining a certificate after completing challenges and the interaction with the leaderboard.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/leaderboard-certificate.png" alt="leaderboard certificate" width="917" height="705">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+actor User
+participant WebApp as "Konnektoren Yew"
+participant Core as "Konnektoren Core"
+participant CertificateModule as "Certificate Module"
+participant LeaderboardModule as "Leaderboard Module"
+participant BackendAPI as "Konnektoren API"
+
+User -&gt; WebApp : Visit Profile Page
+WebApp -&gt; Core : Request Profile Data
+Core -&gt; WebApp : Send Profile Data
+WebApp -&gt; User : Display Profile Data
+
+User -&gt; WebApp : Claim Certificate
+WebApp -&gt; CertificateModule : Generate Certificate
+CertificateModule --&gt; WebApp : Return Certificate Data
+
+WebApp -&gt; Core : Send Certificate Data
+Core -&gt; BackendAPI : Store Certificate Data
+BackendAPI --&gt; Core : Acknowledge Data Storage
+Core -&gt; WebApp : Confirm Certificate Stored
+WebApp -&gt; User : Display Certificate
+
+User -&gt; WebApp : Visit Leaderboard
+WebApp -&gt; Core : Request Leaderboard Data
+Core -&gt; BackendAPI : Get Top 10 Performances
+BackendAPI --&gt; Core : Return Top 10 Performances
+Core -&gt; WebApp : Send Leaderboard Data
+WebApp -&gt; User : Display Leaderboard
+@enduml</pre>
 </div>
 </div>
 <div class="ulist">
@@ -2274,9 +2753,29 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>This scenario describes the process of a user obtaining a verifiable credential (badge) after completing challenges.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/vc-issuance-c4.png" alt="vc issuance c4" width="573" height="624">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "A learner who completed challenges")
+
+System_Boundary(konnektoren, "Konnektoren System") {
+    Container(frontend, "Frontend", "Yew/WebAssembly", "Web interface")
+    Container(core, "Core", "Rust", "Business logic")
+}
+
+System_Ext(vc_issuer, "vc.konnektoren.help", "Verifiable Credential Issuer")
+
+Rel(user, frontend, "1. Completes challenges")
+Rel(frontend, core, "2. Verifies completion")
+Rel(core, frontend, "3. Confirms achievement")
+Rel(frontend, vc_issuer, "4. Requests credential", "HTTPS")
+Rel(vc_issuer, frontend, "5. Issues OpenBadgeCredential", "OpenID4VC")
+Rel(frontend, user, "6. Displays QR code for credential")
+
+@enduml</pre>
 </div>
 </div>
 <div class="ulist">
@@ -2310,9 +2809,24 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>This scenario illustrates how the EventBus and CommandBus facilitate communication and action execution in the Konnektoren system.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/event-command-scenario.png" alt="event command scenario" width="779" height="294">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+participant "User Interface" as UI
+participant "Game Logic" as Game
+participant "EventBus" as EB
+participant "CommandBus" as CB
+participant "Challenge Module" as CM
+
+UI -&gt; CB : Publish(NextChallengeCommand)
+CB -&gt; Game : Execute(NextChallengeCommand)
+Game -&gt; CM : Load Next Challenge
+CM --&gt; Game : Challenge Loaded
+Game -&gt; EB : Publish(ChallengeLoadedEvent)
+EB -&gt; UI : Notify(ChallengeLoadedEvent)
+UI -&gt; User : Update Display
+@enduml</pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -2346,9 +2860,27 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>This scenario demonstrates how the GameController manages game state and handles commands.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/game-controller-interaction.png" alt="game controller interaction" width="1017" height="352">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+participant "Client" as C
+participant "GameController" as GC
+participant "CommandBus" as CB
+participant "EventBus" as EB
+participant "GameState" as GS
+participant "Persistence" as P
+
+C -&gt; GC: publish_command(NextChallengeCommand)
+GC -&gt; CB: publish(NextChallengeCommand)
+CB -&gt; GC: handle_command(NextChallengeCommand)
+GC -&gt; GS: execute(NextChallengeCommand)
+GS --&gt; GC: state updated
+GC -&gt; EB: publish(ChallengeChangedEvent)
+GC -&gt; P: save_game_state()
+P --&gt; GC: state saved
+EB --&gt; C: notify(ChallengeChangedEvent)
+@enduml</pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -2388,9 +2920,28 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p><em><strong>Deployment Overview Diagram</strong></em></p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/deployment-overview.svg" alt="deployment overview" width="388" height="444">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml deployment-overview
+!define C4Deployment
+
+C4Deployment
+
+node "Cloudflare Proxy" {
+  node "GitHub Pages" {
+    [WASM Page]
+  }
+}
+
+node "Docker Container" {
+  [Axum Server] &lt;&lt;Container&gt;&gt;
+}
+
+[WASM Page] --&gt; [Cloudflare Proxy] : Deployed through GitHub Pages
+[Cloudflare Proxy] --&gt; [Axum Server] : Proxy REST API calls to the leaderboard
+
+@enduml</pre>
 </div>
 </div>
 <div class="dlist">
@@ -2441,9 +2992,21 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p><em><strong>GitHub Pages Hosting Diagram</strong></em></p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/github-pages-deployment.svg" alt="github pages deployment" width="339" height="317">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml github-pages-deployment
+node "GitHub Infrastructure" {
+  [GitHub Pages] &lt;&lt;Static Hosting&gt;&gt;
+}
+
+node "User Browser" {
+  [WASM Page]
+}
+
+[User Browser] --&gt; [GitHub Pages] : Access hosted page
+
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2455,9 +3018,22 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p><em><strong>Axum Server Deployment Diagram</strong></em></p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/axum-server-deployment.svg" alt="axum server deployment" width="306" height="357">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml axum-server-deployment
+node "Server Infrastructure" {
+  node "Docker Host" {
+    [Axum Server] &lt;&lt;Docker Container&gt;&gt;
+  }
+}
+
+node "Leaderboard Database" {
+  [Database] &lt;&lt;External System&gt;&gt;
+}
+
+[Axum Server] --&gt; [Database]
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2476,9 +3052,28 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>The <strong>konnektoren</strong> project is built around a core library that contains the business logic. This library is decoupled from any specific user interface and can be reused across different applications. Additionally, reusable UI components are provided, making it easier to integrate and combine them in various applications such as web apps and Telegram apps.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/core-library.svg" alt="core library" width="671" height="296">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml core-library
+package "Konnektoren Core" {
+  class BusinessLogic {
+    +processData()
+    +verifyCertificate()
+  }
+
+  package "UI Components" {
+    class UIComponent1
+    class UIComponent2
+    UIComponent1 -- BusinessLogic
+    UIComponent2 -- BusinessLogic
+  }
+}
+
+UIComponent1 &lt;|-- WebApp
+UIComponent2 &lt;|-- TelegramApp
+
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2490,9 +3085,20 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>The Konnektoren system uses a command and event handling pattern, implemented primarily through the GameController, to manage game state and user interactions.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/command-event-pattern.png" alt="command event pattern" width="594" height="181">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+component "GameController" as GC
+component "CommandBus" as CB
+component "EventBus" as EB
+component "GameState" as GS
+
+GC --&gt; CB : publishes commands
+CB --&gt; GC : executes commands
+GC --&gt; EB : publishes events
+GC --&gt; GS : updates
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2508,9 +3114,25 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>The apps are designed with a web3-oriented architecture, minimizing server-side storage. User data, except for the leaderboard, is stored client-side to ensure privacy and security. The system also employs encryption and digital signatures to verify certificates and user data.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/web3-architecture.svg" alt="web3 architecture" width="511" height="429">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+actor User
+node "Client" {
+  [Local Storage] &lt;&lt;client-side storage&gt;&gt;
+  [App Logic]
+}
+
+node "Server" {
+  [Leaderboard Database] &lt;&lt;Server-Side Storage&gt;&gt;
+}
+
+User --&gt; [App Logic] : Interaction
+[App Logic] --&gt; [Local Storage] : Store user data
+[App Logic] --&gt; [Leaderboard Database] : Update leaderboard
+
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2522,9 +3144,26 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>To ensure data integrity and security, the system uses encryption and signatures to verify certificates. This is a key part of the system’s security, ensuring that data shared between users and the server is verified without relying on a central authority.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/encryption-diagram.svg" alt="encryption diagram" width="296" height="588">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+actor User
+
+node "Client" {
+  [Encryption] &lt;&lt;Client-Side Operation&gt;&gt;
+  [SignatureVerification] &lt;&lt;Client-Side Operation&gt;&gt;
+}
+
+node "Server" {
+  [Certificate Authority] &lt;&lt;Server-Side Operation&gt;&gt;
+}
+
+User --&gt; [Encryption] : Encrypt/Decrypt data
+[Encryption] --&gt; [SignatureVerification] : Sign/Verify certificates
+[SignatureVerification] --&gt; [Certificate Authority] : Verify signature
+
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2570,9 +3209,25 @@ allowing for more concise and readable code when working with repository data.</
 </div>
 <div class="sect3">
 <h4 id="_components">9.6.2. Components</h4>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/diag-plantuml-md5-c289366f0b0efaef6e8fc7cd6956e0a9.png" alt="Diagram" width="1353" height="138">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+actor User
+database "Achievement\nConfiguration" as AC
+database "Challenge\nHistory" as CH
+component "Achievement\nEvaluator" as AE
+component "Game\nStatistics" as GS
+component "Frontend" as FE
+
+User -&gt; CH : completes challenges
+CH -&gt; GS : provides data
+AC -&gt; AE : defines achievements
+GS -&gt; AE : provides statistics
+AE -&gt; FE : updates unlocked achievements
+FE -&gt; User : displays achievements
+
+@enduml</pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -2623,9 +3278,20 @@ allowing for more concise and readable code when working with repository data.</
 <div class="paragraph">
 <p>The Konnektoren project incorporates Self-Sovereign Identity (SSI) principles for issuing achievement badges. This approach aligns with our commitment to user empowerment and data privacy.</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/ssi-badge-concept.svg" alt="ssi badge concept" width="574" height="333">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml
+actor User
+component "Konnektoren Platform" as KP
+component "vc.konnektoren.help" as VCI
+component "SSI Wallet" as Wallet
+
+User --&gt; KP : Completes challenges
+KP --&gt; VCI : Requests badge issuance
+VCI --&gt; User : Issues Verifiable Credential
+User --&gt; Wallet : Stores badge
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2666,9 +3332,23 @@ allowing for more concise and readable code when working with repository data.</
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_quality_tree">10.1. Quality Tree</h3>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="images/quality-tree.svg" alt="quality tree" width="395" height="595">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml quality-tree
+:Quality;
+:Performance;
+:Security;
+:Scalability;
+:Usability;
+:Maintainability;
+
+:Performance --&gt; :Fast response times for user interactions;
+:Security --&gt; :Data encryption and signature verification;
+:Scalability --&gt; :Support for increasing user load;
+:Usability --&gt; :Intuitive UI for web and Telegram apps;
+:Maintainability --&gt; :Modular design for easy updates;
+@enduml</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2955,7 +3635,7 @@ allowing for more concise and readable code when working with repository data.</
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-04-21 11:47:10 UTC
+Last updated 2025-05-13 16:54:26 UTC
 </div>
 </div>
 </body>
