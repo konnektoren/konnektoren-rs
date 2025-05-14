@@ -115,14 +115,14 @@
 <a href=#115 id=115 data-nosnippet>115</a>
 <a href=#116 id=116 data-nosnippet>116</a>        <span class="self">self</span>.persistence
 <a href=#117 id=117 data-nosnippet>117</a>            .save_game_state(<span class="kw-2">&amp;</span>game_state)
-<a href=#118 id=118 data-nosnippet>118</a>            .map_err(|e| ControllerError::Persistence(e))
+<a href=#118 id=118 data-nosnippet>118</a>            .map_err(ControllerError::Persistence)
 <a href=#119 id=119 data-nosnippet>119</a>    }
 <a href=#120 id=120 data-nosnippet>120</a>
 <a href=#121 id=121 data-nosnippet>121</a>    <span class="kw">fn </span>load_game_state(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
 <a href=#122 id=122 data-nosnippet>122</a>        <span class="kw">let </span>loaded_state = <span class="self">self
 <a href=#123 id=123 data-nosnippet>123</a>            </span>.persistence
 <a href=#124 id=124 data-nosnippet>124</a>            .load_game_state()
-<a href=#125 id=125 data-nosnippet>125</a>            .map_err(|e| ControllerError::Persistence(e))<span class="question-mark">?</span>;
+<a href=#125 id=125 data-nosnippet>125</a>            .map_err(ControllerError::Persistence)<span class="question-mark">?</span>;
 <a href=#126 id=126 data-nosnippet>126</a>
 <a href=#127 id=127 data-nosnippet>127</a>        <span class="kw">let </span><span class="kw-2">mut </span>game_state = <span class="self">self
 <a href=#128 id=128 data-nosnippet>128</a>            </span>.game_state
@@ -141,7 +141,7 @@
 <a href=#141 id=141 data-nosnippet>141</a>
 <a href=#142 id=142 data-nosnippet>142</a>        command
 <a href=#143 id=143 data-nosnippet>143</a>            .execute(<span class="kw-2">&amp;mut </span>state)
-<a href=#144 id=144 data-nosnippet>144</a>            .map_err(|e| ControllerError::CommandExecution(e))
+<a href=#144 id=144 data-nosnippet>144</a>            .map_err(ControllerError::CommandExecution)
 <a href=#145 id=145 data-nosnippet>145</a>    }
 <a href=#146 id=146 data-nosnippet>146</a>
 <a href=#147 id=147 data-nosnippet>147</a>    <span class="kw">fn </span>publish_command(<span class="kw-2">&amp;</span><span class="self">self</span>, command: Command) {
