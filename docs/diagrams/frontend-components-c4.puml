@@ -1,0 +1,19 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "A user of the Konnektoren system")
+
+System_Boundary(frontend, "Frontend") {
+    Container(cl, "Challenge List", "Yew Component", "Displays available challenges")
+    Container(cd, "Challenge Detail", "Yew Component", "Shows specific challenge information")
+    Container(rf, "Rating Form", "Yew Component", "Allows users to rate challenges")
+    Container(lb, "Leaderboard", "Yew Component", "Displays top-performing users")
+    Container(up, "User Profile", "Yew Component", "Shows user information and progress")
+}
+
+Rel(user, up, "Views profile")
+Rel(user, cl, "Browses challenges")
+Rel(user, lb, "Views leaderboard")
+Rel(cl, cd, "Navigates to")
+Rel(cd, rf, "Includes")
+@enduml

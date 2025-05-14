@@ -1,0 +1,14 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(konnektoren_workspace, "Konnektoren Workspace") {
+    Container(core, "konnektoren-core", "Rust Crate", "Contains the core logic and functionalities of the Konnektoren project")
+    Container(tests, "konnektoren-tests", "Rust Crate", "Contains tests for the core functionalities and other crates")
+    Container(tui, "konnektoren-tui", "Rust Crate", "Provides a text user interface for the Konnektoren project")
+    Container(yew, "konnektoren-yew", "Rust Crate", "Provides a web frontend using the Yew framework")
+}
+
+Rel(tests, core, "Uses")
+Rel(tui, core, "Uses")
+Rel(yew, core, "Uses")
+@enduml

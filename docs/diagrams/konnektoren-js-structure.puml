@@ -1,0 +1,19 @@
+@startuml
+class KonnektorenJs {
+  +new(window: &Window): KonnektorenJs
+  +set_challenge_data(challenge_data: Custom)
+  +set_result_data(result_data: CustomChallengeResult)
+  +expose_send_event(on_event: F)
+  +expose_execute_command(on_command: F)
+  +execute_js(js_code: &str)
+  +set_i18n_data(i18n_data: serde_json::Value)
+  +finish_challenge(result: Option<CustomChallengeResult>)
+}
+
+KonnektorenJs *-- ChallengeHandler
+KonnektorenJs *-- CommandHandler
+KonnektorenJs *-- EventHandler
+KonnektorenJs *-- I18nHandler
+KonnektorenJs *-- JsExecutor
+KonnektorenJs *-- ResultHandler
+@enduml

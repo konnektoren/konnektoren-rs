@@ -1,0 +1,20 @@
+@startuml
+class CommandBus {
+  +subscribe(command_type: CommandType, handler: Fn(Command))
+  +publish(command: Command)
+}
+
+enum CommandType {
+  Game
+  Challenge
+}
+
+class Command {
+  +get_type(): CommandType
+  +execute(state: &mut GameState)
+}
+
+CommandBus --> "*" Command : executes
+CommandBus --> CommandType : uses
+Command --> CommandType : has
+@enduml
