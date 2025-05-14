@@ -13,21 +13,36 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       # Checkout the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      # Install Asciidoctor, Asciidoctor PDF, and Asciidoctor Diagram (for PlantUML support)
+      # Install Asciidoctor, Asciidoctor PDF, PlantUML and dependencies
       - name: Install Asciidoctor and dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y asciidoctor graphviz default-jre
+          sudo apt-get install -y asciidoctor graphviz default-jre plantuml
           sudo gem install asciidoctor-pdf --pre
           sudo gem install asciidoctor-diagram
+
+      # Create output directories
+      - name: Create directories
+        run: |
+          mkdir -p output/docs/images
+          mkdir -p output/docs/diagrams
+
+      # Copy diagrams to output directory
+      - name: Copy diagrams to output
+        run: |
+          cp -r docs/diagrams/* output/docs/diagrams/ || true
 
       # Convert Asciidoc to PDF with PlantUML support
       - name: Build PDF from Asciidoc
         run: |
-          mkdir -p output
-          asciidoctor-pdf -r asciidoctor-diagram -o output/documentation.pdf -a sourcedir=docs/src docs/README.adoc
+          asciidoctor-pdf -r asciidoctor-diagram \
+            -o output/documentation.pdf \
+            -a sourcedir=docs/src \
+            -a imagesdir=images \
+            -a diagramsdir=diagrams \
+            docs/README.adoc
 
       # Upload the PDF as an artifact
       - name: Upload PDF Artifact
@@ -43,30 +58,44 @@ jobs:
     needs: build_adoc_pdf
     steps:
       # Checkout the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      # Install Asciidoctor (for HTML generation)
+      # Install Asciidoctor, PlantUML and dependencies
       - name: Install Asciidoctor and dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y asciidoctor graphviz default-jre
-          sudo gem install asciidoctor-pdf --pre
+          sudo apt-get install -y asciidoctor graphviz default-jre plantuml
           sudo gem install asciidoctor-diagram
+
+      # Create output directories
+      - name: Create directories
+        run: |
+          mkdir -p output/docs/images
+          mkdir -p output/docs/diagrams
+
+      # Copy diagrams to output directory
+      - name: Copy diagrams to output
+        run: |
+          cp -r docs/diagrams/* output/docs/diagrams/ || true
 
       # Build HTML from Asciidoc
       - name: Build HTML from Asciidoc
         run: |
-          mkdir -p output/docs
-          asciidoctor -r asciidoctor-diagram -D output/docs \
+          asciidoctor -r asciidoctor-diagram \
+            -D output/docs \
             -a imagesdir=images \
+            -a diagramsdir=diagrams \
             -a sourcedir=docs/src \
+            -a toc=left \
+            -a toclevels=3 \
+            -a sectanchors \
+            -a source-highlighter=highlightjs \
             docs/README.adoc
 
       # Copy images directory to output/docs
       - name: Copy Images
         run: |
-          mkdir -p output/docs/images
-          cp -r docs/images/* output/docs/images
+          cp -r docs/images/* output/docs/images/ || true
 
       - name: Copy index.html
         run: |

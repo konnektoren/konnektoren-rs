@@ -1,4 +1,5 @@
 ifndef::imagesdir[:imagesdir: ../images]
+ifndef::diagramsdir[:diagramsdir: ../diagrams]
 
 [[section-building-block-view]]
 == Building Block View
@@ -9,7 +10,7 @@ The Konnektoren project is organized into a workspace containing multiple crates
 
 [plantuml, konnektoren-building-blocks-c4, png]
 ----
-include::../diagrams/konnektoren-building-blocks-c4.puml[]
+include::{diagramsdir}/konnektoren-building-blocks-c4.puml[]
 ----
 
 Motivation::
@@ -33,7 +34,7 @@ The `konnektoren-core` crate is responsible for implementing the main logic and 
 
 [plantuml, konnektoren-core-structure-c4, png]
 ----
-include::../diagrams/konnektoren-core-structure-c4.puml[]
+include::{diagramsdir}/konnektoren-core-structure-c4.puml[]
 ----
 
 ==== konnektoren-core Detailed Structure
@@ -42,7 +43,7 @@ The `konnektoren-core` crate is composed of several modules, each responsible fo
 
 [plantuml, konnektoren-core-detailed-structure, png]
 ----
-include::../diagrams/konnektoren-core-detailed-structure.puml[]
+include::{diagramsdir}/konnektoren-core-detailed-structure.puml[]
 ----
 
 Contained Building Blocks::
@@ -65,7 +66,7 @@ The command structure in konnektoren-core is designed to handle various actions 
 
 [plantuml, command-structure, png]
 ----
-include::../diagrams/command-structure.puml[]
+include::{diagramsdir}/command-structure.puml[]
 ----
 
 - `CommandTrait`: Defines the basic behavior for all commands in the game.
@@ -81,7 +82,7 @@ The event structure in konnektoren-core is designed to handle various occurrence
 
 [plantuml, event-structure, png]
 ----
-include::../diagrams/event-structure.puml[]
+include::{diagramsdir}/event-structure.puml[]
 ----
 
 - `Event`: An enum representing all possible events, including both game-level and challenge-level events.
@@ -109,7 +110,7 @@ The EventBus is a central component for handling events in the Konnektoren syste
 
 [plantuml, eventbus-structure, png]
 ----
-include::../diagrams/eventbus-structure.puml[]
+include::{diagramsdir}/eventbus-structure.puml[]
 ----
 
 Key responsibilities:
@@ -123,7 +124,7 @@ The CommandBus is responsible for handling and executing commands in the Konnekt
 
 [plantuml, commandbus-structure, png]
 ----
-include::../diagrams/commandbus-structure.puml[]
+include::{diagramsdir}/commandbus-structure.puml[]
 ----
 
 Key responsibilities:
@@ -136,7 +137,7 @@ The central component managing game state and coordinating game operations:
 
 [plantuml, game-controller, png]
 ----
-include::../diagrams/game_controller.puml[]
+include::{diagramsdir}/game_controller.puml[]
 ----
 
 * Maintains thread-safe game state using `Arc<Mutex<GameState>>`
@@ -198,7 +199,7 @@ The plugin system integrates closely with the Event and Command system:
 
 [plantuml, plugin-integration, png]
 ----
-include::../diagrams/plugin-integration.puml[]
+include::{diagramsdir}/plugin-integration.puml[]
 ----
 
 ==== KonnektorenJs
@@ -207,7 +208,7 @@ The `KonnektorenJs` struct provides a bridge between the Rust core functionality
 
 [plantuml, konnektoren-js-structure, png]
 ----
-include::../diagrams/konnektoren-js-structure.puml[]
+include::{diagramsdir}/konnektoren-js-structure.puml[]
 ----
 
 The `KonnektorenJs` struct encapsulates several handlers, each responsible for a specific aspect of the JavaScript integration:
@@ -238,7 +239,7 @@ The `konnektoren-yew` crate is responsible for providing a web-based user interf
 
 [plantuml, konnektoren-yew-structure-c4, png]
 ----
-include::../diagrams/konnektoren-yew-structure-c4.puml[]
+include::{diagramsdir}/konnektoren-yew-structure-c4.puml[]
 ----
 
 Contained Building Blocks::
@@ -258,7 +259,7 @@ The challenge rating system is a crucial part of the Konnektoren project, allowi
 
 [plantuml, challenge-rating-system, png]
 ----
-include::../diagrams/challenge-rating-system.puml[]
+include::{diagramsdir}/challenge-rating-system.puml[]
 ----
 
 Motivation::
@@ -279,7 +280,7 @@ This level provides a more detailed view of the frontend components in the Konne
 
 [plantuml, frontend-components-c4, png]
 ----
-include::../diagrams/frontend-components-c4.puml[]
+include::{diagramsdir}/frontend-components-c4.puml[]
 ----
 
 Contained Building Blocks::
@@ -299,7 +300,7 @@ The Game Controller Provider and Repository Provider are crucial components in t
 
 [plantuml, game-controller-and-repository-providers, png]
 ----
-include::../diagrams/game-controller-and-repository-providers.puml[]
+include::{diagramsdir}/game-controller-and-repository-providers.puml[]
 ----
 
 ==== GameControllerProvider
@@ -487,7 +488,7 @@ The data model is a crucial part of the Konnektoren system, defining the structu
 
 [plantuml, data-model, png]
 ----
-include::../diagrams/data-model.puml[]
+include::{diagramsdir}/data-model.puml[]
 ----
 
 Key Entities:
@@ -511,5 +512,5 @@ The achievement system consists of the following components:
 
 [plantuml, achievement-system, png]
 ----
-include::../diagrams/achievement-system.puml[]
+include::{diagramsdir}/achievement-system.puml[]
 ----
