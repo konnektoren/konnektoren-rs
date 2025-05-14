@@ -115,14 +115,14 @@ impl GameControllerTrait for GameController {
 
         self.persistence
             .save_game_state(&game_state)
-            .map_err(|e| ControllerError::Persistence(e))
+            .map_err(ControllerError::Persistence)
     }
 
     fn load_game_state(&self) -> Result<()> {
         let loaded_state = self
             .persistence
             .load_game_state()
-            .map_err(|e| ControllerError::Persistence(e))?;
+            .map_err(ControllerError::Persistence)?;
 
         let mut game_state = self
             .game_state
@@ -141,7 +141,7 @@ impl GameControllerTrait for GameController {
 
         command
             .execute(&mut state)
-            .map_err(|e| ControllerError::CommandExecution(e))
+            .map_err(ControllerError::CommandExecution)
     }
 
     fn publish_command(&self, command: Command) {

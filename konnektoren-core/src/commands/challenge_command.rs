@@ -144,7 +144,7 @@ impl ChallengeCommand {
         state
             .challenge
             .solve(challenge_input)
-            .map_err(|e| CommandError::ChallengeError(e))?;
+            .map_err(CommandError::ChallengeError)?;
 
         // Attempt to move to the next task, but ignore "no more tasks" errors
         let _ = Self::next_task(state);

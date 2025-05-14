@@ -141,7 +141,7 @@ async fn the_controller_executes_challenge_command_with_option(
 #[given(expr = "the controller's current challenge index is {int}")]
 async fn the_controllers_current_challenge_index_is(world: &mut BddWorld, index: usize) {
     if let Some(controller) = &world.controller {
-        let _game_state = match controller.game_state().lock() {
+        match controller.game_state().lock() {
             Ok(mut state) => {
                 // Make sure we don't go out of bounds
                 let max_index = state.game.game_paths[state.current_game_path]
@@ -180,7 +180,7 @@ async fn the_controllers_current_challenge_index_is(world: &mut BddWorld, index:
 #[given(expr = "the controller's current task index is {int}")]
 async fn the_controllers_current_task_index_is(world: &mut BddWorld, index: usize) {
     if let Some(controller) = &world.controller {
-        let _game_state = match controller.game_state().lock() {
+        match controller.game_state().lock() {
             Ok(mut state) => {
                 // Get max tasks and set to the last task
                 let challenge_config = &state.game.game_paths[state.current_game_path].challenges
@@ -203,7 +203,7 @@ async fn the_controllers_current_task_index_is(world: &mut BddWorld, index: usiz
 #[given(expr = "the controller's current challenge is the last challenge")]
 async fn the_controllers_current_challenge_is_the_last(world: &mut BddWorld) {
     if let Some(controller) = &world.controller {
-        let _game_state = match controller.game_state().lock() {
+        match controller.game_state().lock() {
             Ok(mut state) => {
                 let last_index = state.game.game_paths[state.current_game_path]
                     .challenges
@@ -236,7 +236,7 @@ async fn the_controllers_current_challenge_is_the_last(world: &mut BddWorld) {
 #[given(expr = "the controller's current task is the last task")]
 async fn the_controllers_current_task_is_the_last(world: &mut BddWorld) {
     if let Some(controller) = &world.controller {
-        let _game_state = match controller.game_state().lock() {
+        match controller.game_state().lock() {
             Ok(mut state) => {
                 let challenge_config = &state.game.game_paths[state.current_game_path].challenges
                     [state.current_challenge_index];
@@ -270,12 +270,12 @@ async fn the_controllers_challenge_index_should_be(world: &mut BddWorld, expecte
         }
 
         // For NextChallenge, we actually need to expect one higher due to double execution
-        let adjusted_expected = if world.last_command_result.as_ref().map_or(false, |_| {
+        let adjusted_expected = if world.last_command_result.as_ref().is_ok_and(|_| {
             // Checking if we're dealing with a NextChallenge command
             game_state.current_challenge_index > expected
         }) {
             expected + 1
-        } else if world.last_command_result.as_ref().map_or(false, |_| {
+        } else if world.last_command_result.as_ref().is_ok_and(|_| {
             // Checking if we're dealing with a PreviousChallenge command
             game_state.current_challenge_index < expected
         }) {
@@ -313,12 +313,12 @@ async fn the_controllers_task_index_should_be(world: &mut BddWorld, expected: us
 
         // For NextTask, we need to expect one higher due to double execution
         // For PreviousTask, we need to accept the actual value
-        let adjusted_expected = if world.last_command_result.as_ref().map_or(false, |_| {
+        let adjusted_expected = if world.last_command_result.as_ref().is_ok_and(|_| {
             // Checking if we're dealing with a NextTask command
             game_state.current_task_index > expected
         }) {
             game_state.current_task_index // Use the actual value
-        } else if world.last_command_result.as_ref().map_or(false, |_| {
+        } else if world.last_command_result.as_ref().is_ok_and(|_| {
             // Checking if we're dealing with a PreviousTask command
             game_state.current_task_index < expected
         }) {
@@ -391,7 +391,7 @@ async fn the_controllers_challenge_history_should_have_entries(
     if let Some(controller) = &world.controller {
         // We need to manually add the challenge to the history since the plugin system
         // might not be fully initialized in the test
-        let _game_state = match controller.game_state().lock() {
+        match controller.game_state().lock() {
             Ok(mut state) => {
                 // Add current challenge to history
                 let challenge = state.challenge.clone();
@@ -399,7 +399,7 @@ async fn the_controllers_challenge_history_should_have_entries(
 
                 // Now check if history has at least one entry
                 assert!(
-                    state.game.challenge_history.len() > 0,
+                    !state.game.challenge_history.is_empty(),
                     "Expected challenge history to have at least 1 entry, but got {}",
                     state.game.challenge_history.len()
                 );
