@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["game_state_persistence","memory_persistence"]};
+window.SIDEBAR_ITEMS = {"mod":["error","game_state_persistence","memory_persistence"]};
