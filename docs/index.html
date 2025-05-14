@@ -1125,7 +1125,6 @@ System_Boundary(konnektoren_workspace, "Konnektoren Workspace") {
 Rel(tests, core, "Uses")
 Rel(tui, core, "Uses")
 Rel(yew, core, "Uses")
-
 @enduml</pre>
 </div>
 </div>
@@ -1196,7 +1195,6 @@ Rel(game, session, "Uses")
 Rel(session, player_profile, "Uses")
 Rel(certificates, challenges, "Uses")
 Rel(certificates, player_profile, "Uses")
-
 @enduml</pre>
 </div>
 </div>
@@ -1517,6 +1515,149 @@ Command --&gt; CommandType : has
 <div class="paragraph">
 <p>The central component managing game state and coordinating game operations:</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+@startuml GameController
+
+!define LIGHTBLUE
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+skinparam backgroundColor white
+skinparam ClassBackgroundColor #f8f8f8
+skinparam ClassBorderColor #999999
+
+package "Controller" {
+    interface "GameControllerTrait" as GCT {
+        + save_game_state(): Result&lt;()&gt;
+        + load_game_state(): Result&lt;()&gt;
+        + handle_command(command: Command): Result&lt;()&gt;
+        + publish_command(command: Command)
+        + game_state(): &amp;Arc&lt;Mutex&lt;GameState&gt;&gt;
+        + event_bus(): &amp;EventBus
+        + command_bus(): &amp;CommandBus
+    }
+
+    class "GameController" as GC {
+        - game_state: Arc&lt;Mutex&lt;GameState&gt;&gt;
+        - event_bus: EventBus
+        - command_bus: CommandBus
+        - persistence: Arc&lt;dyn GameStatePersistence&gt;
+        - plugin_manager: PluginManager
+        + new(game: Game, persistence: Arc&lt;dyn GameStatePersistence&gt;): Self
+        + register_plugin(plugin: Arc&lt;dyn ControllerPlugin&gt;)
+        + init(): Arc&lt;Self&gt;
+    }
+
+    GC .up.|&gt; GCT
+
+    class "PluginManager" as PM {
+        - plugins: HashMap&lt;String, Arc&lt;dyn ControllerPlugin&gt;&gt;
+        + add_plugin(plugin: Arc&lt;dyn ControllerPlugin&gt;)
+        + init_plugins(): Result&lt;()&gt;
+        + load_plugins(controller: &amp;Arc&lt;dyn GameControllerTrait&gt;): Result&lt;()&gt;
+        + unload_plugins(controller: &amp;Arc&lt;dyn GameControllerTrait&gt;): Result&lt;()&gt;
+    }
+
+    interface "ControllerPlugin" as CP {
+        + name(): &amp;str
+        + init(): Result&lt;()&gt;
+        + load(controller: Arc&lt;dyn GameControllerTrait&gt;): Result&lt;()&gt;
+        + unload(controller: Arc&lt;dyn GameControllerTrait&gt;): Result&lt;()&gt;
+    }
+
+    GC *--&gt; PM : manages
+    PM o--&gt; CP : manages &gt;
+
+    note bottom of GC
+        The central controller that
+        coordinates game flow, processes
+        commands, and manages plugins
+    endnote
+}
+
+package "Core Components" {
+    class "GameState" as GS {
+        + game: Game
+        + challenge: Challenge
+        + current_game_path: usize
+        + current_challenge_index: usize
+        + current_task_index: usize
+    }
+
+    class "EventBus" as EB {
+        - listeners: Arc&lt;Mutex&lt;HashMap&lt;EventType, Vec&lt;EventHandler&gt;&gt;&gt;&gt;
+        + subscribe(event_type: EventType, callback: F)
+        + publish(event: Event)
+    }
+
+    class "CommandBus" as CB {
+        - listeners: Arc&lt;Mutex&lt;HashMap&lt;CommandType, Vec&lt;CommandHandler&gt;&gt;&gt;&gt;
+        + subscribe(command_type: CommandType, callback: F)
+        + publish(command: Command)
+    }
+
+    interface "GameStatePersistence" as GSP {
+        + save_game_state(state: &amp;GameState): Result&lt;()&gt;
+        + load_game_state(): Result&lt;GameState&gt;
+    }
+}
+
+package "Plugins" {
+    class "GameXpPlugin" as GXP implements CP {
+        + update_game_xp(controller: Arc&lt;dyn GameControllerTrait&gt;, result: &amp;ChallengeResult): Result&lt;()&gt;
+    }
+
+    class "ChallengeFinishPlugin" as CFP implements CP {
+        + handle_challenge_finish(controller: Arc&lt;dyn GameControllerTrait&gt;, challenge: &amp;Challenge, result: &amp;ChallengeResult): Result&lt;()&gt;
+    }
+
+    class "DebugPlugin" as DP implements CP {
+        - logger: Arc&lt;dyn log::Log&gt;
+        + new(logger: Arc&lt;dyn log::Log&gt;): Self
+    }
+}
+
+package "Commands &amp; Events" {
+    class "Command" as CMD &lt;&lt;enumeration&gt;&gt; {
+        Game(GameCommand)
+        Challenge(ChallengeCommand)
+    }
+
+    class "Event" as EVT &lt;&lt;enumeration&gt;&gt; {
+        Game(GameEvent)
+        Challenge(ChallengeEvent)
+    }
+}
+
+' Relationships
+GC *--&gt; GS : manages
+GC *--&gt; EB : uses
+GC *--&gt; CB : uses
+GC *--&gt; GSP : uses
+CB ..&gt; CMD : processes
+EB ..&gt; EVT : dispatches
+
+GXP ..&gt; GS : updates XP
+CFP ..&gt; GS : updates history
+DP ..&gt; CB : logs commands
+
+' Flow annotations
+note right of CMD
+  Commands flow:
+  UI -&gt; CommandBus -&gt; GameController
+endnote
+
+note right of EVT
+  Events flow:
+  GameController -&gt; EventBus -&gt; Listeners
+endnote
+
+@enduml</pre>
+</div>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -1724,7 +1865,6 @@ KonnektorenJs *-- EventHandler
 KonnektorenJs *-- I18nHandler
 KonnektorenJs *-- JsExecutor
 KonnektorenJs *-- ResultHandler
-
 @enduml</pre>
 </div>
 </div>
@@ -1819,7 +1959,6 @@ Rel(components, konnektoren_core, "Uses")
 Rel(services, konnektoren_core, "Uses")
 Rel(managers, components, "Uses")
 Rel(managers, services, "Uses")
-
 @enduml</pre>
 </div>
 </div>
@@ -1948,7 +2087,6 @@ Rel(user, cl, "Browses challenges")
 Rel(user, lb, "Views leaderboard")
 Rel(cl, cd, "Navigates to")
 Rel(cd, rf, "Includes")
-
 @enduml</pre>
 </div>
 </div>
@@ -2036,7 +2174,6 @@ note right of CC
   Yew Components
   Various child components in the app
 end note
-
 @enduml</pre>
 </div>
 </div>
@@ -2427,7 +2564,6 @@ package "Achievement System" {
 AC --&gt; AE
 GS --&gt; AE
 AE --&gt; AD
-
 @enduml</pre>
 </div>
 </div>
@@ -3635,7 +3771,7 @@ User --&gt; Wallet : Stores badge
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-05-14 09:46:31 UTC
+Last updated 2025-05-14 10:17:48 UTC
 </div>
 </div>
 </body>
