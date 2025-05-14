@@ -1,0 +1,24 @@
+@startuml
+package "commands" {
+    interface CommandTrait {
+        +execute(state: &mut GameState) -> Result<()>
+    }
+    enum Command {
+        Game(GameCommand)
+        Challenge(ChallengeCommand)
+    }
+    enum GameCommand {
+        NextChallenge
+        PreviousChallenge
+    }
+    enum ChallengeCommand {
+        NextTask
+        PreviousTask
+        SolveOption(usize)
+        Finish(Option<ChallengeResult>)
+    }
+    CommandTrait <|.. Command
+    Command *-- GameCommand
+    Command *-- ChallengeCommand
+}
+@enduml

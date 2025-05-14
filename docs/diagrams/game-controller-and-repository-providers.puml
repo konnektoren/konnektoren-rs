@@ -1,0 +1,39 @@
+@startuml
+package "Frontend" {
+  [GameControllerProvider] as GCP
+  [RepositoryProvider] as RP
+  [GameController] as GC
+  [Repositories] as R
+  [Child Components] as CC
+}
+
+GCP --> GC : Creates and manages
+RP --> R : Creates and manages
+CC --> GCP : Consumes context
+CC --> RP : Consumes context
+
+note right of GCP
+  Yew Component
+  Provides GameController context
+end note
+
+note right of RP
+  Yew Component
+  Provides Repository context
+end note
+
+note right of GC
+  Rust Struct
+  Manages game state and logic
+end note
+
+note right of R
+  Rust Structs
+  Manage data access
+end note
+
+note right of CC
+  Yew Components
+  Various child components in the app
+end note
+@enduml

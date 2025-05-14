@@ -1,0 +1,13 @@
+@startuml
+package "Achievement System" {
+  [Achievement Configuration] as AC
+  [Achievement Evaluator] as AE
+  [Game Statistics] as GS
+  [Achievement Display] as AD
+}
+
+[Challenge History] --> GS
+AC --> AE
+GS --> AE
+AE --> AD
+@enduml

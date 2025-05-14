@@ -1,0 +1,16 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "A user of the Konnektoren system")
+
+System_Boundary(konnektoren, "Konnektoren System") {
+    Container(frontend, "Frontend", "Rust, Yew", "Provides the user interface for interacting with challenges and submitting ratings")
+    Container(backend, "Backend API", "Rust, Axum", "Handles API requests and manages data")
+    ContainerDb(database, "Database", "Redis", "Stores challenge data, user ratings, and reviews")
+}
+
+Rel(user, frontend, "Views challenges, submits ratings and reviews")
+Rel(frontend, backend, "Sends ratings/reviews, requests average ratings", "HTTP/JSON")
+Rel_Neighbor(backend, database, "Reads from and writes to")
+Rel_Back(frontend, user, "Displays average ratings")
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+participant GameController
+participant PluginManager
+participant Plugin
+participant EventBus
+participant CommandBus
+
+GameController -> PluginManager: init_plugins()
+activate PluginManager
+  PluginManager -> Plugin: init()
+  Plugin --> PluginManager: Ok(())
+deactivate PluginManager
+
+GameController -> PluginManager: load_plugins()
+activate PluginManager
+  PluginManager -> Plugin: load(controller)
+  Plugin -> EventBus: subscribe()
+  Plugin -> CommandBus: subscribe()
+  Plugin --> PluginManager: Ok(())
+deactivate PluginManager
+@enduml

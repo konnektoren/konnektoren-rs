@@ -1,0 +1,22 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(konnektoren_yew, "konnektoren-yew") {
+    Container(app, "App", "Yew Root Component", "Main application component that sets up routing and global state")
+    Container(components, "Components", "Yew UI Components", "Reusable UI components used across different pages")
+    Container(pages, "Pages", "Yew Page Components", "Individual page components for different views in the application")
+    Container(services, "Services", "Rust Modules", "Interfaces with konnektoren-core and handles API calls")
+    Container(managers, "Managers", "Yew Components", "Manage state and data flow for specific features or parts of the UI")
+}
+
+System_Ext(konnektoren_core, "konnektoren-core", "Core library containing business logic")
+
+Rel(app, components, "Uses")
+Rel(app, pages, "Uses")
+Rel(pages, components, "Uses")
+Rel(pages, services, "Uses")
+Rel(components, konnektoren_core, "Uses")
+Rel(services, konnektoren_core, "Uses")
+Rel(managers, components, "Uses")
+Rel(managers, services, "Uses")
+@enduml

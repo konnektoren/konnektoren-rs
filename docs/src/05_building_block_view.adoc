@@ -9,21 +9,7 @@ The Konnektoren project is organized into a workspace containing multiple crates
 
 [plantuml, konnektoren-building-blocks-c4, png]
 ----
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
-
-System_Boundary(konnektoren_workspace, "Konnektoren Workspace") {
-    Container(core, "konnektoren-core", "Rust Crate", "Contains the core logic and functionalities of the Konnektoren project")
-    Container(tests, "konnektoren-tests", "Rust Crate", "Contains tests for the core functionalities and other crates")
-    Container(tui, "konnektoren-tui", "Rust Crate", "Provides a text user interface for the Konnektoren project")
-    Container(yew, "konnektoren-yew", "Rust Crate", "Provides a web frontend using the Yew framework")
-}
-
-Rel(tests, core, "Uses")
-Rel(tui, core, "Uses")
-Rel(yew, core, "Uses")
-
-@enduml
+include::../diagrams/konnektoren-building-blocks-c4.puml[]
 ----
 
 Motivation::
@@ -47,25 +33,7 @@ The `konnektoren-core` crate is responsible for implementing the main logic and 
 
 [plantuml, konnektoren-core-structure-c4, png]
 ----
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
-
-System_Boundary(konnektoren_core, "konnektoren-core") {
-    Container(challenges, "Challenges", "Rust Module", "Manages different types of grammar challenges and their evaluation")
-    Container(game, "Game", "Rust Module", "Handles game logic, including paths and states")
-    Container(player_profile, "Player Profile", "Rust Module", "Manages user profiles and progress")
-    Container(session, "Session", "Rust Module", "Handles user sessions and state management")
-    Container(certificates, "Certificates", "Rust Module", "Manages the creation and verification of achievement certificates")
-}
-
-Rel(challenges, game, "Uses")
-Rel(game, player_profile, "Uses")
-Rel(game, session, "Uses")
-Rel(session, player_profile, "Uses")
-Rel(certificates, challenges, "Uses")
-Rel(certificates, player_profile, "Uses")
-
-@enduml
+include::../diagrams/konnektoren-core-structure-c4.puml[]
 ----
 
 ==== konnektoren-core Detailed Structure
@@ -74,51 +42,7 @@ The `konnektoren-core` crate is composed of several modules, each responsible fo
 
 [plantuml, konnektoren-core-detailed-structure, png]
 ----
-@startuml
-package "konnektorencore" {
-    package "challenges" {
-        [challenge]
-        [challenge_config]
-        [challenge_factory]
-        [challenge_history]
-        [challenge_input]
-        [challenge_result]
-        [challenge_type]
-        [custom]
-        [events]
-        [informative]
-        [multiple_choice]
-        [performance]
-        [performance_record]
-        [review]
-        [solvable]
-        [sort_table]
-    }
-
-    package "game_module" {
-        [game_logic]
-        [game_path]
-        [game_state]
-        [map]
-    }
-
-    package "certificates" {
-        [certificate_data]
-        [certificate_image]
-    }
-
-    [player_profile]
-    [session]
-    [commands]
-}
-
-challenges ..> game_module : uses
-game_module ..> player_profile : uses
-game_module ..> session : uses
-certificates ..> challenges : uses
-certificates ..> player_profile : uses
-commands ..> game_module : uses
-@enduml
+include::../diagrams/konnektoren-core-detailed-structure.puml[]
 ----
 
 Contained Building Blocks::
@@ -141,30 +65,7 @@ The command structure in konnektoren-core is designed to handle various actions 
 
 [plantuml, command-structure, png]
 ----
-@startuml
-package "commands" {
-    interface CommandTrait {
-        +execute(state: &mut GameState) -> Result<()>
-    }
-    enum Command {
-        Game(GameCommand)
-        Challenge(ChallengeCommand)
-    }
-    enum GameCommand {
-        NextChallenge
-        PreviousChallenge
-    }
-    enum ChallengeCommand {
-        NextTask
-        PreviousTask
-        SolveOption(usize)
-        Finish(Option<ChallengeResult>)
-    }
-    CommandTrait <|.. Command
-    Command *-- GameCommand
-    Command *-- ChallengeCommand
-}
-@enduml
+include::../diagrams/command-structure.puml[]
 ----
 
 - `CommandTrait`: Defines the basic behavior for all commands in the game.
@@ -180,25 +81,7 @@ The event structure in konnektoren-core is designed to handle various occurrence
 
 [plantuml, event-structure, png]
 ----
-@startuml
-package "events" {
-    enum Event {
-        Game(GameEvent)
-        Challenge(ChallengeEvent)
-    }
-    enum GameEvent {
-        Started
-    }
-    enum ChallengeEvent {
-        SolvedCorrect(usize)
-        SolvedIncorrect(usize)
-        Started
-        Completed
-    }
-    Event *-- GameEvent
-    Event *-- ChallengeEvent
-}
-@enduml
+include::../diagrams/event-structure.puml[]
 ----
 
 - `Event`: An enum representing all possible events, including both game-level and challenge-level events.
@@ -226,25 +109,7 @@ The EventBus is a central component for handling events in the Konnektoren syste
 
 [plantuml, eventbus-structure, png]
 ----
-@startuml
-class EventBus {
-  +subscribe(event_type: EventType, callback: Fn(Event))
-  +publish(event: Event)
-}
-
-enum EventType {
-  Game
-  Challenge
-}
-
-class Event {
-  +get_type(): EventType
-}
-
-EventBus --> "*" Event : publishes
-EventBus --> EventType : uses
-Event --> EventType : has
-@enduml
+include::../diagrams/eventbus-structure.puml[]
 ----
 
 Key responsibilities:
@@ -258,26 +123,7 @@ The CommandBus is responsible for handling and executing commands in the Konnekt
 
 [plantuml, commandbus-structure, png]
 ----
-@startuml
-class CommandBus {
-  +subscribe(command_type: CommandType, handler: Fn(Command))
-  +publish(command: Command)
-}
-
-enum CommandType {
-  Game
-  Challenge
-}
-
-class Command {
-  +get_type(): CommandType
-  +execute(state: &mut GameState)
-}
-
-CommandBus --> "*" Command : executes
-CommandBus --> CommandType : uses
-Command --> CommandType : has
-@enduml
+include::../diagrams/commandbus-structure.puml[]
 ----
 
 Key responsibilities:
@@ -287,6 +133,11 @@ Key responsibilities:
 
 ===== GameController
 The central component managing game state and coordinating game operations:
+
+[plantuml, game-controller, png]
+----
+include::../diagrams/game_controller.puml[]
+----
 
 * Maintains thread-safe game state using `Arc<Mutex<GameState>>`
 * Houses EventBus and CommandBus for communication
@@ -347,27 +198,7 @@ The plugin system integrates closely with the Event and Command system:
 
 [plantuml, plugin-integration, png]
 ----
-@startuml
-participant GameController
-participant PluginManager
-participant Plugin
-participant EventBus
-participant CommandBus
-
-GameController -> PluginManager: init_plugins()
-activate PluginManager
-  PluginManager -> Plugin: init()
-  Plugin --> PluginManager: Ok(())
-deactivate PluginManager
-
-GameController -> PluginManager: load_plugins()
-activate PluginManager
-  PluginManager -> Plugin: load(controller)
-  Plugin -> EventBus: subscribe()
-  Plugin -> CommandBus: subscribe()
-  Plugin --> PluginManager: Ok(())
-deactivate PluginManager
-@enduml
+include::../diagrams/plugin-integration.puml[]
 ----
 
 ==== KonnektorenJs
@@ -376,26 +207,7 @@ The `KonnektorenJs` struct provides a bridge between the Rust core functionality
 
 [plantuml, konnektoren-js-structure, png]
 ----
-@startuml
-class KonnektorenJs {
-  +new(window: &Window): KonnektorenJs
-  +set_challenge_data(challenge_data: Custom)
-  +set_result_data(result_data: CustomChallengeResult)
-  +expose_send_event(on_event: F)
-  +expose_execute_command(on_command: F)
-  +execute_js(js_code: &str)
-  +set_i18n_data(i18n_data: serde_json::Value)
-  +finish_challenge(result: Option<CustomChallengeResult>)
-}
-
-KonnektorenJs *-- ChallengeHandler
-KonnektorenJs *-- CommandHandler
-KonnektorenJs *-- EventHandler
-KonnektorenJs *-- I18nHandler
-KonnektorenJs *-- JsExecutor
-KonnektorenJs *-- ResultHandler
-
-@enduml
+include::../diagrams/konnektoren-js-structure.puml[]
 ----
 
 The `KonnektorenJs` struct encapsulates several handlers, each responsible for a specific aspect of the JavaScript integration:
@@ -426,29 +238,7 @@ The `konnektoren-yew` crate is responsible for providing a web-based user interf
 
 [plantuml, konnektoren-yew-structure-c4, png]
 ----
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
-
-System_Boundary(konnektoren_yew, "konnektoren-yew") {
-    Container(app, "App", "Yew Root Component", "Main application component that sets up routing and global state")
-    Container(components, "Components", "Yew UI Components", "Reusable UI components used across different pages")
-    Container(pages, "Pages", "Yew Page Components", "Individual page components for different views in the application")
-    Container(services, "Services", "Rust Modules", "Interfaces with konnektoren-core and handles API calls")
-    Container(managers, "Managers", "Yew Components", "Manage state and data flow for specific features or parts of the UI")
-}
-
-System_Ext(konnektoren_core, "konnektoren-core", "Core library containing business logic")
-
-Rel(app, components, "Uses")
-Rel(app, pages, "Uses")
-Rel(pages, components, "Uses")
-Rel(pages, services, "Uses")
-Rel(components, konnektoren_core, "Uses")
-Rel(services, konnektoren_core, "Uses")
-Rel(managers, components, "Uses")
-Rel(managers, services, "Uses")
-
-@enduml
+include::../diagrams/konnektoren-yew-structure-c4.puml[]
 ----
 
 Contained Building Blocks::
@@ -468,22 +258,7 @@ The challenge rating system is a crucial part of the Konnektoren project, allowi
 
 [plantuml, challenge-rating-system, png]
 ----
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
-
-Person(user, "User", "A user of the Konnektoren system")
-
-System_Boundary(konnektoren, "Konnektoren System") {
-    Container(frontend, "Frontend", "Rust, Yew", "Provides the user interface for interacting with challenges and submitting ratings")
-    Container(backend, "Backend API", "Rust, Axum", "Handles API requests and manages data")
-    ContainerDb(database, "Database", "Redis", "Stores challenge data, user ratings, and reviews")
-}
-
-Rel(user, frontend, "Views challenges, submits ratings and reviews")
-Rel(frontend, backend, "Sends ratings/reviews, requests average ratings", "HTTP/JSON")
-Rel_Neighbor(backend, database, "Reads from and writes to")
-Rel_Back(frontend, user, "Displays average ratings")
-@enduml
+include::../diagrams/challenge-rating-system.puml[]
 ----
 
 Motivation::
@@ -504,26 +279,7 @@ This level provides a more detailed view of the frontend components in the Konne
 
 [plantuml, frontend-components-c4, png]
 ----
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
-
-Person(user, "User", "A user of the Konnektoren system")
-
-System_Boundary(frontend, "Frontend") {
-    Container(cl, "Challenge List", "Yew Component", "Displays available challenges")
-    Container(cd, "Challenge Detail", "Yew Component", "Shows specific challenge information")
-    Container(rf, "Rating Form", "Yew Component", "Allows users to rate challenges")
-    Container(lb, "Leaderboard", "Yew Component", "Displays top-performing users")
-    Container(up, "User Profile", "Yew Component", "Shows user information and progress")
-}
-
-Rel(user, up, "Views profile")
-Rel(user, cl, "Browses challenges")
-Rel(user, lb, "Views leaderboard")
-Rel(cl, cd, "Navigates to")
-Rel(cd, rf, "Includes")
-
-@enduml
+include::../diagrams/frontend-components-c4.puml[]
 ----
 
 Contained Building Blocks::
@@ -543,46 +299,7 @@ The Game Controller Provider and Repository Provider are crucial components in t
 
 [plantuml, game-controller-and-repository-providers, png]
 ----
-@startuml
-package "Frontend" {
-  [GameControllerProvider] as GCP
-  [RepositoryProvider] as RP
-  [GameController] as GC
-  [Repositories] as R
-  [Child Components] as CC
-}
-
-GCP --> GC : Creates and manages
-RP --> R : Creates and manages
-CC --> GCP : Consumes context
-CC --> RP : Consumes context
-
-note right of GCP
-  Yew Component
-  Provides GameController context
-end note
-
-note right of RP
-  Yew Component
-  Provides Repository context
-end note
-
-note right of GC
-  Rust Struct
-  Manages game state and logic
-end note
-
-note right of R
-  Rust Structs
-  Manage data access
-end note
-
-note right of CC
-  Yew Components
-  Various child components in the app
-end note
-
-@enduml
+include::../diagrams/game-controller-and-repository-providers.puml[]
 ----
 
 ==== GameControllerProvider
@@ -770,51 +487,7 @@ The data model is a crucial part of the Konnektoren system, defining the structu
 
 [plantuml, data-model, png]
 ----
-@startuml
-!define TABLE(name,desc) class name as "desc" << (T,#FFAAAA) >>
-!define PK(x) <u>x</u>
-!define FK(x) #x
-
-TABLE(PlayerProfile, "PlayerProfile") {
-  PK(id): String
-  name: String
-  xp: Xp
-}
-
-TABLE(Challenge, "Challenge") {
-  PK(id): String
-  challenge_type: ChallengeType
-  challenge_config: ChallengeConfig
-  challenge_result: ChallengeResult
-}
-
-TABLE(GamePath, "GamePath") {
-  PK(id): String
-  name: String
-  challenges: Vec<ChallengeConfig>
-  map: Option<Map>
-}
-
-TABLE(GameState, "GameState") {
-  game: Game
-  challenge: Challenge
-  current_game_path: usize
-  current_challenge_index: usize
-  current_task_index: usize
-}
-
-TABLE(Session, "Session") {
-  PK(id): String
-  FK(player_profile_id): String
-  FK(game_state_id): String
-}
-
-PlayerProfile "1" -- "1" Session
-GameState "1" -- "1" Session
-GamePath "1" *-- "many" Challenge
-Challenge "1" *-- "1" ChallengeConfig
-Challenge "1" *-- "1" ChallengeResult
-@enduml
+include::../diagrams/data-model.puml[]
 ----
 
 Key Entities:
@@ -836,20 +509,7 @@ The achievement system consists of the following components:
 * Game Statistics: Collects and provides statistics about the user's game progress.
 * Achievement Display: Shows unlocked and locked achievements in the frontend.
 
-[plantuml]
-....
-@startuml
-package "Achievement System" {
-  [Achievement Configuration] as AC
-  [Achievement Evaluator] as AE
-  [Game Statistics] as GS
-  [Achievement Display] as AD
-}
-
-[Challenge History] --> GS
-AC --> AE
-GS --> AE
-AE --> AD
-
-@enduml
-....
+[plantuml, achievement-system, png]
+----
+include::../diagrams/achievement-system.puml[]
+----

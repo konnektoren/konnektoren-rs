@@ -1,0 +1,45 @@
+@startuml
+package "konnektorencore" {
+    package "challenges" {
+        [challenge]
+        [challenge_config]
+        [challenge_factory]
+        [challenge_history]
+        [challenge_input]
+        [challenge_result]
+        [challenge_type]
+        [custom]
+        [events]
+        [informative]
+        [multiple_choice]
+        [performance]
+        [performance_record]
+        [review]
+        [solvable]
+        [sort_table]
+    }
+
+    package "game_module" {
+        [game_logic]
+        [game_path]
+        [game_state]
+        [map]
+    }
+
+    package "certificates" {
+        [certificate_data]
+        [certificate_image]
+    }
+
+    [player_profile]
+    [session]
+    [commands]
+}
+
+challenges ..> game_module : uses
+game_module ..> player_profile : uses
+game_module ..> session : uses
+certificates ..> challenges : uses
+certificates ..> player_profile : uses
+commands ..> game_module : uses
+@enduml

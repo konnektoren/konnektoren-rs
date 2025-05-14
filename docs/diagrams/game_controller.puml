@@ -1,0 +1,138 @@
+@startuml GameController
+
+!define LIGHTBLUE
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+skinparam backgroundColor white
+skinparam ClassBackgroundColor #f8f8f8
+skinparam ClassBorderColor #999999
+
+package "Controller" {
+    interface "GameControllerTrait" as GCT {
+        + save_game_state(): Result<()>
+        + load_game_state(): Result<()>
+        + handle_command(command: Command): Result<()>
+        + publish_command(command: Command)
+        + game_state(): &Arc<Mutex<GameState>>
+        + event_bus(): &EventBus
+        + command_bus(): &CommandBus
+    }
+
+    class "GameController" as GC {
+        - game_state: Arc<Mutex<GameState>>
+        - event_bus: EventBus
+        - command_bus: CommandBus
+        - persistence: Arc<dyn GameStatePersistence>
+        - plugin_manager: PluginManager
+        + new(game: Game, persistence: Arc<dyn GameStatePersistence>): Self
+        + register_plugin(plugin: Arc<dyn ControllerPlugin>)
+        + init(): Arc<Self>
+    }
+
+    GC .up.|> GCT
+
+    class "PluginManager" as PM {
+        - plugins: HashMap<String, Arc<dyn ControllerPlugin>>
+        + add_plugin(plugin: Arc<dyn ControllerPlugin>)
+        + init_plugins(): Result<()>
+        + load_plugins(controller: &Arc<dyn GameControllerTrait>): Result<()>
+        + unload_plugins(controller: &Arc<dyn GameControllerTrait>): Result<()>
+    }
+
+    interface "ControllerPlugin" as CP {
+        + name(): &str
+        + init(): Result<()>
+        + load(controller: Arc<dyn GameControllerTrait>): Result<()>
+        + unload(controller: Arc<dyn GameControllerTrait>): Result<()>
+    }
+
+    GC *--> PM : manages
+    PM o--> CP : manages >
+
+    note bottom of GC
+        The central controller that
+        coordinates game flow, processes
+        commands, and manages plugins
+    endnote
+}
+
+package "Core Components" {
+    class "GameState" as GS {
+        + game: Game
+        + challenge: Challenge
+        + current_game_path: usize
+        + current_challenge_index: usize
+        + current_task_index: usize
+    }
+
+    class "EventBus" as EB {
+        - listeners: Arc<Mutex<HashMap<EventType, Vec<EventHandler>>>>
+        + subscribe(event_type: EventType, callback: F)
+        + publish(event: Event)
+    }
+
+    class "CommandBus" as CB {
+        - listeners: Arc<Mutex<HashMap<CommandType, Vec<CommandHandler>>>>
+        + subscribe(command_type: CommandType, callback: F)
+        + publish(command: Command)
+    }
+
+    interface "GameStatePersistence" as GSP {
+        + save_game_state(state: &GameState): Result<()>
+        + load_game_state(): Result<GameState>
+    }
+}
+
+package "Plugins" {
+    class "GameXpPlugin" as GXP implements CP {
+        + update_game_xp(controller: Arc<dyn GameControllerTrait>, result: &ChallengeResult): Result<()>
+    }
+
+    class "ChallengeFinishPlugin" as CFP implements CP {
+        + handle_challenge_finish(controller: Arc<dyn GameControllerTrait>, challenge: &Challenge, result: &ChallengeResult): Result<()>
+    }
+
+    class "DebugPlugin" as DP implements CP {
+        - logger: Arc<dyn log::Log>
+        + new(logger: Arc<dyn log::Log>): Self
+    }
+}
+
+package "Commands & Events" {
+    class "Command" as CMD <<enumeration>> {
+        Game(GameCommand)
+        Challenge(ChallengeCommand)
+    }
+
+    class "Event" as EVT <<enumeration>> {
+        Game(GameEvent)
+        Challenge(ChallengeEvent)
+    }
+}
+
+' Relationships
+GC *--> GS : manages
+GC *--> EB : uses
+GC *--> CB : uses
+GC *--> GSP : uses
+CB ..> CMD : processes
+EB ..> EVT : dispatches
+
+GXP ..> GS : updates XP
+CFP ..> GS : updates history
+DP ..> CB : logs commands
+
+' Flow annotations
+note right of CMD
+  Commands flow:
+  UI -> CommandBus -> GameController
+endnote
+
+note right of EVT
+  Events flow:
+  GameController -> EventBus -> Listeners
+endnote
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+package "events" {
+    enum Event {
+        Game(GameEvent)
+        Challenge(ChallengeEvent)
+    }
+    enum GameEvent {
+        Started
+    }
+    enum ChallengeEvent {
+        SolvedCorrect(usize)
+        SolvedIncorrect(usize)
+        Started
+        Completed
+    }
+    Event *-- GameEvent
+    Event *-- ChallengeEvent
+}
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(konnektoren_core, "konnektoren-core") {
+    Container(challenges, "Challenges", "Rust Module", "Manages different types of grammar challenges and their evaluation")
+    Container(game, "Game", "Rust Module", "Handles game logic, including paths and states")
+    Container(player_profile, "Player Profile", "Rust Module", "Manages user profiles and progress")
+    Container(session, "Session", "Rust Module", "Handles user sessions and state management")
+    Container(certificates, "Certificates", "Rust Module", "Manages the creation and verification of achievement certificates")
+}
+
+Rel(challenges, game, "Uses")
+Rel(game, player_profile, "Uses")
+Rel(game, session, "Uses")
+Rel(session, player_profile, "Uses")
+Rel(certificates, challenges, "Uses")
+Rel(certificates, player_profile, "Uses")
+@enduml

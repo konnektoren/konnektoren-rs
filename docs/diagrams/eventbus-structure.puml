@@ -1,0 +1,19 @@
+@startuml
+class EventBus {
+  +subscribe(event_type: EventType, callback: Fn(Event))
+  +publish(event: Event)
+}
+
+enum EventType {
+  Game
+  Challenge
+}
+
+class Event {
+  +get_type(): EventType
+}
+
+EventBus --> "*" Event : publishes
+EventBus --> EventType : uses
+Event --> EventType : has
+@enduml
