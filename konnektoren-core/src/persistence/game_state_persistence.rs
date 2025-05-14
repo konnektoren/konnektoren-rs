@@ -1,5 +1,5 @@
 use crate::game::GameState;
-use anyhow::Result;
+use crate::persistence::error::Result;
 
 pub trait GameStatePersistence: Send + Sync {
     fn save_game_state(&self, state: &GameState) -> Result<()>;

@@ -1,5 +1,8 @@
 use crate::{
-    challenge_tabs::ChallengeTabs, challenge_widget::ChallengeWidget, map_widget::MapWidget,
+    challenge_tabs::ChallengeTabs,
+    challenge_widget::ChallengeWidget,
+    error::{Error, Result},
+    map_widget::MapWidget,
 };
 
 #[cfg(feature = "crossterm")]
@@ -38,13 +41,14 @@ impl App {
     }
 
     #[cfg(feature = "crossterm")]
-    pub fn run(&mut self, terminal: &mut Tui) -> anyhow::Result<()> {
-        terminal.clear()?;
-        terminal.hide_cursor()?;
+    pub fn run(&mut self, terminal: &mut Tui) -> Result<()> {
+        terminal.clear().map_err(Error::IoError)?;
+        terminal.hide_cursor().map_err(Error::IoError)?;
 
         while !self.exit {
-            terminal.draw(|frame| self.render_frame(frame))?;
-
+            terminal
+                .draw(|frame| self.render_frame(frame))
+                .map_err(Error::IoError)?;
             self.handle_events()?;
         }
         Ok(())
@@ -60,35 +64,37 @@ impl App {
 
     pub fn next_question(&mut self) {
         let command = Command::Challenge(ChallengeCommand::NextTask);
-        command
-            .execute(&mut self.session.game_state)
-            .unwrap_or_default();
+        if let Err(err) = command.execute(&mut self.session.game_state) {
+            log::error!("Failed to execute next question command: {}", err);
+        }
     }
 
     pub fn previous_question(&mut self) {
         let command = Command::Challenge(ChallengeCommand::PreviousTask);
-        command
-            .execute(&mut self.session.game_state)
-            .unwrap_or_default();
+        if let Err(err) = command.execute(&mut self.session.game_state) {
+            log::error!("Failed to execute previous question command: {}", err);
+        }
     }
 
     pub fn next_challenge(&mut self) {
         let command = Command::Game(GameCommand::NextChallenge);
-        command
-            .execute(&mut self.session.game_state)
-            .unwrap_or_default();
+        if let Err(err) = command.execute(&mut self.session.game_state) {
+            log::error!("Failed to execute next challenge command: {}", err);
+        }
     }
 
     pub fn previous_challenge(&mut self) {
         let command = Command::Game(GameCommand::PreviousChallenge);
-        command
-            .execute(&mut self.session.game_state)
-            .unwrap_or_default();
+        if let Err(err) = command.execute(&mut self.session.game_state) {
+            log::error!("Failed to execute previous challenge command: {}", err);
+        }
     }
 
-    pub fn solve_option(&mut self, option_id: usize) -> anyhow::Result<()> {
+    pub fn solve_option(&mut self, option_id: usize) -> Result<()> {
         let command = Command::Challenge(ChallengeCommand::SolveOption(option_id));
-        command.execute(&mut self.session.game_state)
+        command
+            .execute(&mut self.session.game_state)
+            .map_err(Error::CommandError)
     }
 
     pub fn toggl_map(&mut self) {
@@ -96,7 +102,7 @@ impl App {
     }
 
     #[cfg(feature = "crossterm")]
-    fn handle_key_event(&mut self, key_event: KeyEvent) -> anyhow::Result<()> {
+    fn handle_key_event(&mut self, key_event: KeyEvent) -> Result<()> {
         match key_event.code {
             KeyCode::Char('q') => self.exit(),
             KeyCode::Left => self.previous_question(),
@@ -119,11 +125,13 @@ impl App {
         Ok(())
     }
 
-    fn handle_events(&mut self) -> anyhow::Result<()> {
+    fn handle_events(&mut self) -> Result<()> {
         #[cfg(feature = "crossterm")]
-        match event::read()? {
+        match event::read().map_err(Error::IoError)? {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
-                self.handle_key_event(key_event).unwrap_or_default();
+                if let Err(e) = self.handle_key_event(key_event) {
+                    log::error!("Error handling key event: {}", e);
+                }
             }
             _ => {}
         };
@@ -208,9 +216,9 @@ mod tests {
 
     #[test]
     #[cfg(feature = "crossterm")]
-    fn handle_key_event() -> anyhow::Result<()> {
+    fn handle_key_event() -> Result<()> {
         let mut app = App::default();
-        app.handle_key_event(KeyCode::Char('q').into()).unwrap();
+        app.handle_key_event(KeyCode::Char('q').into())?;
         assert!(app.exit);
 
         Ok(())

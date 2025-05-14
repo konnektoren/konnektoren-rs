@@ -3,9 +3,10 @@
 use super::command::CommandTrait;
 use super::command_type::CommandType;
 use crate::challenges::Timed;
+use crate::commands::error::{CommandError, Result};
 use crate::game::GamePath;
 use crate::game::GameState;
-use anyhow::{Result, anyhow};
+use crate::game::error::GameError;
 
 /// Represents game-level commands that can be executed on the game state.
 #[derive(Debug, Clone, PartialEq)]
@@ -54,10 +55,12 @@ impl GameCommand {
             .game
             .game_paths
             .get(state.current_game_path)
-            .expect("Invalid game path index");
+            .ok_or(CommandError::GameError(GameError::GamePathNotFound))?;
 
         if state.current_challenge_index + 1 >= current_game_path.challenge_ids().len() {
-            return Err(anyhow!("No more challenges"));
+            return Err(CommandError::GameError(GameError::InvalidGameState(
+                "No more challenges".to_string(),
+            )));
         }
         state.current_challenge_index += 1;
 
@@ -65,7 +68,8 @@ impl GameCommand {
         state.challenge = state
             .game
             .create_challenge(&challenge_config.id)
-            .unwrap_or_default();
+            .map_err(CommandError::GameError)?;
+
         state.challenge.start();
         state.current_task_index = 0;
 
@@ -83,22 +87,30 @@ impl GameCommand {
     /// A `Result` indicating success or containing an error if there are no previous challenges.
     pub fn previous_challenge(state: &mut GameState) -> Result<()> {
         if state.current_challenge_index == 0 {
-            return Err(anyhow!("No previous challenges"));
+            return Err(CommandError::GameError(GameError::InvalidGameState(
+                "No previous challenges".to_string(),
+            )));
         }
+
         state.current_challenge_index -= 1;
+
         let current_game_path: &GamePath = state
             .game
             .game_paths
             .get(state.current_game_path)
-            .expect("Invalid game path index");
+            .ok_or(CommandError::GameError(GameError::GamePathNotFound))?;
+
         let challenge_config = &current_game_path.challenges[state.current_challenge_index];
-        state.challenge = state
-            .game
-            .create_challenge(&challenge_config.id)
-            .unwrap_or_default();
-        state.challenge.start();
-        state.current_task_index = 0;
-        Ok(())
+
+        match state.game.create_challenge(&challenge_config.id) {
+            Ok(challenge) => {
+                state.challenge = challenge;
+                state.challenge.start();
+                state.current_task_index = 0;
+                Ok(())
+            }
+            Err(err) => Err(CommandError::GameError(err)),
+        }
     }
 }
 
@@ -143,6 +155,16 @@ mod tests {
         assert_eq!(state.current_challenge_index, 7);
         let result = command.execute(&mut state);
         assert!(result.is_err());
+
+        // Check the error type
+        if let Err(error) = result {
+            match error {
+                CommandError::GameError(GameError::InvalidGameState(msg)) => {
+                    assert_eq!(msg, "No more challenges");
+                }
+                _ => panic!("Unexpected error type: {:?}", error),
+            }
+        }
     }
 
     #[test]
@@ -151,5 +173,33 @@ mod tests {
         let command = GameCommand::PreviousChallenge;
         let result = command.execute(&mut state);
         assert!(result.is_err());
+
+        // Check the error type
+        if let Err(error) = result {
+            match error {
+                CommandError::GameError(GameError::InvalidGameState(msg)) => {
+                    assert_eq!(msg, "No previous challenges");
+                }
+                _ => panic!("Unexpected error type: {:?}", error),
+            }
+        }
+    }
+
+    #[test]
+    fn test_game_path_not_found() {
+        let mut state = GameState::default();
+        state.current_game_path = 999; // Invalid index
+
+        let command = GameCommand::NextChallenge;
+        let result = command.execute(&mut state);
+        assert!(result.is_err());
+
+        // Check the error type
+        if let Err(error) = result {
+            match error {
+                CommandError::GameError(GameError::GamePathNotFound) => {}
+                _ => panic!("Unexpected error type: {:?}", error),
+            }
+        }
     }
 }

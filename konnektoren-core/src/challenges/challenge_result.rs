@@ -1,3 +1,4 @@
+use crate::challenges::error::{ChallengeError, Result};
 use crate::challenges::{
     ChallengeInput, ContextItemChoiceAnswers, CustomChallengeResult, GapFillAnswer,
     MultipleChoiceOption, OrderingResult, SortTableRow,
@@ -22,42 +23,52 @@ impl Default for ChallengeResult {
 }
 
 impl ChallengeResult {
-    pub fn add_input(&mut self, input: ChallengeInput) -> anyhow::Result<()> {
+    pub fn add_input(&mut self, input: ChallengeInput) -> Result<()> {
         match self {
             ChallengeResult::MultipleChoice(options) => match input {
                 ChallengeInput::MultipleChoice(option) => {
                     options.push(option);
                     Ok(())
                 }
-                _ => panic!("Invalid challenge input"),
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected MultipleChoice input".to_string(),
+                )),
             },
             ChallengeResult::ContextualChoice(answers) => match input {
                 ChallengeInput::ContextualChoice(answer) => {
                     answers.push(answer);
                     Ok(())
                 }
-                _ => panic!("Invalid challenge input"),
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected ContextualChoice input".to_string(),
+                )),
             },
             ChallengeResult::GapFill(answers) => match input {
                 ChallengeInput::GapFill(answer) => {
                     answers.push(answer);
                     Ok(())
                 }
-                _ => panic!("Invalid challenge input"),
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected GapFill input".to_string(),
+                )),
             },
             ChallengeResult::SortTable(rows) => match input {
                 ChallengeInput::SortTable(row) => {
                     rows.push(row);
                     Ok(())
                 }
-                _ => panic!("Invalid challenge input"),
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected SortTable input".to_string(),
+                )),
             },
             ChallengeResult::Ordering(results) => match input {
                 ChallengeInput::Ordering(result) => {
                     results.push(result);
                     Ok(())
                 }
-                _ => panic!("Invalid challenge input"),
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected Ordering input".to_string(),
+                )),
             },
             ChallengeResult::Informative => Ok(()),
             ChallengeResult::Custom(_) => Ok(()),

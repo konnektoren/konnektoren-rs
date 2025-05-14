@@ -1,8 +1,19 @@
 use crate::controller::GameControllerTrait;
 use std::sync::Arc;
+use thiserror::Error;
 
-#[derive(Debug, PartialEq)]
+#[derive(Error, Debug, PartialEq)]
 pub enum ControllerPluginError {
+    #[error("Plugin initialization error: {0}")]
+    InitError(String),
+
+    #[error("Plugin loading error: {0}")]
+    LoadError(String),
+
+    #[error("Plugin unloading error: {0}")]
+    UnloadError(String),
+
+    #[error("General plugin error: {0}")]
     PluginError(String),
 }
 

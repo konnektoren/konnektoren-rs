@@ -1,6 +1,6 @@
 use super::keypair_from_static_str;
+use crate::certificates::error::{CertificateError, Result};
 use crate::challenges::PerformanceRecord;
-use anyhow::{Result, anyhow};
 use base64::{Engine as _, engine::general_purpose};
 use chrono::{DateTime, Utc};
 use ed25519_dalek::{Signature, Signer, Verifier, ed25519::SignatureBytes};
@@ -64,54 +64,69 @@ impl CertificateData {
         let mut buf = Vec::new();
 
         self.serialize(&mut rmp_serde::Serializer::new(&mut buf))
+            .map_err(|e| {
+                CertificateError::SerializationError(format!(
+                    "Failed to serialize certificate data to msgpack: {}",
+                    e
+                ))
+            })
             .expect("Failed to serialize certificate data to msgpack.");
 
         general_purpose::STANDARD.encode(buf).to_string()
     }
 
     pub fn from_base64(encoded: &str) -> Result<Self> {
-        let decoded = match general_purpose::STANDARD.decode(encoded) {
-            Ok(decoded) => decoded,
-            Err(_) => return Err(anyhow!("Failed to decode the certificate data.")),
-        };
+        let decoded = general_purpose::STANDARD
+            .decode(encoded)
+            .map_err(|_| CertificateError::DecodingError)?;
 
-        match rmp_serde::from_slice(&decoded) {
-            Ok(certificate_data) => Ok(certificate_data),
-            Err(_) => Err(anyhow!(
-                "Failed to deserialize certificate data from msgpack."
-            )),
-        }
+        rmp_serde::from_slice(&decoded).map_err(|e| {
+            CertificateError::DeserializationError(format!(
+                "Failed to deserialize certificate data: {}",
+                e
+            ))
+        })
     }
 
-    pub fn create_signature(&mut self) {
+    pub fn create_signature(&mut self) -> Result<()> {
         let (signing_key, _) = keypair_from_static_str();
         let certificate_data_copy = CertificateData::new_data_copy(self);
 
-        let serialized = serde_cbor::to_vec(&certificate_data_copy)
-            .expect("Failed to serialize certificate data");
-        let signature: Signature = signing_key.sign(&serialized);
+        let serialized = serde_cbor::to_vec(&certificate_data_copy).map_err(|e| {
+            CertificateError::SerializationError(format!(
+                "Failed to serialize certificate data: {}",
+                e
+            ))
+        })?;
 
+        let signature: Signature = signing_key.sign(&serialized);
         self.signature = Some(signature.to_bytes().to_vec());
+
+        Ok(())
     }
 
-    pub fn verify(&self) -> bool {
-        let (_, verifying_key) = keypair_from_static_str();
+    pub fn verify(&self) -> Result<bool> {
+        if self.signature.is_none() {
+            return Ok(false);
+        }
 
+        let (_, verifying_key) = keypair_from_static_str();
         let certificate_data_copy = CertificateData::new_data_copy(self);
 
-        let serialized = serde_cbor::to_vec(&certificate_data_copy)
-            .expect("Failed to serialize certificate data for verification");
+        let serialized = serde_cbor::to_vec(&certificate_data_copy).map_err(|e| {
+            CertificateError::SerializationError(format!(
+                "Failed to serialize certificate data for verification: {}",
+                e
+            ))
+        })?;
 
-        match &self.signature {
-            Some(signature) => {
-                let signature_bytes = SignatureBytes::try_from(signature.as_slice())
-                    .expect("Failed to convert signature bytes");
-                let signature = Signature::from_bytes(&signature_bytes);
+        let signature = self.signature.as_ref().unwrap();
+        let signature_bytes = SignatureBytes::try_from(signature.as_slice()).map_err(|_| {
+            CertificateError::SignatureError("Failed to convert signature bytes".to_string())
+        })?;
 
-                verifying_key.verify(&serialized, &signature).is_ok()
-            }
-            None => false,
-        }
+        let signature = Signature::from_bytes(&signature_bytes);
+        Ok(verifying_key.verify(&serialized, &signature).is_ok())
     }
 }
 
@@ -153,6 +168,12 @@ mod tests {
         let base64_encoded = "invalid_base64";
         let decoded_certificate_data = CertificateData::from_base64(base64_encoded);
         assert!(decoded_certificate_data.is_err());
+
+        // Verify error type
+        match decoded_certificate_data {
+            Err(CertificateError::DecodingError) => {}
+            _ => panic!("Expected DecodingError"),
+        }
     }
 
     #[test]
@@ -180,13 +201,28 @@ mod tests {
             Utc::now(),
         );
 
-        certificate_data.create_signature();
-        let is_verified = certificate_data.verify();
+        certificate_data.create_signature().unwrap();
+        let is_verified = certificate_data.verify().unwrap();
 
         assert!(
             is_verified,
             "The signature should be verified successfully."
         );
+    }
+
+    #[test]
+    fn test_missing_signature_verification() {
+        let certificate_data = CertificateData::new(
+            "Level A1".to_string(),
+            12,
+            10,
+            "Player".to_string(),
+            Utc::now(),
+        );
+
+        // Signature hasn't been created yet
+        let is_verified = certificate_data.verify().unwrap();
+        assert!(!is_verified, "Verification should fail with no signature");
     }
 
     #[test]
@@ -214,7 +250,7 @@ mod tests {
         let certificate_data_copy = certificate_data.new_data_copy();
         assert_eq!(certificate_data, certificate_data_copy);
 
-        certificate_data.create_signature();
+        certificate_data.create_signature().unwrap();
 
         let certificate_data_copy = certificate_data.new_data_copy();
         assert_ne!(certificate_data, certificate_data_copy);

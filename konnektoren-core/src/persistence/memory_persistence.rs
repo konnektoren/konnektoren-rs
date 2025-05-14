@@ -1,6 +1,6 @@
 use super::GameStatePersistence;
 use crate::game::GameState;
-use anyhow::Result;
+use crate::persistence::error::{PersistenceError, Result};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -22,12 +22,22 @@ impl MemoryPersistence {
 
 impl GameStatePersistence for MemoryPersistence {
     fn save_game_state(&self, state: &GameState) -> Result<()> {
-        *self.game_state.borrow_mut() = state.clone();
-        Ok(())
+        match self.game_state.try_borrow_mut() {
+            Ok(mut gs) => {
+                *gs = state.clone();
+                Ok(())
+            }
+            Err(_) => Err(PersistenceError::AccessError(
+                "Failed to get mutable borrow of game state".to_string(),
+            )),
+        }
     }
 
     fn load_game_state(&self) -> Result<GameState> {
-        Ok(self.game_state.borrow().clone())
+        self.game_state
+            .try_borrow()
+            .map(|gs| gs.clone())
+            .map_err(|_| PersistenceError::AccessError("Failed to borrow game state".to_string()))
     }
 }
 
@@ -54,5 +64,36 @@ mod tests {
 
         let loaded_state = persistence.load_game_state().unwrap();
         assert_eq!(state, loaded_state);
+    }
+
+    #[test]
+    fn test_concurrent_access_errors() {
+        let persistence = MemoryPersistence::default();
+        let state = GameState::default();
+
+        // Create a borrow that will cause subsequent borrows to fail
+        let _borrow = persistence.game_state.borrow_mut();
+
+        // This should fail with an AccessError
+        let save_result = persistence.save_game_state(&state);
+        assert!(save_result.is_err());
+
+        if let Err(err) = save_result {
+            match err {
+                PersistenceError::AccessError(_) => {} // Expected error type
+                _ => panic!("Unexpected error type: {:?}", err),
+            }
+        }
+
+        // This should also fail with an AccessError
+        let load_result = persistence.load_game_state();
+        assert!(load_result.is_err());
+
+        if let Err(err) = load_result {
+            match err {
+                PersistenceError::AccessError(_) => {} // Expected error type
+                _ => panic!("Unexpected error type: {:?}", err),
+            }
+        }
     }
 }

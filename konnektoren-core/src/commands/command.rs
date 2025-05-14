@@ -2,9 +2,9 @@
 
 use super::CommandType;
 use super::challenge_command::ChallengeCommand;
+use super::error::Result;
 use super::game_command::GameCommand;
 use crate::game::GameState;
-use anyhow::Result;
 
 /// A trait that defines the basic behavior for all commands in the game.
 pub trait CommandTrait {

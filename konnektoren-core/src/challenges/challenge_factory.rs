@@ -1,7 +1,7 @@
 use crate::challenges::challenge::Challenge;
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_type::ChallengeType;
-use anyhow::Result;
+use crate::challenges::error::{ChallengeError, Result};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -34,7 +34,7 @@ impl ChallengeFactory {
             .challenge_types
             .iter()
             .find(|challenge_type| challenge_type.id() == challenge_config.challenge)
-            .ok_or_else(|| anyhow::anyhow!("Challenge type not found"))?;
+            .ok_or(ChallengeError::ChallengeTypeNotFound)?;
         Ok(Challenge::new(
             &challenge_type.of_tasks(&challenge_config.tasks),
             challenge_config,

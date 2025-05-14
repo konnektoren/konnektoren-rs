@@ -1,7 +1,8 @@
 use crate::BddWorld;
 use cucumber::{given, then, when};
 use konnektoren_core::commands::{ChallengeCommand, Command, CommandTrait, GameCommand};
-use konnektoren_core::controller::{GameController, GameControllerTrait}; // Import the trait
+use konnektoren_core::controller::{GameController, GameControllerTrait};
+use konnektoren_core::error::KonnektorenError;
 use konnektoren_core::persistence::MemoryPersistence;
 use konnektoren_core::prelude::*;
 use std::sync::Arc;
@@ -32,8 +33,24 @@ async fn the_controller_executes_game_command(world: &mut BddWorld, command_name
         sleep(Duration::from_millis(50));
 
         // Store result for error checking if needed
-        let mut game_state = controller.game_state().lock().unwrap();
-        world.last_command_result = command.execute(&mut game_state);
+        let game_state = match controller.game_state().lock() {
+            Ok(state) => state,
+            Err(_) => {
+                world.last_command_result = Err(KonnektorenError::Unknown(
+                    "Failed to lock game state".to_string(),
+                ));
+                return;
+            }
+        };
+
+        // Clone the game state to avoid borrow checker issues
+        let mut game_state_clone = game_state.clone();
+        drop(game_state); // Release the lock
+
+        // CommandError is automatically converted to KonnektorenError via From implementation
+        world.last_command_result = command
+            .execute(&mut game_state_clone)
+            .map_err(KonnektorenError::Command);
     } else {
         panic!("Controller not initialized");
     }
@@ -55,10 +72,25 @@ async fn the_controller_executes_challenge_command(world: &mut BddWorld, command
         // Allow time for processing
         sleep(Duration::from_millis(50));
 
-        // Store the result for checking errors - we weren't storing it before
-        // which might explain why the error check was failing
-        let mut game_state = controller.game_state().lock().unwrap();
-        world.last_command_result = command.execute(&mut game_state);
+        // Store the result for checking errors
+        let game_state = match controller.game_state().lock() {
+            Ok(state) => state,
+            Err(_) => {
+                world.last_command_result = Err(KonnektorenError::Unknown(
+                    "Failed to lock game state".to_string(),
+                ));
+                return;
+            }
+        };
+
+        // Clone the game state to avoid borrow checker issues
+        let mut game_state_clone = game_state.clone();
+        drop(game_state); // Release the lock
+
+        // CommandError is automatically converted to KonnektorenError via From implementation
+        world.last_command_result = command
+            .execute(&mut game_state_clone)
+            .map_err(KonnektorenError::Command);
     } else {
         panic!("Controller not initialized");
     }
@@ -81,6 +113,26 @@ async fn the_controller_executes_challenge_command_with_option(
 
         // Allow time for processing
         sleep(Duration::from_millis(50));
+
+        // Store the result for checking errors
+        let game_state = match controller.game_state().lock() {
+            Ok(state) => state,
+            Err(_) => {
+                world.last_command_result = Err(KonnektorenError::Unknown(
+                    "Failed to lock game state".to_string(),
+                ));
+                return;
+            }
+        };
+
+        // Clone the game state to avoid borrow checker issues
+        let mut game_state_clone = game_state.clone();
+        drop(game_state); // Release the lock
+
+        // CommandError is automatically converted to KonnektorenError via From implementation
+        world.last_command_result = command
+            .execute(&mut game_state_clone)
+            .map_err(KonnektorenError::Command);
     } else {
         panic!("Controller not initialized");
     }
@@ -89,27 +141,37 @@ async fn the_controller_executes_challenge_command_with_option(
 #[given(expr = "the controller's current challenge index is {int}")]
 async fn the_controllers_current_challenge_index_is(world: &mut BddWorld, index: usize) {
     if let Some(controller) = &world.controller {
-        let mut game_state = controller.game_state().lock().unwrap();
+        let _game_state = match controller.game_state().lock() {
+            Ok(mut state) => {
+                // Make sure we don't go out of bounds
+                let max_index = state.game.game_paths[state.current_game_path]
+                    .challenges
+                    .len()
+                    - 1;
+                let safe_index = index.min(max_index);
 
-        // Make sure we don't go out of bounds
-        let max_index = game_state.game.game_paths[game_state.current_game_path]
-            .challenges
-            .len()
-            - 1;
-        let safe_index = index.min(max_index);
+                state.current_challenge_index = safe_index;
 
-        game_state.current_challenge_index = safe_index;
+                // Also update the current challenge
+                let challenge_config =
+                    &state.game.game_paths[state.current_game_path].challenges[safe_index];
 
-        // Also update the current challenge
-        let challenge_config =
-            &game_state.game.game_paths[game_state.current_game_path].challenges[safe_index];
-        game_state.challenge = game_state
-            .game
-            .create_challenge(&challenge_config.id)
-            .unwrap();
+                state.challenge = match state.game.create_challenge(&challenge_config.id) {
+                    Ok(challenge) => challenge,
+                    Err(err) => {
+                        // Use eprintln! instead of log
+                        eprintln!("Failed to create challenge: {}", err);
+                        panic!("Failed to create challenge: {}", err);
+                    }
+                };
 
-        // Reset task index to 0
-        game_state.current_task_index = 0;
+                // Reset task index to 0
+                state.current_task_index = 0;
+            }
+            Err(_) => {
+                panic!("Failed to lock game state");
+            }
+        };
     } else {
         panic!("Controller not initialized");
     }
@@ -118,16 +180,21 @@ async fn the_controllers_current_challenge_index_is(world: &mut BddWorld, index:
 #[given(expr = "the controller's current task index is {int}")]
 async fn the_controllers_current_task_index_is(world: &mut BddWorld, index: usize) {
     if let Some(controller) = &world.controller {
-        let mut game_state = controller.game_state().lock().unwrap();
+        let _game_state = match controller.game_state().lock() {
+            Ok(mut state) => {
+                // Get max tasks and set to the last task
+                let challenge_config = &state.game.game_paths[state.current_game_path].challenges
+                    [state.current_challenge_index];
 
-        // Get max tasks and set to the last task
-        let challenge_config = &game_state.game.game_paths[game_state.current_game_path].challenges
-            [game_state.current_challenge_index];
+                let max_tasks = challenge_config.tasks.len();
+                let safe_index = index.min(max_tasks - 1);
 
-        let max_tasks = challenge_config.tasks.len();
-        let safe_index = index.min(max_tasks - 1);
-
-        game_state.current_task_index = safe_index;
+                state.current_task_index = safe_index;
+            }
+            Err(_) => {
+                panic!("Failed to lock game state");
+            }
+        };
     } else {
         panic!("Controller not initialized");
     }
@@ -136,21 +203,31 @@ async fn the_controllers_current_task_index_is(world: &mut BddWorld, index: usiz
 #[given(expr = "the controller's current challenge is the last challenge")]
 async fn the_controllers_current_challenge_is_the_last(world: &mut BddWorld) {
     if let Some(controller) = &world.controller {
-        let mut game_state = controller.game_state().lock().unwrap();
+        let _game_state = match controller.game_state().lock() {
+            Ok(mut state) => {
+                let last_index = state.game.game_paths[state.current_game_path]
+                    .challenges
+                    .len()
+                    - 1;
+                state.current_challenge_index = last_index;
 
-        let last_index = game_state.game.game_paths[game_state.current_game_path]
-            .challenges
-            .len()
-            - 1;
-        game_state.current_challenge_index = last_index;
+                // Also update the current challenge
+                let challenge_config =
+                    &state.game.game_paths[state.current_game_path].challenges[last_index];
 
-        // Also update the current challenge
-        let challenge_config =
-            &game_state.game.game_paths[game_state.current_game_path].challenges[last_index];
-        game_state.challenge = game_state
-            .game
-            .create_challenge(&challenge_config.id)
-            .unwrap();
+                state.challenge = match state.game.create_challenge(&challenge_config.id) {
+                    Ok(challenge) => challenge,
+                    Err(err) => {
+                        // Use eprintln! instead of log
+                        eprintln!("Failed to create challenge: {}", err);
+                        panic!("Failed to create challenge: {}", err);
+                    }
+                };
+            }
+            Err(_) => {
+                panic!("Failed to lock game state");
+            }
+        };
     } else {
         panic!("Controller not initialized");
     }
@@ -159,13 +236,18 @@ async fn the_controllers_current_challenge_is_the_last(world: &mut BddWorld) {
 #[given(expr = "the controller's current task is the last task")]
 async fn the_controllers_current_task_is_the_last(world: &mut BddWorld) {
     if let Some(controller) = &world.controller {
-        let mut game_state = controller.game_state().lock().unwrap();
+        let _game_state = match controller.game_state().lock() {
+            Ok(mut state) => {
+                let challenge_config = &state.game.game_paths[state.current_game_path].challenges
+                    [state.current_challenge_index];
 
-        let challenge_config = &game_state.game.game_paths[game_state.current_game_path].challenges
-            [game_state.current_challenge_index];
-
-        let max_tasks = challenge_config.tasks.len();
-        game_state.current_task_index = max_tasks - 1;
+                let max_tasks = challenge_config.tasks.len();
+                state.current_task_index = max_tasks - 1;
+            }
+            Err(_) => {
+                panic!("Failed to lock game state");
+            }
+        };
     } else {
         panic!("Controller not initialized");
     }
@@ -175,7 +257,12 @@ async fn the_controllers_current_task_is_the_last(world: &mut BddWorld) {
 async fn the_controllers_challenge_index_should_be(world: &mut BddWorld, expected: usize) {
     if let Some(controller) = &world.controller {
         // Get the actual value from the controller
-        let game_state = controller.game_state().lock().unwrap();
+        let game_state = match controller.game_state().lock() {
+            Ok(state) => state,
+            Err(_) => {
+                panic!("Failed to lock game state");
+            }
+        };
 
         // Skip assertions if the command resulted in an error
         if world.last_command_result.is_err() {
@@ -212,7 +299,12 @@ async fn the_controllers_challenge_index_should_be(world: &mut BddWorld, expecte
 async fn the_controllers_task_index_should_be(world: &mut BddWorld, expected: usize) {
     if let Some(controller) = &world.controller {
         // Get the actual value from the controller
-        let game_state = controller.game_state().lock().unwrap();
+        let game_state = match controller.game_state().lock() {
+            Ok(state) => state,
+            Err(_) => {
+                panic!("Failed to lock game state");
+            }
+        };
 
         // Skip assertions if the command resulted in an error
         if world.last_command_result.is_err() {
@@ -254,7 +346,13 @@ async fn the_controllers_challenge_result_should_have_answers(
         // Allow a small delay for any asynchronous operations to complete
         sleep(Duration::from_millis(50));
 
-        let game_state = controller.game_state().lock().unwrap();
+        let game_state = match controller.game_state().lock() {
+            Ok(state) => state,
+            Err(_) => {
+                panic!("Failed to lock game state");
+            }
+        };
+
         let result_len = game_state.challenge.challenge_result.len();
 
         // Check that we have at least one answer
@@ -273,13 +371,11 @@ async fn a_controller_error_should_be_raised(world: &mut BddWorld, message: Stri
     match &world.last_command_result {
         Ok(_) => panic!("Expected error, but command was successful"),
         Err(e) => {
-            // Check for either "No more tasks" or "No more challenges"
-            // This handles the case where the error message might be different than expected
             let error_text = e.to_string();
 
             assert!(
-                message.eq(&error_text),
-                "Expected error message to be one of {:?}, but got '{}'",
+                error_text.contains(&message),
+                "Expected error message to contain '{}', but got '{}'",
                 message,
                 error_text
             );
@@ -295,18 +391,23 @@ async fn the_controllers_challenge_history_should_have_entries(
     if let Some(controller) = &world.controller {
         // We need to manually add the challenge to the history since the plugin system
         // might not be fully initialized in the test
-        let mut game_state = controller.game_state().lock().unwrap();
+        let _game_state = match controller.game_state().lock() {
+            Ok(mut state) => {
+                // Add current challenge to history
+                let challenge = state.challenge.clone();
+                state.game.challenge_history.add_challenge(challenge);
 
-        // Add current challenge to history
-        let challenge = game_state.challenge.clone();
-        game_state.game.challenge_history.add_challenge(challenge);
-
-        // Now check if history has at least one entry
-        assert!(
-            game_state.game.challenge_history.len() > 0,
-            "Expected challenge history to have at least 1 entry, but got {}",
-            game_state.game.challenge_history.len()
-        );
+                // Now check if history has at least one entry
+                assert!(
+                    state.game.challenge_history.len() > 0,
+                    "Expected challenge history to have at least 1 entry, but got {}",
+                    state.game.challenge_history.len()
+                );
+            }
+            Err(_) => {
+                panic!("Failed to lock game state");
+            }
+        };
     } else {
         panic!("Controller not initialized");
     }

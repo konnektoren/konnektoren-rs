@@ -1,5 +1,5 @@
-use anyhow::Result;
 use cucumber::World;
+use konnektoren_core::error::Result;
 pub mod steps;
 use cucumber::WriterExt;
 use konnektoren_core::controller::GameController;

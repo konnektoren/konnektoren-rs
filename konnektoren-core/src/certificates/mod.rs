@@ -4,9 +4,11 @@ use sha2::{Digest, Sha256};
 
 mod certificate_data;
 mod certificate_image;
+pub mod error;
 
 pub use certificate_data::CertificateData;
 pub use certificate_image::{create_certificate, create_certificate_data_url};
+pub use error::*;
 
 pub fn keypair_from_static_str() -> (SigningKey, VerifyingKey) {
     let mut hasher = Sha256::new();

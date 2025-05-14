@@ -42,7 +42,6 @@ js = [
 ]
 
 [dependencies]
-anyhow = "1.0"
 chrono = { version = "0.4.38", features = ["serde"] }
 country-emoji = "0.2.0"
 eval = { version = "0.4", optional = true }

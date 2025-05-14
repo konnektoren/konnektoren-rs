@@ -1,11 +1,10 @@
+use super::GamePath;
 use crate::Xp;
 use crate::challenges::{
     Challenge, ChallengeConfig, ChallengeFactory, ChallengeHistory, Performance,
 };
-use anyhow::Result;
+use crate::game::error::{GameError, Result};
 use serde::{Deserialize, Serialize};
-
-use super::GamePath;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Game {
@@ -37,12 +36,13 @@ impl Game {
     }
 
     pub fn create_challenge(&self, challenge_config_id: &str) -> Result<Challenge> {
-        let challenge_config: Option<ChallengeConfig> =
-            self.get_challenge_config(challenge_config_id);
+        let challenge_config = self
+            .get_challenge_config(challenge_config_id)
+            .ok_or_else(|| GameError::ChallengeNotFound(challenge_config_id.to_string()))?;
 
-        let challenge_config =
-            challenge_config.ok_or_else(|| anyhow::anyhow!("Challenge config not found"))?;
-        self.challenge_factory.create_challenge(&challenge_config)
+        self.challenge_factory
+            .create_challenge(&challenge_config)
+            .map_err(GameError::ChallengeError)
     }
 
     pub fn get_challenge_config(&self, challenge_config_id: &str) -> Option<ChallengeConfig> {

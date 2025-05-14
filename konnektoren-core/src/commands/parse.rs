@@ -1,56 +1,54 @@
-use super::{ChallengeCommand, Command, CommandParseError, GameCommand};
+use super::{ChallengeCommand, Command, CommandError, GameCommand};
 use crate::challenges::{ChallengeResult, CustomChallengeResult};
 use serde_json::Value;
 use wasm_bindgen::prelude::*;
 
-impl From<CommandParseError> for JsValue {
-    fn from(error: CommandParseError) -> Self {
+impl From<CommandError> for JsValue {
+    fn from(error: CommandError) -> Self {
         JsValue::from_str(&error.to_string())
     }
 }
 
 impl TryFrom<JsValue> for Command {
-    type Error = CommandParseError;
+    type Error = CommandError;
 
     fn try_from(value: JsValue) -> Result<Self, Self::Error> {
         let obj: Value = serde_wasm_bindgen::from_value(value)
-            .map_err(|e| CommandParseError::ParseError(e.to_string()))?;
+            .map_err(|e| CommandError::ParseError(e.to_string()))?;
         Command::try_from(obj)
     }
 }
 
 impl TryFrom<Value> for Command {
-    type Error = CommandParseError;
+    type Error = CommandError;
 
     fn try_from(obj: Value) -> Result<Self, Self::Error> {
         match obj.get("type").and_then(|v| v.as_str()) {
             Some("Game") => Ok(Command::Game(GameCommand::try_from(obj)?)),
             Some("Challenge") => Ok(Command::Challenge(ChallengeCommand::try_from(obj)?)),
-            Some(unknown_type) => Err(CommandParseError::UnknownCommandType(
-                unknown_type.to_string(),
-            )),
-            None => Err(CommandParseError::MissingData),
+            Some(unknown_type) => Err(CommandError::UnknownCommandType(unknown_type.to_string())),
+            None => Err(CommandError::MissingData),
         }
     }
 }
 
 impl TryFrom<Value> for GameCommand {
-    type Error = CommandParseError;
+    type Error = CommandError;
 
     fn try_from(value: Value) -> Result<Self, Self::Error> {
         match value.get("action").and_then(|v| v.as_str()) {
             Some("NextChallenge") => Ok(GameCommand::NextChallenge),
             Some("PreviousChallenge") => Ok(GameCommand::PreviousChallenge),
-            Some(unknown_action) => Err(CommandParseError::UnknownCommandType(
-                unknown_action.to_string(),
-            )),
-            None => Err(CommandParseError::MissingData),
+            Some(unknown_action) => {
+                Err(CommandError::UnknownCommandType(unknown_action.to_string()))
+            }
+            None => Err(CommandError::MissingData),
         }
     }
 }
 
 impl TryFrom<Value> for ChallengeCommand {
-    type Error = CommandParseError;
+    type Error = CommandError;
 
     fn try_from(value: Value) -> Result<Self, Self::Error> {
         match value.get("action").and_then(|v| v.as_str()) {
@@ -59,25 +57,25 @@ impl TryFrom<Value> for ChallengeCommand {
             Some("SolveOption") => {
                 let option_index = value
                     .get("optionIndex")
-                    .ok_or(CommandParseError::MissingData)?
+                    .ok_or(CommandError::MissingData)?
                     .as_u64()
                     .ok_or_else(|| {
-                        CommandParseError::InvalidData("optionIndex must be a number".to_string())
+                        CommandError::InvalidData("optionIndex must be a number".to_string())
                     })?;
                 Ok(ChallengeCommand::SolveOption(option_index as usize))
             }
             Some("Finish") => {
-                let result = value.get("result").ok_or(CommandParseError::MissingData)?;
+                let result = value.get("result").ok_or(CommandError::MissingData)?;
                 let result: CustomChallengeResult = serde_json::from_value(result.clone())
-                    .map_err(|e| CommandParseError::ParseError(e.to_string()))?;
+                    .map_err(|e| CommandError::ParseError(e.to_string()))?;
                 Ok(ChallengeCommand::Finish(Some(ChallengeResult::Custom(
                     result.clone(),
                 ))))
             }
-            Some(unknown_action) => Err(CommandParseError::UnknownCommandType(
-                unknown_action.to_string(),
-            )),
-            None => Err(CommandParseError::MissingData),
+            Some(unknown_action) => {
+                Err(CommandError::UnknownCommandType(unknown_action.to_string()))
+            }
+            None => Err(CommandError::MissingData),
         }
     }
 }
@@ -139,7 +137,7 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err(),
-            CommandParseError::UnknownCommandType("Unknown".to_string())
+            CommandError::UnknownCommandType("Unknown".to_string())
         );
     }
 
@@ -149,7 +147,7 @@ mod tests {
         let value: serde_json::Value = serde_json::from_str(json).unwrap();
         let result = Command::try_from(value);
         assert!(result.is_err());
-        assert_eq!(result.unwrap_err(), CommandParseError::MissingData);
+        assert_eq!(result.unwrap_err(), CommandError::MissingData);
     }
 
     #[test]
@@ -158,7 +156,7 @@ mod tests {
         let value: serde_json::Value = serde_json::from_str(json).unwrap();
         let result = Command::try_from(value);
         assert!(result.is_err());
-        assert_eq!(result.unwrap_err(), CommandParseError::MissingData);
+        assert_eq!(result.unwrap_err(), CommandError::MissingData);
     }
 
     #[test]
@@ -167,10 +165,7 @@ mod tests {
         let value: serde_json::Value = serde_json::from_str(json).unwrap();
         let result = Command::try_from(value);
         assert!(result.is_err());
-        assert!(matches!(
-            result.unwrap_err(),
-            CommandParseError::InvalidData(_)
-        ));
+        assert!(matches!(result.unwrap_err(), CommandError::InvalidData(_)));
     }
 
     #[cfg(target_arch = "wasm32")]
@@ -230,7 +225,7 @@ mod tests {
             assert!(result.is_err());
             assert_eq!(
                 result.unwrap_err(),
-                CommandParseError::UnknownCommandType("Unknown".to_string())
+                CommandError::UnknownCommandType("Unknown".to_string())
             );
         }
 
@@ -240,7 +235,7 @@ mod tests {
             let value: JsValue = js_sys::JSON::parse(json).unwrap();
             let result = Command::try_from(value);
             assert!(result.is_err());
-            assert_eq!(result.unwrap_err(), CommandParseError::MissingData);
+            assert_eq!(result.unwrap_err(), CommandError::MissingData);
         }
 
         #[wasm_bindgen_test]
@@ -249,7 +244,7 @@ mod tests {
             let value: JsValue = js_sys::JSON::parse(json).unwrap();
             let result = Command::try_from(value);
             assert!(result.is_err());
-            assert_eq!(result.unwrap_err(), CommandParseError::MissingData);
+            assert_eq!(result.unwrap_err(), CommandError::MissingData);
         }
     }
 }

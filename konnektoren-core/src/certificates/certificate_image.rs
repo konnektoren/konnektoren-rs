@@ -1,6 +1,6 @@
 use super::CertificateData;
+use crate::certificates::error::{CertificateError, Result};
 use ab_glyph::{Font, FontRef, PxScale, ScaleFont};
-use anyhow::Result;
 use base64::Engine as _;
 use base64::engine::general_purpose;
 use image::{DynamicImage, ImageBuffer, ImageFormat, ImageReader, Luma, Rgba, RgbaImage, imageops};
@@ -8,7 +8,7 @@ use imageproc::drawing::draw_text_mut;
 use imageproc::rect::Rect;
 use lazy_static::lazy_static;
 use plot_icon::generate_png;
-use qrcode::{EcLevel, QrCode};
+use qrcode::{EcLevel, QrCode, types::QrError as QrCodeError};
 use std::io::Cursor;
 
 // Define color constants
@@ -24,9 +24,11 @@ const SMALL_FONT_SIZE: f32 = 18.0;
 
 lazy_static! {
     static ref TITLE_FONT: FontRef<'static> =
-        FontRef::try_from_slice(include_bytes!("../../assets/Montserrat-Bold.ttf")).unwrap();
+        FontRef::try_from_slice(include_bytes!("../../assets/Montserrat-Bold.ttf"))
+            .expect("Failed to load title font");
     static ref BODY_FONT: FontRef<'static> =
-        FontRef::try_from_slice(include_bytes!("../../assets/Lora-Regular.ttf")).unwrap();
+        FontRef::try_from_slice(include_bytes!("../../assets/Lora-Regular.ttf"))
+            .expect("Failed to load body font");
 }
 
 pub fn create_certificate(
@@ -40,7 +42,11 @@ pub fn create_certificate(
     let qr_code_size = 250;
 
     // Create QR code
-    let qr_code = QrCode::with_error_correction_level(url, EcLevel::H).unwrap();
+    let qr_code =
+        QrCode::with_error_correction_level(url, EcLevel::H).map_err(|e: QrCodeError| {
+            CertificateError::ImageProcessingError(format!("Failed to create QR code: {}", e))
+        })?;
+
     let qr_code_image = qr_code.render::<Luma<u8>>().quiet_zone(false).build();
     let qr_code_image_rgba =
         ImageBuffer::from_fn(qr_code_image.width(), qr_code_image.height(), |x, y| {
@@ -80,20 +86,38 @@ pub fn create_certificate(
     let logo_bytes = include_bytes!("../../assets/favicon.png");
     let logo_image = ImageReader::new(Cursor::new(logo_bytes))
         .with_guessed_format()
-        .expect("Failed to guess image format")
+        .map_err(|e| {
+            CertificateError::ImageProcessingError(format!(
+                "Failed to guess logo image format: {}",
+                e
+            ))
+        })?
         .decode()
-        .expect("Failed to decode image");
+        .map_err(|e| {
+            CertificateError::ImageProcessingError(format!("Failed to decode logo image: {}", e))
+        })?;
+
     let scaled_logo_image = imageops::resize(&logo_image, 120, 120, imageops::FilterType::Lanczos3);
     image::imageops::overlay(&mut cert_image, &scaled_logo_image, 50, 50);
 
     // Generate and draw identicon
     let identicon_image = {
-        let data: Vec<u8> = generate_png(certificate_data.to_base64().as_bytes(), 90)
-            .expect("Failed to generate identicon");
+        let data: Vec<u8> =
+            generate_png(certificate_data.to_base64().as_bytes(), 90).map_err(|e| {
+                CertificateError::ImageProcessingError(format!(
+                    "Failed to generate identicon: {}",
+                    e
+                ))
+            })?;
+
         let mut image = ImageReader::new(Cursor::new(data));
         image.set_format(image::ImageFormat::Png);
-        image.decode().expect("Failed to decode image")
+
+        image.decode().map_err(|e| {
+            CertificateError::ImageProcessingError(format!("Failed to decode identicon: {}", e))
+        })?
     };
+
     image::imageops::overlay(
         &mut cert_image,
         &identicon_image,
@@ -187,13 +211,16 @@ pub fn create_certificate_data_url(
     certificate_data: &CertificateData,
     url: &str,
     issuer: &str,
-) -> std::result::Result<String, Box<dyn std::error::Error>> {
+) -> Result<String> {
     let image = create_certificate(certificate_data, url, issuer)?;
 
     let mut image_data: Vec<u8> = Vec::new();
-    image
-        .write_to(&mut Cursor::new(&mut image_data), ImageFormat::Png)
-        .unwrap();
+    let mut cursor = Cursor::new(&mut image_data);
+
+    image.write_to(&mut cursor, ImageFormat::Png).map_err(|e| {
+        CertificateError::ImageProcessingError(format!("Failed to write image to buffer: {}", e))
+    })?;
+
     let res_base64 = general_purpose::STANDARD.encode(image_data);
     Ok(format!("data:image/png;base64,{}", res_base64))
 }
@@ -250,5 +277,33 @@ mod tests {
         let data_url = create_certificate_data_url(&certificate_data, url, issuer).unwrap();
 
         assert!(data_url.starts_with("data:image/png;base64,"));
+    }
+
+    #[test]
+    fn test_error_handling_invalid_url() {
+        // Test with an invalid URL that would cause QR code generation to fail
+        let certificate_data = CertificateData::new(
+            "Test Game Path".to_string(),
+            10,
+            5,
+            "Test Player".to_string(),
+            Utc::now(),
+        );
+
+        // Create an extremely long URL that exceeds QR code capacity for EcLevel::H
+        // The maximum capacity for QR code with error correction level H is around 1273 characters
+        // for version 40, so we'll use something longer than that
+        let url = "a".repeat(2000); // This should be too long for a QR code
+        let issuer = "Test Issuer";
+
+        let result = create_certificate(&certificate_data, &url, issuer);
+        assert!(result.is_err());
+
+        // Verify the error type
+        match result {
+            Err(CertificateError::ImageProcessingError(_)) => {} // Expected error
+            Err(e) => panic!("Unexpected error type: {:?}", e),
+            Ok(_) => panic!("Expected an error but got success"),
+        }
     }
 }

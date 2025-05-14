@@ -3,12 +3,14 @@
 use super::command::CommandTrait;
 use super::command_type::CommandType;
 use crate::challenges::Timed;
+use crate::challenges::error::ChallengeError;
 use crate::challenges::{
     Challenge, ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
 };
+use crate::commands::error::{CommandError, Result};
 use crate::game::GamePath;
 use crate::game::GameState;
-use anyhow::{Result, anyhow};
+use crate::game::error::GameError;
 
 /// Represents challenge-level commands that can be executed on the game state.
 #[derive(Debug, Clone, PartialEq)]
@@ -74,12 +76,15 @@ impl ChallengeCommand {
             .game
             .game_paths
             .get(state.current_game_path)
-            .expect("Invalid game path index");
+            .ok_or(CommandError::GameError(GameError::GamePathNotFound))?;
+
         let challenge_config = &current_game_path.challenges[state.current_challenge_index];
         let max_questions = challenge_config.tasks.len();
+
         if state.current_task_index >= max_questions - 1 {
-            return Err(anyhow!("No more tasks"));
+            return Err(CommandError::ChallengeError(ChallengeError::NoMoreTasks));
         }
+
         state.current_task_index += 1;
         Ok(())
     }
@@ -95,7 +100,9 @@ impl ChallengeCommand {
     /// A `Result` indicating success or containing an error if there are no previous tasks.
     fn previous_task(state: &mut GameState) -> Result<()> {
         if state.current_task_index == 0 {
-            return Err(anyhow!("No previous tasks"));
+            return Err(CommandError::ChallengeError(
+                ChallengeError::NoPreviousTasks,
+            ));
         }
         state.current_task_index -= 1;
         Ok(())
@@ -114,24 +121,33 @@ impl ChallengeCommand {
     fn solve_option(state: &mut GameState, option_index: usize) -> Result<()> {
         let challenge_input = match state.challenge.challenge_type {
             ChallengeType::MultipleChoice(ref dataset) => {
-                let option = match dataset.options.get(option_index) {
-                    Some(option) => option,
-                    None => {
-                        return Err(anyhow!("Invalid option id: {}", option_index));
-                    }
-                };
+                let option =
+                    dataset
+                        .options
+                        .get(option_index)
+                        .ok_or(CommandError::ChallengeError(
+                            ChallengeError::InvalidOptionId(option_index),
+                        ))?;
+
                 ChallengeInput::MultipleChoice(MultipleChoiceOption {
                     id: option.id,
                     name: option.name.clone(),
                 })
             }
             _ => {
-                return Err(anyhow!("Invalid challenge type"));
+                return Err(CommandError::ChallengeError(
+                    ChallengeError::InvalidChallengeType,
+                ));
             }
         };
-        state.challenge.solve(challenge_input)?;
 
-        Self::next_task(state).unwrap_or_default();
+        state
+            .challenge
+            .solve(challenge_input)
+            .map_err(|e| CommandError::ChallengeError(e))?;
+
+        // Attempt to move to the next task, but ignore "no more tasks" errors
+        let _ = Self::next_task(state);
 
         Ok(())
     }
@@ -169,6 +185,26 @@ mod tests {
     }
 
     #[test]
+    fn test_solve_option_invalid() {
+        let mut state = GameState::default();
+        state.current_game_path = 0;
+        state.current_challenge_index = 0;
+        state.current_task_index = 0;
+
+        // Try to solve with an invalid option index
+        let result = ChallengeCommand::solve_option(&mut state, 999);
+        assert!(result.is_err());
+
+        // Verify error type
+        if let Err(error) = result {
+            match error {
+                CommandError::ChallengeError(ChallengeError::InvalidOptionId(999)) => {}
+                _ => panic!("Unexpected error type: {:?}", error),
+            }
+        }
+    }
+
+    #[test]
     fn test_next_task() {
         let mut state = GameState::default();
         state.current_game_path = 0;
@@ -181,6 +217,30 @@ mod tests {
     }
 
     #[test]
+    fn test_next_task_no_more() {
+        let mut state = GameState::default();
+        state.current_game_path = 0;
+        state.current_challenge_index = 0;
+
+        // Set to last task
+        let current_game_path = &state.game.game_paths[state.current_game_path];
+        let challenge_config = &current_game_path.challenges[state.current_challenge_index];
+        let max_tasks = challenge_config.tasks.len();
+        state.current_task_index = max_tasks - 1;
+
+        let result = ChallengeCommand::next_task(&mut state);
+        assert!(result.is_err());
+
+        // Verify error type
+        if let Err(error) = result {
+            match error {
+                CommandError::ChallengeError(ChallengeError::NoMoreTasks) => {}
+                _ => panic!("Unexpected error type: {:?}", error),
+            }
+        }
+    }
+
+    #[test]
     fn test_previous_task() {
         let mut state = GameState::default();
         state.current_game_path = 0;
@@ -190,6 +250,25 @@ mod tests {
         let result = ChallengeCommand::previous_task(&mut state);
         assert!(result.is_ok());
         assert_eq!(state.current_task_index, 0);
+    }
+
+    #[test]
+    fn test_previous_task_no_more() {
+        let mut state = GameState::default();
+        state.current_game_path = 0;
+        state.current_challenge_index = 0;
+        state.current_task_index = 0;
+
+        let result = ChallengeCommand::previous_task(&mut state);
+        assert!(result.is_err());
+
+        // Verify error type
+        if let Err(error) = result {
+            match error {
+                CommandError::ChallengeError(ChallengeError::NoPreviousTasks) => {}
+                _ => panic!("Unexpected error type: {:?}", error),
+            }
+        }
     }
 
     #[test]
@@ -213,5 +292,43 @@ mod tests {
         let result = ChallengeCommand::SolveOption(0).execute(&mut state);
         assert!(result.is_ok());
         assert_eq!(state.current_task_index, 1);
+    }
+
+    #[test]
+    fn test_invalid_challenge_type() {
+        // Create a challenge with a non-multiple-choice type
+        let mut state = GameState::default();
+
+        // Modify challenge type to something other than MultipleChoice
+        // This is a bit of a hack for testing - ideally we'd create a proper challenge with a different type
+        state.challenge.challenge_type = ChallengeType::Informative(Default::default());
+
+        let result = ChallengeCommand::solve_option(&mut state, 0);
+        assert!(result.is_err());
+
+        // Verify error type
+        if let Err(error) = result {
+            match error {
+                CommandError::ChallengeError(ChallengeError::InvalidChallengeType) => {}
+                _ => panic!("Unexpected error type: {:?}", error),
+            }
+        }
+    }
+
+    #[test]
+    fn test_game_path_not_found() {
+        let mut state = GameState::default();
+        state.current_game_path = 999; // Invalid index
+
+        let result = ChallengeCommand::next_task(&mut state);
+        assert!(result.is_err());
+
+        // Verify error type
+        if let Err(error) = result {
+            match error {
+                CommandError::GameError(GameError::GamePathNotFound) => {}
+                _ => panic!("Unexpected error type: {:?}", error),
+            }
+        }
     }
 }

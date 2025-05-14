@@ -2,6 +2,7 @@ use crate::challenges::Timed;
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_result::ChallengeResult;
 use crate::challenges::challenge_type::ChallengeType;
+use crate::challenges::error::{ChallengeError, Result};
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -37,7 +38,7 @@ impl Challenge {
 }
 
 impl Solvable for Challenge {
-    fn solve(&mut self, input: super::ChallengeInput) -> anyhow::Result<bool> {
+    fn solve(&mut self, input: super::ChallengeInput) -> Result<bool> {
         self.update_end_time();
 
         match self.challenge_result.add_input(input.clone()) {
@@ -102,7 +103,7 @@ impl Solvable for Challenge {
                         // Custom challenges might need special handling
                         Ok(true)
                     }
-                    _ => Ok(false), // Mismatched challenge type and result type
+                    _ => Err(ChallengeError::InvalidChallengeType),
                 }
             }
             Err(_) => Ok(false),

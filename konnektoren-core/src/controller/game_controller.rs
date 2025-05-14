@@ -1,11 +1,10 @@
 use super::ControllerPlugin;
 use crate::commands::{Command, CommandBus, CommandTrait, CommandType};
-use crate::controller::PluginManager;
+use crate::controller::{ControllerError, PluginManager, Result};
 use crate::events::EventBus;
 use crate::game::Game;
 use crate::game::GameState;
 use crate::persistence::GameStatePersistence;
-use anyhow::Result;
 use std::fmt::{Debug, Formatter};
 use std::sync::{Arc, Mutex};
 
@@ -17,7 +16,7 @@ pub trait GameControllerTrait: Send + Sync {
     fn save_game_state(&self) -> Result<()>;
     fn load_game_state(&self) -> Result<()>;
 
-    fn handle_command(&self, command: Command);
+    fn handle_command(&self, command: Command) -> Result<()>;
     fn publish_command(&self, command: Command);
 
     // Getters for internal components
@@ -81,20 +80,24 @@ impl GameController {
         controller
             .command_bus
             .subscribe(CommandType::Game, move |command| {
-                controller_clone.handle_command(command);
+                if let Err(e) = controller_clone.handle_command(command) {
+                    log::error!("Error handling game command: {:?}", e);
+                }
             });
 
         let controller_clone = Arc::clone(&controller);
         controller
             .command_bus
             .subscribe(CommandType::Challenge, move |command| {
-                controller_clone.handle_command(command);
+                if let Err(e) = controller_clone.handle_command(command) {
+                    log::error!("Error handling challenge command: {:?}", e);
+                }
             });
 
         // Cast Arc<GameController> to Arc<dyn GameControllerTrait>
         let controller_trait: Arc<dyn GameControllerTrait> = controller.clone();
 
-        // Load plugins with the trait object - modify PluginManager to accept immutable reference
+        // Load plugins with the trait object
         if let Err(e) = controller.plugin_manager.load_plugins(&controller_trait) {
             log::error!("Error loading plugins: {:?}", e);
         }
@@ -105,22 +108,40 @@ impl GameController {
 
 impl GameControllerTrait for GameController {
     fn save_game_state(&self) -> Result<()> {
-        let game_state = self.game_state.lock().unwrap();
-        self.persistence.save_game_state(&game_state)
+        let game_state = self
+            .game_state
+            .lock()
+            .map_err(|_| ControllerError::StateLock)?;
+
+        self.persistence
+            .save_game_state(&game_state)
+            .map_err(|e| ControllerError::Persistence(e))
     }
 
     fn load_game_state(&self) -> Result<()> {
-        let loaded_state = self.persistence.load_game_state()?;
-        let mut game_state = self.game_state.lock().unwrap();
+        let loaded_state = self
+            .persistence
+            .load_game_state()
+            .map_err(|e| ControllerError::Persistence(e))?;
+
+        let mut game_state = self
+            .game_state
+            .lock()
+            .map_err(|_| ControllerError::StateLock)?;
+
         *game_state = loaded_state;
         Ok(())
     }
 
-    fn handle_command(&self, command: Command) {
-        let mut state = self.game_state.lock().unwrap();
-        if let Err(e) = command.execute(&mut state) {
-            eprintln!("Error executing command: {:?}", e);
-        }
+    fn handle_command(&self, command: Command) -> Result<()> {
+        let mut state = self
+            .game_state
+            .lock()
+            .map_err(|_| ControllerError::StateLock)?;
+
+        command
+            .execute(&mut state)
+            .map_err(|e| ControllerError::CommandExecution(e))
     }
 
     fn publish_command(&self, command: Command) {
