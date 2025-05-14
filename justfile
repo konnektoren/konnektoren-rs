@@ -32,6 +32,31 @@ lint:
 doc:
     cargo doc --workspace --no-deps
 
+# Documentation with AsciiDoc
+docs-build:
+    cd docs && asciidoctor -r asciidoctor-diagram -o index.html -a imagesdir=images -a sourcedir=src README.adoc
+
+# Documentation PDF
+docs-pdf:
+    cd docs && asciidoctor-pdf -r asciidoctor-diagram -o konnektoren-docs.pdf -a imagesdir=images -a sourcedir=src README.adoc
+
+# Start Structurizr Lite using direct Docker commands
+structurizr:
+    docker run -it --rm -d \
+      -p 8082:8080 \
+      -v {{justfile_directory()}}/docs:/usr/local/structurizr \
+      --name structurizr-lite \
+      structurizr/lite:latest
+    @echo "Structurizr is starting at http://localhost:8082"
+    #!/usr/bin/env sh
+    if command -v xdg-open > /dev/null; then xdg-open http://localhost:8082; \
+    elif command -v open > /dev/null; then open http://localhost:8082; \
+    else echo "Could not detect the web browser opener"; fi
+
+# Stop Structurizr
+structurizr-down:
+    docker stop structurizr-lite
+
 # Coverage
 coverage:
     cargo tarpaulin --workspace --ignore-tests
