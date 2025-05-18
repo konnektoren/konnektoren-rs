@@ -88,8 +88,8 @@
 <a href=#88 id=88 data-nosnippet>88</a>    <span class="attr">#[test]
 <a href=#89 id=89 data-nosnippet>89</a>    </span><span class="kw">fn </span>test_variant_iteration() {
 <a href=#90 id=90 data-nosnippet>90</a>        <span class="kw">let </span>variants: Vec&lt;ChallengeVariant&gt; = ChallengeVariant::iter().collect();
-<a href=#91 id=91 data-nosnippet>91</a>        <span class="macro">assert_eq!</span>(variants.len(), <span class="number">9</span>); <span class="comment">// was 8, now 9
-<a href=#92 id=92 data-nosnippet>92</a>        </span><span class="macro">assert!</span>(variants.contains(<span class="kw-2">&amp;</span>ChallengeVariant::MultipleChoice));
+<a href=#91 id=91 data-nosnippet>91</a>        <span class="macro">assert_eq!</span>(variants.len(), <span class="number">9</span>);
+<a href=#92 id=92 data-nosnippet>92</a>        <span class="macro">assert!</span>(variants.contains(<span class="kw-2">&amp;</span>ChallengeVariant::MultipleChoice));
 <a href=#93 id=93 data-nosnippet>93</a>        <span class="macro">assert!</span>(variants.contains(<span class="kw-2">&amp;</span>ChallengeVariant::MultipleChoice4));
 <a href=#94 id=94 data-nosnippet>94</a>        <span class="macro">assert!</span>(variants.contains(<span class="kw-2">&amp;</span>ChallengeVariant::CustomPackage));
 <a href=#95 id=95 data-nosnippet>95</a>    }
