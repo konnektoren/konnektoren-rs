@@ -12,6 +12,7 @@ pub enum ChallengeVariant {
     MultipleChoice,
     ContextualChoice,
     MultipleChoiceCircle,
+    MultipleChoice4,
     SortTable,
     InformativeText,
     InformativeMarkdown,
@@ -25,6 +26,7 @@ impl fmt::Display for ChallengeVariant {
             ChallengeVariant::MultipleChoice => "Multiple Choice",
             ChallengeVariant::ContextualChoice => "Contextual Choice",
             ChallengeVariant::MultipleChoiceCircle => "Multiple Choice Circle",
+            ChallengeVariant::MultipleChoice4 => "Multiple Choice (4 Options)",
             ChallengeVariant::SortTable => "Sort Table",
             ChallengeVariant::InformativeText => "Informative Text",
             ChallengeVariant::InformativeMarkdown => "Informative Markdown",
@@ -49,6 +51,10 @@ mod tests {
         let variant = ChallengeVariant::ContextualChoice;
         let serialized = serde_json::to_string(&variant).unwrap();
         assert_eq!(serialized, "\"contextual-choice\"");
+
+        let variant = ChallengeVariant::MultipleChoice4;
+        let serialized = serde_json::to_string(&variant).unwrap();
+        assert_eq!(serialized, "\"multiple-choice4\"");
     }
 
     #[test]
@@ -58,6 +64,9 @@ mod tests {
 
         let variant: ChallengeVariant = serde_json::from_str("\"contextual-choice\"").unwrap();
         assert_eq!(variant, ChallengeVariant::ContextualChoice);
+
+        let variant: ChallengeVariant = serde_json::from_str("\"multiple-choice4\"").unwrap();
+        assert_eq!(variant, ChallengeVariant::MultipleChoice4);
     }
 
     #[test]
@@ -70,13 +79,18 @@ mod tests {
             <ChallengeVariant as Into<&'static str>>::into(ChallengeVariant::ContextualChoice),
             "contextual-choice"
         );
+        assert_eq!(
+            <ChallengeVariant as Into<&'static str>>::into(ChallengeVariant::MultipleChoice4),
+            "multiple-choice4"
+        );
     }
 
     #[test]
     fn test_variant_iteration() {
         let variants: Vec<ChallengeVariant> = ChallengeVariant::iter().collect();
-        assert_eq!(variants.len(), 8);
+        assert_eq!(variants.len(), 9);
         assert!(variants.contains(&ChallengeVariant::MultipleChoice));
+        assert!(variants.contains(&ChallengeVariant::MultipleChoice4));
         assert!(variants.contains(&ChallengeVariant::CustomPackage));
     }
 
@@ -89,6 +103,10 @@ mod tests {
         assert_eq!(
             ChallengeVariant::ContextualChoice.to_string(),
             "Contextual Choice"
+        );
+        assert_eq!(
+            ChallengeVariant::MultipleChoice4.to_string(),
+            "Multiple Choice (4 Options)"
         );
     }
 
