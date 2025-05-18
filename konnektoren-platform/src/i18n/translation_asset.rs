@@ -23,27 +23,52 @@ impl<T: rust_embed::RustEmbed> JsonTranslationAsset<T> {
             _marker: std::marker::PhantomData,
         }
     }
-
-    fn load_json_file(filename: &str) -> Option<Value> {
-        T::get(filename).and_then(|file| {
-            String::from_utf8(file.data.to_vec())
-                .ok()
-                .and_then(|content| serde_json::from_str(&content).ok())
-        })
-    }
 }
 
 impl<T: rust_embed::RustEmbed> TranslationAsset for JsonTranslationAsset<T> {
-    fn load_translations(&self) -> HashMap<String, Value> {
-        let mut translations = HashMap::new();
+    fn load_translations(&self) -> HashMap<String, serde_json::Value> {
+        let mut translations: HashMap<String, serde_json::Map<String, serde_json::Value>> =
+            HashMap::new();
 
-        for lang in Language::builtin() {
-            if let Some(json) = Self::load_json_file(&format!("{}.json", lang.code())) {
-                translations.insert(lang.code().to_string(), json);
+        // Collect all files in the embedded folder
+        for file in T::iter() {
+            let filename = file.as_ref();
+
+            // Try to extract the language code from the filename
+            // Accepts: de.json, level_a1_de.json, wortschatz_a1_begruessung_de.json, etc.
+            if let Some(lang) = filename.strip_suffix(".json") {
+                // Try to match "de" or "level_a1_de"
+                let parts: Vec<&str> = lang.split('_').collect();
+                let lang_code = if parts.len() == 1 {
+                    // de
+                    parts[0]
+                } else {
+                    // level_a1_de -> de
+                    parts.last().unwrap()
+                };
+
+                // Only process if it's a known language code
+                if Language::builtin().iter().any(|l| l.code() == lang_code) {
+                    if let Some(content) = T::get(filename) {
+                        if let Ok(json) = serde_json::from_slice::<
+                            serde_json::Map<String, serde_json::Value>,
+                        >(&content.data)
+                        {
+                            translations
+                                .entry(lang_code.to_string())
+                                .and_modify(|existing| existing.extend(json.clone()))
+                                .or_insert(json);
+                        }
+                    }
+                }
             }
         }
 
+        // Convert to HashMap<String, Value>
         translations
+            .into_iter()
+            .map(|(k, v)| (k, serde_json::Value::Object(v)))
+            .collect()
     }
 }
 
