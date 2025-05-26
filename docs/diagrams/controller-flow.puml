@@ -1,0 +1,318 @@
+@startuml
+title Konnektoren Controller: Complete Challenge Flow with ChallengeEvent::Error
+
+actor User
+participant "UserInterface" as UI
+participant "CommandBus" as CB
+participant "GameController" as GC
+participant "GameState" as GS
+participant "Challenge" as CH
+participant "ChallengeFinishPlugin" as CFP
+participant "GameXpPlugin" as GXP
+participant "EventBus" as EB
+participant "Persistence" as PERS
+
+== Initialization ==
+User -> UI: Start Application
+UI -> GC: new(game, persistence)
+activate GC
+  GC -> GC: Create GameState, EventBus, CommandBus
+  GC -> GC: register_plugin(ChallengeFinishPlugin)
+  GC -> GC: register_plugin(GameXpPlugin)
+  GC -> GC: init() -> Arc<Self>
+
+  GC -> CFP: init()
+  CFP --> GC: Ok(())
+  GC -> GXP: init()
+  GXP --> GC: Ok(())
+
+  GC -> CFP: load(controller)
+  CFP -> CB: subscribe(CommandType::Challenge, callback)
+  CFP --> GC: Ok(())
+
+  GC -> GXP: load(controller)
+  GXP -> CB: subscribe(CommandType::Challenge, callback)
+  GXP --> GC: Ok(())
+
+  UI -> EB: subscribe(EventType::Game, callback)
+  UI -> EB: subscribe(EventType::Challenge, callback)
+
+  Note over CB: CommandBus now has subscribers:\n- ChallengeFinishPlugin\n- GameXpPlugin\n- GameController's own handlers
+  Note over EB: EventBus now has subscribers:\n- UserInterface (Game, Challenge events)
+deactivate GC
+
+EB -> UI: Event::Game(GameEvent::Started)
+
+== Challenge Start ==
+User -> UI: Navigate to challenge or click "Start Challenge"
+UI -> GC: publish_command(Command::Challenge(ChallengeCommand::Start(challenge)))
+GC -> CB: publish(Command::Challenge(Start(challenge)))
+
+activate CB
+  CB -> GC: handle_command(Start(challenge))
+  activate GC
+    GC -> GS: lock game_state
+    activate GS
+      GC -> CH: challenge.clone()
+      GC -> CH: challenge.start() // Start timing
+      activate CH
+        CH -> CH: Set start_time
+        CH -> CH: Reset challenge_result
+        CH --> GC: // Challenge is now active
+      deactivate CH
+      GC -> GS: state.challenge = challenge
+      GC -> GS: state.current_task_index = 0
+    deactivate GS
+    GC -> EB: publish(Event::Challenge(ChallengeEvent::Started))
+    EB -> UI: Event::Challenge(ChallengeEvent::Started)
+    GC --> CB: Ok(())
+  deactivate GC
+deactivate CB
+
+== User Solves Challenge Option (Success) ==
+User -> UI: Click option 2 for current task
+UI -> GC: publish_command(Command::Challenge(ChallengeCommand::SolveOption(2)))
+GC -> CB: publish(Command::Challenge(SolveOption(2)))
+
+activate CB
+  CB -> GC: handle_command(SolveOption(2))
+  activate GC
+    GC -> GS: lock game_state
+    activate GS
+      GC -> CH: solve(ChallengeInput::MultipleChoice(option_2))
+      activate CH
+        CH -> CH: Record answer in challenge_result
+        CH -> CH: Check if answer is correct
+        CH -> CH: Update performance metrics
+        CH --> GC: Ok(())
+      deactivate CH
+
+      alt Answer is correct
+        GC -> EB: publish(Event::Challenge(ChallengeEvent::SolvedCorrect(2)))
+        EB -> UI: Event::Challenge(ChallengeEvent::SolvedCorrect(2))
+      else Answer is incorrect
+        GC -> EB: publish(Event::Challenge(ChallengeEvent::SolvedIncorrect(2)))
+        EB -> UI: Event::Challenge(ChallengeEvent::SolvedIncorrect(2))
+      end
+
+      GC -> GC: next_task() // Attempt to move to next task
+      alt Has more tasks
+        GC -> GS: current_task_index += 1
+      else No more tasks (challenge complete)
+        Note right: Silently ignore "no more tasks" error\nChallenge is ready to finish
+      end
+
+    deactivate GS
+    GC --> CB: Ok(())
+  deactivate GC
+deactivate CB
+
+== Error Handling: Invalid Option Index ==
+User -> UI: Try invalid option index 999
+UI -> GC: publish_command(Command::Challenge(ChallengeCommand::SolveOption(999)))
+GC -> CB: publish(Command::Challenge(SolveOption(999)))
+
+activate CB
+  CB -> GC: handle_command(SolveOption(999))
+  activate GC
+    GC -> GS: lock game_state
+    activate GS
+      GC -> CH: solve(invalid_option)
+      CH --> GC: Err(ChallengeError::InvalidOptionId(999))
+    deactivate GS
+
+    GC -> EB: publish(Event::Challenge(ChallengeEvent::Error("Invalid option index: 999")))
+    EB -> UI: Event::Challenge(ChallengeEvent::Error("Invalid option index: 999"))
+
+    GC --> CB: Err(CommandError::ChallengeError(...))
+  deactivate GC
+
+  Note over GC: Error is logged:\n"Error handling challenge command: ..."
+deactivate CB
+
+== Error Handling: No More Tasks ==
+User -> UI: Try to go to next task when at last task
+UI -> GC: publish_command(Command::Challenge(ChallengeCommand::NextTask))
+GC -> CB: publish(Command::Challenge(NextTask))
+
+activate CB
+  CB -> GC: handle_command(NextTask)
+  activate GC
+    GC -> GS: lock game_state
+    activate GS
+      GC -> GS: Check if current_task_index >= max_tasks
+      GS --> GC: Err(ChallengeError::NoMoreTasks)
+    deactivate GS
+
+    GC -> EB: publish(Event::Challenge(ChallengeEvent::Error("No more tasks available")))
+    EB -> UI: Event::Challenge(ChallengeEvent::Error("No more tasks available"))
+
+    GC --> CB: Err(CommandError::ChallengeError(NoMoreTasks))
+  deactivate GC
+deactivate CB
+
+== Error Handling: No Previous Tasks ==
+User -> UI: Try to go to previous task when at first task
+UI -> GC: publish_command(Command::Challenge(ChallengeCommand::PreviousTask))
+GC -> CB: publish(Command::Challenge(PreviousTask))
+
+activate CB
+  CB -> GC: handle_command(PreviousTask)
+  activate GC
+    GC -> GS: lock game_state
+    activate GS
+      GC -> GS: Check if current_task_index == 0
+      GS --> GC: Err(ChallengeError::NoPreviousTasks)
+    deactivate GS
+
+    GC -> EB: publish(Event::Challenge(ChallengeEvent::Error("No previous tasks available")))
+    EB -> UI: Event::Challenge(ChallengeEvent::Error("No previous tasks available"))
+
+    GC --> CB: Err(CommandError::ChallengeError(NoPreviousTasks))
+  deactivate GC
+deactivate CB
+
+== Error Handling: Invalid Challenge Type ==
+User -> UI: Try to solve option on non-multiple-choice challenge
+UI -> GC: publish_command(Command::Challenge(ChallengeCommand::SolveOption(0)))
+GC -> CB: publish(Command::Challenge(SolveOption(0)))
+
+activate CB
+  CB -> GC: handle_command(SolveOption(0))
+  activate GC
+    GC -> GS: lock game_state
+    activate GS
+      Note over GS: Challenge type is not MultipleChoice
+      GS --> GC: Err(ChallengeError::InvalidChallengeType)
+    deactivate GS
+
+    GC -> EB: publish(Event::Challenge(ChallengeEvent::Error("Invalid challenge type for this operation")))
+    EB -> UI: Event::Challenge(ChallengeEvent::Error("Invalid challenge type for this operation"))
+
+    GC --> CB: Err(CommandError::ChallengeError(InvalidChallengeType))
+  deactivate GC
+deactivate CB
+
+== Error Handling: State Lock Error ==
+User -> UI: Multiple rapid commands causing lock contention
+UI -> GC: publish_command(Command::Challenge(ChallengeCommand::SolveOption(1)))
+GC -> CB: publish(Command::Challenge(SolveOption(1)))
+
+activate CB
+  CB -> GC: handle_command(SolveOption(1))
+  activate GC
+    GC -> GS: lock game_state
+    Note over GS: Lock fails due to contention
+    GS --> GC: Err(StateLock)
+
+    GC -> EB: publish(Event::Challenge(ChallengeEvent::Error("Failed to acquire game state lock")))
+    EB -> UI: Event::Challenge(ChallengeEvent::Error("Failed to acquire game state lock"))
+
+    GC --> CB: Err(CommandError::StateLock(...))
+  deactivate GC
+deactivate CB
+
+== Error Handling: Persistence Error in Plugin ==
+User -> UI: Finish challenge but save fails
+UI -> GC: publish_command(Command::Challenge(ChallengeCommand::Finish(Some(result))))
+GC -> CB: publish(Command::Challenge(Finish(Some(result))))
+
+activate CB
+  CB -> GC: handle_command(Finish(Some(result)))
+  activate GC
+    GC -> GS: lock game_state
+    activate GS
+      GC -> CH: update_end_time()
+      GC -> GS: challenge.challenge_result = result
+    deactivate GS
+    GC -> EB: publish(Event::Challenge(ChallengeEvent::Completed))
+    EB -> UI: Event::Challenge(ChallengeEvent::Completed)
+    GC --> CB: Ok(())
+  deactivate GC
+
+  CB -> CFP: callback(Command::Challenge(Finish(Some(result))))
+  activate CFP
+    CFP -> GC: game_state().lock()
+    activate GS
+      CFP -> GS: Update challenge history and result
+    deactivate GS
+    CFP -> GC: save_game_state()
+    GC -> PERS: save_game_state(&game_state)
+    PERS --> GC: Err(PersistenceError::SaveFailed("Disk full"))
+    GC --> CFP: Err(ControllerError::Persistence(...))
+
+    CFP -> EB: publish(Event::Challenge(ChallengeEvent::Error("Failed to save game state: Disk full")))
+    EB -> UI: Event::Challenge(ChallengeEvent::Error("Failed to save game state: Disk full"))
+
+    Note over CFP: Error is logged:\n"Error in challenge finish handler: ..."
+    CFP --> CB: // callback ends with error logged
+  deactivate CFP
+
+  Note over GXP: GameXpPlugin may still execute\nif ChallengeFinishPlugin error doesn't stop processing
+deactivate CB
+
+== Successful Challenge Completion ==
+User -> UI: Click "Finish Challenge" (successful path)
+UI -> GC: publish_command(Command::Challenge(ChallengeCommand::Finish(Some(result))))
+GC -> CB: publish(Command::Challenge(Finish(Some(result))))
+
+activate CB
+  CB -> GC: handle_command(Finish(Some(result)))
+  activate GC
+    GC -> GS: lock game_state
+    activate GS
+      GC -> CH: update_end_time()
+      GC -> GS: challenge.challenge_result = result
+    deactivate GS
+    GC -> EB: publish(Event::Challenge(ChallengeEvent::Completed))
+    EB -> UI: Event::Challenge(ChallengeEvent::Completed)
+    GC --> CB: Ok(())
+  deactivate GC
+
+  CB -> CFP: callback(Command::Challenge(Finish(Some(result))))
+  activate CFP
+    CFP -> GC: game_state().lock()
+    activate GS
+      CFP -> GS: Update challenge history and result
+    deactivate GS
+    CFP -> GC: save_game_state()
+    GC -> PERS: save_game_state(&game_state)
+    PERS --> GC: Ok(())
+    CFP --> CB: // callback ends successfully
+  deactivate CFP
+
+  CB -> GXP: callback(Command::Challenge(Finish(Some(result))))
+  activate GXP
+    GXP -> GC: game_state().lock()
+    activate GS
+      GXP -> GS: Update XP
+    deactivate GS
+    GXP -> GC: save_game_state()
+    GC -> PERS: save_game_state(&game_state)
+    PERS --> GC: Ok(())
+    GXP --> CB: // callback ends successfully
+  deactivate GXP
+deactivate CB
+
+== Navigation Commands ==
+User -> UI: Click "Next Challenge"
+UI -> GC: publish_command(Command::Game(GameCommand::NextChallenge))
+GC -> CB: publish(Command::Game(NextChallenge))
+
+activate CB
+  CB -> GC: handle_command(NextChallenge)
+  activate GC
+    GC -> GS: lock game_state
+    activate GS
+      GC -> GS: current_challenge_index += 1
+      GC -> GS: Create new challenge from game.create_challenge()
+      GC -> CH: start() // Auto-start new challenge
+      GC -> GS: current_task_index = 0
+    deactivate GS
+    GC -> EB: publish(Event::Challenge(ChallengeEvent::Started))
+    EB -> UI: Event::Challenge(ChallengeEvent::Started)
+    GC --> CB: Ok(())
+  deactivate GC
+deactivate CB
+
+@enduml
