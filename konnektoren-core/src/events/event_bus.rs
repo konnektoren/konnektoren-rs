@@ -32,7 +32,7 @@ impl EventBus {
         let listeners = self.listeners.lock().unwrap();
         if let Some(handlers) = listeners.get(&event.get_type()) {
             for handler in handlers {
-                handler(event);
+                handler(event.clone());
             }
         }
     }

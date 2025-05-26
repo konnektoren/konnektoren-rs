@@ -1,13 +1,14 @@
 use super::{EventType, event::EventTrait};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub enum ChallengeEvent {
     SolvedCorrect(usize),
     SolvedIncorrect(usize),
     #[default]
     Started,
     Completed,
+    Error(String),
 }
 
 impl EventTrait for ChallengeEvent {
@@ -21,6 +22,7 @@ impl EventTrait for ChallengeEvent {
             ChallengeEvent::SolvedIncorrect(_) => "SolvedIncorrect",
             ChallengeEvent::Started => "Started",
             ChallengeEvent::Completed => "Completed",
+            ChallengeEvent::Error(_) => "Error",
         }
     }
 }

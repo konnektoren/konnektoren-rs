@@ -8,7 +8,7 @@ pub trait EventTrait {
     fn get_action(&self) -> &str;
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Event {
     Game(GameEvent),
     Challenge(ChallengeEvent),

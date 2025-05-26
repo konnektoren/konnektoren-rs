@@ -49,7 +49,7 @@ impl TryFrom<Value> for GameEvent {
 impl TryFrom<Value> for ChallengeEvent {
     type Error = EventParseError;
 
-    fn try_from(value: Value) -> Result<Self, Self::Error> {
+    fn try_from(value: Value) -> Result<Self, EventParseError> {
         match value.get("action").and_then(|v| v.as_str()) {
             Some("SolvedCorrect") => {
                 let index = value
@@ -70,6 +70,16 @@ impl TryFrom<Value> for ChallengeEvent {
                         EventParseError::InvalidData("index must be a number".to_string())
                     })?;
                 Ok(ChallengeEvent::SolvedIncorrect(index as usize))
+            }
+            Some("Error") => {
+                let message = value
+                    .get("message")
+                    .ok_or(EventParseError::MissingData)?
+                    .as_str()
+                    .ok_or_else(|| {
+                        EventParseError::InvalidData("message must be a string".to_string())
+                    })?;
+                Ok(ChallengeEvent::Error(message.to_string()))
             }
             Some("Started") => Ok(ChallengeEvent::Started),
             Some("Completed") => Ok(ChallengeEvent::Completed),
@@ -123,6 +133,27 @@ mod tests {
         let value: serde_json::Value = serde_json::from_str(json).unwrap();
         let event = Event::try_from(value).unwrap();
         assert_eq!(event, Event::Challenge(ChallengeEvent::Completed));
+    }
+
+    #[test]
+    fn test_parse_challenge_event_error_missing_message() {
+        let json = r#"{"type":"Challenge","action":"Error"}"#;
+        let value: serde_json::Value = serde_json::from_str(json).unwrap();
+        let result = Event::try_from(value);
+        assert_eq!(result, Err(EventParseError::MissingData));
+    }
+
+    #[test]
+    fn test_parse_challenge_event_error_invalid_message() {
+        let json = r#"{"type":"Challenge","action":"Error","message":123}"#;
+        let value: serde_json::Value = serde_json::from_str(json).unwrap();
+        let result = Event::try_from(value);
+        assert_eq!(
+            result,
+            Err(EventParseError::InvalidData(
+                "message must be a string".to_string()
+            ))
+        );
     }
 
     #[cfg(target_arch = "wasm32")]
