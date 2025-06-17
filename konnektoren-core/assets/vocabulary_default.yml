@@ -1,0 +1,44 @@
+!vocabulary
+id: "vocabulary-example"
+name: "Basic German Vocabulary"
+description: "Learn essential German words with pronunciation"
+icon: "fa-solid fa-book-open" # Optional icon for the challenge overview
+lang: "de"
+
+# List of vocabulary items to learn
+items:
+  - id: 0 # Unique numeric identifier for the vocabulary item
+    text: "der Apfel" # The main vocabulary word/phrase
+    translation: "the apple" # Optional: Translation in another language
+    icon: "fa-solid fa-apple-whole" # Optional: Font Awesome icon class or image path
+    phonetic: "/ˈapfəl/" # Optional: Phonetic transcription
+
+  - id: 1
+    text: "das Haus"
+    translation: "the house"
+    icon: "fa-solid fa-house"
+    phonetic: "/haʊs/"
+
+  - id: 2
+    text: "die Katze"
+    translation: "the cat"
+    icon: "fa-solid fa-cat"
+    phonetic: "/ˈkatsə/"
+
+  - id: 3
+    text: "das Auto"
+    translation: "the car"
+    icon: "fa-solid fa-car"
+    phonetic: "/ˈaʊto/"
+
+  - id: 4
+    text: "der Baum"
+    translation: "the tree"
+    icon: "fa-solid fa-tree"
+    phonetic: "/baʊm/"
+
+  - id: 5
+    text: "die Blume"
+    translation: "the flower"
+    icon: "fa-solid fa-seedling"
+    # No phonetic specified (demonstrates optional nature)

@@ -1,10 +1,10 @@
 use super::{ChallengeResult, ContextualChoice, Custom, Performance, Placeholder};
-use crate::challenges::gap_fill::GapFill;
 use crate::challenges::informative::Informative;
 use crate::challenges::multiple_choice::MultipleChoice;
 use crate::challenges::ordering::Ordering;
 use crate::challenges::sort_table::SortTable;
 use crate::challenges::task_pattern::TaskPattern;
+use crate::challenges::{gap_fill::GapFill, vocabulary::Vocabulary};
 use serde::{Deserialize, Serialize};
 use strum_macros::{EnumIter, IntoStaticStr};
 
@@ -20,6 +20,7 @@ pub enum ChallengeType {
     Ordering(Ordering),
     Custom(Custom),
     Placeholder(Placeholder),
+    Vocabulary(Vocabulary),
 }
 
 impl Default for ChallengeType {
@@ -66,6 +67,12 @@ impl ChallengeType {
                 ChallengeType::Custom(dataset)
             }
             ChallengeType::Placeholder(dataset) => ChallengeType::Placeholder(dataset.clone()),
+            ChallengeType::Vocabulary(dataset) => {
+                let selected_items = task_pattern.select_items(&dataset.items);
+                let mut new_dataset = dataset.clone();
+                new_dataset.items = selected_items;
+                ChallengeType::Vocabulary(new_dataset)
+            }
         }
     }
 
@@ -79,6 +86,7 @@ impl ChallengeType {
             ChallengeType::Ordering(dataset) => &dataset.name,
             ChallengeType::Custom(dataset) => &dataset.name,
             ChallengeType::Placeholder(dataset) => &dataset.name,
+            ChallengeType::Vocabulary(dataset) => &dataset.name,
         }
     }
 
@@ -92,6 +100,7 @@ impl ChallengeType {
             ChallengeType::Ordering(dataset) => &dataset.id,
             ChallengeType::Custom(dataset) => &dataset.id,
             ChallengeType::Placeholder(dataset) => &dataset.id,
+            ChallengeType::Vocabulary(dataset) => &dataset.id,
         }
     }
 }
@@ -176,7 +185,16 @@ impl Performance for ChallengeType {
                 (100.0 * result.performance) as u32
             }
             (ChallengeType::Placeholder(_), _) => 0,
-            _ => panic!("Invalid challenge type {:?}", self),
+            // Add this line to handle Vocabulary challenges
+            (ChallengeType::Vocabulary(_), ChallengeResult::Vocabulary) => 100,
+            (ChallengeType::Vocabulary(_), ChallengeResult::Informative) => 100,
+            _ => {
+                log::warn!(
+                    "Unhandled challenge type/result combination: {:?}",
+                    (self, result)
+                );
+                0
+            }
         }
     }
 }

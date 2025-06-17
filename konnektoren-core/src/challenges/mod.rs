@@ -25,6 +25,7 @@ pub mod solvable;
 pub mod sort_table;
 pub mod task_pattern;
 pub mod timed;
+pub mod vocabulary;
 
 pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;
@@ -51,3 +52,4 @@ pub use review::Review;
 pub use solvable::Solvable;
 pub use sort_table::{SortTable, SortTableRow};
 pub use timed::Timed;
+pub use vocabulary::{Vocabulary, VocabularyItem};

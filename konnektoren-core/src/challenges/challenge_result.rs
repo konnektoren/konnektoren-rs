@@ -14,6 +14,7 @@ pub enum ChallengeResult {
     Informative,
     Ordering(Vec<OrderingResult>),
     Custom(CustomChallengeResult),
+    Vocabulary,
 }
 
 impl Default for ChallengeResult {
@@ -72,6 +73,7 @@ impl ChallengeResult {
             },
             ChallengeResult::Informative => Ok(()),
             ChallengeResult::Custom(_) => Ok(()),
+            ChallengeResult::Vocabulary => Ok(()),
         }
     }
 
@@ -84,6 +86,7 @@ impl ChallengeResult {
             ChallengeResult::Ordering(results) => results.len(),
             ChallengeResult::Informative => 0,
             ChallengeResult::Custom(_) => 0,
+            ChallengeResult::Vocabulary => 0,
         }
     }
 
@@ -96,6 +99,7 @@ impl ChallengeResult {
             ChallengeResult::Ordering(results) => results.is_empty(),
             ChallengeResult::Informative => true,
             ChallengeResult::Custom(_) => true,
+            ChallengeResult::Vocabulary => true,
         }
     }
 }
