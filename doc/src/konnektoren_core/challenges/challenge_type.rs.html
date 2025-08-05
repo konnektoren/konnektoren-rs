@@ -470,4 +470,46 @@
 <a href=#470 id=470 data-nosnippet>470</a>        <span class="kw">let </span>serialized = serde_yaml::to_string(<span class="kw-2">&amp;</span>challenge).unwrap();
 <a href=#471 id=471 data-nosnippet>471</a>        <span class="macro">assert!</span>(serialized.contains(<span class="string">"multiple-choice"</span>));
 <a href=#472 id=472 data-nosnippet>472</a>    }
-<a href=#473 id=473 data-nosnippet>473</a>}</code></pre></div></section></main></body></html>
+<a href=#473 id=473 data-nosnippet>473</a>
+<a href=#474 id=474 data-nosnippet>474</a>    <span class="attr">#[test]
+<a href=#475 id=475 data-nosnippet>475</a>    </span><span class="kw">fn </span>test_schema() {
+<a href=#476 id=476 data-nosnippet>476</a>        <span class="kw">let </span>schema = ChallengeType::schema();
+<a href=#477 id=477 data-nosnippet>477</a>
+<a href=#478 id=478 data-nosnippet>478</a>        <span class="comment">// Verify it's a valid JSON object
+<a href=#479 id=479 data-nosnippet>479</a>        </span><span class="macro">assert!</span>(schema.is_object());
+<a href=#480 id=480 data-nosnippet>480</a>
+<a href=#481 id=481 data-nosnippet>481</a>        <span class="comment">// Check that it contains expected schema properties
+<a href=#482 id=482 data-nosnippet>482</a>        </span><span class="kw">let </span>schema_obj = schema.as_object().unwrap();
+<a href=#483 id=483 data-nosnippet>483</a>        <span class="macro">assert!</span>(schema_obj.contains_key(<span class="string">"$schema"</span>) || schema_obj.contains_key(<span class="string">"type"</span>));
+<a href=#484 id=484 data-nosnippet>484</a>
+<a href=#485 id=485 data-nosnippet>485</a>        <span class="comment">// Verify it can be serialized back to JSON string
+<a href=#486 id=486 data-nosnippet>486</a>        </span><span class="kw">let </span>schema_string = serde_json::to_string(<span class="kw-2">&amp;</span>schema).unwrap();
+<a href=#487 id=487 data-nosnippet>487</a>        <span class="macro">assert!</span>(!schema_string.is_empty());
+<a href=#488 id=488 data-nosnippet>488</a>
+<a href=#489 id=489 data-nosnippet>489</a>        <span class="comment">// Verify the schema contains information about our enum variants
+<a href=#490 id=490 data-nosnippet>490</a>        </span><span class="kw">let </span>schema_str = serde_json::to_string_pretty(<span class="kw-2">&amp;</span>schema).unwrap();
+<a href=#491 id=491 data-nosnippet>491</a>        <span class="macro">assert!</span>(schema_str.contains(<span class="string">"MultipleChoice"</span>) || schema_str.contains(<span class="string">"multiple-choice"</span>));
+<a href=#492 id=492 data-nosnippet>492</a>    }
+<a href=#493 id=493 data-nosnippet>493</a>
+<a href=#494 id=494 data-nosnippet>494</a>    <span class="attr">#[test]
+<a href=#495 id=495 data-nosnippet>495</a>    </span><span class="kw">fn </span>test_schema_for_variant() {
+<a href=#496 id=496 data-nosnippet>496</a>        <span class="kw">let </span>challenge = ChallengeType::default(); <span class="comment">// This should be MultipleChoice
+<a href=#497 id=497 data-nosnippet>497</a>        </span><span class="kw">let </span>variant_schema = challenge.schema_for_variant();
+<a href=#498 id=498 data-nosnippet>498</a>
+<a href=#499 id=499 data-nosnippet>499</a>        <span class="comment">// Verify it's a valid JSON object
+<a href=#500 id=500 data-nosnippet>500</a>        </span><span class="macro">assert!</span>(variant_schema.is_object());
+<a href=#501 id=501 data-nosnippet>501</a>
+<a href=#502 id=502 data-nosnippet>502</a>        <span class="comment">// Check basic schema structure
+<a href=#503 id=503 data-nosnippet>503</a>        </span><span class="kw">let </span>schema_obj = variant_schema.as_object().unwrap();
+<a href=#504 id=504 data-nosnippet>504</a>        <span class="macro">assert!</span>(schema_obj.contains_key(<span class="string">"type"</span>) || schema_obj.contains_key(<span class="string">"properties"</span>));
+<a href=#505 id=505 data-nosnippet>505</a>
+<a href=#506 id=506 data-nosnippet>506</a>        <span class="comment">// Verify it can be converted to string
+<a href=#507 id=507 data-nosnippet>507</a>        </span><span class="kw">let </span>schema_json = challenge.schema_json();
+<a href=#508 id=508 data-nosnippet>508</a>        <span class="macro">assert!</span>(!schema_json.is_empty());
+<a href=#509 id=509 data-nosnippet>509</a>        <span class="macro">assert!</span>(
+<a href=#510 id=510 data-nosnippet>510</a>            schema_json.contains(<span class="string">"MultipleChoice"</span>)
+<a href=#511 id=511 data-nosnippet>511</a>                || schema_json.contains(<span class="string">"id"</span>)
+<a href=#512 id=512 data-nosnippet>512</a>                || schema_json.contains(<span class="string">"name"</span>)
+<a href=#513 id=513 data-nosnippet>513</a>        );
+<a href=#514 id=514 data-nosnippet>514</a>    }
+<a href=#515 id=515 data-nosnippet>515</a>}</code></pre></div></section></main></body></html>
