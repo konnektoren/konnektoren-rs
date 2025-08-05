@@ -5,10 +5,11 @@ use crate::challenges::ordering::Ordering;
 use crate::challenges::sort_table::SortTable;
 use crate::challenges::task_pattern::TaskPattern;
 use crate::challenges::{gap_fill::GapFill, vocabulary::Vocabulary};
+use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
 use strum_macros::{EnumIter, IntoStaticStr};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumIter, IntoStaticStr)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumIter, IntoStaticStr, JsonSchema)]
 #[serde(rename_all = "kebab-case")]
 #[strum(serialize_all = "kebab-case")]
 pub enum ChallengeType {
@@ -27,6 +28,35 @@ impl Default for ChallengeType {
     fn default() -> Self {
         let data = include_str!("../../assets/konnektoren.yml");
         serde_yaml::from_str(data).unwrap()
+    }
+}
+
+impl ChallengeType {
+    /// Get the JSON schema for creating challenges
+    pub fn schema() -> serde_json::Value {
+        let schema = schema_for!(ChallengeType);
+        serde_json::to_value(schema).unwrap()
+    }
+
+    /// Get the JSON schema for a specific challenge variant
+    pub fn schema_for_variant(&self) -> serde_json::Value {
+        let schema = match self {
+            ChallengeType::MultipleChoice(_) => schema_for!(MultipleChoice),
+            ChallengeType::ContextualChoice(_) => schema_for!(ContextualChoice),
+            ChallengeType::GapFill(_) => schema_for!(GapFill),
+            ChallengeType::SortTable(_) => schema_for!(SortTable),
+            ChallengeType::Informative(_) => schema_for!(Informative),
+            ChallengeType::Ordering(_) => schema_for!(Ordering),
+            ChallengeType::Custom(_) => schema_for!(Custom),
+            ChallengeType::Placeholder(_) => schema_for!(Placeholder),
+            ChallengeType::Vocabulary(_) => schema_for!(Vocabulary),
+        };
+        serde_json::to_value(schema).unwrap()
+    }
+
+    /// Get the JSON schema as a pretty-printed string
+    pub fn schema_json(&self) -> String {
+        serde_json::to_string_pretty(&self.schema_for_variant()).unwrap()
     }
 }
 

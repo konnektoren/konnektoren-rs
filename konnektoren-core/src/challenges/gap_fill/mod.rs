@@ -1,11 +1,17 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct GapFill {
+    /// Unique identifier for the challenge
     pub id: String,
+    /// Display name of the challenge
     pub name: String,
+    /// Description of the challenge
     pub description: String,
+    /// Language code
     pub lang: String,
+    /// List of gap-fill questions
     pub questions: Vec<GapFillQuestion>,
 }
 
@@ -16,25 +22,35 @@ impl Default for GapFill {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct GapFillQuestion {
+    /// The sentence with gaps
     pub sentence: String,
+    /// Gaps to be filled
     pub gaps: Vec<Gap>,
+    /// Helpful hints
     pub hints: Vec<String>,
+    /// Translation of the sentence
     pub translation: String,
+    /// Explanation of the grammar rule
     pub explanation: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct Gap {
+    /// Position of the gap in the sentence
     pub position: usize,
+    /// Available options for this gap
     pub options: Vec<String>,
+    /// The correct answer
     pub correct: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct GapFillAnswer {
+    /// Index of the question being answered
     pub question_index: usize,
+    /// Answers for each gap
     pub answers: Vec<String>,
 }
 

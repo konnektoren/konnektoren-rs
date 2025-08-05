@@ -1,10 +1,15 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct Informative {
+    /// Unique identifier for the informative content
     pub id: String,
+    /// Display name of the content
     pub name: String,
+    /// Description of the content
     pub description: String,
+    /// Multilingual text content
     pub text: Vec<InformativeText>,
 }
 
@@ -15,9 +20,11 @@ impl Default for Informative {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct InformativeText {
+    /// Language code
     pub language: String,
+    /// The informative text content
     pub text: String,
 }
 

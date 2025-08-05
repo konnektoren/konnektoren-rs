@@ -1,10 +1,15 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct Ordering {
+    /// Unique identifier for the challenge
     pub id: String,
+    /// Display name of the challenge
     pub name: String,
+    /// Description of the challenge
     pub description: String,
+    /// List of ordering items
     pub items: Vec<OrderingItem>,
 }
 
@@ -15,14 +20,17 @@ impl Default for Ordering {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct OrderingItem {
+    /// Elements to be ordered
     pub elements: Vec<String>,
+    /// Correct order (indices)
     pub correct_order: Vec<usize>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct OrderingResult {
+    /// User's ordering (indices)
     pub order: Vec<usize>,
 }
 

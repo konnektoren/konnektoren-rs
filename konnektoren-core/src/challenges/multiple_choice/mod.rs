@@ -1,32 +1,37 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct MultipleChoice {
+    /// Unique identifier for the challenge
     pub id: String,
+    /// Display name of the challenge
     pub name: String,
+    /// Language code (e.g., "en", "de")
     pub lang: String,
+    /// Available answer options
     pub options: Vec<MultipleChoiceOption>,
+    /// List of questions
     pub questions: Vec<Question>,
 }
 
-impl Default for MultipleChoice {
-    fn default() -> Self {
-        let data = include_str!("../../../assets/multiple_choice_default.yml");
-        serde_yaml::from_str(data).unwrap()
-    }
-}
-
-#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct MultipleChoiceOption {
+    /// Option identifier
     pub id: usize,
+    /// Display text for the option
     pub name: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct Question {
+    /// The question text
     pub question: String,
+    /// Help text or context
     pub help: String,
+    /// Optional image/icon identifier
     pub image: Option<String>,
+    /// ID of the correct option
     pub option: usize,
 }
 

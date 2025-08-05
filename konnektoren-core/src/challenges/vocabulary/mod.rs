@@ -1,12 +1,19 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct Vocabulary {
+    /// Unique identifier for the vocabulary set
     pub id: String,
+    /// Display name of the vocabulary set
     pub name: String,
+    /// Description of the vocabulary set
     pub description: String,
+    /// Optional icon identifier
     pub icon: Option<String>,
+    /// Language code
     pub lang: String,
+    /// List of vocabulary items
     pub items: Vec<VocabularyItem>,
 }
 
@@ -17,12 +24,17 @@ impl Default for Vocabulary {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct VocabularyItem {
+    /// Item identifier
     pub id: usize,
+    /// The word or phrase
     pub text: String,
+    /// Translation of the word
     pub translation: Option<String>,
+    /// Optional icon identifier
     pub icon: Option<String>,
+    /// Phonetic pronunciation
     pub phonetic: Option<String>,
 }
 

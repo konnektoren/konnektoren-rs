@@ -1,10 +1,15 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct ContextualChoice {
+    /// Unique identifier for the challenge
     pub id: String,
+    /// Display name of the challenge
     pub name: String,
+    /// Description of the challenge
     pub description: String,
+    /// List of contextual items
     pub items: Vec<ContextItem>,
 }
 
@@ -15,21 +20,27 @@ impl Default for ContextualChoice {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct ContextItem {
+    /// Template string with placeholders like {0}, {1}
     pub template: String,
+    /// Available choices for each placeholder
     pub choices: Vec<Choice>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct Choice {
+    /// Choice identifier
     pub id: usize,
+    /// Available options for this choice
     pub options: Vec<String>,
+    /// The correct answer
     pub correct_answer: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct ContextItemChoiceAnswers {
+    /// Selected option IDs for each choice
     pub ids: Vec<usize>,
 }
 

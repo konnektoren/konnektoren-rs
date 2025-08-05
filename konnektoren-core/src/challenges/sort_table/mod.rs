@@ -1,11 +1,17 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct SortTable {
+    /// Unique identifier for the challenge
     pub id: String,
+    /// Display name of the challenge
     pub name: String,
+    /// Description of the challenge
     pub description: String,
+    /// Table column definitions
     pub columns: Vec<SortTableColumn>,
+    /// Table rows to be sorted
     pub rows: Vec<SortTableRow>,
 }
 
@@ -16,16 +22,21 @@ impl Default for SortTable {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct SortTableColumn {
+    /// Column identifier
     pub id: String,
+    /// Column title
     pub title: String,
+    /// Column description
     pub description: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
 pub struct SortTableRow {
+    /// Row identifier
     pub id: usize,
+    /// Values for each column
     pub values: Vec<String>,
 }
 

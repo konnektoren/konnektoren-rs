@@ -1,14 +1,22 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct Placeholder {
+    /// Unique identifier for the placeholder
     pub id: String,
+    /// Display name of the placeholder
     pub name: String,
+    /// Description of what's coming
     pub description: String,
+    /// Type of placeholder
     #[serde(rename = "type")]
     pub type_: PlaceholderType,
+    /// Optional image identifier
     pub image: Option<String>,
+    /// Estimated time for completion
     pub estimated_time: Option<String>,
+    /// Informative text content
     pub text: Vec<InformativeText>,
 }
 
@@ -19,16 +27,18 @@ impl Default for Placeholder {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub enum PlaceholderType {
     ComingSoon,
     Planned,
     UnderDevelopment,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct InformativeText {
+    /// Language code
     pub language: String,
+    /// The text content
     pub text: String,
 }
 

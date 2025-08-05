@@ -1,13 +1,18 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::ops::RangeInclusive;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum TaskPattern {
+    /// Exact number of tasks
     Exact(usize),
+    /// Range of task indices
     Range(RangeInclusive<i32>),
+    /// Random selection with optional range
     Random(usize, Option<RangeInclusive<i32>>),
 }
 

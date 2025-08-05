@@ -1,17 +1,29 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
 pub struct Custom {
+    /// Unique identifier for the custom challenge
     pub id: String,
+    /// Display name of the challenge
     pub name: String,
+    /// Description of the challenge
     pub description: String,
+    /// HTML content for the challenge
     pub html: String,
+    /// Optional HTML content for results display
     pub results_html: Option<String>,
+    /// CSS styles for the challenge
     pub css: String,
+    /// JavaScript code for the challenge
     pub js: String,
+    /// Optional internationalization data
     pub i18n: Option<String>,
+    /// Custom data for the challenge
     pub data: serde_json::Value,
+    /// Optional task IDs for selection
     pub task_ids: Option<Vec<usize>>,
+    /// Optional package URL for external content
     pub package_url: Option<String>,
 }
 
