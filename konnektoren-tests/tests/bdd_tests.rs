@@ -17,10 +17,8 @@ pub struct BddWorld {
     pub factory: Option<ChallengeFactory>,
     pub last_command_result: Result<()>,
     pub game: Game,
-    // Change these to owned values instead of references
     pub unlocked_achievements: Vec<AchievementDefinition>,
     pub achievement_notification: Option<AchievementDefinition>,
-    // Add controller field
     pub controller: Option<Arc<GameController>>,
 }
 

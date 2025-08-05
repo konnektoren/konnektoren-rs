@@ -15,4 +15,3 @@ Feature: Game
   Scenario: List all challenges
     Given default game is loaded
     Then the game should have at least 2 challenges
-  

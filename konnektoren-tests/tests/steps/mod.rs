@@ -1,4 +1,5 @@
 pub mod achievement;
+pub mod base64_serialization;
 pub mod challenge;
 pub mod commands;
 pub mod controller;
