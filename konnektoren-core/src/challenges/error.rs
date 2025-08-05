@@ -26,11 +26,20 @@ pub enum ChallengeError {
     #[error("Challenge validation failed: {0}")]
     ValidationFailed(String),
 
+    #[error("Base64 decode error: {0}")]
+    Base64Decode(String),
+
     #[error("Serialization error: {0}")]
     Serialization(String),
 
+    #[error("Deserialization error: {0}")]
+    Deserialization(String),
+
     #[error("Parse error: {0}")]
     Parse(String),
+
+    #[error("Challenge not found: {0}")]
+    ChallengeNotFound(String),
 }
 
 pub type Result<T> = std::result::Result<T, ChallengeError>;

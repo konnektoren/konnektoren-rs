@@ -1,4 +1,5 @@
 //! This module contains all the challenges that can be solved by the user.
+pub mod base64_serializable;
 pub mod challenge;
 pub mod challenge_config;
 pub mod challenge_factory;
@@ -27,6 +28,7 @@ pub mod task_pattern;
 pub mod timed;
 pub mod vocabulary;
 
+pub use base64_serializable::Base64Serializable;
 pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;
 pub use challenge_factory::ChallengeFactory;
