@@ -470,4 +470,46 @@ pub mod tests {
         let serialized = serde_yaml::to_string(&challenge).unwrap();
         assert!(serialized.contains("multiple-choice"));
     }
+
+    #[test]
+    fn test_schema() {
+        let schema = ChallengeType::schema();
+
+        // Verify it's a valid JSON object
+        assert!(schema.is_object());
+
+        // Check that it contains expected schema properties
+        let schema_obj = schema.as_object().unwrap();
+        assert!(schema_obj.contains_key("$schema") || schema_obj.contains_key("type"));
+
+        // Verify it can be serialized back to JSON string
+        let schema_string = serde_json::to_string(&schema).unwrap();
+        assert!(!schema_string.is_empty());
+
+        // Verify the schema contains information about our enum variants
+        let schema_str = serde_json::to_string_pretty(&schema).unwrap();
+        assert!(schema_str.contains("MultipleChoice") || schema_str.contains("multiple-choice"));
+    }
+
+    #[test]
+    fn test_schema_for_variant() {
+        let challenge = ChallengeType::default(); // This should be MultipleChoice
+        let variant_schema = challenge.schema_for_variant();
+
+        // Verify it's a valid JSON object
+        assert!(variant_schema.is_object());
+
+        // Check basic schema structure
+        let schema_obj = variant_schema.as_object().unwrap();
+        assert!(schema_obj.contains_key("type") || schema_obj.contains_key("properties"));
+
+        // Verify it can be converted to string
+        let schema_json = challenge.schema_json();
+        assert!(!schema_json.is_empty());
+        assert!(
+            schema_json.contains("MultipleChoice")
+                || schema_json.contains("id")
+                || schema_json.contains("name")
+        );
+    }
 }
