@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":["Base64Serializable"]};
+window.SIDEBAR_ITEMS = {"trait":["Base64Serializable","RmpBase64Serializable"]};
