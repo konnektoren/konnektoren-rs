@@ -28,7 +28,7 @@ pub mod task_pattern;
 pub mod timed;
 pub mod vocabulary;
 
-pub use base64_serializable::Base64Serializable;
+pub use base64_serializable::{Base64Serializable, RmpBase64Serializable};
 pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;
 pub use challenge_factory::ChallengeFactory;
