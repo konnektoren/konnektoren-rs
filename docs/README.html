@@ -629,31 +629,82 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_requirements_overview"><a class="anchor" href="#_requirements_overview"></a>1.1. Requirements Overview</h3>
 <div class="paragraph">
-<p>Konnektoren is a web-based learning platform designed to improve the understanding and usage of German grammatical connectors through gamification. The system will engage users with a variety of interactive challenges, from simple multiple-choice questions to dynamic scenario-based tasks, aimed at both beginners and intermediate learners of German.</p>
+<p>Konnektoren is a web-based learning platform focused on improving the understanding and usage of German grammar through gamification.
+It offers interactive challenges—ranging from multiple-choice questions to scenario-based tasks—targeted at both beginners and intermediate learners.</p>
 </div>
 <div class="paragraph">
-<p>The main objective of Konnektoren is to make learning German grammar more engaging and effective. By integrating gamified elements like points, levels, and challenges, the platform aims to enhance user motivation, increase retention rates, and foster a deeper understanding of the German language.</p>
+<p><strong>Main objectives:</strong></p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Use Case 1</dt>
-<dd>
-<p>User creates a profile.</p>
-</dd>
-<dt class="hdlist1">Use Case 2</dt>
-<dd>
-<p>User participates in different grammar challenges.</p>
-</dd>
-<dt class="hdlist1">Use Case 3</dt>
-<dd>
-<p>User tracks progress through a visual progress map.</p>
-</dd>
-<dt class="hdlist1">Use Case 4</dt>
-<dd>
-<p>User competes with others on leaderboards.</p>
-</dd>
-</dl>
+<div class="ulist">
+<ul>
+<li>
+<p>Make learning German grammar engaging and effective.</p>
+</li>
+<li>
+<p>Use gamification (points, levels, achievements) to motivate users and increase retention.</p>
+</li>
+<li>
+<p>Provide measurable progress and feedback to learners and educators.</p>
+</li>
+</ul>
 </div>
+<div class="paragraph">
+<p><strong>Core Features:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>User profiles and progress tracking</p>
+</li>
+<li>
+<p>Interactive grammar challenges</p>
+</li>
+<li>
+<p>Visual progress maps</p>
+</li>
+<li>
+<p>Leaderboards and achievements</p>
+</li>
+<li>
+<p>Certificate and badge issuance (SSI-compatible)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Key Use Cases:</strong></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use Case</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Create Profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User sets up a personal profile name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Participate in Challenges</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User selects and completes grammar challenges.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Track Progress</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User views progress via maps, achievements, and statistics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compete on Leaderboards</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User compares performance with others.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Claim Certificates/Badges</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User receives digital credentials for achievements.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_quality_goals"><a class="anchor" href="#_quality_goals"></a>1.2. Quality Goals</h3>
@@ -673,28 +724,33 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Usability</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Users should find the platform easy to navigate and understand.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Users can intuitively navigate, start challenges, and view progress without training.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reliability</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The platform should have minimal downtime and quick recovery from failures.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The platform maintains &gt;99.9% uptime and recovers quickly from failures.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scalability</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The system should handle a significant increase in user numbers without performance issues.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system supports 1,000+ concurrent users with no performance degradation.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Performance</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The platform should respond quickly to user actions and load content efficiently.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Challenge loading and user actions respond within 1 second in 95% of cases.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Security</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">User data must be protected against unauthorized access and breaches.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All user data is encrypted in transit and at rest; certificates use digital signatures.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maintainability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modular codebase allows new features to be added with minimal impact.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
 </tr>
 </tbody>
 </table>
@@ -703,52 +759,43 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_stakeholders"><a class="anchor" href="#_stakeholders"></a>1.3. Stakeholders</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Role/Name</th>
-<th class="tableblock halign-left valign-top">Contact</th>
 <th class="tableblock halign-left valign-top">Expectations</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Product Owner</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Contact Information]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Ensure the product meets business and educational objectives.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product meets business and educational objectives; measurable impact.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Developers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Contact Information]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Clear requirements, well-defined development environment, and realistic timelines.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clear requirements, modern toolchain, documented APIs, CI/CD.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">End Users (Students)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Contact Information]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A user-friendly platform that makes learning German grammar enjoyable and effective.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fun, effective, and accessible learning experience.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Educational Institutions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Contact Information]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A platform that can be integrated into existing curriculums and provide measurable improvements in language proficiency.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Integration with curricula, reporting, and privacy compliance.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Support Team</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Contact Information]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Tools and documentation to assist users with technical issues.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Troubleshooting tools, clear documentation, rapid issue resolution.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Content Creators</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Contact Information]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Easy-to-use tools for creating and updating educational content.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Easy-to-use authoring tools, versioning, preview features.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Marketing Team</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">[Contact Information]</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Features and updates that can be promoted to attract and retain users.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Features and updates to promote and grow user base.</p></td>
 </tr>
 </tbody>
 </table>
@@ -763,16 +810,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>The platform must be developed using web technologies (HTML, CSS, JavaScript, Rust/WASM).</p>
+<p>Platform built with web technologies: HTML, CSS, JavaScript, Rust (WASM).</p>
 </li>
 <li>
-<p>It should be compatible with modern web browsers (Chrome, Firefox, Safari, Edge).</p>
+<p>Compatible with modern browsers: Chrome, Firefox, Safari, Edge.</p>
 </li>
 <li>
-<p>The backend services should be implemented in Rust and hosted on a scalable cloud platform.</p>
+<p>Backend services in Rust, hosted on scalable cloud infrastructure.</p>
 </li>
 <li>
-<p>Integration with third-party services (e.g., payment gateways, social media APIs) must follow industry standards for security and reliability.</p>
+<p>Third-party integrations (payments, social media) must follow security best practices.</p>
 </li>
 </ul>
 </div>
@@ -788,7 +835,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>All content must be reviewed and approved by language experts to ensure accuracy and quality.</p>
 </li>
 <li>
-<p>The development team should follow agile methodologies with regular sprints and reviews.</p>
+<p>The development team contributes on a voluntary basis, working in their free time as availability allows.</p>
+</li>
+<li>
+<p>Development follows a continuous improvement approach, with updates and enhancements made as contributors’ time permits.</p>
 </li>
 </ul>
 </div>
@@ -798,10 +848,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>The platform must comply with data protection regulations (e.g., GDPR, CCPA) to ensure user privacy and data security.</p>
+<p>The platform must comply with all relevant data protection regulations (e.g., GDPR, CCPA) to ensure user privacy and data security.</p>
 </li>
 <li>
-<p>All educational content should be original or properly licensed to avoid copyright issues.</p>
+<p>All educational content must be original or properly licensed, with clear attribution where required, to avoid copyright infringement.</p>
+</li>
+<li>
+<p>User consent must be obtained for any data collection, and users must be able to access, modify, or delete their personal data as required by law.</p>
+</li>
+<li>
+<p>Third-party integrations (such as payment gateways or analytics) must adhere to industry standards for privacy and security.</p>
+</li>
+<li>
+<p>Regular reviews should be conducted to ensure ongoing compliance with changing legal requirements and best practices.</p>
 </li>
 </ul>
 </div>
@@ -828,19 +887,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Programming Language</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The library must be developed in Rust to be compatible with the Yew frontend and also able to compile to WebAssembly (Wasm).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All core libraries and backend services must be implemented in Rust to ensure compatibility with the Yew frontend and WebAssembly (WASM) compilation. This enables high performance, safety, and code reuse across frontend and backend.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Browser Compatibility</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The application must support the latest versions of Chrome, Firefox, and Safari to ensure a wide user reach.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application must support the latest versions of Chrome, Firefox, Safari, and Edge to maximize accessibility for users.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WebAssembly Support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The frontend must compile to WASM for efficient execution in browsers, leveraging Rust&#8217;s WASM toolchain.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scalability</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The system must use a serverless architecture to handle unpredictable loads and maintain cost efficiency.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system should use a serverless or cloud-native architecture to handle variable loads and minimize operational overhead.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Backend Services</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Backend services should be implemented using Rust and hosted on a scalable cloud platform.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend APIs and services must be written in Rust and deployed on scalable cloud infrastructure (e.g., Docker containers, serverless platforms).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Third-Party Integrations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Integrations (e.g., payment gateways, analytics) must use secure, standards-compliant APIs and minimize vendor lock-in.</p></td>
 </tr>
 </tbody>
 </table>
@@ -861,19 +928,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Data Privacy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">All features must comply with the GDPR as the platform will be used by users from the European Union.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All features must comply with GDPR and other relevant data protection laws, as the platform serves users in the EU and globally.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Budget Limitations</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The project has a fixed budget which restricts the extent of third-party services and tools that can be employed.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The project operates with a limited budget, relying on free/open-source tools and voluntary contributions. Use of paid third-party services must be justified and kept minimal.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Development Timeline</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The project has a flexible timeline, with no fixed deadlines for completion.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Development is ongoing and flexible, driven by contributors' availability and free time. There are no fixed deadlines, but continuous improvement is encouraged.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Stakeholder Involvement</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Regular feedback must be obtained from key stakeholders, including educators and end-users, to guide the development process.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Feedback from educators, students, and other stakeholders should be regularly solicited and incorporated into the design and development process.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Content Review</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All educational content must be reviewed and approved by qualified language experts before publication.</p></td>
 </tr>
 </tbody>
 </table>
@@ -894,27 +965,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Code Style Guidelines</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The project must adhere to Rust&#8217;s official style guide to maintain code consistency across the development team.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All Rust code must follow the official Rust style guide (<code>rustfmt</code>) to ensure consistency and readability across the codebase.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Versioning Guidelines</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Semantic Versioning (SemVer) must be used for all project releases to ensure clarity and consistency in version management.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Semantic Versioning (SemVer) is required for all releases to communicate changes and maintain compatibility.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Documentation Standards</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Core library code must be documented using Rustdoc to facilitate maintenance and future development.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All public APIs and core modules must be documented using Rustdoc. Additional architectural documentation should be maintained in AsciiDoc format.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Naming Conventions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Variables, functions, and modules must follow clear and descriptive naming conventions as outlined in the internal developer guide.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use clear, descriptive names for variables, functions, modules, and crates, following Rust community conventions and internal guidelines.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Testing Guidelines</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Automated tests must be written for all new features and bug fixes to ensure code reliability and prevent regressions.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Automated tests (unit, integration, and BDD) must be written for all new features and bug fixes. Code coverage should be monitored and improved over time.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Security Practices</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Follow industry best practices for security, including dependency checks, and vulnerability assessments.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Regularly audit dependencies for vulnerabilities (<code>cargo audit</code>), follow secure coding practices, and conduct periodic security reviews.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Continuous Integration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All code changes must pass CI checks, including formatting, linting, and tests, before merging.</p></td>
 </tr>
 </tbody>
 </table>
@@ -934,16 +1009,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
 Person(user, "User", "A learner using the Konnektoren platform")
+Person(educator, "Educator", "Teacher or institution integrating Konnektoren")
+Person(content_creator, "Content Creator", "Contributor of educational material")
 
 System_Boundary(konnektoren, "Konnektoren System") {
     System(frontend, "Frontend", "Web-based UI built with Yew and WebAssembly")
     System(core, "Konnektoren Core", "Core business logic and game mechanics")
     System(leaderboard, "Leaderboard Service", "Manages user rankings and scores (Docker Container)")
+    System(certificates, "Certificate Issuer", "Issues digital badges and certificates")
 }
 
 System_Ext(github_pages, "GitHub Pages", "Hosts static frontend content")
 System_Ext(cloudflare, "Cloudflare", "CDN and proxy service")
 System_Ext(vc_issuer, "vc.konnektoren.help", "Verifiable Credential Issuer")
+System_Ext(payment_gateway, "Payment Gateway", "Handles payments for premium features")
 
 Rel(user, cloudflare, "Interacts with", "HTTPS")
 Rel(cloudflare, github_pages, "Retrieves static content", "HTTPS")
@@ -953,12 +1032,18 @@ Rel(frontend, leaderboard, "Queries/Updates", "REST API")
 Rel(core, leaderboard, "Updates scores")
 Rel(frontend, vc_issuer, "Requests credential issuance", "HTTPS")
 Rel(vc_issuer, user, "Issues verifiable credentials", "OpenID4VC")
+Rel(user, payment_gateway, "Makes payments", "HTTPS")
+Rel(content_creator, core, "Submits content", "HTTPS")
+Rel(educator, core, "Assigns challenges, reviews progress", "HTTPS")
 
 @enduml</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This diagram provides a high-level overview of the Konnektoren system, showing the main components and their interactions. The user interacts with the system through Cloudflare, which serves as a CDN and proxy. The frontend, built with Yew and WebAssembly, is hosted on GitHub Pages. The Konnektoren Core contains the business logic and game mechanics. The Leaderboard Service, running in a Docker container, manages user rankings and scores, interacting with both the frontend and core components.</p>
+<p>This diagram provides a high-level overview of the Konnektoren system, showing the main components and their interactions.
+Users, educators, and content creators interact with the system via secure web protocols.
+Cloudflare acts as a CDN and proxy, while GitHub Pages hosts the static frontend.
+The core logic and leaderboard service run in containers, and external services handle credential issuance and payments.</p>
 </div>
 </div>
 <div class="sect2">
@@ -978,9 +1063,24 @@ Rel(vc_issuer, user, "Issues verifiable credentials", "OpenID4VC")
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Users</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">User registration data, grammar test answers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Learning progress, feedback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Users (Learners)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Registration data, challenge answers, feedback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Learning progress, achievements, certificates, feedback</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Content Creators</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Educational content submissions, updates</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Content publication status, feedback</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Payment Gateway</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Payment confirmations</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access to premium features, receipts</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External Credential Issuer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Credential requests</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Verifiable credentials (badges, certificates)</p></td>
 </tr>
 </tbody>
 </table>
@@ -988,7 +1088,9 @@ Rel(vc_issuer, user, "Issues verifiable credentials", "OpenID4VC")
 <p><strong>Explanation of external domain interfaces</strong></p>
 </div>
 <div class="paragraph">
-<p>The system interfaces with individual users. It receives data such as user registration details and test responses, and outputs learning progress and detailed analytical reports.</p>
+<p>The system interfaces with individual users, educators, and content creators.
+It receives registration details, challenge responses, content submissions, and payment confirmations.
+Outputs include learning progress, achievements, certificates, analytics, and feedback.</p>
 </div>
 </div>
 <div class="sect2">
@@ -3369,7 +3471,7 @@ User --&gt; Wallet : Stores badge
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-08-17 09:31:05 UTC
+Last updated 2025-08-17 10:36:50 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
