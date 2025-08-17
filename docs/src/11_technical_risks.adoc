@@ -7,57 +7,64 @@ ifndef::imagesdir[:imagesdir: ../images]
 |===
 |Risk/Technical Debt |Description and Mitigation
 
-|**Dependency on Client-Side Data Storage (Web3 Architecture)**
-|Since most user data is stored client-side to adhere to web3 principles, there is a risk of data loss or inconsistency if users clear their browser storage or lose access to their local environment.
+|**Client-Side Data Storage Risks**
+|Storing most user data client-side (browser/local storage) risks data loss if users clear their browser, switch devices, or lose access.
 
-*Mitigation*: Implement clear instructions for users to back up important data. Optionally, provide an opt-in feature for secure, server-side backups (with encryption).
+*Mitigation*: Provide clear backup/export instructions. Offer optional encrypted server-side backups. Educate users about risks.
 
-|**Security of Client-Side Encryption**
-|Client-side encryption and signature verification are core components, but if improperly implemented or flawed, it can lead to serious security breaches (e.g., data leakage, certificate spoofing).
+|**Client-Side Cryptography and Signature Verification**
+|Improper implementation of client-side encryption or digital signatures can lead to data leaks, spoofed certificates, or compromised privacy.
 
-*Mitigation*: Use well-established cryptographic libraries, conduct thorough security audits, and encourage penetration testing.
+*Mitigation*: Use audited, well-established cryptographic libraries. Conduct regular security audits and penetration testing. Stay updated on cryptography best practices.
 
-|**Performance Overhead with WebAssembly (WASM)**
-|WebAssembly may introduce performance overhead in browsers with less robust support, or the size of the WASM binary could lead to slower load times, especially in low-bandwidth environments.
+|**WebAssembly (WASM) Performance and Compatibility**
+|Large WASM binaries or poor browser support can cause slow load times, especially on low-bandwidth connections or older devices.
 
-*Mitigation*: Optimize WASM binaries, use lazy loading, and conduct performance profiling for different environments.
+*Mitigation*: Optimize binary size, use code splitting/lazy loading, and profile performance across target browsers. Provide fallback UI for unsupported environments.
 
-|**Dependency on Third-Party Services (Cloudflare, Google Analytics)**
-|The reliance on third-party services (e.g., Cloudflare for proxy and Google Analytics) introduces risks if those services experience downtime, are discontinued, or change their terms of service.
+|**Reliance on Third-Party Services**
+|Downtime, API changes, or discontinued services (e.g., Cloudflare, payment gateways, analytics) can disrupt platform functionality.
 
-*Mitigation*: Design the system to degrade gracefully if third-party services are unavailable, and consider alternatives or backups for critical services.
+*Mitigation*: Design for graceful degradation. Monitor service status. Maintain alternative providers or backup solutions for critical services.
 
 |**Docker Container Security**
-|Using Docker for the leaderboard backend introduces potential security risks if the container is improperly configured, outdated, or vulnerable to attacks like container escapes or privilege escalations.
+|Leaderboard and backend services running in Docker containers may be vulnerable if images are outdated, misconfigured, or run as root.
 
-*Mitigation*: Regularly update Docker images, enforce security best practices (e.g., use non-root users in containers), and scan for vulnerabilities.
+*Mitigation*: Use minimal, regularly updated images. Enforce non-root users. Scan containers for vulnerabilities. Apply security patches promptly.
 
 |**Axum Framework Maturity**
-|Axum is a relatively new framework, and while Rust is known for its safety, there may be unaddressed issues or fewer resources/community support compared to more mature frameworks.
+|Axum, while promising, is newer and may lack mature documentation or community support compared to older Rust frameworks.
 
-*Mitigation*: Keep up with the latest Axum releases and actively monitor any security patches. Maintain modularity to enable easy swapping of frameworks if necessary.
+*Mitigation*: Track Axum releases and security advisories. Keep code modular to allow framework migration if needed. Engage with the Axum community.
 
-|**Lack of Backend Logging**
-|Not having any backend logging may limit the ability to debug or identify issues in production, which could slow down response times when dealing with critical bugs.
+|**Insufficient Backend Logging**
+|Lack of backend logging limits visibility into production issues, making debugging and incident response difficult.
 
-*Mitigation*: Implement selective or opt-in backend logging for critical events (e.g., anonymized logging), ensuring it adheres to privacy principles.
+*Mitigation*: Implement privacy-compliant, selective logging for critical events. Use log aggregation tools for monitoring.
 
-|**Complexity of Multi-Environment Deployment**
-|Managing deployments across different environments (development, staging, production) can become complex, particularly if deployment configurations are not properly maintained or synchronized.
+|**Multi-Environment Deployment Complexity**
+|Managing development, staging, and production deployments can lead to configuration drift and inconsistent environments.
 
-*Mitigation*: Use containerization (Docker) and Infrastructure as Code (IaC) tools like Terraform or Ansible to standardize deployments across environments.
+*Mitigation*: Use containerization (Docker) and Infrastructure as Code (e.g., Terraform, Ansible) to standardize deployments. Automate environment setup and configuration.
 
-|**Technical Debt from UI Component Reuse**
-|While reusing UI components across different applications (web app and Telegram app) is efficient, it might lead to technical debt if changes in the core components lead to compatibility issues between apps.
+|**UI Component Reuse Technical Debt**
+|Sharing UI components across web and Telegram apps can cause compatibility issues if core components change without proper versioning.
 
-*Mitigation*: Ensure thorough version control of UI components and maintain backward compatibility or well-documented upgrade paths.
+*Mitigation*: Maintain strict version control and documentation for shared components. Test compatibility before upgrades. Use semantic versioning.
 
-|**Limited SSI Wallet Support**
-|The adoption of SSI for badges relies on the availability and quality of SSI wallets. Currently, there are limited options for SSI wallets that fully support our implementation, and the quality of existing libraries for SSI integration is not optimal.
+|**Limited SSI Wallet and Library Support**
+|SSI badge adoption depends on wallet and library support, which is currently limited and sometimes unstable.
 
-*Mitigation*:
-- Continuously monitor the SSI ecosystem for improvements in wallet support and library quality.
-- Implement a fallback system that allows users to view and share their achievements even without an SSI wallet.
-- Contribute to open-source SSI projects to help improve the overall ecosystem.
+*Mitigation*: Monitor SSI ecosystem for improvements. Provide fallback achievement display for users without SSI wallets. Contribute to open-source SSI projects.
+
+|**Rust/WASM Toolchain Upgrades**
+|Frequent updates to Rust, WASM, or related toolchains may introduce breaking changes or require refactoring.
+
+*Mitigation*: Pin toolchain versions in CI. Test upgrades in staging before production. Monitor Rust/WASM release notes.
+
+|**Accessibility and Internationalization Gaps**
+|Rapid feature development may overlook accessibility (a11y) or internationalization (i18n), limiting usability for some users.
+
+*Mitigation*: Include a11y and i18n checks in code reviews. Use automated tools to detect issues. Prioritize improvements based on user feedback.
 
 |===
