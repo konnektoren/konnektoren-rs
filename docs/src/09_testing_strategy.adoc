@@ -5,34 +5,39 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Overview
 
-The Konnektoren project employs a comprehensive testing strategy to ensure the reliability, correctness, and performance of the system. Our approach includes various levels of testing, from unit tests to end-to-end tests, to cover different aspects of the application.
+The Konnektoren project employs a multi-layered testing strategy to ensure reliability, correctness, security, and performance.
+Testing is integrated into the development workflow and CI/CD pipeline, covering everything from individual functions to full user journeys.
 
 === Levels of Testing
 
 ==== Unit Tests
 
-* *Purpose*: Verify the correctness of individual functions and methods.
-* *Tools*: Rust's built-in testing framework
-* *Location*: Implemented alongside the code in the same files, typically in a `tests` module at the bottom of each Rust file.
-* *Coverage*: Aim for high coverage (>80%) of all core functionality.
+* *Purpose*: Validate the correctness of individual functions, methods, and small components.
+* *Tools*: Rust's built-in test framework (`cargo test`)
+* *Location*: Inline `#[cfg(test)]` modules within source files.
+* *Coverage*: Target >80% coverage for all core logic and business rules.
+* *Best Practices*: Use descriptive test names, cover edge cases, and maintain fast execution.
 
 ==== Integration Tests
 
-* *Purpose*: Test the interaction between different modules and components.
-* *Tools*: Rust's built-in testing framework, with tests in separate files
-* *Location*: In the `tests` directory of each crate
-* *Coverage*: Focus on key interactions and workflows between modules
+* *Purpose*: Verify interactions between modules, crates, and external interfaces.
+* *Tools*: Rust's integration test framework (`cargo test` in `tests/` directory)
+* *Location*: `tests/` directory in each crate.
+* *Coverage*: Focus on workflows, API boundaries, and module interoperability.
+* *Best Practices*: Use realistic data, mock dependencies where needed, and test error handling.
 
-==== End-to-End Tests
+==== End-to-End (E2E) Tests
 
-* *Purpose*: Validate complete user scenarios and workflows
-* *Tools*: Cucumber for Rust (cucumber-rs)
-* *Location*: In the `konnektoren-tests` crate, under `tests/features`
-* *Coverage*: Key user journeys and critical business scenarios
+* *Purpose*: Simulate real user scenarios and validate system behavior from start to finish.
+* *Tools*: Cucumber for Rust (`cucumber-rs`)
+* *Location*: `konnektoren-tests` crate, under `tests/features`
+* *Coverage*: Critical user journeys, business scenarios, and acceptance criteria.
+* *Best Practices*: Write Gherkin feature files for clarity, keep scenarios maintainable, and automate regression checks.
 
 === Behavior-Driven Development (BDD)
 
-We use Cucumber for Rust to implement BDD tests, which serve as both documentation and functional tests. These tests are written in Gherkin syntax and cover high-level user scenarios.
+BDD tests are implemented using Cucumber for Rust, serving as both executable documentation and functional validation.
+Scenarios are written in Gherkin syntax to describe expected behavior in plain language.
 
 Example feature file (`konnektoren-tests/tests/features/challenge.feature`):
 
@@ -49,31 +54,36 @@ Feature: Challenge
 
 === Performance Testing
 
-* *Tools*: Custom benchmarking tools built with Rust's `criterion` crate
-* *Focus*: Key operations like challenge loading, solving, and leaderboard updates
-* *Frequency*: Run as part of the CI/CD pipeline for each release
+* *Tools*: Rust's `criterion` crate for micro-benchmarks and profiling.
+* *Focus*: Challenge loading, solving, leaderboard updates, and core algorithms.
+* *Frequency*: Benchmarks run in CI/CD for each release and major update.
+* *Best Practices*: Track performance trends, set thresholds, and optimize bottlenecks.
 
 === Security Testing
 
-* *Static Analysis*: Use of `cargo audit` to check for known vulnerabilities in dependencies
-* *Fuzz Testing*: Employ `cargo fuzz` for critical parsing and data handling functions
-* *Manual Penetration Testing*: Conducted periodically on the deployed application
+* *Static Analysis*: Use `cargo audit` to detect vulnerable dependencies.
+* *Fuzz Testing*: Employ `cargo fuzz` for critical parsing and input validation.
+* *Manual Penetration Testing*: Conduct periodic security reviews of deployed systems.
+* *Best Practices*: Integrate security checks into CI, respond quickly to advisories, and document findings.
 
-=== Continuous Integration
+=== Continuous Integration (CI)
 
-* All tests are run as part of our CI/CD pipeline using GitHub Actions
-* The pipeline includes running unit tests, integration tests, and BDD scenarios
-* Code coverage reports are generated and tracked to ensure maintenance of high test coverage
+* All tests (unit, integration, BDD, benchmarks) are executed in GitHub Actions CI pipeline.
+* Code coverage is measured and reported (e.g., via `cargo tarpaulin` and Codecov).
+* CI enforces code formatting (`rustfmt`), linting (`clippy`), and test pass status before merging.
+* Automated notifications for failed builds or coverage drops.
 
 === Test Data Management
 
-* Test data for challenges is stored in YAML files in the `assets` directory
-* Mocked data for integration and E2E tests is generated programmatically or stored in fixture files
+* Challenge test data is stored in YAML files under the `assets` directory.
+* Integration and E2E tests use programmatically generated or fixture-based mock data.
+* Sensitive or large datasets are anonymized and versioned for reproducibility.
 
 === Future Improvements
 
-* Implement property-based testing using the `proptest` crate for more robust unit tests
-* Expand end-to-end test coverage to include more complex user scenarios
-* Introduce load testing to verify system performance under high concurrency
+* Add property-based testing with the `proptest` crate for more robust unit and integration tests.
+* Expand E2E coverage to include edge cases, error flows, and multi-user scenarios.
+* Introduce load and stress testing to validate system behavior under high concurrency and traffic.
+* Automate accessibility and internationalization checks as part of the test suite.
 
-By following this comprehensive testing strategy, we aim to maintain high quality and reliability in the Konnektoren system, enabling confident and frequent releases.
+By following this comprehensive testing strategy, Konnektoren maintains high quality, reliability, and confidence in frequent releases and rapid iteration.
