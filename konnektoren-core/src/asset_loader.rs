@@ -132,6 +132,7 @@ impl AssetLoader {
 
 #[cfg(test)]
 mod tests {
+    use crate::asset_loader::AssetLoader;
 
     #[cfg(feature = "csr")]
     use wasm_bindgen_test::*;
@@ -146,7 +147,6 @@ mod tests {
     #[cfg(all(test, feature = "ssr", not(feature = "csr")))]
     #[tokio::test]
     async fn test_load_konnektoren_yaml_ssr() {
-        use crate::asset_loader::AssetLoader;
         use std::io::Write;
         use tempfile::TempDir;
         // Create a temporary directory for testing
@@ -184,7 +184,6 @@ mod tests {
     #[cfg(all(test, feature = "ssr", not(feature = "csr")))]
     #[tokio::test]
     async fn test_load_konnektoren_yaml_file_loader() {
-        use crate::asset_loader::AssetLoader;
         use std::io::Write;
         use tempfile::TempDir;
 
