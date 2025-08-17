@@ -42,14 +42,32 @@ See https://docs.arc42.org/section-1/[Introduction and Goals] in the arc42 docum
 ****
 endif::arc42help[]
 
-Konnektoren is a web-based learning platform designed to improve the understanding and usage of German grammatical connectors through gamification. The system will engage users with a variety of interactive challenges, from simple multiple-choice questions to dynamic scenario-based tasks, aimed at both beginners and intermediate learners of German.
+Konnektoren is a web-based learning platform focused on improving the understanding and usage of German grammar through gamification.
+It offers interactive challenges—ranging from multiple-choice questions to scenario-based tasks—targeted at both beginners and intermediate learners.
 
-The main objective of Konnektoren is to make learning German grammar more engaging and effective. By integrating gamified elements like points, levels, and challenges, the platform aims to enhance user motivation, increase retention rates, and foster a deeper understanding of the German language.
+**Main objectives:**
 
-Use Case 1:: User creates a profile.
-Use Case 2:: User participates in different grammar challenges.
-Use Case 3:: User tracks progress through a visual progress map.
-Use Case 4:: User competes with others on leaderboards.
+* Make learning German grammar engaging and effective.
+* Use gamification (points, levels, achievements) to motivate users and increase retention.
+* Provide measurable progress and feedback to learners and educators.
+
+**Core Features:**
+
+* User profiles and progress tracking
+* Interactive grammar challenges
+* Visual progress maps
+* Leaderboards and achievements
+* Certificate and badge issuance (SSI-compatible)
+
+**Key Use Cases:**
+|===
+| Use Case | Description
+| Create Profile | User sets up a personal profile name.
+| Participate in Challenges | User selects and completes grammar challenges.
+| Track Progress | User views progress via maps, achievements, and statistics.
+| Compete on Leaderboards | User compares performance with others.
+| Claim Certificates/Badges | User receives digital credentials for achievements.
+|===
 
 === Quality Goals
 
@@ -77,11 +95,12 @@ endif::arc42help[]
 [options="header",cols="1,2,2"]
 |===
 | Quality Goal | Scenario | Priority
-| Usability | Users should find the platform easy to navigate and understand. | High
-| Reliability | The platform should have minimal downtime and quick recovery from failures. | High
-| Scalability | The system should handle a significant increase in user numbers without performance issues. | Medium
-| Performance | The platform should respond quickly to user actions and load content efficiently. | Medium
-| Security | User data must be protected against unauthorized access and breaches. | High
+| Usability | Users can intuitively navigate, start challenges, and view progress without training. | High
+| Reliability | The platform maintains >99.9% uptime and recovers quickly from failures. | High
+| Scalability | The system supports 1,000+ concurrent users with no performance degradation. | Medium
+| Performance | Challenge loading and user actions respond within 1 second in 95% of cases. | Medium
+| Security | All user data is encrypted in transit and at rest; certificates use digital signatures. | High
+| Maintainability | Modular codebase allows new features to be added with minimal impact. | Medium
 |===
 
 === Stakeholders
@@ -108,34 +127,38 @@ Table with role names, person names, and their expectations with respect to the 
 ****
 endif::arc42help[]
 
-[options="header",cols="1,2,2"]
+[options="header",cols="1,2"]
 |===
-| Role/Name | Contact | Expectations
-| Product Owner | [Contact Information] | Ensure the product meets business and educational objectives.
-| Developers | [Contact Information] | Clear requirements, well-defined development environment, and realistic timelines.
-| End Users (Students) | [Contact Information] | A user-friendly platform that makes learning German grammar enjoyable and effective.
-| Educational Institutions | [Contact Information] | A platform that can be integrated into existing curriculums and provide measurable improvements in language proficiency.
-| Support Team | [Contact Information] | Tools and documentation to assist users with technical issues.
-| Content Creators | [Contact Information] | Easy-to-use tools for creating and updating educational content.
-| Marketing Team | [Contact Information] | Features and updates that can be promoted to attract and retain users.
+| Role/Name | Expectations
+| Product Owner | Product meets business and educational objectives; measurable impact.
+| Developers | Clear requirements, modern toolchain, documented APIs, CI/CD.
+| End Users (Students) | Fun, effective, and accessible learning experience.
+| Educational Institutions | Integration with curricula, reporting, and privacy compliance.
+| Support Team | Troubleshooting tools, clear documentation, rapid issue resolution.
+| Content Creators | Easy-to-use authoring tools, versioning, preview features.
+| Marketing Team | Features and updates to promote and grow user base.
 |===
 
 == Constraints
 
 === Technical Constraints
 
-- The platform must be developed using web technologies (HTML, CSS, JavaScript, Rust/WASM).
-- It should be compatible with modern web browsers (Chrome, Firefox, Safari, Edge).
-- The backend services should be implemented in Rust and hosted on a scalable cloud platform.
-- Integration with third-party services (e.g., payment gateways, social media APIs) must follow industry standards for security and reliability.
+- Platform built with web technologies: HTML, CSS, JavaScript, Rust (WASM).
+- Compatible with modern browsers: Chrome, Firefox, Safari, Edge.
+- Backend services in Rust, hosted on scalable cloud infrastructure.
+- Third-party integrations (payments, social media) must follow security best practices.
 
 === Organizational Constraints
 
-- The project should align with the educational goals and standards set by partner educational institutions.
-- All content must be reviewed and approved by language experts to ensure accuracy and quality.
-- The development team should follow agile methodologies with regular sprints and reviews.
+* The project should align with the educational goals and standards set by partner educational institutions.
+* All content must be reviewed and approved by language experts to ensure accuracy and quality.
+* The development team contributes on a voluntary basis, working in their free time as availability allows.
+* Development follows a continuous improvement approach, with updates and enhancements made as contributors’ time permits.
 
 === Legal Constraints
 
-- The platform must comply with data protection regulations (e.g., GDPR, CCPA) to ensure user privacy and data security.
-- All educational content should be original or properly licensed to avoid copyright issues.
+* The platform must comply with all relevant data protection regulations (e.g., GDPR, CCPA) to ensure user privacy and data security.
+* All educational content must be original or properly licensed, with clear attribution where required, to avoid copyright infringement.
+* User consent must be obtained for any data collection, and users must be able to access, modify, or delete their personal data as required by law.
+* Third-party integrations (such as payment gateways or analytics) must adhere to industry standards for privacy and security.
+* Regular reviews should be conducted to ensure ongoing compliance with changing legal requirements and best practices.
