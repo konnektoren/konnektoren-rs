@@ -29,10 +29,12 @@ endif::arc42help[]
 [options="header",cols="2,5"]
 |===
 | Constraint | Explanation
-| Programming Language | The library must be developed in Rust to be compatible with the Yew frontend and also able to compile to WebAssembly (Wasm).
-| Browser Compatibility | The application must support the latest versions of Chrome, Firefox, and Safari to ensure a wide user reach.
-| Scalability | The system must use a serverless architecture to handle unpredictable loads and maintain cost efficiency.
-| Backend Services | Backend services should be implemented using Rust and hosted on a scalable cloud platform.
+| Programming Language | All core libraries and backend services must be implemented in Rust to ensure compatibility with the Yew frontend and WebAssembly (WASM) compilation. This enables high performance, safety, and code reuse across frontend and backend.
+| Browser Compatibility | The application must support the latest versions of Chrome, Firefox, Safari, and Edge to maximize accessibility for users.
+| WebAssembly Support | The frontend must compile to WASM for efficient execution in browsers, leveraging Rust's WASM toolchain.
+| Scalability | The system should use a serverless or cloud-native architecture to handle variable loads and minimize operational overhead.
+| Backend Services | Backend APIs and services must be written in Rust and deployed on scalable cloud infrastructure (e.g., Docker containers, serverless platforms).
+| Third-Party Integrations | Integrations (e.g., payment gateways, analytics) must use secure, standards-compliant APIs and minimize vendor lock-in.
 |===
 
 === Organizational and Political Constraints
@@ -40,10 +42,11 @@ endif::arc42help[]
 [options="header",cols="2,5"]
 |===
 | Constraint | Explanation
-| Data Privacy | All features must comply with the GDPR as the platform will be used by users from the European Union.
-| Budget Limitations | The project has a fixed budget which restricts the extent of third-party services and tools that can be employed.
-| Development Timeline | The project has a flexible timeline, with no fixed deadlines for completion.
-| Stakeholder Involvement | Regular feedback must be obtained from key stakeholders, including educators and end-users, to guide the development process.
+| Data Privacy | All features must comply with GDPR and other relevant data protection laws, as the platform serves users in the EU and globally.
+| Budget Limitations | The project operates with a limited budget, relying on free/open-source tools and voluntary contributions. Use of paid third-party services must be justified and kept minimal.
+| Development Timeline | Development is ongoing and flexible, driven by contributors' availability and free time. There are no fixed deadlines, but continuous improvement is encouraged.
+| Stakeholder Involvement | Feedback from educators, students, and other stakeholders should be regularly solicited and incorporated into the design and development process.
+| Content Review | All educational content must be reviewed and approved by qualified language experts before publication.
 |===
 
 === Conventions
@@ -51,10 +54,11 @@ endif::arc42help[]
 [options="header",cols="2,5"]
 |===
 | Constraint | Explanation
-| Code Style Guidelines | The project must adhere to Rust's official style guide to maintain code consistency across the development team.
-| Versioning Guidelines | Semantic Versioning (SemVer) must be used for all project releases to ensure clarity and consistency in version management.
-| Documentation Standards | Core library code must be documented using Rustdoc to facilitate maintenance and future development.
-| Naming Conventions | Variables, functions, and modules must follow clear and descriptive naming conventions as outlined in the internal developer guide.
-| Testing Guidelines | Automated tests must be written for all new features and bug fixes to ensure code reliability and prevent regressions.
-| Security Practices | Follow industry best practices for security, including dependency checks, and vulnerability assessments.
+| Code Style Guidelines | All Rust code must follow the official Rust style guide (`rustfmt`) to ensure consistency and readability across the codebase.
+| Versioning Guidelines | Semantic Versioning (SemVer) is required for all releases to communicate changes and maintain compatibility.
+| Documentation Standards | All public APIs and core modules must be documented using Rustdoc. Additional architectural documentation should be maintained in AsciiDoc format.
+| Naming Conventions | Use clear, descriptive names for variables, functions, modules, and crates, following Rust community conventions and internal guidelines.
+| Testing Guidelines | Automated tests (unit, integration, and BDD) must be written for all new features and bug fixes. Code coverage should be monitored and improved over time.
+| Security Practices | Regularly audit dependencies for vulnerabilities (`cargo audit`), follow secure coding practices, and conduct periodic security reviews.
+| Continuous Integration | All code changes must pass CI checks, including formatting, linting, and tests, before merging.
 |===
