@@ -10,39 +10,52 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
-    name: Test
+  test-and-coverage:
+    name: Test and Coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
 
-  coverage:
-    name: Code coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+      # Cache dependencies
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      # Setup Rust toolchain (old action)
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: stable
           override: true
-      - uses: actions-rs/cargo@v1
+
+      # Install cargo-tarpaulin
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
+
+      # Run tests (optional, since tarpaulin runs tests for coverage)
+      - name: Run tests
+        run: cargo test --workspace --all-features
+
+      # Run coverage for all workspace members
+      - name: Run coverage
+        run: cargo tarpaulin --workspace --all-features --ignore-tests --out Xml
+
+      # Upload coverage report as artifact (old action)
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
         with:
-          command: install
-          args: cargo-tarpaulin
-      - uses: actions-rs/cargo@v1
+          name: coverage-report
+          path: tarpaulin-report.xml
+
+      # Upload to Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          command: tarpaulin
-          args: --ignore-tests --out Xml -p konnektoren-core
-      - uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          files: tarpaulin-report.xml
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
