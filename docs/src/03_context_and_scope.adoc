@@ -34,16 +34,20 @@ endif::arc42help[]
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
 Person(user, "User", "A learner using the Konnektoren platform")
+Person(educator, "Educator", "Teacher or institution integrating Konnektoren")
+Person(content_creator, "Content Creator", "Contributor of educational material")
 
 System_Boundary(konnektoren, "Konnektoren System") {
     System(frontend, "Frontend", "Web-based UI built with Yew and WebAssembly")
     System(core, "Konnektoren Core", "Core business logic and game mechanics")
     System(leaderboard, "Leaderboard Service", "Manages user rankings and scores (Docker Container)")
+    System(certificates, "Certificate Issuer", "Issues digital badges and certificates")
 }
 
 System_Ext(github_pages, "GitHub Pages", "Hosts static frontend content")
 System_Ext(cloudflare, "Cloudflare", "CDN and proxy service")
 System_Ext(vc_issuer, "vc.konnektoren.help", "Verifiable Credential Issuer")
+System_Ext(payment_gateway, "Payment Gateway", "Handles payments for premium features")
 
 Rel(user, cloudflare, "Interacts with", "HTTPS")
 Rel(cloudflare, github_pages, "Retrieves static content", "HTTPS")
@@ -53,11 +57,17 @@ Rel(frontend, leaderboard, "Queries/Updates", "REST API")
 Rel(core, leaderboard, "Updates scores")
 Rel(frontend, vc_issuer, "Requests credential issuance", "HTTPS")
 Rel(vc_issuer, user, "Issues verifiable credentials", "OpenID4VC")
+Rel(user, payment_gateway, "Makes payments", "HTTPS")
+Rel(content_creator, core, "Submits content", "HTTPS")
+Rel(educator, core, "Assigns challenges, reviews progress", "HTTPS")
 
 @enduml
 ----
 
-This diagram provides a high-level overview of the Konnektoren system, showing the main components and their interactions. The user interacts with the system through Cloudflare, which serves as a CDN and proxy. The frontend, built with Yew and WebAssembly, is hosted on GitHub Pages. The Konnektoren Core contains the business logic and game mechanics. The Leaderboard Service, running in a Docker container, manages user rankings and scores, interacting with both the frontend and core components.
+This diagram provides a high-level overview of the Konnektoren system, showing the main components and their interactions.
+Users, educators, and content creators interact with the system via secure web protocols.
+Cloudflare acts as a CDN and proxy, while GitHub Pages hosts the static frontend.
+The core logic and leaderboard service run in containers, and external services handle credential issuance and payments.
 
 === Business Context
 
@@ -81,12 +91,17 @@ endif::arc42help[]
 [options="header",cols="3*"]
 |===
 | Communication Partner | Inputs to System | Outputs from System
-| Users | User registration data, grammar test answers | Learning progress, feedback
+| Users (Learners) | Registration data, challenge answers, feedback | Learning progress, achievements, certificates, feedback
+| Content Creators | Educational content submissions, updates | Content publication status, feedback
+| Payment Gateway | Payment confirmations | Access to premium features, receipts
+| External Credential Issuer | Credential requests | Verifiable credentials (badges, certificates)
 |===
 
 **Explanation of external domain interfaces**
 
-The system interfaces with individual users. It receives data such as user registration details and test responses, and outputs learning progress and detailed analytical reports.
+The system interfaces with individual users, educators, and content creators.
+It receives registration details, challenge responses, content submissions, and payment confirmations.
+Outputs include learning progress, achievements, certificates, analytics, and feedback.
 
 === Technical Context
 
