@@ -26,6 +26,7 @@ pub trait CommandTrait {
 /// An enum representing all possible commands in the game.
 ///
 /// This enum serves as a unified interface for both game-level and challenge-level commands.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
     /// Represents a game-level command.

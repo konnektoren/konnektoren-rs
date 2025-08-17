@@ -1,3 +1,3 @@
-mod contextual_choice;
+mod contextual_choice_impl;
 
-pub use contextual_choice::*;
+pub use contextual_choice_impl::*;

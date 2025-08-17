@@ -1,12 +1,8 @@
 [package]
 name = "konnektoren-core"
-version = "0.5.2"
-edition = "2024"
+edition = { workspace = true }
+version = { workspace = true }
 description = "Core library for Konnektoren"
-license = "MIT"
-repository = "https://github.com/Konnektoren/konnektoren-rs"
-readme = "../README.md"
-authors = ["Christian M <chriamue@gmail.com>"]
 keywords = ["konnektoren", "core", "library"]
 
 [lib]
@@ -40,32 +36,37 @@ js = [
 ]
 
 [dependencies]
-chrono = { version = "0.4.38", features = ["serde"] }
+# Core dependencies
+base64 = { workspace = true }
+chrono = { workspace = true }
 country-emoji = "0.2.0"
 eval = { version = "0.4", optional = true }
-isolang = "2.4.0"
-log = { version = "0.4" }
+isolang = { workspace = true }
+log = { workspace = true }
 names = { version = "0.15.0-dev", git = "https://github.com/jakswa/names", default-features = false }
-serde = { version = "1.0", features = ["derive"] }
+rand = "0.8.5"
+rmp-serde = "1.1.2"
+schemars = "1.0.4"
+serde = { workspace = true }
 serde_json = { workspace = true }
 serde_yaml = { workspace = true }
 strum = "0.27"
 strum_macros = "0.27"
-thiserror = "1.0"
-# certificate features
-base64 = { version = "0.22.1" }
-sha2 = { version = "0.10.8", optional = true }
-serde_cbor = { version = "0.11.2", optional = true }
+thiserror = { workspace = true }
+uuid = { version = "1.10.0", features = ["serde", "v4"] }
+
+# Certificate feature dependencies
+ab_glyph = { version = "0.2.28", optional = true }
 ed25519-dalek = { version = "2.1.1", default-features = false, optional = true }
-rmp-serde = { version = "1.1.2" }
 image = { version = "0.25.1", optional = true }
 imageproc = { version = "0.25", optional = true }
-ab_glyph = { version = "0.2.28", optional = true }
+lazy_static = { version = "1.4", optional = true }
 plot_icon = { version = "0.3.0", optional = true }
 qrcode = { version = "0.14.1", optional = true }
-lazy_static = { version = "1.4", optional = true }
-schemars = "1.0.4"
-# js features
+serde_cbor = { version = "0.11.2", optional = true }
+sha2 = { version = "0.10.8", optional = true }
+
+# JS feature dependencies
 gloo = { version = "0.11.0", optional = true }
 js-sys = { version = "0.3.70", optional = true }
 serde-wasm-bindgen = { version = "0.6.5", optional = true }
@@ -74,17 +75,15 @@ wasm-bindgen = { version = "0.2.93", optional = true, features = [
 ] }
 wasm-bindgen-futures = { version = "0.4.43", optional = true }
 web-sys = { version = "0.3.70", optional = true, features = ["Window"] }
-uuid = { version = "1.10.0", features = ["serde", "v4"] }
-zip = { version = "2.2.0", optional = true, default-features = false, features = [
+zip = { version = "4.3", optional = true, default-features = false, features = [
     "deflate",
 ] }
-rand = "0.8.5"
 
 [dev-dependencies]
+env_logger = { workspace = true }
+mockall = { workspace = true }
 tempdir = "0.3.7"
 tempfile = "3.19.1"
-mockall = "0.13.0"
-env_logger = "0.10"
+tokio = { version = "1.0", features = ["rt", "macros"] }
 wasm-bindgen-test = { version = "0.3.43" }
 wasm-logger = { version = "0.2.0" }
-tokio = { version = "1.0", features = ["rt", "macros"] }

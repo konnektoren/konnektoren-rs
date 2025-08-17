@@ -99,6 +99,14 @@ impl TaskPattern {
             TaskPattern::Random(n, _) => *n,
         }
     }
+
+    pub fn is_empty(&self) -> bool {
+        match self {
+            TaskPattern::Exact(n) => *n == 0,
+            TaskPattern::Range(range) => range.is_empty(),
+            TaskPattern::Random(n, _) => *n == 0,
+        }
+    }
 }
 
 impl fmt::Display for TaskPattern {

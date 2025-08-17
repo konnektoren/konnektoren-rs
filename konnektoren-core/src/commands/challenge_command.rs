@@ -13,6 +13,7 @@ use crate::game::GameState;
 use crate::game::error::GameError;
 
 /// Represents challenge-level commands that can be executed on the game state.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum ChallengeCommand {
     Start(Challenge),
