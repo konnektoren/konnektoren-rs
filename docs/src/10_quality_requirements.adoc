@@ -14,16 +14,20 @@ ifndef::imagesdir[:imagesdir: ../images]
 :Scalability;
 :Usability;
 :Maintainability;
+:Accessibility;
+:Internationalization;
 
 :Performance --> :Fast response times for user interactions;
-:Security --> :Data encryption and signature verification;
-:Scalability --> :Support for increasing user load;
-:Usability --> :Intuitive UI for web and Telegram apps;
-:Maintainability --> :Modular design for easy updates;
+:Security --> :Data encryption, signature verification, privacy compliance;
+:Scalability --> :Support for increasing user load and traffic spikes;
+:Usability --> :Intuitive, responsive UI for web and Telegram apps;
+:Maintainability --> :Modular, well-documented codebase;
+:Accessibility --> :Support for users with disabilities;
+:Internationalization --> :Multi-language support;
 @enduml
 ....
 
-The quality tree breaks down key quality goals of the *konnektoren.help* project, categorized into performance, security, scalability, usability, and maintainability.
+The quality tree breaks down key quality goals of the *konnektoren.help* project, including performance, security, scalability, usability, maintainability, accessibility, and internationalization.
 
 === Quality Scenarios
 
@@ -32,51 +36,79 @@ The quality tree breaks down key quality goals of the *konnektoren.help* project
 |Quality Attribute |Scenario Description
 
 |**Performance**
-|The system must respond to user interactions (e.g., open a challenge or updating the leaderboard) within 1 second in 95% of cases.
+|95% of user interactions (e.g., opening a challenge, updating the leaderboard) complete within 1 second. WASM binaries load quickly even on low-bandwidth connections.
 
 |**Security**
-|User data must be encrypted both in transit and at rest. The system must verify certificates using digital signatures to ensure data authenticity.
+|All user data is encrypted in transit (HTTPS) and at rest. Digital certificates are verified using Ed25519 signatures. No sensitive data is stored server-side unless explicitly consented.
 
 |**Scalability**
-|The system should scale to handle up to 1,000 concurrent users without significant degradation in performance.
+|The system supports at least 1,000 concurrent users and can handle traffic spikes without downtime or significant slowdowns.
 
 |**Usability**
-|The web and Telegram apps must have an intuitive interface. Users should be able to create challenges and view leaderboards with minimal guidance.
+|Users can register, start challenges, and view leaderboards with minimal guidance. The UI is intuitive and consistent across devices and platforms.
 
 |**Maintainability**
-|The system's core library and UI components should be modular, allowing new features or bug fixes to be added without impacting existing functionality.
+|New features or bug fixes can be added with minimal impact on existing functionality. The codebase is modular, well-documented, and covered by automated tests.
+
+|**Accessibility**
+|The platform meets WCAG 2.1 AA standards. Users with disabilities can navigate and use all features.
+
+|**Internationalization**
+|The UI and content support multiple languages. Users can switch languages seamlessly, and translations are accurate.
 |===
 
 === Detailed Quality Requirements
 
 ==== Performance
 
-* The system uses WebAssembly (WASM) to ensure near-native performance in the browser.
-* Cloudflare's CDN is utilized to minimize latency for static assets.
-* The core library is optimized for efficiency, with careful consideration given to algorithmic complexity.
+* WebAssembly (WASM) is used for near-native browser performance.
+* Static assets are served via Cloudflare CDN to minimize latency.
+* Core algorithms are profiled and optimized for efficiency.
+* WASM binary size is kept low for fast initial load.
+* Performance is monitored and tested across target browsers and devices.
 
 ==== Security
 
-* All user data is encrypted at rest using industry-standard encryption algorithms.
-* HTTPS is enforced for all communications to ensure data integrity and confidentiality in transit.
-* Certificate verification uses Ed25519 signatures to prevent forgery.
-* The system follows a principle of minimal server-side data storage to reduce potential attack surfaces.
+* All user data is encrypted at rest using AES-256 or equivalent.
+* HTTPS is enforced for all communications.
+* Digital certificates use Ed25519 signatures for authenticity.
+* Minimal server-side data storage reduces attack surface.
+* Regular security audits and dependency vulnerability scans (`cargo audit`) are performed.
+* Privacy compliance (GDPR, CCPA) is maintained.
 
 ==== Scalability
 
-* The serverless architecture allows for automatic scaling based on demand.
-* The use of GitHub Pages for static content hosting provides excellent scalability for the front-end.
-* The leaderboard service is containerized, allowing for easy horizontal scaling.
+* Serverless architecture enables automatic scaling based on demand.
+* Static content is hosted on GitHub Pages for high scalability.
+* Leaderboard and backend services are containerized for horizontal scaling.
+* Load testing is performed to validate scalability targets.
 
 ==== Usability
 
-* The UI is designed with responsive web design principles to ensure a consistent experience across devices.
-* Gamification elements are incorporated to increase user engagement and motivation.
-* Regular user testing and feedback loops are part of the development process to continually improve usability.
+* Responsive web design ensures consistent experience across desktop and mobile.
+* Gamification elements (points, badges, leaderboards) increase engagement.
+* User flows are tested and refined based on feedback.
+* UI components are reused and versioned for consistency.
+* Onboarding and help features are available for new users.
 
 ==== Maintainability
 
-* The codebase follows Rust's official style guide to ensure consistency.
-* Modular architecture allows for easy updates and feature additions.
-* Comprehensive unit and integration tests are maintained to catch regressions early.
-* Documentation is treated as a first-class citizen, with inline documentation for all public APIs.
+* Codebase adheres to Rust's official style guide (`rustfmt`).
+* Modular architecture enables isolated updates and feature additions.
+* Comprehensive unit, integration, and BDD tests are maintained.
+* Inline documentation for all public APIs; architectural docs in AsciiDoc.
+* CI/CD pipelines enforce code quality and test coverage.
+
+==== Accessibility
+
+* All interactive elements are keyboard-accessible.
+* Sufficient color contrast and scalable fonts are used.
+* ARIA attributes and semantic HTML are implemented.
+* Accessibility is tested with automated tools and real users.
+
+==== Internationalization
+
+* All UI text and content are translatable via i18n framework.
+* Language switching is available in the UI.
+* Translations are reviewed for accuracy and completeness.
+* Unicode and RTL language support is included.
