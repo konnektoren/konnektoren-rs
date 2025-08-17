@@ -1,37 +1,29 @@
 [package]
 name = "konnektoren-platform"
-version = "0.1.0"
-edition = "2021"
+edition = { workspace = true }
+version = { workspace = true }
 description = "Platform library for Konnektoren"
-license = "MIT"
-repository = "https://github.com/Konnektoren/konnektoren-rs"
-readme = "../README.md"
-authors = ["Christian M <chriamue@gmail.com>"]
+keywords = ["konnektoren", "platform", "library"]
 
 [features]
 default = []
 tools = ["regex", "walkdir"]
 
 [dependencies]
-konnektoren-core = { path = "../konnektoren-core" }
-
-# Common dependencies from workspace
-serde = { workspace = true }
-serde_json = { workspace = true }
-serde_yaml = { workspace = true }
 isolang = { workspace = true }
+konnektoren-core = { path = "../konnektoren-core" }
 log = { workspace = true }
-thiserror = { workspace = true }
-
-# Platform specific dependencies
+regex = { version = "1.11.1", optional = true }
 rust-embed = { version = "8.5.0", features = [
     "interpolate-folder-path",
     "debug-embed",
 ] }
-config = "0.13"
-regex = { version = "1.11.1", optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+thiserror = { workspace = true }
 walkdir = { version = "2.5.0", optional = true }
 
 [dev-dependencies]
-mockall = { workspace = true }
 env_logger = { workspace = true }
+mockall = { workspace = true }

@@ -22,9 +22,11 @@ bdd:
 build:
     cargo build --workspace
 
+# Run tests
 test:
     cargo test --workspace
 
+# Run linter
 lint:
     cargo clippy --workspace -- -D warnings
 
