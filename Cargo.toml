@@ -8,7 +8,15 @@ members = [
     "konnektoren-tui",
 ]
 
+[workspace.package]
+edition = "2024"
+version = "0.6.0"
+license = "MIT"
+repository = "https://github.com/konnektoren/konnektoren-rs"
+authors = ["Christian M <chriamue@gmail.com>"]
+
 [workspace.dependencies]
+base64 = "0.22.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.9.33"
@@ -17,3 +25,4 @@ log = "0.4"
 thiserror = "1.0"
 mockall = "0.13.0"
 env_logger = "0.10"
+chrono = { version = "0.4", features = ["serde"] }

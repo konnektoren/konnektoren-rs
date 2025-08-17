@@ -1,24 +1,26 @@
 [package]
 name = "konnektoren-tests"
-version = "0.1.0"
-edition = "2021"
+edition = { workspace = true }
+version = { workspace = true }
+description = "BDD and integration tests for Konnektoren"
+keywords = ["konnektoren", "tests", "bdd"]
 
 [dependencies]
-base64 = "0.22.1"
-chrono = { version = "0.4.38", features = ["serde"] }
+base64 = { workspace = true }
+chrono = { workspace = true }
+cucumber = "0.20"
 konnektoren-core = { path = "../konnektoren-core" }
 konnektoren-platform = { path = "../konnektoren-platform" }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+log = { workspace = true }
 rust-embed = { version = "8.5.0", features = [
     "interpolate-folder-path",
     "debug-embed",
 ] }
-log = "0.4"
+serde = { workspace = true }
+serde_json = { workspace = true }
 
 [dev-dependencies]
-cucumber = "0.20"
-tokio = { version = "1.37", features = ["macros", "rt-multi-thread", "time"] }
+tokio = { version = "1.37", features = ["macros", "rt-multi-thread"] }
 
 [[test]]
 name = "bdd_tests"
