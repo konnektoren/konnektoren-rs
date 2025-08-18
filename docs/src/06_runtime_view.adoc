@@ -30,7 +30,6 @@ There are many notations for describing scenarios, e.g.
 * state machines
 * ...
 
-
 .Further Information
 
 See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
@@ -40,7 +39,7 @@ endif::arc42help[]
 
 === Profile Update Scenario
 
-This scenario describes the process of a user updating their profile name in the `konnektoren` system. The user's name is stored in the browser's local storage.
+This scenario demonstrates how a user updates their profile name, with data stored locally for privacy and offline support.
 
 [plantuml, profile-update, png]
 ----
@@ -52,20 +51,25 @@ participant LocalStorage
 User -> WebApp : Open Profile Page
 User -> WebApp : Update Name
 WebApp -> LocalStorage : Save Updated Name
-LocalStorage --> WebApp : Acknowledge Save
+LocalStorage --> WebApp : Confirm Save
 WebApp -> User : Display Success Message
 @enduml
 ----
 
-* **Step 1:** The User opens the profile page on the Konnektoren Yew application.
-* **Step 2:** The User updates their name from "anonymous" to their own name.
-* **Step 3:** The Yew frontend saves the updated name in the browser's local storage.
-* **Step 4:** The local storage acknowledges the save to the Yew frontend.
-* **Step 5:** The Yew frontend displays a success message to the User.
+**Steps:**
 
-=== User Selects Challenge on Map Scenario
+1. User opens the profile page in the Konnektoren Yew web app.
+2. User updates their name.
+3. WebApp saves the updated name in browser local storage.
+4. LocalStorage confirms the save.
+5. WebApp displays a success message.
 
-This scenario describes the process of a user selecting a challenge on the map in the `konnektoren` system. The user can view information about the challenge and start it, or encounter an error if they do not have enough points to unlock the challenge.
+**Architectural relevance:**
+Demonstrates privacy-preserving local data management and immediate UI feedback.
+
+=== Challenge Selection Scenario
+
+This scenario shows how a user selects a challenge on the map, with access control and error handling.
 
 [plantuml, user-selects-challenge, png]
 ----
@@ -76,43 +80,42 @@ participant Core as "Konnektoren Core"
 participant LocalStorage
 
 User -> WebApp : Open Map Page
-WebApp -> Core : Load User Profile
-WebApp -> Core : Load Game State
-Core -> LocalStorage : Retrieve User Profile and Game State
-LocalStorage --> Core : Send Profile and Game State Data
-Core --> WebApp : Send Loaded Data
-WebApp -> User : Display Map with Challenges
+WebApp -> Core : Load User Profile & Game State
+Core -> LocalStorage : Retrieve Data
+LocalStorage --> Core : Return Data
+Core --> WebApp : Send Data
+WebApp -> User : Display Map
 
-User -> WebApp : Select Challenge on Map
+User -> WebApp : Select Challenge
 WebApp -> Core : Check Challenge Requirements
 alt Challenge Locked
-    Core -> WebApp : Send Error Response
-    WebApp -> User : Display Error Dialog (Challenge Locked)
+    Core -> WebApp : Error: Challenge Locked
+    WebApp -> User : Show Error Dialog
 else Challenge Unlocked
     Core -> WebApp : Send Challenge Info
-    WebApp -> User : Display Challenge Info Dialog
+    WebApp -> User : Show Challenge Info
     User -> WebApp : Start Challenge
-    WebApp -> User : Redirect to Challenge URL
+    WebApp -> User : Redirect to Challenge
 end
 @enduml
 ----
 
-* **Step 1:** The User opens the map page on the Konnektoren Yew application.
-* **Step 2:** The Yew frontend requests the user profile and game state from the Konnektoren Core.
-* **Step 3:** The Core retrieves the user profile and game state from the local storage.
-* **Step 4:** The local storage sends the profile and game state data back to the Core.
-* **Step 5:** The Core sends the loaded data to the Yew frontend.
-* **Step 6:** The Yew frontend displays the map with the available challenges to the User.
-* **Step 7:** The User selects a challenge on the map.
-* **Step 8:** The Yew frontend checks the challenge requirements with the Core.
-* **Step 9:**
-* If the challenge is locked, the Core sends an error response back to the Yew frontend, which then displays an error dialog indicating that the challenge is locked.
-* If the challenge is unlocked, the Core sends the challenge info back to the Yew frontend, which displays a challenge info dialog to the User.
-* **Step 10:** If the challenge is unlocked, the User can start the challenge, which redirects them to the challenge URL.
+**Steps:**
+
+1. User opens the map page.
+2. WebApp requests profile and game state from Core.
+3. Core retrieves data from LocalStorage.
+4. Data flows back to WebApp, which displays the map.
+5. User selects a challenge.
+6. WebApp checks requirements with Core.
+7. If locked, error is shown; if unlocked, challenge info is displayed and user can start the challenge.
+
+**Architectural relevance:**
+Shows access control, error handling, and data flow between frontend, core logic, and local storage.
 
 === Challenge Participation Scenario
 
-This scenario describes the process of a user participating in a grammar challenge.
+This scenario covers the full flow of a user participating in a challenge, including evaluation and awarding points.
 
 [plantuml, challenge-participation, png]
 ----
@@ -122,50 +125,44 @@ participant WebApp as "Konnektoren Yew"
 participant Core as "Konnektoren Core"
 participant ChallengeConfig as "Challenge Config"
 participant ChallengeModule as "Challenge Module"
+participant UserProfile
 
 User -> WebApp : Start Challenge
 WebApp -> Core : Request Challenge Data
-Core -> ChallengeConfig : Get Challenge Questions
-ChallengeConfig --> Core : Return Challenge Questions
+Core -> ChallengeConfig : Get Questions
+ChallengeConfig --> Core : Return Questions
 Core -> WebApp : Send Challenge Data
-WebApp -> User : Display Challenge Questions
+WebApp -> User : Show Questions
 
 User -> WebApp : Submit Answers
 WebApp -> Core : Send Answers
 Core -> ChallengeModule : Evaluate Answers
 ChallengeModule --> Core : Return Results
 Core -> WebApp : Send Results
-WebApp -> User : Display Results
+WebApp -> User : Show Results
 
 WebApp -> Core : Award Points
 Core -> UserProfile : Update Points
-UserProfile --> Core : Acknowledge Update
+UserProfile --> Core : Confirm Update
 Core -> WebApp : Confirm Points Awarded
-WebApp -> User : Display Points Awarded
+WebApp -> User : Show Points Awarded
 @enduml
 ----
 
-* **Step 1:** The User starts a challenge on the Konnektoren Yew application.
-* **Step 2:** The Yew frontend requests challenge data from the Konnektoren Core.
-* **Step 3:** The Core retrieves challenge questions from the Challenge Config.
-* **Step 4:** The Challenge Config returns the challenge questions to the Core.
-* **Step 5:** The Core sends the challenge data to the Yew frontend.
-* **Step 6:** The Yew frontend displays the challenge questions to the User.
-* **Step 7:** The User submits their answers through the Yew frontend.
-* **Step 8:** The Yew frontend sends the answers to the Core.
-* **Step 9:** The Core evaluates the answers using the Challenge Module.
-* **Step 10:** The Challenge Module returns the evaluation results to the Core.
-* **Step 11:** The Core sends the results to the Yew frontend.
-* **Step 12:** The Yew frontend displays the results to the User.
-* **Step 13:** The WebApp requests to award points for the challenge.
-* **Step 14:** The Core updates the user's points in the UserProfile.
-* **Step 15:** The UserProfile acknowledges the points update to the Core.
-* **Step 16:** The Core confirms the points awarded to the WebApp.
-* **Step 17:** The WebApp displays the points awarded to the User.
+**Steps:**
+
+1. User starts a challenge.
+2. Challenge data is loaded and displayed.
+3. User submits answers.
+4. Answers are evaluated; results are returned and shown.
+5. Points are awarded and user profile is updated.
+
+**Architectural relevance:**
+Demonstrates modular evaluation, state updates, and feedback loop.
 
 === Leaderboard and Certificate Scenario
 
-This scenario describes the process of a user obtaining a certificate after completing challenges and the interaction with the leaderboard.
+This scenario illustrates how a user claims a certificate and interacts with the leaderboard.
 
 [plantuml, leaderboard-certificate, png]
 ----
@@ -180,86 +177,76 @@ participant BackendAPI as "Konnektoren API"
 User -> WebApp : Visit Profile Page
 WebApp -> Core : Request Profile Data
 Core -> WebApp : Send Profile Data
-WebApp -> User : Display Profile Data
+WebApp -> User : Show Profile
 
 User -> WebApp : Claim Certificate
 WebApp -> CertificateModule : Generate Certificate
 CertificateModule --> WebApp : Return Certificate Data
 
-WebApp -> Core : Send Certificate Data
-Core -> BackendAPI : Store Certificate Data
-BackendAPI --> Core : Acknowledge Data Storage
+WebApp -> Core : Store Certificate Data
+Core -> BackendAPI : Store Data
+BackendAPI --> Core : Confirm Storage
 Core -> WebApp : Confirm Certificate Stored
-WebApp -> User : Display Certificate
+WebApp -> User : Show Certificate
 
 User -> WebApp : Visit Leaderboard
 WebApp -> Core : Request Leaderboard Data
-Core -> BackendAPI : Get Top 10 Performances
-BackendAPI --> Core : Return Top 10 Performances
+Core -> BackendAPI : Get Top Performances
+BackendAPI --> Core : Return Data
 Core -> WebApp : Send Leaderboard Data
-WebApp -> User : Display Leaderboard
+WebApp -> User : Show Leaderboard
 @enduml
 ----
 
-* **Step 1:** The User visits the profile page on the Konnektoren Yew application.
-* **Step 2:** The Yew frontend requests profile data from the Konnektoren Core.
-* **Step 3:** The Core sends the profile data to the Yew frontend.
-* **Step 4:** The Yew frontend displays the profile data to the User.
-* **Step 5:** The User claims a certificate.
-* **Step 6:** The Yew frontend requests certificate generation from the Certificate Module.
-* **Step 7:** The Certificate Module generates and returns the certificate data to the Yew frontend.
-* **Step 8:** The Yew frontend sends the certificate data to the Core.
-* **Step 9:** The Core stores the certificate data via a REST API call to the BackendAPI.
-* **Step 10:** The BackendAPI acknowledges the data storage to the Core.
-* **Step 11:** The Core confirms the certificate storage to the Yew frontend.
-* **Step 12:** The Yew frontend displays the certificate to the User.
-* **Step 13:** The User visits the leaderboard page.
-* **Step 14:** The Yew frontend requests leaderboard data from the Konnektoren Core.
-* **Step 15:** The Core requests the top 10 performances from the BackendAPI.
-* **Step 16:** The BackendAPI returns the top 10 performances to the Core.
-* **Step 17:** The Core sends the leaderboard data to the Yew frontend.
-* **Step 18:** The Yew frontend displays the leaderboard to the User.
+**Steps:**
+
+1. User views profile and claims certificate.
+2. Certificate is generated and stored via backend API.
+3. User views leaderboard, which is fetched from backend.
+
+**Architectural relevance:**
+Shows integration with backend APIs, certificate generation, and leaderboard data flow.
 
 === Verifiable Credential Issuance Scenario
 
-This scenario describes the process of a user obtaining a verifiable credential (badge) after completing challenges.
+This scenario demonstrates how a user receives a verifiable credential (badge) after completing challenges.
 
 [plantuml, vc-issuance-c4, png]
 ----
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-Person(user, "User", "A learner who completed challenges")
-
+Person(user, "User", "Learner")
 System_Boundary(konnektoren, "Konnektoren System") {
     Container(frontend, "Frontend", "Yew/WebAssembly", "Web interface")
     Container(core, "Core", "Rust", "Business logic")
 }
+System_Ext(vc_issuer, "vc.konnektoren.help", "Credential Issuer")
 
-System_Ext(vc_issuer, "vc.konnektoren.help", "Verifiable Credential Issuer")
-
-Rel(user, frontend, "1. Completes challenges")
-Rel(frontend, core, "2. Verifies completion")
-Rel(core, frontend, "3. Confirms achievement")
-Rel(frontend, vc_issuer, "4. Requests credential", "HTTPS")
-Rel(vc_issuer, frontend, "5. Issues OpenBadgeCredential", "OpenID4VC")
-Rel(frontend, user, "6. Displays QR code for credential")
-
+Rel(user, frontend, "Completes challenges")
+Rel(frontend, core, "Verifies completion")
+Rel(core, frontend, "Confirms achievement")
+Rel(frontend, vc_issuer, "Requests credential", "HTTPS")
+Rel(vc_issuer, frontend, "Issues credential", "OpenID4VC")
+Rel(frontend, user, "Displays QR code for credential")
 @enduml
 ----
 
-* **Step 1:** The User completes a set of challenges on the Konnektoren platform.
-* **Step 2:** The Frontend communicates with the Core to verify the completion of challenges.
-* **Step 3:** The Core confirms the achievement back to the Frontend.
-* **Step 4:** The Frontend requests a credential from the vc.konnektoren.help issuer.
-* **Step 5:** The vc.konnektoren.help issuer creates and issues an OpenBadgeCredential using the OpenID4VC protocol.
-* **Step 6:** The Frontend displays a QR code to the User, which can be scanned with a self-sovereign identity wallet to receive the badge.
+**Steps:**
 
-This simplified diagram illustrates the key steps in the verifiable credential issuance process, highlighting the interaction between the user, the Konnektoren system, and the external credential issuer.
+1. User completes challenges.
+2. Frontend verifies completion with Core.
+3. Achievement is confirmed.
+4. Frontend requests credential from external issuer.
+5. Credential is issued via OpenID4VC.
+6. Frontend displays QR code for user to claim badge.
+
+**Architectural relevance:**
+Highlights SSI integration and secure credential issuance.
 
 === Event and Command Handling Scenario
 
-This scenario illustrates how the EventBus and CommandBus facilitate communication and action execution in the Konnektoren system.
+This scenario shows how the EventBus and CommandBus decouple actions and notifications in the system.
 
 [plantuml, event-command-scenario, png]
 ----
@@ -280,18 +267,20 @@ UI -> User : Update Display
 @enduml
 ----
 
-1. The User Interface publishes a NextChallengeCommand to the CommandBus.
-2. The CommandBus executes the command, which is handled by the Game Logic.
-3. The Game Logic loads the next challenge from the Challenge Module.
-4. Once the challenge is loaded, the Game Logic publishes a ChallengeLoadedEvent to the EventBus.
-5. The EventBus notifies all subscribers, including the User Interface, about the new challenge.
-6. The User Interface updates the display for the user.
+**Steps:**
 
-This scenario demonstrates how the EventBus and CommandBus decouple different parts of the system, allowing for a more modular and maintainable architecture.
+1. UI publishes a command to CommandBus.
+2. CommandBus executes the command via Game Logic.
+3. Game Logic loads the next challenge.
+4. Game Logic publishes an event to EventBus.
+5. EventBus notifies UI, which updates the display.
+
+**Architectural relevance:**
+Demonstrates modular, event-driven architecture for maintainability and extensibility.
 
 === Game Controller Interaction Scenario
 
-This scenario demonstrates how the GameController manages game state and handles commands.
+This scenario demonstrates how the GameController manages state and coordinates commands, events, and persistence.
 
 [plantuml, game-controller-interaction, png]
 ----
@@ -315,10 +304,15 @@ EB --> C: notify(ChallengeChangedEvent)
 @enduml
 ----
 
-1. The Client publishes a NextChallengeCommand to the GameController.
-2. The GameController forwards the command to the CommandBus.
-3. The CommandBus calls back to the GameController to handle the command.
-4. The GameController executes the command on the GameState.
-5. After the state is updated, the GameController publishes a ChallengeChangedEvent to the EventBus.
-6. The GameController saves the updated state using the Persistence layer.
-7. The EventBus notifies the Client about the state change.
+**Steps:**
+
+1. Client publishes a command to GameController.
+2. GameController forwards to CommandBus.
+3. CommandBus calls back to GameController to handle the command.
+4. GameController updates GameState.
+5. GameController publishes an event to EventBus.
+6. GameController saves state via Persistence.
+7. EventBus notifies Client of the state change.
+
+**Architectural relevance:**
+Shows orchestration of state, events, and persistence for robust game management.
