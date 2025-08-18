@@ -1,10 +1,15 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-deployment-view]]
-
 == Deployment View
 
-=== Infrastructure Level 1
+=== Overview
+
+The *konnektoren.help* platform uses a modern, cloud-native deployment model.
+The frontend is a static WebAssembly (WASM) application hosted on GitHub Pages, delivered globally via Cloudflare CDN and proxy.
+The backend leaderboard service is a Rust Axum server running inside a Docker container, communicating via REST API.
+
+=== Infrastructure Level 1: High-Level Deployment
 
 _**Deployment Overview Diagram**_
 
@@ -12,46 +17,64 @@ _**Deployment Overview Diagram**_
 ....
 @startuml deployment-overview
 !define C4Deployment
-
 C4Deployment
 
-node "Cloudflare Proxy" {
+actor User
+
+node "Cloudflare CDN & Proxy" {
   node "GitHub Pages" {
-    [WASM Page]
+    [WASM Frontend]
   }
 }
 
-node "Docker Container" {
-  [Axum Server] <<Container>>
+node "GitHub Actions" {
+  [CI/CD Pipeline] <<Process>>
 }
 
-[WASM Page] --> [Cloudflare Proxy] : Deployed through GitHub Pages
-[Cloudflare Proxy] --> [Axum Server] : Proxy REST API calls to the leaderboard
+node "Backend Cluster" {
+  node "Docker Host" {
+    [Axum Leaderboard Server] <<Container>>
+  }
+}
+
+User --> [Cloudflare CDN & Proxy] : HTTPS
+[Cloudflare CDN & Proxy] --> [WASM Frontend] : Delivers static assets
+[WASM Frontend] --> [Cloudflare CDN & Proxy] : API requests (REST)
+[Cloudflare CDN & Proxy] --> [Axum Leaderboard Server] : Proxies REST API calls
+[Axum Leaderboard Server] --> [Leaderboard Database] : Reads/Writes scores
+
+[CI/CD Pipeline] --> [GitHub Pages] : Builds & deploys WASM Frontend
 
 @enduml
 ....
 
-Motivation::
+**Motivation**
 
-The *konnektoren.help* project uses a decentralized deployment model. The front-end is deployed as a static WASM page hosted on GitHub Pages, with Cloudflare acting as a proxy for secure, global content delivery. The back-end leaderboard service is a Docker container running an Axum server, communicating via REST API.
+- Decentralized, scalable architecture for global reach and low latency.
+- Separation of concerns: static frontend, containerized backend, and managed CDN/proxy.
 
-Quality and/or Performance Features::
+**Quality & Performance Features**
 
-- The Cloudflare proxy provides enhanced performance by caching static assets and offering DDoS protection.
-- Using Docker for the Axum server enables containerized, reproducible, and scalable deployments.
+- Cloudflare provides caching, DDoS protection, SSL termination, and global distribution.
+- Docker enables reproducible, isolated, and scalable backend deployments.
+- REST API ensures loose coupling between frontend and backend.
 
-Mapping of Building Blocks to Infrastructure::
+**Mapping of Building Blocks to Infrastructure**
 
-- *WASM Page* is deployed on *GitHub Pages* behind the *Cloudflare Proxy*.
-- *Axum Server* is deployed inside a *Docker Container* and handles the leaderboard functionality through REST API.
-- Cloudflare is responsible for routing traffic and optimizing delivery for the WASM page.
-- REST API is used to connect the WASM front-end with the leaderboard server.
+[options="header",cols="1,2,2"]
+|===
+| Building Block         | Infrastructure Component         | Notes
+| WASM Frontend          | GitHub Pages + Cloudflare CDN     | Built and deployed via GitHub Actions; static hosting, global delivery
+| Axum Leaderboard       | Docker Host (Cloud/VM)            | Containerized Rust backend
+| Leaderboard Database   | Managed DB (e.g., PostgreSQL)     | Persistent scores, scalable
+| CDN/Proxy              | Cloudflare                        | Caching, SSL, API routing
+|===
 
-=== Infrastructure Level 2
+=== Infrastructure Level 2: Detailed Components
 
-==== _GitHub Pages Infrastructure_
+==== _GitHub Pages & Cloudflare CDN_
 
-_**GitHub Pages Hosting Diagram**_
+_**Frontend Hosting Diagram**_
 
 [plantuml, github-pages-deployment, svg]
 ....
@@ -60,27 +83,34 @@ node "GitHub Infrastructure" {
   [GitHub Pages] <<Static Hosting>>
 }
 
-node "User Browser" {
-  [WASM Page]
+node "Cloudflare CDN" {
+  [CDN Edge Node]
 }
 
-[User Browser] --> [GitHub Pages] : Access hosted page
+node "User Browser" {
+  [WASM Frontend]
+}
+
+[User Browser] --> [Cloudflare CDN] : HTTPS
+[Cloudflare CDN] --> [GitHub Pages] : Fetches static assets
+[Cloudflare CDN] --> [User Browser] : Delivers cached content
 
 @enduml
 ....
 
-The WASM front-end is deployed on GitHub Pages and accessed by users through their browsers. GitHub Pages hosts the static WASM content and serves it globally.
+- Users access the WASM frontend via Cloudflare, which caches and accelerates delivery.
+- GitHub Pages hosts the static assets, with Cloudflare providing SSL and edge caching.
 
 ==== _Axum Server in Docker_
 
-_**Axum Server Deployment Diagram**_
+_**Backend Deployment Diagram**_
 
 [plantuml, axum-server-deployment, svg]
 ....
 @startuml axum-server-deployment
-node "Server Infrastructure" {
+node "Cloud/VM Infrastructure" {
   node "Docker Host" {
-    [Axum Server] <<Docker Container>>
+    [Axum Leaderboard Server] <<Docker Container>>
   }
 }
 
@@ -88,8 +118,19 @@ node "Leaderboard Database" {
   [Database] <<External System>>
 }
 
-[Axum Server] --> [Database]
+[Axum Leaderboard Server] --> [Database] : REST/SQL
 @enduml
 ....
 
-The Axum server, running in a Docker container, handles leaderboard functionalities. It communicates with the leaderboard database.
+- The Axum server runs in a Docker container, exposing REST APIs for leaderboard management.
+- The backend communicates with a managed database (e.g., PostgreSQL, SQLite, or cloud DB).
+
+=== Scaling, Monitoring, and Security
+
+* **Scaling**: Docker containers can be replicated for horizontal scaling. Cloudflare automatically scales CDN delivery.
+* **Monitoring**: Use Cloudflare analytics for traffic and health.
+* **Security**: All traffic is encrypted (HTTPS). Cloudflare provides DDoS protection and WAF. Backend containers run as non-root and are regularly updated.
+
+=== Deployment Automation
+
+* **CI/CD**: GitHub Actions automates build, test, and deployment for both frontend and backend.
