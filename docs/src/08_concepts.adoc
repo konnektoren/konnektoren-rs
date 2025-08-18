@@ -3,9 +3,11 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-concepts]]
 == Cross-cutting Concepts
 
-=== Core Library and UI Components
+=== Modular Core Library and UI Components
 
-The *konnektoren* project is built around a core library that contains the business logic. This library is decoupled from any specific user interface and can be reused across different applications. Additionally, reusable UI components are provided, making it easier to integrate and combine them in various applications such as web apps and Telegram apps.
+The *konnektoren* project centers on a modular core library containing all business logic, decoupled from any specific user interface.
+This enables code reuse across multiple applications (e.g., web, Telegram) and simplifies maintenance and extension.
+Reusable UI components are provided for rapid integration and consistent user experience.
 
 [plantuml, core-library, svg]
 ....
@@ -30,13 +32,20 @@ UIComponent2 <|-- TelegramApp
 @enduml
 ....
 
-The diagram above shows the relationship between the core library, UI components, and the two apps (Web and Telegram) using these components.
+*Diagram: Modular architecture enables UI components to interact with core business logic, supporting multiple frontends.*
 
-=== Command and Event Handling
+**Benefits:**
 
-The Konnektoren system uses a command and event handling pattern, implemented primarily through the GameController, to manage game state and user interactions.
+- Separation of concerns: UI and logic evolve independently.
+- Code reuse: Core logic shared across platforms.
+- Easier testing and extension.
 
-[plantuml, command-event-pattern, png]
+=== Command and Event Handling Pattern
+
+Konnektoren uses a command/event pattern, primarily via the GameController, to manage game state and user interactions.
+Commands trigger actions; events notify subscribers of changes.
+
+[plantuml, command-event-pattern, svg]
 ----
 @startuml
 component "GameController" as GC
@@ -51,15 +60,17 @@ GC --> GS : updates
 @enduml
 ----
 
-This pattern provides several benefits:
-- Decouples components by using commands and events for communication
-- Allows for easy extension of functionality by adding new command and event types
-- Provides a clear flow of control and data in the system
-- Facilitates testing by allowing commands and events to be easily mocked or verified
+**Advantages:**
+
+- Decouples components for maintainability.
+- Enables extensibility by adding new command/event types.
+- Clear control and data flow.
+- Facilitates testing and mocking.
 
 === Web3-Oriented Architecture
 
-The apps are designed with a web3-oriented architecture, minimizing server-side storage. User data, except for the leaderboard, is stored client-side to ensure privacy and security. The system also employs encryption and digital signatures to verify certificates and user data.
+The system is designed with web3 principles: minimal server-side storage, privacy by default, and user empowerment.
+User data (except leaderboard) is stored client-side, with encryption and digital signatures for verification.
 
 [plantuml, web3-architecture, svg]
 ....
@@ -81,11 +92,18 @@ User --> [App Logic] : Interaction
 @enduml
 ....
 
-This architecture ensures minimal dependency on centralized servers, following web3 principles. Only essential data, like the leaderboard, is stored server-side, while user data remains in local storage.
+*Diagram: User data is stored locally; only essential data (leaderboard) is centralized.*
 
-=== Encryption and Signatures for Verification
+**Benefits:**
 
-To ensure data integrity and security, the system uses encryption and signatures to verify certificates. This is a key part of the system’s security, ensuring that data shared between users and the server is verified without relying on a central authority.
+- Enhanced privacy and user control.
+- Reduced attack surface.
+- Offline support.
+
+=== Encryption and Digital Signatures
+
+Data integrity and security are ensured through encryption and digital signatures.
+Certificates and sensitive data are signed and verified using industry-standard cryptography (e.g., Ed25519).
 
 [plantuml, encryption-diagram, svg]
 ....
@@ -108,32 +126,38 @@ User --> [Encryption] : Encrypt/Decrypt data
 @enduml
 ....
 
-Encryption and digital signatures are central to the system’s security model, ensuring that all certificates are securely verified and that data is protected at rest and in transit.
+*Diagram: Encryption and signature verification are performed client-side, with server-side certificate authority for validation.*
 
-=== No Backend Logging and Analytics
+**Key Points:**
 
-To preserve privacy, the *konnektoren.help* system does not employ any backend logging. Google Analytics is used minimally to help improve the product while adhering to privacy standards.
+- Data is encrypted at rest and in transit.
+- Certificates are signed and verified without central authority.
+- Security is a first-class concern.
 
-'''
+=== Privacy: Minimal Backend Logging and Analytics
 
-This documentation provides a clear description of the concepts that cross-cut multiple areas of the *konnektoren.help* project. By adhering to web3 principles, employing encryption, and focusing on a modular, reusable core, the system ensures security and flexibility in its design.
+To maximize privacy, *konnektoren.help* does not use backend logging.
+Google Analytics is used sparingly, only for product improvement and in compliance with privacy standards.
+
+**Best Practices:**
+
+- No personal data is logged server-side.
+- Analytics are anonymized and opt-in where possible.
 
 === Achievement System
 
-The achievement system in Konnektoren is designed to motivate users and recognize their progress in learning German grammar.
+The achievement system motivates users and recognizes progress in learning German grammar.
 
 ==== Overview
 
-The achievement system works as follows:
-
-1. Achievements are defined in a YAML configuration file.
-2. As users complete challenges, their progress is recorded in the Challenge History.
-3. The Achievement Evaluator regularly checks the user's progress against the achievement conditions.
-4. Unlocked achievements are displayed in the frontend, providing visual feedback and motivation.
+1. Achievements are defined in YAML configuration.
+2. User progress is tracked in Challenge History.
+3. Achievement Evaluator checks progress against achievement conditions.
+4. Unlocked achievements are displayed in the frontend.
 
 ==== Components
 
-[plantuml]
+[plantuml, achievement-system, svg]
 ....
 @startuml
 actor User
@@ -153,26 +177,25 @@ FE -> User : displays achievements
 @enduml
 ....
 
-1. Achievement Configuration: A YAML file that defines achievements, their conditions, and metadata (name, description, icon).
-2. Challenge History: Records the user's completed challenges and performance.
-3. Game Statistics: Aggregates data from the Challenge History to provide meaningful statistics for achievement evaluation.
-4. Achievement Evaluator: Processes the Achievement Configuration and Game Statistics to determine which achievements have been unlocked.
-5. Frontend: Displays unlocked and locked achievements to the user.
+**Component Roles:**
+
+- *Achievement Configuration*: YAML file with achievement definitions.
+- *Challenge History*: Tracks completed challenges and performance.
+- *Game Statistics*: Aggregates challenge data for evaluation.
+- *Achievement Evaluator*: Determines unlocked achievements.
+- *Frontend*: Displays achievements to users.
 
 ==== Implementation
 
-The achievement system is implemented using the following key components:
+- `AchievementDefinition`: Metadata and condition for each achievement.
+- `AchievementEvaluator`: Evaluates achievements based on statistics.
+- `GameStatistics`: Calculates stats from challenge history.
 
-- `AchievementDefinition`: Represents an individual achievement with its metadata and condition.
-- `AchievementEvaluator`: Evaluates achievements based on game statistics.
-- `GameStatistics`: Provides methods to calculate various statistics from the Challenge History.
-
-The frontend periodically requests updated achievement information and displays it to the user, providing immediate feedback on their progress and newly unlocked achievements.
-
+**Frontend** requests updated achievement info and displays progress and new achievements.
 
 === Self-Sovereign Identity (SSI) for Badges
 
-The Konnektoren project incorporates Self-Sovereign Identity (SSI) principles for issuing achievement badges. This approach aligns with our commitment to user empowerment and data privacy.
+Konnektoren uses SSI principles for issuing achievement badges, empowering users and enhancing privacy.
 
 [plantuml, ssi-badge-concept, svg]
 ....
@@ -189,12 +212,13 @@ User --> Wallet : Stores badge
 @enduml
 ....
 
-We've implemented SSI for badges for several key reasons:
+**Why SSI for badges?**
 
-1. **User Control**: Users have full ownership and control over their achievement credentials, deciding when and with whom to share them.
-2. **Portability**: Badges can be stored in any compatible SSI wallet, allowing users to carry their achievements across different platforms and contexts.
-3. **Privacy**: The SSI approach minimizes the need for centralized storage of user achievements, enhancing privacy.
-4. **Verifiability**: Third parties can easily verify the authenticity of badges without needing to contact Konnektoren directly.
-5. **Interoperability**: By using standard formats like Verifiable Credentials and OpenBadges, we ensure our badges can be recognized and utilized in a broader ecosystem.
+1. **User Control**: Users own and manage their credentials.
+2. **Portability**: Badges can be stored in any compatible SSI wallet.
+3. **Privacy**: No centralized storage of achievements.
+4. **Verifiability**: Third parties can verify badges without contacting Konnektoren.
+5. **Interoperability**: Uses standard formats (Verifiable Credentials, OpenBadges).
 
-This feature represents a step towards a more decentralized, user-centric approach to managing educational and achievement credentials, aligning with broader trends in digital identity and credentialing.
+**Architectural relevance:**
+SSI integration aligns with decentralized, privacy-first design and future-proofs achievement credentials.
