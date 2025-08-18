@@ -1,5 +1,5 @@
 use super::language::Language;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::collections::HashMap;
 
 pub trait TranslationAsset {
@@ -211,14 +211,18 @@ mod tests {
         assert_eq!(translations["en"]["Description"], "Description");
 
         // Test that both formats are merged correctly
-        assert!(translations["en"]
-            .as_object()
-            .unwrap()
-            .contains_key("Language"));
-        assert!(translations["en"]
-            .as_object()
-            .unwrap()
-            .contains_key("Description"));
+        assert!(
+            translations["en"]
+                .as_object()
+                .unwrap()
+                .contains_key("Language")
+        );
+        assert!(
+            translations["en"]
+                .as_object()
+                .unwrap()
+                .contains_key("Description")
+        );
     }
 
     #[test]
@@ -243,5 +247,32 @@ mod tests {
         let en_trans = translations["en"].as_object().unwrap();
         assert!(en_trans.contains_key("Language")); // From JSON
         assert!(en_trans.contains_key("Description")); // From YAML
+    }
+
+    #[test]
+    fn test_json_asset_with_invalid_json() {
+        // Simulate a RustEmbed with an invalid JSON file
+        #[derive(rust_embed::RustEmbed)]
+        #[folder = "$CARGO_MANIFEST_DIR/assets/i18n/"]
+        struct BadAssets;
+
+        // You'd need to add a file like "bad.json" with invalid content to assets/i18n for this test.
+        let asset = JsonTranslationAsset::<BadAssets>::new();
+        let translations = asset.load_translations();
+        // Should not panic, and should not include "bad" in the translations
+        assert!(!translations.contains_key("bad"));
+    }
+
+    #[test]
+    fn test_yaml_asset_with_invalid_yaml() {
+        #[derive(rust_embed::RustEmbed)]
+        #[folder = "$CARGO_MANIFEST_DIR/assets/i18n/"]
+        struct BadAssets;
+
+        // Add a file "bad.yml" with invalid YAML for this test.
+        let asset = YamlTranslationAsset::<BadAssets>::new("bad.yml");
+        let translations = asset.load_translations();
+        // Should not panic, and should be empty
+        assert!(translations.is_empty());
     }
 }
