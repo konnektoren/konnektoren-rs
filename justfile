@@ -61,7 +61,7 @@ structurizr-down:
 
 # Coverage
 coverage:
-    cargo tarpaulin --workspace --ignore-tests
+    cargo tarpaulin --workspace --all-features --ignore-tests --out Xml
 
 # Generate SBOM
 sbom:

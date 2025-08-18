@@ -18,3 +18,4 @@ Cargo.lock
 .vscode/
 
 *.cdx.xml
+cobertura.xml
