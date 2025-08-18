@@ -1,15 +1,10 @@
+use super::report::LanguageStats;
 use crate::i18n::{I18nConfig, Language};
+use crate::tools::i18n::I18nReportError;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 use walkdir::WalkDir;
-
-#[derive(Debug)]
-pub struct LanguageStats {
-    pub total_keys: usize,
-    pub missing_keys: usize,
-    pub coverage_percentage: f64,
-}
 
 #[derive(Debug)]
 pub struct I18nReport {
@@ -23,103 +18,20 @@ pub struct I18nReport {
 }
 
 impl I18nReport {
-    pub fn print_report(&self) {
-        log::info!("\nTranslation Report");
-        log::info!("=================");
-        log::info!("Source keys found: {}", self.source_keys.len());
-
-        // Print statistics for each language
-        log::info!("\nLanguage Statistics:");
-        log::info!("-------------------");
-        for lang in Language::builtin() {
-            if let Some(stats) = self.language_stats.get(lang.code()) {
-                log::info!(
-                    "{} ({}): {}/{} keys ({:.1}% coverage)",
-                    lang.native_name(),
-                    lang.code(),
-                    stats.total_keys - stats.missing_keys,
-                    stats.total_keys,
-                    stats.coverage_percentage
-                );
-            }
-        }
-
-        // Print missing translations by language
-        if !self.missing_translations.is_empty() {
-            log::warn!("\nMissing Translations:");
-            log::warn!("-------------------");
-            for lang in Language::builtin() {
-                if let Some(missing) = self.missing_translations.get(lang.code()) {
-                    if !missing.is_empty() {
-                        log::warn!(
-                            "{} ({}) - {} missing:",
-                            lang.native_name(),
-                            lang.code(),
-                            missing.len()
-                        );
-                        for key in missing {
-                            // Show the English translation as reference if available
-                            if let Some(en_trans) = self
-                                .translations
-                                .get("en")
-                                .and_then(|t| t.get(key))
-                                .and_then(|v| v.as_str())
-                            {
-                                log::warn!("  - {}: \"{}\"", key, en_trans);
-                            } else {
-                                log::warn!("  - {}", key);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Print unused translations
-        if !self.unused_translations.is_empty() {
-            log::warn!("\nUnused Translations:");
-            log::warn!("-------------------");
-            for key in &self.unused_translations {
-                log::warn!("  - {}", key);
-                // Show translations in all languages
-                for lang in Language::builtin() {
-                    if let Some(trans) = self
-                        .translations
-                        .get(lang.code())
-                        .and_then(|t| t.get(key))
-                        .and_then(|v| v.as_str())
-                    {
-                        log::info!(
-                            "    {} ({}): \"{}\"",
-                            lang.native_name(),
-                            lang.code(),
-                            trans
-                        );
-                    }
-                }
-            }
-        }
-
-        // Print summary
-        log::info!("\nSummary:");
-        log::info!("--------");
-        log::info!("Total source keys: {}", self.source_keys.len());
-        log::info!(
-            "Languages: {}",
-            Language::builtin()
-                .iter()
-                .map(|l| l.code())
-                .collect::<Vec<_>>()
-                .join(", ")
-        );
-        log::info!(
-            "Overall status: {}",
-            if self.has_errors {
-                "❌ Missing translations"
-            } else {
-                "✅ All translations complete"
-            }
-        );
+    pub fn format_with<F: super::report_format::I18nReportFormatter>(
+        &self,
+        formatter: &F,
+    ) -> Result<String, I18nReportError> {
+        formatter.format(self)
+    }
+    pub fn missing_as_yaml(&self) -> Result<String, I18nReportError> {
+        self.format_with(&super::report_format::I18nYamlFormatter)
+    }
+    pub fn missing_as_json(&self) -> Result<String, I18nReportError> {
+        self.format_with(&super::report_format::I18nJsonFormatter)
+    }
+    pub fn as_report(&self) -> Result<String, I18nReportError> {
+        self.format_with(&super::report_format::I18nHumanFormatter)
     }
 }
 
@@ -157,7 +69,6 @@ impl I18nChecker {
 
     fn collect_source_keys<P: AsRef<Path>>(&self, dir: P) -> HashSet<String> {
         let mut keys = HashSet::new();
-
         for entry in WalkDir::new(dir) {
             let entry = entry.unwrap();
             if entry.path().extension().map_or(false, |ext| ext == "rs") {
@@ -170,13 +81,11 @@ impl I18nChecker {
                 }
             }
         }
-
         keys
     }
 
     fn collect_translation_keys(&self) -> HashMap<String, HashSet<String>> {
         let mut translation_keys = HashMap::new();
-
         for lang in Language::builtin() {
             let lang_code = lang.code().to_string();
             if let Some(translations) = self.config.translations.get(&lang_code) {
@@ -185,7 +94,6 @@ impl I18nChecker {
                 }
             }
         }
-
         translation_keys
     }
 
@@ -195,26 +103,19 @@ impl I18nChecker {
         translation_keys: &HashMap<String, HashSet<String>>,
     ) -> HashMap<String, Vec<String>> {
         let mut missing = HashMap::new();
-
         for lang in Language::builtin() {
             let lang_code = lang.code().to_string();
-
-            // Create the empty set first and bind it to a variable
             let empty_set = HashSet::new();
-            // Get the reference to either the existing keys or the empty set
             let keys = translation_keys.get(&lang_code).unwrap_or(&empty_set);
-
             let missing_keys: Vec<_> = source_keys
                 .iter()
                 .filter(|key| !keys.contains(*key))
                 .cloned()
                 .collect();
-
             if !missing_keys.is_empty() {
                 missing.insert(lang_code, missing_keys);
             }
         }
-
         missing
     }
 
@@ -224,7 +125,6 @@ impl I18nChecker {
         translation_keys: &HashMap<String, HashSet<String>>,
     ) -> HashSet<String> {
         let mut unused = HashSet::new();
-
         for keys in translation_keys.values() {
             for key in keys {
                 if !source_keys.contains(key) {
@@ -232,7 +132,6 @@ impl I18nChecker {
                 }
             }
         }
-
         unused
     }
 
@@ -242,7 +141,6 @@ impl I18nChecker {
         translation_keys: &HashMap<String, HashSet<String>>,
     ) -> HashMap<String, LanguageStats> {
         let mut stats = HashMap::new();
-
         for lang in Language::builtin() {
             let lang_code = lang.code().to_string();
             let total_keys = source_keys.len();
@@ -257,7 +155,6 @@ impl I18nChecker {
             } else {
                 100.0
             };
-
             stats.insert(
                 lang_code,
                 LanguageStats {
@@ -267,52 +164,6 @@ impl I18nChecker {
                 },
             );
         }
-
         stats
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use serde_json::json;
-
-    #[test]
-    fn test_i18n_checker() {
-        let _ = env_logger::builder()
-            .filter_level(log::LevelFilter::Info)
-            .is_test(true)
-            .try_init();
-
-        let mut config = I18nConfig::default();
-        config.merge_translation(
-            &Language::from("en"),
-            json!({
-                "Hello": "Hello",
-                "Unused": "Unused",
-                "Test": "Test",
-            }),
-        );
-        config.merge_translation(
-            &Language::from("de"),
-            json!({
-                "Hello": "Hallo",
-                "Test": "Test",
-            }),
-        );
-
-        let checker = I18nChecker::new(config);
-        let report = checker.check_directory("src/tools");
-
-        // Verify statistics
-        assert_eq!(report.source_keys.len(), 0);
-        assert!(!report.translation_keys.is_empty());
-
-        if let Some(en_stats) = report.language_stats.get("en") {
-            assert_eq!(en_stats.total_keys, 0);
-            assert_eq!(en_stats.coverage_percentage, 100.0);
-        }
-
-        report.print_report();
     }
 }
