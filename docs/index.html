@@ -550,7 +550,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#section-runtime-view">7. Runtime View</a>
 <ul class="sectlevel2">
 <li><a href="#_profile_update_scenario">7.1. Profile Update Scenario</a></li>
-<li><a href="#_user_selects_challenge_on_map_scenario">7.2. User Selects Challenge on Map Scenario</a></li>
+<li><a href="#_challenge_selection_scenario">7.2. Challenge Selection Scenario</a></li>
 <li><a href="#_challenge_participation_scenario">7.3. Challenge Participation Scenario</a></li>
 <li><a href="#_leaderboard_and_certificate_scenario">7.4. Leaderboard and Certificate Scenario</a></li>
 <li><a href="#_verifiable_credential_issuance_scenario">7.5. Verifiable Credential Issuance Scenario</a></li>
@@ -560,25 +560,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#section-deployment-view">8. Deployment View</a>
 <ul class="sectlevel2">
-<li><a href="#_infrastructure_level_1">8.1. Infrastructure Level 1</a></li>
-<li><a href="#_infrastructure_level_2">8.2. Infrastructure Level 2</a>
+<li><a href="#_overview">8.1. Overview</a></li>
+<li><a href="#_infrastructure_level_1_high_level_deployment">8.2. Infrastructure Level 1: High-Level Deployment</a></li>
+<li><a href="#_infrastructure_level_2_detailed_components">8.3. Infrastructure Level 2: Detailed Components</a>
 <ul class="sectlevel3">
-<li><a href="#_github_pages_infrastructure">8.2.1. <em>GitHub Pages Infrastructure</em></a></li>
-<li><a href="#_axum_server_in_docker">8.2.2. <em>Axum Server in Docker</em></a></li>
+<li><a href="#_github_pages_cloudflare_cdn">8.3.1. <em>GitHub Pages &amp; Cloudflare CDN</em></a></li>
+<li><a href="#_axum_server_in_docker">8.3.2. <em>Axum Server in Docker</em></a></li>
 </ul>
 </li>
+<li><a href="#_scaling_monitoring_and_security">8.4. Scaling, Monitoring, and Security</a></li>
+<li><a href="#_deployment_automation">8.5. Deployment Automation</a></li>
 </ul>
 </li>
 <li><a href="#section-concepts">9. Cross-cutting Concepts</a>
 <ul class="sectlevel2">
-<li><a href="#_core_library_and_ui_components">9.1. Core Library and UI Components</a></li>
-<li><a href="#_command_and_event_handling">9.2. Command and Event Handling</a></li>
+<li><a href="#_modular_core_library_and_ui_components">9.1. Modular Core Library and UI Components</a></li>
+<li><a href="#_command_and_event_handling_pattern">9.2. Command and Event Handling Pattern</a></li>
 <li><a href="#_web3_oriented_architecture">9.3. Web3-Oriented Architecture</a></li>
-<li><a href="#_encryption_and_signatures_for_verification">9.4. Encryption and Signatures for Verification</a></li>
-<li><a href="#_no_backend_logging_and_analytics">9.5. No Backend Logging and Analytics</a></li>
+<li><a href="#_encryption_and_digital_signatures">9.4. Encryption and Digital Signatures</a></li>
+<li><a href="#_privacy_minimal_backend_logging_and_analytics">9.5. Privacy: Minimal Backend Logging and Analytics</a></li>
 <li><a href="#_achievement_system_2">9.6. Achievement System</a>
 <ul class="sectlevel3">
-<li><a href="#_overview">9.6.1. Overview</a></li>
+<li><a href="#_overview_2">9.6.1. Overview</a></li>
 <li><a href="#_components">9.6.2. Components</a></li>
 <li><a href="#_implementation">9.6.3. Implementation</a></li>
 </ul>
@@ -2279,7 +2282,7 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/achi
 <div class="sect2">
 <h3 id="_profile_update_scenario"><a class="anchor" href="#_profile_update_scenario"></a>7.1. Profile Update Scenario</h3>
 <div class="paragraph">
-<p>This scenario describes the process of a user updating their profile name in the <code>konnektoren</code> system. The user&#8217;s name is stored in the browser&#8217;s local storage.</p>
+<p>This scenario demonstrates how a user updates their profile name, with data stored locally for privacy and offline support.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2292,35 +2295,42 @@ participant LocalStorage
 User -&gt; WebApp : Open Profile Page
 User -&gt; WebApp : Update Name
 WebApp -&gt; LocalStorage : Save Updated Name
-LocalStorage --&gt; WebApp : Acknowledge Save
+LocalStorage --&gt; WebApp : Confirm Save
 WebApp -&gt; User : Display Success Message
 @enduml</pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+<div class="paragraph">
+<p><strong>Steps:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p><strong>Step 1:</strong> The User opens the profile page on the Konnektoren Yew application.</p>
+<p>User opens the profile page in the Konnektoren Yew web app.</p>
 </li>
 <li>
-<p><strong>Step 2:</strong> The User updates their name from "anonymous" to their own name.</p>
+<p>User updates their name.</p>
 </li>
 <li>
-<p><strong>Step 3:</strong> The Yew frontend saves the updated name in the browser&#8217;s local storage.</p>
+<p>WebApp saves the updated name in browser local storage.</p>
 </li>
 <li>
-<p><strong>Step 4:</strong> The local storage acknowledges the save to the Yew frontend.</p>
+<p>LocalStorage confirms the save.</p>
 </li>
 <li>
-<p><strong>Step 5:</strong> The Yew frontend displays a success message to the User.</p>
+<p>WebApp displays a success message.</p>
 </li>
-</ul>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Architectural relevance:</strong>
+Demonstrates privacy-preserving local data management and immediate UI feedback.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_user_selects_challenge_on_map_scenario"><a class="anchor" href="#_user_selects_challenge_on_map_scenario"></a>7.2. User Selects Challenge on Map Scenario</h3>
+<h3 id="_challenge_selection_scenario"><a class="anchor" href="#_challenge_selection_scenario"></a>7.2. Challenge Selection Scenario</h3>
 <div class="paragraph">
-<p>This scenario describes the process of a user selecting a challenge on the map in the <code>konnektoren</code> system. The user can view information about the challenge and start it, or encounter an error if they do not have enough points to unlock the challenge.</p>
+<p>This scenario shows how a user selects a challenge on the map, with access control and error handling.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2332,72 +2342,63 @@ participant Core as "Konnektoren Core"
 participant LocalStorage
 
 User -&gt; WebApp : Open Map Page
-WebApp -&gt; Core : Load User Profile
-WebApp -&gt; Core : Load Game State
-Core -&gt; LocalStorage : Retrieve User Profile and Game State
-LocalStorage --&gt; Core : Send Profile and Game State Data
-Core --&gt; WebApp : Send Loaded Data
-WebApp -&gt; User : Display Map with Challenges
+WebApp -&gt; Core : Load User Profile &amp; Game State
+Core -&gt; LocalStorage : Retrieve Data
+LocalStorage --&gt; Core : Return Data
+Core --&gt; WebApp : Send Data
+WebApp -&gt; User : Display Map
 
-User -&gt; WebApp : Select Challenge on Map
+User -&gt; WebApp : Select Challenge
 WebApp -&gt; Core : Check Challenge Requirements
 alt Challenge Locked
-    Core -&gt; WebApp : Send Error Response
-    WebApp -&gt; User : Display Error Dialog (Challenge Locked)
+    Core -&gt; WebApp : Error: Challenge Locked
+    WebApp -&gt; User : Show Error Dialog
 else Challenge Unlocked
     Core -&gt; WebApp : Send Challenge Info
-    WebApp -&gt; User : Display Challenge Info Dialog
+    WebApp -&gt; User : Show Challenge Info
     User -&gt; WebApp : Start Challenge
-    WebApp -&gt; User : Redirect to Challenge URL
+    WebApp -&gt; User : Redirect to Challenge
 end
 @enduml</pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+<div class="paragraph">
+<p><strong>Steps:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p><strong>Step 1:</strong> The User opens the map page on the Konnektoren Yew application.</p>
+<p>User opens the map page.</p>
 </li>
 <li>
-<p><strong>Step 2:</strong> The Yew frontend requests the user profile and game state from the Konnektoren Core.</p>
+<p>WebApp requests profile and game state from Core.</p>
 </li>
 <li>
-<p><strong>Step 3:</strong> The Core retrieves the user profile and game state from the local storage.</p>
+<p>Core retrieves data from LocalStorage.</p>
 </li>
 <li>
-<p><strong>Step 4:</strong> The local storage sends the profile and game state data back to the Core.</p>
+<p>Data flows back to WebApp, which displays the map.</p>
 </li>
 <li>
-<p><strong>Step 5:</strong> The Core sends the loaded data to the Yew frontend.</p>
+<p>User selects a challenge.</p>
 </li>
 <li>
-<p><strong>Step 6:</strong> The Yew frontend displays the map with the available challenges to the User.</p>
+<p>WebApp checks requirements with Core.</p>
 </li>
 <li>
-<p><strong>Step 7:</strong> The User selects a challenge on the map.</p>
+<p>If locked, error is shown; if unlocked, challenge info is displayed and user can start the challenge.</p>
 </li>
-<li>
-<p><strong>Step 8:</strong> The Yew frontend checks the challenge requirements with the Core.</p>
-</li>
-<li>
-<p><strong>Step 9:</strong></p>
-</li>
-<li>
-<p>If the challenge is locked, the Core sends an error response back to the Yew frontend, which then displays an error dialog indicating that the challenge is locked.</p>
-</li>
-<li>
-<p>If the challenge is unlocked, the Core sends the challenge info back to the Yew frontend, which displays a challenge info dialog to the User.</p>
-</li>
-<li>
-<p><strong>Step 10:</strong> If the challenge is unlocked, the User can start the challenge, which redirects them to the challenge URL.</p>
-</li>
-</ul>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Architectural relevance:</strong>
+Shows access control, error handling, and data flow between frontend, core logic, and local storage.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_challenge_participation_scenario"><a class="anchor" href="#_challenge_participation_scenario"></a>7.3. Challenge Participation Scenario</h3>
 <div class="paragraph">
-<p>This scenario describes the process of a user participating in a grammar challenge.</p>
+<p>This scenario covers the full flow of a user participating in a challenge, including evaluation and awarding points.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2408,89 +2409,61 @@ participant WebApp as "Konnektoren Yew"
 participant Core as "Konnektoren Core"
 participant ChallengeConfig as "Challenge Config"
 participant ChallengeModule as "Challenge Module"
+participant UserProfile
 
 User -&gt; WebApp : Start Challenge
 WebApp -&gt; Core : Request Challenge Data
-Core -&gt; ChallengeConfig : Get Challenge Questions
-ChallengeConfig --&gt; Core : Return Challenge Questions
+Core -&gt; ChallengeConfig : Get Questions
+ChallengeConfig --&gt; Core : Return Questions
 Core -&gt; WebApp : Send Challenge Data
-WebApp -&gt; User : Display Challenge Questions
+WebApp -&gt; User : Show Questions
 
 User -&gt; WebApp : Submit Answers
 WebApp -&gt; Core : Send Answers
 Core -&gt; ChallengeModule : Evaluate Answers
 ChallengeModule --&gt; Core : Return Results
 Core -&gt; WebApp : Send Results
-WebApp -&gt; User : Display Results
+WebApp -&gt; User : Show Results
 
 WebApp -&gt; Core : Award Points
 Core -&gt; UserProfile : Update Points
-UserProfile --&gt; Core : Acknowledge Update
+UserProfile --&gt; Core : Confirm Update
 Core -&gt; WebApp : Confirm Points Awarded
-WebApp -&gt; User : Display Points Awarded
+WebApp -&gt; User : Show Points Awarded
 @enduml</pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+<div class="paragraph">
+<p><strong>Steps:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p><strong>Step 1:</strong> The User starts a challenge on the Konnektoren Yew application.</p>
+<p>User starts a challenge.</p>
 </li>
 <li>
-<p><strong>Step 2:</strong> The Yew frontend requests challenge data from the Konnektoren Core.</p>
+<p>Challenge data is loaded and displayed.</p>
 </li>
 <li>
-<p><strong>Step 3:</strong> The Core retrieves challenge questions from the Challenge Config.</p>
+<p>User submits answers.</p>
 </li>
 <li>
-<p><strong>Step 4:</strong> The Challenge Config returns the challenge questions to the Core.</p>
+<p>Answers are evaluated; results are returned and shown.</p>
 </li>
 <li>
-<p><strong>Step 5:</strong> The Core sends the challenge data to the Yew frontend.</p>
+<p>Points are awarded and user profile is updated.</p>
 </li>
-<li>
-<p><strong>Step 6:</strong> The Yew frontend displays the challenge questions to the User.</p>
-</li>
-<li>
-<p><strong>Step 7:</strong> The User submits their answers through the Yew frontend.</p>
-</li>
-<li>
-<p><strong>Step 8:</strong> The Yew frontend sends the answers to the Core.</p>
-</li>
-<li>
-<p><strong>Step 9:</strong> The Core evaluates the answers using the Challenge Module.</p>
-</li>
-<li>
-<p><strong>Step 10:</strong> The Challenge Module returns the evaluation results to the Core.</p>
-</li>
-<li>
-<p><strong>Step 11:</strong> The Core sends the results to the Yew frontend.</p>
-</li>
-<li>
-<p><strong>Step 12:</strong> The Yew frontend displays the results to the User.</p>
-</li>
-<li>
-<p><strong>Step 13:</strong> The WebApp requests to award points for the challenge.</p>
-</li>
-<li>
-<p><strong>Step 14:</strong> The Core updates the user&#8217;s points in the UserProfile.</p>
-</li>
-<li>
-<p><strong>Step 15:</strong> The UserProfile acknowledges the points update to the Core.</p>
-</li>
-<li>
-<p><strong>Step 16:</strong> The Core confirms the points awarded to the WebApp.</p>
-</li>
-<li>
-<p><strong>Step 17:</strong> The WebApp displays the points awarded to the User.</p>
-</li>
-</ul>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Architectural relevance:</strong>
+Demonstrates modular evaluation, state updates, and feedback loop.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_leaderboard_and_certificate_scenario"><a class="anchor" href="#_leaderboard_and_certificate_scenario"></a>7.4. Leaderboard and Certificate Scenario</h3>
 <div class="paragraph">
-<p>This scenario describes the process of a user obtaining a certificate after completing challenges and the interaction with the leaderboard.</p>
+<p>This scenario illustrates how a user claims a certificate and interacts with the leaderboard.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2506,90 +2479,52 @@ participant BackendAPI as "Konnektoren API"
 User -&gt; WebApp : Visit Profile Page
 WebApp -&gt; Core : Request Profile Data
 Core -&gt; WebApp : Send Profile Data
-WebApp -&gt; User : Display Profile Data
+WebApp -&gt; User : Show Profile
 
 User -&gt; WebApp : Claim Certificate
 WebApp -&gt; CertificateModule : Generate Certificate
 CertificateModule --&gt; WebApp : Return Certificate Data
 
-WebApp -&gt; Core : Send Certificate Data
-Core -&gt; BackendAPI : Store Certificate Data
-BackendAPI --&gt; Core : Acknowledge Data Storage
+WebApp -&gt; Core : Store Certificate Data
+Core -&gt; BackendAPI : Store Data
+BackendAPI --&gt; Core : Confirm Storage
 Core -&gt; WebApp : Confirm Certificate Stored
-WebApp -&gt; User : Display Certificate
+WebApp -&gt; User : Show Certificate
 
 User -&gt; WebApp : Visit Leaderboard
 WebApp -&gt; Core : Request Leaderboard Data
-Core -&gt; BackendAPI : Get Top 10 Performances
-BackendAPI --&gt; Core : Return Top 10 Performances
+Core -&gt; BackendAPI : Get Top Performances
+BackendAPI --&gt; Core : Return Data
 Core -&gt; WebApp : Send Leaderboard Data
-WebApp -&gt; User : Display Leaderboard
+WebApp -&gt; User : Show Leaderboard
 @enduml</pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+<div class="paragraph">
+<p><strong>Steps:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p><strong>Step 1:</strong> The User visits the profile page on the Konnektoren Yew application.</p>
+<p>User views profile and claims certificate.</p>
 </li>
 <li>
-<p><strong>Step 2:</strong> The Yew frontend requests profile data from the Konnektoren Core.</p>
+<p>Certificate is generated and stored via backend API.</p>
 </li>
 <li>
-<p><strong>Step 3:</strong> The Core sends the profile data to the Yew frontend.</p>
+<p>User views leaderboard, which is fetched from backend.</p>
 </li>
-<li>
-<p><strong>Step 4:</strong> The Yew frontend displays the profile data to the User.</p>
-</li>
-<li>
-<p><strong>Step 5:</strong> The User claims a certificate.</p>
-</li>
-<li>
-<p><strong>Step 6:</strong> The Yew frontend requests certificate generation from the Certificate Module.</p>
-</li>
-<li>
-<p><strong>Step 7:</strong> The Certificate Module generates and returns the certificate data to the Yew frontend.</p>
-</li>
-<li>
-<p><strong>Step 8:</strong> The Yew frontend sends the certificate data to the Core.</p>
-</li>
-<li>
-<p><strong>Step 9:</strong> The Core stores the certificate data via a REST API call to the BackendAPI.</p>
-</li>
-<li>
-<p><strong>Step 10:</strong> The BackendAPI acknowledges the data storage to the Core.</p>
-</li>
-<li>
-<p><strong>Step 11:</strong> The Core confirms the certificate storage to the Yew frontend.</p>
-</li>
-<li>
-<p><strong>Step 12:</strong> The Yew frontend displays the certificate to the User.</p>
-</li>
-<li>
-<p><strong>Step 13:</strong> The User visits the leaderboard page.</p>
-</li>
-<li>
-<p><strong>Step 14:</strong> The Yew frontend requests leaderboard data from the Konnektoren Core.</p>
-</li>
-<li>
-<p><strong>Step 15:</strong> The Core requests the top 10 performances from the BackendAPI.</p>
-</li>
-<li>
-<p><strong>Step 16:</strong> The BackendAPI returns the top 10 performances to the Core.</p>
-</li>
-<li>
-<p><strong>Step 17:</strong> The Core sends the leaderboard data to the Yew frontend.</p>
-</li>
-<li>
-<p><strong>Step 18:</strong> The Yew frontend displays the leaderboard to the User.</p>
-</li>
-</ul>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Architectural relevance:</strong>
+Shows integration with backend APIs, certificate generation, and leaderboard data flow.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_verifiable_credential_issuance_scenario"><a class="anchor" href="#_verifiable_credential_issuance_scenario"></a>7.5. Verifiable Credential Issuance Scenario</h3>
 <div class="paragraph">
-<p>This scenario describes the process of a user obtaining a verifiable credential (badge) after completing challenges.</p>
+<p>This scenario demonstrates how a user receives a verifiable credential (badge) after completing challenges.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2597,55 +2532,56 @@ WebApp -&gt; User : Display Leaderboard
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-Person(user, "User", "A learner who completed challenges")
-
+Person(user, "User", "Learner")
 System_Boundary(konnektoren, "Konnektoren System") {
     Container(frontend, "Frontend", "Yew/WebAssembly", "Web interface")
     Container(core, "Core", "Rust", "Business logic")
 }
+System_Ext(vc_issuer, "vc.konnektoren.help", "Credential Issuer")
 
-System_Ext(vc_issuer, "vc.konnektoren.help", "Verifiable Credential Issuer")
-
-Rel(user, frontend, "1. Completes challenges")
-Rel(frontend, core, "2. Verifies completion")
-Rel(core, frontend, "3. Confirms achievement")
-Rel(frontend, vc_issuer, "4. Requests credential", "HTTPS")
-Rel(vc_issuer, frontend, "5. Issues OpenBadgeCredential", "OpenID4VC")
-Rel(frontend, user, "6. Displays QR code for credential")
-
+Rel(user, frontend, "Completes challenges")
+Rel(frontend, core, "Verifies completion")
+Rel(core, frontend, "Confirms achievement")
+Rel(frontend, vc_issuer, "Requests credential", "HTTPS")
+Rel(vc_issuer, frontend, "Issues credential", "OpenID4VC")
+Rel(frontend, user, "Displays QR code for credential")
 @enduml</pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
+<div class="paragraph">
+<p><strong>Steps:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p><strong>Step 1:</strong> The User completes a set of challenges on the Konnektoren platform.</p>
+<p>User completes challenges.</p>
 </li>
 <li>
-<p><strong>Step 2:</strong> The Frontend communicates with the Core to verify the completion of challenges.</p>
+<p>Frontend verifies completion with Core.</p>
 </li>
 <li>
-<p><strong>Step 3:</strong> The Core confirms the achievement back to the Frontend.</p>
+<p>Achievement is confirmed.</p>
 </li>
 <li>
-<p><strong>Step 4:</strong> The Frontend requests a credential from the vc.konnektoren.help issuer.</p>
+<p>Frontend requests credential from external issuer.</p>
 </li>
 <li>
-<p><strong>Step 5:</strong> The vc.konnektoren.help issuer creates and issues an OpenBadgeCredential using the OpenID4VC protocol.</p>
+<p>Credential is issued via OpenID4VC.</p>
 </li>
 <li>
-<p><strong>Step 6:</strong> The Frontend displays a QR code to the User, which can be scanned with a self-sovereign identity wallet to receive the badge.</p>
+<p>Frontend displays QR code for user to claim badge.</p>
 </li>
-</ul>
+</ol>
 </div>
 <div class="paragraph">
-<p>This simplified diagram illustrates the key steps in the verifiable credential issuance process, highlighting the interaction between the user, the Konnektoren system, and the external credential issuer.</p>
+<p><strong>Architectural relevance:</strong>
+Highlights SSI integration and secure credential issuance.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_event_and_command_handling_scenario"><a class="anchor" href="#_event_and_command_handling_scenario"></a>7.6. Event and Command Handling Scenario</h3>
 <div class="paragraph">
-<p>This scenario illustrates how the EventBus and CommandBus facilitate communication and action execution in the Konnektoren system.</p>
+<p>This scenario shows how the EventBus and CommandBus decouple actions and notifications in the system.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2667,36 +2603,37 @@ UI -&gt; User : Update Display
 @enduml</pre>
 </div>
 </div>
+<div class="paragraph">
+<p><strong>Steps:</strong></p>
+</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>The User Interface publishes a NextChallengeCommand to the CommandBus.</p>
+<p>UI publishes a command to CommandBus.</p>
 </li>
 <li>
-<p>The CommandBus executes the command, which is handled by the Game Logic.</p>
+<p>CommandBus executes the command via Game Logic.</p>
 </li>
 <li>
-<p>The Game Logic loads the next challenge from the Challenge Module.</p>
+<p>Game Logic loads the next challenge.</p>
 </li>
 <li>
-<p>Once the challenge is loaded, the Game Logic publishes a ChallengeLoadedEvent to the EventBus.</p>
+<p>Game Logic publishes an event to EventBus.</p>
 </li>
 <li>
-<p>The EventBus notifies all subscribers, including the User Interface, about the new challenge.</p>
-</li>
-<li>
-<p>The User Interface updates the display for the user.</p>
+<p>EventBus notifies UI, which updates the display.</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>This scenario demonstrates how the EventBus and CommandBus decouple different parts of the system, allowing for a more modular and maintainable architecture.</p>
+<p><strong>Architectural relevance:</strong>
+Demonstrates modular, event-driven architecture for maintainability and extensibility.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_game_controller_interaction_scenario"><a class="anchor" href="#_game_controller_interaction_scenario"></a>7.7. Game Controller Interaction Scenario</h3>
 <div class="paragraph">
-<p>This scenario demonstrates how the GameController manages game state and handles commands.</p>
+<p>This scenario demonstrates how the GameController manages state and coordinates commands, events, and persistence.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2721,30 +2658,37 @@ EB --&gt; C: notify(ChallengeChangedEvent)
 @enduml</pre>
 </div>
 </div>
+<div class="paragraph">
+<p><strong>Steps:</strong></p>
+</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>The Client publishes a NextChallengeCommand to the GameController.</p>
+<p>Client publishes a command to GameController.</p>
 </li>
 <li>
-<p>The GameController forwards the command to the CommandBus.</p>
+<p>GameController forwards to CommandBus.</p>
 </li>
 <li>
-<p>The CommandBus calls back to the GameController to handle the command.</p>
+<p>CommandBus calls back to GameController to handle the command.</p>
 </li>
 <li>
-<p>The GameController executes the command on the GameState.</p>
+<p>GameController updates GameState.</p>
 </li>
 <li>
-<p>After the state is updated, the GameController publishes a ChallengeChangedEvent to the EventBus.</p>
+<p>GameController publishes an event to EventBus.</p>
 </li>
 <li>
-<p>The GameController saves the updated state using the Persistence layer.</p>
+<p>GameController saves state via Persistence.</p>
 </li>
 <li>
-<p>The EventBus notifies the Client about the state change.</p>
+<p>EventBus notifies Client of the state change.</p>
 </li>
 </ol>
+</div>
+<div class="paragraph">
+<p><strong>Architectural relevance:</strong>
+Shows orchestration of state, events, and persistence for robust game management.</p>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
@@ -2754,7 +2698,15 @@ EB --&gt; C: notify(ChallengeChangedEvent)
 <h2 id="section-deployment-view"><a class="anchor" href="#section-deployment-view"></a>8. Deployment View</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_infrastructure_level_1"><a class="anchor" href="#_infrastructure_level_1"></a>8.1. Infrastructure Level 1</h3>
+<h3 id="_overview"><a class="anchor" href="#_overview"></a>8.1. Overview</h3>
+<div class="paragraph">
+<p>The <strong>konnektoren.help</strong> platform uses a modern, cloud-native deployment model.
+The frontend is a static WebAssembly (WASM) application hosted on GitHub Pages, delivered globally via Cloudflare CDN and proxy.
+The backend leaderboard service is a Rust Axum server running inside a Docker container, communicating via REST API.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_infrastructure_level_1_high_level_deployment"><a class="anchor" href="#_infrastructure_level_1_high_level_deployment"></a>8.2. Infrastructure Level 1: High-Level Deployment</h3>
 <div class="paragraph">
 <p><em><strong>Deployment Overview Diagram</strong></em></p>
 </div>
@@ -2763,72 +2715,112 @@ EB --&gt; C: notify(ChallengeChangedEvent)
 <pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
 @startuml deployment-overview
 !define C4Deployment
-
 C4Deployment
 
-node "Cloudflare Proxy" {
+actor User
+
+node "Cloudflare CDN &amp; Proxy" {
   node "GitHub Pages" {
-    [WASM Page]
+    [WASM Frontend]
   }
 }
 
-node "Docker Container" {
-  [Axum Server] &lt;&lt;Container&gt;&gt;
+node "GitHub Actions" {
+  [CI/CD Pipeline] &lt;&lt;Process&gt;&gt;
 }
 
-[WASM Page] --&gt; [Cloudflare Proxy] : Deployed through GitHub Pages
-[Cloudflare Proxy] --&gt; [Axum Server] : Proxy REST API calls to the leaderboard
+node "Backend Cluster" {
+  node "Docker Host" {
+    [Axum Leaderboard Server] &lt;&lt;Container&gt;&gt;
+  }
+}
+
+User --&gt; [Cloudflare CDN &amp; Proxy] : HTTPS
+[Cloudflare CDN &amp; Proxy] --&gt; [WASM Frontend] : Delivers static assets
+[WASM Frontend] --&gt; [Cloudflare CDN &amp; Proxy] : API requests (REST)
+[Cloudflare CDN &amp; Proxy] --&gt; [Axum Leaderboard Server] : Proxies REST API calls
+[Axum Leaderboard Server] --&gt; [Leaderboard Database] : Reads/Writes scores
+
+[CI/CD Pipeline] --&gt; [GitHub Pages] : Builds &amp; deploys WASM Frontend
 
 @enduml</pre>
 </div>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Motivation</dt>
-<dd>
-<p>The <strong>konnektoren.help</strong> project uses a decentralized deployment model. The front-end is deployed as a static WASM page hosted on GitHub Pages, with Cloudflare acting as a proxy for secure, global content delivery. The back-end leaderboard service is a Docker container running an Axum server, communicating via REST API.</p>
-</dd>
-<dt class="hdlist1">Quality and/or Performance Features</dt>
-<dd>
+<div class="paragraph">
+<p><strong>Motivation</strong></p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p>The Cloudflare proxy provides enhanced performance by caching static assets and offering DDoS protection.</p>
+<p>Decentralized, scalable architecture for global reach and low latency.</p>
 </li>
 <li>
-<p>Using Docker for the Axum server enables containerized, reproducible, and scalable deployments.</p>
+<p>Separation of concerns: static frontend, containerized backend, and managed CDN/proxy.</p>
 </li>
 </ul>
 </div>
-</dd>
-<dt class="hdlist1">Mapping of Building Blocks to Infrastructure</dt>
-<dd>
+<div class="paragraph">
+<p><strong>Quality &amp; Performance Features</strong></p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>WASM Page</strong> is deployed on <strong>GitHub Pages</strong> behind the <strong>Cloudflare Proxy</strong>.</p>
+<p>Cloudflare provides caching, DDoS protection, SSL termination, and global distribution.</p>
 </li>
 <li>
-<p><strong>Axum Server</strong> is deployed inside a <strong>Docker Container</strong> and handles the leaderboard functionality through REST API.</p>
+<p>Docker enables reproducible, isolated, and scalable backend deployments.</p>
 </li>
 <li>
-<p>Cloudflare is responsible for routing traffic and optimizing delivery for the WASM page.</p>
-</li>
-<li>
-<p>REST API is used to connect the WASM front-end with the leaderboard server.</p>
+<p>REST API ensures loose coupling between frontend and backend.</p>
 </li>
 </ul>
 </div>
-</dd>
-</dl>
+<div class="paragraph">
+<p><strong>Mapping of Building Blocks to Infrastructure</strong></p>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Building Block</th>
+<th class="tableblock halign-left valign-top">Infrastructure Component</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WASM Frontend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GitHub Pages + Cloudflare CDN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Built and deployed via GitHub Actions; static hosting, global delivery</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Axum Leaderboard</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker Host (Cloud/VM)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Containerized Rust backend</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Leaderboard Database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Managed DB (e.g., PostgreSQL)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Persistent scores, scalable</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CDN/Proxy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cloudflare</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Caching, SSL, API routing</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
-<h3 id="_infrastructure_level_2"><a class="anchor" href="#_infrastructure_level_2"></a>8.2. Infrastructure Level 2</h3>
+<h3 id="_infrastructure_level_2_detailed_components"><a class="anchor" href="#_infrastructure_level_2_detailed_components"></a>8.3. Infrastructure Level 2: Detailed Components</h3>
 <div class="sect3">
-<h4 id="_github_pages_infrastructure"><a class="anchor" href="#_github_pages_infrastructure"></a>8.2.1. <em>GitHub Pages Infrastructure</em></h4>
+<h4 id="_github_pages_cloudflare_cdn"><a class="anchor" href="#_github_pages_cloudflare_cdn"></a>8.3.1. <em>GitHub Pages &amp; Cloudflare CDN</em></h4>
 <div class="paragraph">
-<p><em><strong>GitHub Pages Hosting Diagram</strong></em></p>
+<p><em><strong>Frontend Hosting Diagram</strong></em></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2838,31 +2830,44 @@ node "GitHub Infrastructure" {
   [GitHub Pages] &lt;&lt;Static Hosting&gt;&gt;
 }
 
-node "User Browser" {
-  [WASM Page]
+node "Cloudflare CDN" {
+  [CDN Edge Node]
 }
 
-[User Browser] --&gt; [GitHub Pages] : Access hosted page
+node "User Browser" {
+  [WASM Frontend]
+}
+
+[User Browser] --&gt; [Cloudflare CDN] : HTTPS
+[Cloudflare CDN] --&gt; [GitHub Pages] : Fetches static assets
+[Cloudflare CDN] --&gt; [User Browser] : Delivers cached content
 
 @enduml</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The WASM front-end is deployed on GitHub Pages and accessed by users through their browsers. GitHub Pages hosts the static WASM content and serves it globally.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Users access the WASM frontend via Cloudflare, which caches and accelerates delivery.</p>
+</li>
+<li>
+<p>GitHub Pages hosts the static assets, with Cloudflare providing SSL and edge caching.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_axum_server_in_docker"><a class="anchor" href="#_axum_server_in_docker"></a>8.2.2. <em>Axum Server in Docker</em></h4>
+<h4 id="_axum_server_in_docker"><a class="anchor" href="#_axum_server_in_docker"></a>8.3.2. <em>Axum Server in Docker</em></h4>
 <div class="paragraph">
-<p><em><strong>Axum Server Deployment Diagram</strong></em></p>
+<p><em><strong>Backend Deployment Diagram</strong></em></p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
 @startuml axum-server-deployment
-node "Server Infrastructure" {
+node "Cloud/VM Infrastructure" {
   node "Docker Host" {
-    [Axum Server] &lt;&lt;Docker Container&gt;&gt;
+    [Axum Leaderboard Server] &lt;&lt;Docker Container&gt;&gt;
   }
 }
 
@@ -2870,15 +2875,48 @@ node "Leaderboard Database" {
   [Database] &lt;&lt;External System&gt;&gt;
 }
 
-[Axum Server] --&gt; [Database]
+[Axum Leaderboard Server] --&gt; [Database] : REST/SQL
 @enduml</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The Axum server, running in a Docker container, handles leaderboard functionalities. It communicates with the leaderboard database.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The Axum server runs in a Docker container, exposing REST APIs for leaderboard management.</p>
+</li>
+<li>
+<p>The backend communicates with a managed database (e.g., PostgreSQL, SQLite, or cloud DB).</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scaling_monitoring_and_security"><a class="anchor" href="#_scaling_monitoring_and_security"></a>8.4. Scaling, Monitoring, and Security</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Scaling</strong>: Docker containers can be replicated for horizontal scaling. Cloudflare automatically scales CDN delivery.</p>
+</li>
+<li>
+<p><strong>Monitoring</strong>: Use Cloudflare analytics for traffic and health.</p>
+</li>
+<li>
+<p><strong>Security</strong>: All traffic is encrypted (HTTPS). Cloudflare provides DDoS protection and WAF. Backend containers run as non-root and are regularly updated.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deployment_automation"><a class="anchor" href="#_deployment_automation"></a>8.5. Deployment Automation</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>CI/CD</strong>: GitHub Actions automates build, test, and deployment for both frontend and backend.</p>
+</li>
+</ul>
 </div>
 <div style="page-break-after: always;"></div>
-</div>
 </div>
 </div>
 </div>
@@ -2886,9 +2924,11 @@ node "Leaderboard Database" {
 <h2 id="section-concepts"><a class="anchor" href="#section-concepts"></a>9. Cross-cutting Concepts</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_core_library_and_ui_components"><a class="anchor" href="#_core_library_and_ui_components"></a>9.1. Core Library and UI Components</h3>
+<h3 id="_modular_core_library_and_ui_components"><a class="anchor" href="#_modular_core_library_and_ui_components"></a>9.1. Modular Core Library and UI Components</h3>
 <div class="paragraph">
-<p>The <strong>konnektoren</strong> project is built around a core library that contains the business logic. This library is decoupled from any specific user interface and can be reused across different applications. Additionally, reusable UI components are provided, making it easier to integrate and combine them in various applications such as web apps and Telegram apps.</p>
+<p>The <strong>konnektoren</strong> project centers on a modular core library containing all business logic, decoupled from any specific user interface.
+This enables code reuse across multiple applications (e.g., web, Telegram) and simplifies maintenance and extension.
+Reusable UI components are provided for rapid integration and consistent user experience.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2915,13 +2955,30 @@ UIComponent2 &lt;|-- TelegramApp
 </div>
 </div>
 <div class="paragraph">
-<p>The diagram above shows the relationship between the core library, UI components, and the two apps (Web and Telegram) using these components.</p>
+<p><strong>Diagram: Modular architecture enables UI components to interact with core business logic, supporting multiple frontends.</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Benefits:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Separation of concerns: UI and logic evolve independently.</p>
+</li>
+<li>
+<p>Code reuse: Core logic shared across platforms.</p>
+</li>
+<li>
+<p>Easier testing and extension.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_command_and_event_handling"><a class="anchor" href="#_command_and_event_handling"></a>9.2. Command and Event Handling</h3>
+<h3 id="_command_and_event_handling_pattern"><a class="anchor" href="#_command_and_event_handling_pattern"></a>9.2. Command and Event Handling Pattern</h3>
 <div class="paragraph">
-<p>The Konnektoren system uses a command and event handling pattern, implemented primarily through the GameController, to manage game state and user interactions.</p>
+<p>Konnektoren uses a command/event pattern, primarily via the GameController, to manage game state and user interactions.
+Commands trigger actions; events notify subscribers of changes.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2940,17 +2997,30 @@ GC --&gt; GS : updates
 </div>
 </div>
 <div class="paragraph">
-<p>This pattern provides several benefits:
-- Decouples components by using commands and events for communication
-- Allows for easy extension of functionality by adding new command and event types
-- Provides a clear flow of control and data in the system
-- Facilitates testing by allowing commands and events to be easily mocked or verified</p>
+<p><strong>Advantages:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Decouples components for maintainability.</p>
+</li>
+<li>
+<p>Enables extensibility by adding new command/event types.</p>
+</li>
+<li>
+<p>Clear control and data flow.</p>
+</li>
+<li>
+<p>Facilitates testing and mocking.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_web3_oriented_architecture"><a class="anchor" href="#_web3_oriented_architecture"></a>9.3. Web3-Oriented Architecture</h3>
 <div class="paragraph">
-<p>The apps are designed with a web3-oriented architecture, minimizing server-side storage. User data, except for the leaderboard, is stored client-side to ensure privacy and security. The system also employs encryption and digital signatures to verify certificates and user data.</p>
+<p>The system is designed with web3 principles: minimal server-side storage, privacy by default, and user empowerment.
+User data (except leaderboard) is stored client-side, with encryption and digital signatures for verification.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2974,13 +3044,30 @@ User --&gt; [App Logic] : Interaction
 </div>
 </div>
 <div class="paragraph">
-<p>This architecture ensures minimal dependency on centralized servers, following web3 principles. Only essential data, like the leaderboard, is stored server-side, while user data remains in local storage.</p>
+<p><strong>Diagram: User data is stored locally; only essential data (leaderboard) is centralized.</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Benefits:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enhanced privacy and user control.</p>
+</li>
+<li>
+<p>Reduced attack surface.</p>
+</li>
+<li>
+<p>Offline support.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_encryption_and_signatures_for_verification"><a class="anchor" href="#_encryption_and_signatures_for_verification"></a>9.4. Encryption and Signatures for Verification</h3>
+<h3 id="_encryption_and_digital_signatures"><a class="anchor" href="#_encryption_and_digital_signatures"></a>9.4. Encryption and Digital Signatures</h3>
 <div class="paragraph">
-<p>To ensure data integrity and security, the system uses encryption and signatures to verify certificates. This is a key part of the system’s security, ensuring that data shared between users and the server is verified without relying on a central authority.</p>
+<p>Data integrity and security are ensured through encryption and digital signatures.
+Certificates and sensitive data are signed and verified using industry-standard cryptography (e.g., Ed25519).</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3005,42 +3092,65 @@ User --&gt; [Encryption] : Encrypt/Decrypt data
 </div>
 </div>
 <div class="paragraph">
-<p>Encryption and digital signatures are central to the system’s security model, ensuring that all certificates are securely verified and that data is protected at rest and in transit.</p>
+<p><strong>Diagram: Encryption and signature verification are performed client-side, with server-side certificate authority for validation.</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Key Points:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Data is encrypted at rest and in transit.</p>
+</li>
+<li>
+<p>Certificates are signed and verified without central authority.</p>
+</li>
+<li>
+<p>Security is a first-class concern.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_no_backend_logging_and_analytics"><a class="anchor" href="#_no_backend_logging_and_analytics"></a>9.5. No Backend Logging and Analytics</h3>
+<h3 id="_privacy_minimal_backend_logging_and_analytics"><a class="anchor" href="#_privacy_minimal_backend_logging_and_analytics"></a>9.5. Privacy: Minimal Backend Logging and Analytics</h3>
 <div class="paragraph">
-<p>To preserve privacy, the <strong>konnektoren.help</strong> system does not employ any backend logging. Google Analytics is used minimally to help improve the product while adhering to privacy standards.</p>
+<p>To maximize privacy, <strong>konnektoren.help</strong> does not use backend logging.
+Google Analytics is used sparingly, only for product improvement and in compliance with privacy standards.</p>
 </div>
-<hr>
 <div class="paragraph">
-<p>This documentation provides a clear description of the concepts that cross-cut multiple areas of the <strong>konnektoren.help</strong> project. By adhering to web3 principles, employing encryption, and focusing on a modular, reusable core, the system ensures security and flexibility in its design.</p>
+<p><strong>Best Practices:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No personal data is logged server-side.</p>
+</li>
+<li>
+<p>Analytics are anonymized and opt-in where possible.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_achievement_system_2"><a class="anchor" href="#_achievement_system_2"></a>9.6. Achievement System</h3>
 <div class="paragraph">
-<p>The achievement system in Konnektoren is designed to motivate users and recognize their progress in learning German grammar.</p>
+<p>The achievement system motivates users and recognizes progress in learning German grammar.</p>
 </div>
 <div class="sect3">
-<h4 id="_overview"><a class="anchor" href="#_overview"></a>9.6.1. Overview</h4>
-<div class="paragraph">
-<p>The achievement system works as follows:</p>
-</div>
+<h4 id="_overview_2"><a class="anchor" href="#_overview_2"></a>9.6.1. Overview</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Achievements are defined in a YAML configuration file.</p>
+<p>Achievements are defined in YAML configuration.</p>
 </li>
 <li>
-<p>As users complete challenges, their progress is recorded in the Challenge History.</p>
+<p>User progress is tracked in Challenge History.</p>
 </li>
 <li>
-<p>The Achievement Evaluator regularly checks the user&#8217;s progress against the achievement conditions.</p>
+<p>Achievement Evaluator checks progress against achievement conditions.</p>
 </li>
 <li>
-<p>Unlocked achievements are displayed in the frontend, providing visual feedback and motivation.</p>
+<p>Unlocked achievements are displayed in the frontend.</p>
 </li>
 </ol>
 </div>
@@ -3068,53 +3178,53 @@ FE -&gt; User : displays achievements
 @enduml</pre>
 </div>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Achievement Configuration: A YAML file that defines achievements, their conditions, and metadata (name, description, icon).</p>
-</li>
-<li>
-<p>Challenge History: Records the user&#8217;s completed challenges and performance.</p>
-</li>
-<li>
-<p>Game Statistics: Aggregates data from the Challenge History to provide meaningful statistics for achievement evaluation.</p>
-</li>
-<li>
-<p>Achievement Evaluator: Processes the Achievement Configuration and Game Statistics to determine which achievements have been unlocked.</p>
-</li>
-<li>
-<p>Frontend: Displays unlocked and locked achievements to the user.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_implementation"><a class="anchor" href="#_implementation"></a>9.6.3. Implementation</h4>
 <div class="paragraph">
-<p>The achievement system is implemented using the following key components:</p>
+<p><strong>Component Roles:</strong></p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>AchievementDefinition</code>: Represents an individual achievement with its metadata and condition.</p>
+<p><strong>Achievement Configuration</strong>: YAML file with achievement definitions.</p>
 </li>
 <li>
-<p><code>AchievementEvaluator</code>: Evaluates achievements based on game statistics.</p>
+<p><strong>Challenge History</strong>: Tracks completed challenges and performance.</p>
 </li>
 <li>
-<p><code>GameStatistics</code>: Provides methods to calculate various statistics from the Challenge History.</p>
+<p><strong>Game Statistics</strong>: Aggregates challenge data for evaluation.</p>
+</li>
+<li>
+<p><strong>Achievement Evaluator</strong>: Determines unlocked achievements.</p>
+</li>
+<li>
+<p><strong>Frontend</strong>: Displays achievements to users.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implementation"><a class="anchor" href="#_implementation"></a>9.6.3. Implementation</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>AchievementDefinition</code>: Metadata and condition for each achievement.</p>
+</li>
+<li>
+<p><code>AchievementEvaluator</code>: Evaluates achievements based on statistics.</p>
+</li>
+<li>
+<p><code>GameStatistics</code>: Calculates stats from challenge history.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The frontend periodically requests updated achievement information and displays it to the user, providing immediate feedback on their progress and newly unlocked achievements.</p>
+<p><strong>Frontend</strong> requests updated achievement info and displays progress and new achievements.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_self_sovereign_identity_ssi_for_badges"><a class="anchor" href="#_self_sovereign_identity_ssi_for_badges"></a>9.7. Self-Sovereign Identity (SSI) for Badges</h3>
 <div class="paragraph">
-<p>The Konnektoren project incorporates Self-Sovereign Identity (SSI) principles for issuing achievement badges. This approach aligns with our commitment to user empowerment and data privacy.</p>
+<p>Konnektoren uses SSI principles for issuing achievement badges, empowering users and enhancing privacy.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3133,29 +3243,30 @@ User --&gt; Wallet : Stores badge
 </div>
 </div>
 <div class="paragraph">
-<p>We&#8217;ve implemented SSI for badges for several key reasons:</p>
+<p><strong>Why SSI for badges?</strong></p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>User Control</strong>: Users have full ownership and control over their achievement credentials, deciding when and with whom to share them.</p>
+<p><strong>User Control</strong>: Users own and manage their credentials.</p>
 </li>
 <li>
-<p><strong>Portability</strong>: Badges can be stored in any compatible SSI wallet, allowing users to carry their achievements across different platforms and contexts.</p>
+<p><strong>Portability</strong>: Badges can be stored in any compatible SSI wallet.</p>
 </li>
 <li>
-<p><strong>Privacy</strong>: The SSI approach minimizes the need for centralized storage of user achievements, enhancing privacy.</p>
+<p><strong>Privacy</strong>: No centralized storage of achievements.</p>
 </li>
 <li>
-<p><strong>Verifiability</strong>: Third parties can easily verify the authenticity of badges without needing to contact Konnektoren directly.</p>
+<p><strong>Verifiability</strong>: Third parties can verify badges without contacting Konnektoren.</p>
 </li>
 <li>
-<p><strong>Interoperability</strong>: By using standard formats like Verifiable Credentials and OpenBadges, we ensure our badges can be recognized and utilized in a broader ecosystem.</p>
+<p><strong>Interoperability</strong>: Uses standard formats (Verifiable Credentials, OpenBadges).</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>This feature represents a step towards a more decentralized, user-centric approach to managing educational and achievement credentials, aligning with broader trends in digital identity and credentialing.</p>
+<p><strong>Architectural relevance:</strong>
+SSI integration aligns with decentralized, privacy-first design and future-proofs achievement credentials.</p>
 </div>
 <div style="page-break-after: always;"></div>
 <div class="paragraph">
@@ -3595,7 +3706,7 @@ User --&gt; Wallet : Stores badge
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-08-17 12:20:20 UTC
+Last updated 2025-08-18 14:43:06 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
