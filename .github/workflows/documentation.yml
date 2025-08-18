@@ -23,19 +23,20 @@ jobs:
           sudo gem install asciidoctor-pdf --pre
           sudo gem install asciidoctor-diagram
 
-      # Create output directories
-      - name: Create directories
+      # Download PlantUML JAR
+      - name: Download PlantUML JAR
         run: |
-          mkdir -p output/docs/images
-          mkdir -p output/docs/diagrams
+          wget https://github.com/plantuml/plantuml/releases/download/v1.2025.4/plantuml-1.2025.4.jar -O plantuml.jar
 
-      # Copy diagrams to output directory
-      - name: Copy diagrams to output
+      # Create output directory
+      - name: Create output directory
         run: |
-          cp -r docs/diagrams/* output/docs/diagrams/ || true
+          mkdir -p output
 
-      # Convert Asciidoc to PDF with PlantUML support
+      # Build PDF from Asciidoc
       - name: Build PDF from Asciidoc
+        env:
+          DIAGRAM_PLANTUML_CLASSPATH: ${{ github.workspace }}/plantuml.jar
         run: |
           asciidoctor-pdf -r asciidoctor-diagram \
             -o output/documentation.pdf \
@@ -67,19 +68,20 @@ jobs:
           sudo apt-get install -y asciidoctor graphviz default-jre plantuml
           sudo gem install asciidoctor-diagram
 
-      # Create output directories
-      - name: Create directories
+      # Download PlantUML JAR
+      - name: Download PlantUML JAR
         run: |
-          mkdir -p output/docs/images
-          mkdir -p output/docs/diagrams
+          wget https://github.com/plantuml/plantuml/releases/download/v1.2025.4/plantuml-1.2025.4.jar -O plantuml.jar
 
-      # Copy diagrams to output directory
-      - name: Copy diagrams to output
+      # Create output directory
+      - name: Create output directory
         run: |
-          cp -r docs/diagrams/* output/docs/diagrams/ || true
+          mkdir -p output/docs
 
       # Build HTML from Asciidoc
       - name: Build HTML from Asciidoc
+        env:
+          DIAGRAM_PLANTUML_CLASSPATH: ${{ github.workspace }}/plantuml.jar
         run: |
           asciidoctor -r asciidoctor-diagram \
             -D output/docs \
@@ -95,8 +97,14 @@ jobs:
       # Copy images directory to output/docs
       - name: Copy Images
         run: |
-          cp -r docs/images/* output/docs/images/ || true
+          cp -r docs/images output/docs/ || true
 
+      # Copy diagrams directory to output/docs
+      - name: Copy Diagrams
+        run: |
+          cp -r docs/diagrams output/docs/ || true
+
+      # Copy index.html
       - name: Copy index.html
         run: |
           cp output/docs/README.html output/docs/index.html
