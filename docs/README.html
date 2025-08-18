@@ -1007,41 +1007,9 @@ It offers interactive challenges—ranging from multiple-choice questions to sce
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_system_overview"><a class="anchor" href="#_system_overview"></a>4.1. System Overview</h3>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
-
-Person(user, "User", "A learner using the Konnektoren platform")
-Person(educator, "Educator", "Teacher or institution integrating Konnektoren")
-Person(content_creator, "Content Creator", "Contributor of educational material")
-
-System_Boundary(konnektoren, "Konnektoren System") {
-    System(frontend, "Frontend", "Web-based UI built with Yew and WebAssembly")
-    System(core, "Konnektoren Core", "Core business logic and game mechanics")
-    System(leaderboard, "Leaderboard Service", "Manages user rankings and scores (Docker Container)")
-    System(certificates, "Certificate Issuer", "Issues digital badges and certificates")
-}
-
-System_Ext(github_pages, "GitHub Pages", "Hosts static frontend content")
-System_Ext(cloudflare, "Cloudflare", "CDN and proxy service")
-System_Ext(vc_issuer, "vc.konnektoren.help", "Verifiable Credential Issuer")
-System_Ext(payment_gateway, "Payment Gateway", "Handles payments for premium features")
-
-Rel(user, cloudflare, "Interacts with", "HTTPS")
-Rel(cloudflare, github_pages, "Retrieves static content", "HTTPS")
-Rel(cloudflare, leaderboard, "Proxies API requests", "HTTPS")
-Rel(frontend, core, "Uses")
-Rel(frontend, leaderboard, "Queries/Updates", "REST API")
-Rel(core, leaderboard, "Updates scores")
-Rel(frontend, vc_issuer, "Requests credential issuance", "HTTPS")
-Rel(vc_issuer, user, "Issues verifiable credentials", "OpenID4VC")
-Rel(user, payment_gateway, "Makes payments", "HTTPS")
-Rel(content_creator, core, "Submits content", "HTTPS")
-Rel(educator, core, "Assigns challenges, reviews progress", "HTTPS")
-
-@enduml</pre>
+<img src="images/system-overview-c4.png" alt="system overview c4" width="1162" height="1058">
 </div>
 </div>
 <div class="paragraph">
@@ -1291,7 +1259,13 @@ Outputs include learning progress, achievements, certificates, analytics, and fe
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-building-blocks-c4.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-building-blocks-c4.puml[]</pre>
 </div>
 </div>
@@ -1344,7 +1318,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konn
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-core-structure-c4.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-core-structure-c4.puml[]</pre>
 </div>
 </div>
@@ -1356,7 +1336,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konn
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-core-detailed-structure.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-core-detailed-structure.puml[]</pre>
 </div>
 </div>
@@ -1413,7 +1399,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konn
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/command-structure.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/command-structure.puml[]</pre>
 </div>
 </div>
@@ -1444,7 +1436,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/comm
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/event-structure.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/event-structure.puml[]</pre>
 </div>
 </div>
@@ -1510,7 +1508,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/even
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/eventbus-structure.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/eventbus-structure.puml[]</pre>
 </div>
 </div>
@@ -1528,7 +1532,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/even
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/commandbus-structure.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/commandbus-structure.puml[]</pre>
 </div>
 </div>
@@ -1545,7 +1555,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/comm
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/game_controller.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/game_controller.puml[]</pre>
 </div>
 </div>
@@ -1705,7 +1721,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/game
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/plugin-integration.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/plugin-integration.puml[]</pre>
 </div>
 </div>
@@ -1717,7 +1739,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/plug
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-js-structure.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-js-structure.puml[]</pre>
 </div>
 </div>
@@ -1790,7 +1818,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konn
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-yew-structure-c4.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konnektoren-yew-structure-c4.puml[]</pre>
 </div>
 </div>
@@ -1840,7 +1874,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/konn
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/challenge-rating-system.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/challenge-rating-system.puml[]</pre>
 </div>
 </div>
@@ -1885,7 +1925,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/chal
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/frontend-components-c4.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/frontend-components-c4.puml[]</pre>
 </div>
 </div>
@@ -1934,7 +1980,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/fron
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/game-controller-and-repository-providers.pum ...
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/game-controller-and-repository-providers.puml[]</pre>
 </div>
 </div>
@@ -2215,7 +2267,13 @@ allowing for more concise and readable code when working with repository data.</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/data-model.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/data-model.puml[]</pre>
 </div>
 </div>
@@ -2268,7 +2326,13 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/data
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+<pre>Failed to generate image: PlantUML preprocessing failed: [From &lt;input&gt; (line 2) ]
+
+@startuml
+Unresolved directive in src/05_building_block_view.adoc - include::diagrams/achievement-system.puml[]
+^^^^^
+ Syntax Error?
+
 Unresolved directive in src/05_building_block_view.adoc - include::diagrams/achievement-system.puml[]</pre>
 </div>
 </div>
@@ -2284,20 +2348,9 @@ Unresolved directive in src/05_building_block_view.adoc - include::diagrams/achi
 <div class="paragraph">
 <p>This scenario demonstrates how a user updates their profile name, with data stored locally for privacy and offline support.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-actor User
-participant WebApp as "Konnektoren Yew"
-participant LocalStorage
-
-User -&gt; WebApp : Open Profile Page
-User -&gt; WebApp : Update Name
-WebApp -&gt; LocalStorage : Save Updated Name
-LocalStorage --&gt; WebApp : Confirm Save
-WebApp -&gt; User : Display Success Message
-@enduml</pre>
+<img src="images/profile-update.png" alt="profile update" width="428" height="326">
 </div>
 </div>
 <div class="paragraph">
@@ -2332,34 +2385,9 @@ Demonstrates privacy-preserving local data management and immediate UI feedback.
 <div class="paragraph">
 <p>This scenario shows how a user selects a challenge on the map, with access control and error handling.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-actor User
-participant WebApp as "Konnektoren Yew"
-participant Core as "Konnektoren Core"
-participant LocalStorage
-
-User -&gt; WebApp : Open Map Page
-WebApp -&gt; Core : Load User Profile &amp; Game State
-Core -&gt; LocalStorage : Retrieve Data
-LocalStorage --&gt; Core : Return Data
-Core --&gt; WebApp : Send Data
-WebApp -&gt; User : Display Map
-
-User -&gt; WebApp : Select Challenge
-WebApp -&gt; Core : Check Challenge Requirements
-alt Challenge Locked
-    Core -&gt; WebApp : Error: Challenge Locked
-    WebApp -&gt; User : Show Error Dialog
-else Challenge Unlocked
-    Core -&gt; WebApp : Send Challenge Info
-    WebApp -&gt; User : Show Challenge Info
-    User -&gt; WebApp : Start Challenge
-    WebApp -&gt; User : Redirect to Challenge
-end
-@enduml</pre>
+<img src="images/user-selects-challenge.png" alt="user selects challenge" width="624" height="634">
 </div>
 </div>
 <div class="paragraph">
@@ -2400,37 +2428,9 @@ Shows access control, error handling, and data flow between frontend, core logic
 <div class="paragraph">
 <p>This scenario covers the full flow of a user participating in a challenge, including evaluation and awarding points.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-actor User
-participant WebApp as "Konnektoren Yew"
-participant Core as "Konnektoren Core"
-participant ChallengeConfig as "Challenge Config"
-participant ChallengeModule as "Challenge Module"
-participant UserProfile
-
-User -&gt; WebApp : Start Challenge
-WebApp -&gt; Core : Request Challenge Data
-Core -&gt; ChallengeConfig : Get Questions
-ChallengeConfig --&gt; Core : Return Questions
-Core -&gt; WebApp : Send Challenge Data
-WebApp -&gt; User : Show Questions
-
-User -&gt; WebApp : Submit Answers
-WebApp -&gt; Core : Send Answers
-Core -&gt; ChallengeModule : Evaluate Answers
-ChallengeModule --&gt; Core : Return Results
-Core -&gt; WebApp : Send Results
-WebApp -&gt; User : Show Results
-
-WebApp -&gt; Core : Award Points
-Core -&gt; UserProfile : Update Points
-UserProfile --&gt; Core : Confirm Update
-Core -&gt; WebApp : Confirm Points Awarded
-WebApp -&gt; User : Show Points Awarded
-@enduml</pre>
+<img src="images/challenge-participation.png" alt="challenge participation" width="837" height="676">
 </div>
 </div>
 <div class="paragraph">
@@ -2465,39 +2465,9 @@ Demonstrates modular evaluation, state updates, and feedback loop.</p>
 <div class="paragraph">
 <p>This scenario illustrates how a user claims a certificate and interacts with the leaderboard.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-actor User
-participant WebApp as "Konnektoren Yew"
-participant Core as "Konnektoren Core"
-participant CertificateModule as "Certificate Module"
-participant LeaderboardModule as "Leaderboard Module"
-participant BackendAPI as "Konnektoren API"
-
-User -&gt; WebApp : Visit Profile Page
-WebApp -&gt; Core : Request Profile Data
-Core -&gt; WebApp : Send Profile Data
-WebApp -&gt; User : Show Profile
-
-User -&gt; WebApp : Claim Certificate
-WebApp -&gt; CertificateModule : Generate Certificate
-CertificateModule --&gt; WebApp : Return Certificate Data
-
-WebApp -&gt; Core : Store Certificate Data
-Core -&gt; BackendAPI : Store Data
-BackendAPI --&gt; Core : Confirm Storage
-Core -&gt; WebApp : Confirm Certificate Stored
-WebApp -&gt; User : Show Certificate
-
-User -&gt; WebApp : Visit Leaderboard
-WebApp -&gt; Core : Request Leaderboard Data
-Core -&gt; BackendAPI : Get Top Performances
-BackendAPI --&gt; Core : Return Data
-Core -&gt; WebApp : Send Leaderboard Data
-WebApp -&gt; User : Show Leaderboard
-@enduml</pre>
+<img src="images/leaderboard-certificate.png" alt="leaderboard certificate" width="904" height="705">
 </div>
 </div>
 <div class="paragraph">
@@ -2526,26 +2496,9 @@ Shows integration with backend APIs, certificate generation, and leaderboard dat
 <div class="paragraph">
 <p>This scenario demonstrates how a user receives a verifiable credential (badge) after completing challenges.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
-
-Person(user, "User", "Learner")
-System_Boundary(konnektoren, "Konnektoren System") {
-    Container(frontend, "Frontend", "Yew/WebAssembly", "Web interface")
-    Container(core, "Core", "Rust", "Business logic")
-}
-System_Ext(vc_issuer, "vc.konnektoren.help", "Credential Issuer")
-
-Rel(user, frontend, "Completes challenges")
-Rel(frontend, core, "Verifies completion")
-Rel(core, frontend, "Confirms achievement")
-Rel(frontend, vc_issuer, "Requests credential", "HTTPS")
-Rel(vc_issuer, frontend, "Issues credential", "OpenID4VC")
-Rel(frontend, user, "Displays QR code for credential")
-@enduml</pre>
+<img src="images/vc-issuance-c4.png" alt="vc issuance c4" width="672" height="594">
 </div>
 </div>
 <div class="paragraph">
@@ -2583,24 +2536,9 @@ Highlights SSI integration and secure credential issuance.</p>
 <div class="paragraph">
 <p>This scenario shows how the EventBus and CommandBus decouple actions and notifications in the system.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-participant "User Interface" as UI
-participant "Game Logic" as Game
-participant "EventBus" as EB
-participant "CommandBus" as CB
-participant "Challenge Module" as CM
-
-UI -&gt; CB : Publish(NextChallengeCommand)
-CB -&gt; Game : Execute(NextChallengeCommand)
-Game -&gt; CM : Load Next Challenge
-CM --&gt; Game : Challenge Loaded
-Game -&gt; EB : Publish(ChallengeLoadedEvent)
-EB -&gt; UI : Notify(ChallengeLoadedEvent)
-UI -&gt; User : Update Display
-@enduml</pre>
+<img src="images/event-command-scenario.png" alt="event command scenario" width="779" height="294">
 </div>
 </div>
 <div class="paragraph">
@@ -2635,27 +2573,9 @@ Demonstrates modular, event-driven architecture for maintainability and extensib
 <div class="paragraph">
 <p>This scenario demonstrates how the GameController manages state and coordinates commands, events, and persistence.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-participant "Client" as C
-participant "GameController" as GC
-participant "CommandBus" as CB
-participant "EventBus" as EB
-participant "GameState" as GS
-participant "Persistence" as P
-
-C -&gt; GC: publish_command(NextChallengeCommand)
-GC -&gt; CB: publish(NextChallengeCommand)
-CB -&gt; GC: handle_command(NextChallengeCommand)
-GC -&gt; GS: execute(NextChallengeCommand)
-GS --&gt; GC: state updated
-GC -&gt; EB: publish(ChallengeChangedEvent)
-GC -&gt; P: save_game_state()
-P --&gt; GC: state saved
-EB --&gt; C: notify(ChallengeChangedEvent)
-@enduml</pre>
+<img src="images/game-controller-interaction.png" alt="game controller interaction" width="1017" height="352">
 </div>
 </div>
 <div class="paragraph">
@@ -2710,40 +2630,9 @@ The backend leaderboard service is a Rust Axum server running inside a Docker co
 <div class="paragraph">
 <p><em><strong>Deployment Overview Diagram</strong></em></p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml deployment-overview
-!define C4Deployment
-C4Deployment
-
-actor User
-
-node "Cloudflare CDN &amp; Proxy" {
-  node "GitHub Pages" {
-    [WASM Frontend]
-  }
-}
-
-node "GitHub Actions" {
-  [CI/CD Pipeline] &lt;&lt;Process&gt;&gt;
-}
-
-node "Backend Cluster" {
-  node "Docker Host" {
-    [Axum Leaderboard Server] &lt;&lt;Container&gt;&gt;
-  }
-}
-
-User --&gt; [Cloudflare CDN &amp; Proxy] : HTTPS
-[Cloudflare CDN &amp; Proxy] --&gt; [WASM Frontend] : Delivers static assets
-[WASM Frontend] --&gt; [Cloudflare CDN &amp; Proxy] : API requests (REST)
-[Cloudflare CDN &amp; Proxy] --&gt; [Axum Leaderboard Server] : Proxies REST API calls
-[Axum Leaderboard Server] --&gt; [Leaderboard Database] : Reads/Writes scores
-
-[CI/CD Pipeline] --&gt; [GitHub Pages] : Builds &amp; deploys WASM Frontend
-
-@enduml</pre>
+<img src="images/deployment-overview.svg" alt="deployment overview" width="1006" height="642">
 </div>
 </div>
 <div class="paragraph">
@@ -2822,27 +2711,9 @@ User --&gt; [Cloudflare CDN &amp; Proxy] : HTTPS
 <div class="paragraph">
 <p><em><strong>Frontend Hosting Diagram</strong></em></p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml github-pages-deployment
-node "GitHub Infrastructure" {
-  [GitHub Pages] &lt;&lt;Static Hosting&gt;&gt;
-}
-
-node "Cloudflare CDN" {
-  [CDN Edge Node]
-}
-
-node "User Browser" {
-  [WASM Frontend]
-}
-
-[User Browser] --&gt; [Cloudflare CDN] : HTTPS
-[Cloudflare CDN] --&gt; [GitHub Pages] : Fetches static assets
-[Cloudflare CDN] --&gt; [User Browser] : Delivers cached content
-
-@enduml</pre>
+<img src="images/github-pages-deployment.svg" alt="github pages deployment" width="623" height="324">
 </div>
 </div>
 <div class="ulist">
@@ -2861,22 +2732,9 @@ node "User Browser" {
 <div class="paragraph">
 <p><em><strong>Backend Deployment Diagram</strong></em></p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml axum-server-deployment
-node "Cloud/VM Infrastructure" {
-  node "Docker Host" {
-    [Axum Leaderboard Server] &lt;&lt;Docker Container&gt;&gt;
-  }
-}
-
-node "Leaderboard Database" {
-  [Database] &lt;&lt;External System&gt;&gt;
-}
-
-[Axum Leaderboard Server] --&gt; [Database] : REST/SQL
-@enduml</pre>
+<img src="images/axum-server-deployment.svg" alt="axum server deployment" width="337" height="382">
 </div>
 </div>
 <div class="ulist">
@@ -2930,28 +2788,9 @@ node "Leaderboard Database" {
 This enables code reuse across multiple applications (e.g., web, Telegram) and simplifies maintenance and extension.
 Reusable UI components are provided for rapid integration and consistent user experience.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml core-library
-package "Konnektoren Core" {
-  class BusinessLogic {
-    +processData()
-    +verifyCertificate()
-  }
-
-  package "UI Components" {
-    class UIComponent1
-    class UIComponent2
-    UIComponent1 -- BusinessLogic
-    UIComponent2 -- BusinessLogic
-  }
-}
-
-UIComponent1 &lt;|-- WebApp
-UIComponent2 &lt;|-- TelegramApp
-
-@enduml</pre>
+<img src="images/core-library.svg" alt="core library" width="671" height="296">
 </div>
 </div>
 <div class="paragraph">
@@ -2980,20 +2819,9 @@ UIComponent2 &lt;|-- TelegramApp
 <p>Konnektoren uses a command/event pattern, primarily via the GameController, to manage game state and user interactions.
 Commands trigger actions; events notify subscribers of changes.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-component "GameController" as GC
-component "CommandBus" as CB
-component "EventBus" as EB
-component "GameState" as GS
-
-GC --&gt; CB : publishes commands
-CB --&gt; GC : executes commands
-GC --&gt; EB : publishes events
-GC --&gt; GS : updates
-@enduml</pre>
+<img src="images/command-event-pattern.svg" alt="command event pattern" width="595" height="182">
 </div>
 </div>
 <div class="paragraph">
@@ -3022,25 +2850,9 @@ GC --&gt; GS : updates
 <p>The system is designed with web3 principles: minimal server-side storage, privacy by default, and user empowerment.
 User data (except leaderboard) is stored client-side, with encryption and digital signatures for verification.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-actor User
-node "Client" {
-  [Local Storage] &lt;&lt;client-side storage&gt;&gt;
-  [App Logic]
-}
-
-node "Server" {
-  [Leaderboard Database] &lt;&lt;Server-Side Storage&gt;&gt;
-}
-
-User --&gt; [App Logic] : Interaction
-[App Logic] --&gt; [Local Storage] : Store user data
-[App Logic] --&gt; [Leaderboard Database] : Update leaderboard
-
-@enduml</pre>
+<img src="images/web3-architecture.svg" alt="web3 architecture" width="511" height="429">
 </div>
 </div>
 <div class="paragraph">
@@ -3069,26 +2881,9 @@ User --&gt; [App Logic] : Interaction
 <p>Data integrity and security are ensured through encryption and digital signatures.
 Certificates and sensitive data are signed and verified using industry-standard cryptography (e.g., Ed25519).</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-actor User
-
-node "Client" {
-  [Encryption] &lt;&lt;Client-Side Operation&gt;&gt;
-  [SignatureVerification] &lt;&lt;Client-Side Operation&gt;&gt;
-}
-
-node "Server" {
-  [Certificate Authority] &lt;&lt;Server-Side Operation&gt;&gt;
-}
-
-User --&gt; [Encryption] : Encrypt/Decrypt data
-[Encryption] --&gt; [SignatureVerification] : Sign/Verify certificates
-[SignatureVerification] --&gt; [Certificate Authority] : Verify signature
-
-@enduml</pre>
+<img src="images/encryption-diagram.svg" alt="encryption diagram" width="296" height="588">
 </div>
 </div>
 <div class="paragraph">
@@ -3157,25 +2952,9 @@ Google Analytics is used sparingly, only for product improvement and in complian
 </div>
 <div class="sect3">
 <h4 id="_components"><a class="anchor" href="#_components"></a>9.6.2. Components</h4>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-actor User
-database "Achievement\nConfiguration" as AC
-database "Challenge\nHistory" as CH
-component "Achievement\nEvaluator" as AE
-component "Game\nStatistics" as GS
-component "Frontend" as FE
-
-User -&gt; CH : completes challenges
-CH -&gt; GS : provides data
-AC -&gt; AE : defines achievements
-GS -&gt; AE : provides statistics
-AE -&gt; FE : updates unlocked achievements
-FE -&gt; User : displays achievements
-
-@enduml</pre>
+<img src="images/achievement-system.svg" alt="achievement system" width="1354" height="139">
 </div>
 </div>
 <div class="paragraph">
@@ -3226,20 +3005,9 @@ FE -&gt; User : displays achievements
 <div class="paragraph">
 <p>Konnektoren uses SSI principles for issuing achievement badges, empowering users and enhancing privacy.</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml
-actor User
-component "Konnektoren Platform" as KP
-component "vc.konnektoren.help" as VCI
-component "SSI Wallet" as Wallet
-
-User --&gt; KP : Completes challenges
-KP --&gt; VCI : Requests badge issuance
-VCI --&gt; User : Issues Verifiable Credential
-User --&gt; Wallet : Stores badge
-@enduml</pre>
+<img src="images/ssi-badge-concept.svg" alt="ssi badge concept" width="574" height="333">
 </div>
 </div>
 <div class="paragraph">
@@ -3281,27 +3049,9 @@ SSI integration aligns with decentralized, privacy-first design and future-proof
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_quality_tree"><a class="anchor" href="#_quality_tree"></a>10.1. Quality Tree</h3>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-@startuml quality-tree
-:Quality;
-:Performance;
-:Security;
-:Scalability;
-:Usability;
-:Maintainability;
-:Accessibility;
-:Internationalization;
-
-:Performance --&gt; :Fast response times for user interactions;
-:Security --&gt; :Data encryption, signature verification, privacy compliance;
-:Scalability --&gt; :Support for increasing user load and traffic spikes;
-:Usability --&gt; :Intuitive, responsive UI for web and Telegram apps;
-:Maintainability --&gt; :Modular, well-documented codebase;
-:Accessibility --&gt; :Support for users with disabilities;
-:Internationalization --&gt; :Multi-language support;
-@enduml</pre>
+<img src="images/quality-tree.svg" alt="quality tree" width="478" height="811">
 </div>
 </div>
 <div class="paragraph">
@@ -3706,7 +3456,7 @@ SSI integration aligns with decentralized, privacy-first design and future-proof
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2025-08-18 15:18:14 UTC
+Last updated 2025-08-18 15:25:57 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
