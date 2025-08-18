@@ -212,4 +212,16 @@
 <a href=#212 id=212 data-nosnippet>212</a>        <span class="kw">let </span>end_time = challenge.end_time().unwrap();
 <a href=#213 id=213 data-nosnippet>213</a>        <span class="macro">assert!</span>(end_time &gt; start_time);
 <a href=#214 id=214 data-nosnippet>214</a>    }
-<a href=#215 id=215 data-nosnippet>215</a>}</code></pre></div></section></main></body></html>
+<a href=#215 id=215 data-nosnippet>215</a>
+<a href=#216 id=216 data-nosnippet>216</a>    <span class="attr">#[test]
+<a href=#217 id=217 data-nosnippet>217</a>    </span><span class="kw">fn </span>test_get_id_and_solved() {
+<a href=#218 id=218 data-nosnippet>218</a>        <span class="kw">let </span>challenge_type = ChallengeType::default();
+<a href=#219 id=219 data-nosnippet>219</a>        <span class="kw">let </span>challenge_config = ChallengeConfig::default();
+<a href=#220 id=220 data-nosnippet>220</a>        <span class="kw">let </span><span class="kw-2">mut </span>challenge = Challenge::new(<span class="kw-2">&amp;</span>challenge_type, <span class="kw-2">&amp;</span>challenge_config);
+<a href=#221 id=221 data-nosnippet>221</a>        <span class="macro">assert_eq!</span>(challenge.get_id(), challenge_config.id);
+<a href=#222 id=222 data-nosnippet>222</a>        <span class="macro">assert!</span>(!challenge.solved());
+<a href=#223 id=223 data-nosnippet>223</a>        challenge.challenge_result =
+<a href=#224 id=224 data-nosnippet>224</a>            ChallengeResult::MultipleChoice(<span class="macro">vec!</span>[MultipleChoiceOption::default()]);
+<a href=#225 id=225 data-nosnippet>225</a>        <span class="macro">assert!</span>(challenge.solved());
+<a href=#226 id=226 data-nosnippet>226</a>    }
+<a href=#227 id=227 data-nosnippet>227</a>}</code></pre></div></section></main></body></html>

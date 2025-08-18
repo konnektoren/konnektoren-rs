@@ -181,4 +181,15 @@
 <a href=#181 id=181 data-nosnippet>181</a>
 <a href=#182 id=182 data-nosnippet>182</a>        <span class="macro">assert!</span>(challenge_history.stars() &gt; <span class="number">0</span>);
 <a href=#183 id=183 data-nosnippet>183</a>    }
-<a href=#184 id=184 data-nosnippet>184</a>}</code></pre></div></section></main></body></html>
+<a href=#184 id=184 data-nosnippet>184</a>
+<a href=#185 id=185 data-nosnippet>185</a>    <span class="attr">#[test]
+<a href=#186 id=186 data-nosnippet>186</a>    </span><span class="kw">fn </span>test_tuple_challenge_stats() {
+<a href=#187 id=187 data-nosnippet>187</a>        <span class="kw">let </span>config = ChallengeConfig::default();
+<a href=#188 id=188 data-nosnippet>188</a>        <span class="kw">let </span><span class="kw-2">mut </span>history = ChallengeHistory::new();
+<a href=#189 id=189 data-nosnippet>189</a>        <span class="kw">let </span>challenge = Challenge::new(<span class="kw-2">&amp;</span>ChallengeType::default(), <span class="kw-2">&amp;</span>config);
+<a href=#190 id=190 data-nosnippet>190</a>        history.add_challenge(challenge);
+<a href=#191 id=191 data-nosnippet>191</a>        <span class="kw">let </span>tuple_stats = (<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>history);
+<a href=#192 id=192 data-nosnippet>192</a>        <span class="macro">assert_eq!</span>(tuple_stats.challenges(), <span class="number">1</span>);
+<a href=#193 id=193 data-nosnippet>193</a>        <span class="macro">assert!</span>(tuple_stats.solved());
+<a href=#194 id=194 data-nosnippet>194</a>    }
+<a href=#195 id=195 data-nosnippet>195</a>}</code></pre></div></section></main></body></html>
