@@ -26,3 +26,15 @@ impl EventTrait for ChallengeEvent {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_challenge_event_trait() {
+        let event = ChallengeEvent::SolvedCorrect(1);
+        assert_eq!(event.get_type(), EventType::Challenge);
+        assert_eq!(event.get_action(), "SolvedCorrect");
+    }
+}

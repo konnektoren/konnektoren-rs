@@ -81,3 +81,40 @@ impl ControllerPlugin for ChallengeFinishPlugin {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::challenges::{Challenge, ChallengeConfig, ChallengeResult, ChallengeType};
+    use crate::controller::game_controller::MockGameControllerTrait;
+    use std::sync::{Arc, Mutex};
+
+    #[test]
+    fn test_handle_challenge_finish_updates_state_and_saves() {
+        let mut mock_controller = MockGameControllerTrait::new();
+
+        // Setup a challenge and result
+        let challenge = Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
+        let result = ChallengeResult::default();
+
+        // Setup game state
+        let game_state = Mutex::new(crate::game::GameState {
+            challenge: challenge.clone(),
+            ..Default::default()
+        });
+        mock_controller
+            .expect_game_state()
+            .return_const(Arc::new(game_state));
+        mock_controller
+            .expect_save_game_state()
+            .returning(|| Ok(()));
+
+        // Should update state and call save_game_state
+        let res = ChallengeFinishPlugin::handle_challenge_finish(
+            Arc::new(mock_controller),
+            &challenge,
+            &result,
+        );
+        assert!(res.is_ok());
+    }
+}

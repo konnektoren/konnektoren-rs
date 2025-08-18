@@ -209,4 +209,12 @@ mod tests {
         let challenge_result = ChallengeResult::Ordering(Vec::new());
         assert!(challenge_result.is_empty());
     }
+
+    #[test]
+    fn test_add_input_wrong_type() {
+        let mut result = ChallengeResult::MultipleChoice(vec![]);
+        let input = ChallengeInput::SortTable(SortTableRow::default());
+        let err = result.add_input(input);
+        assert!(err.is_err());
+    }
 }

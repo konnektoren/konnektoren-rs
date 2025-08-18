@@ -333,4 +333,11 @@ mod tests {
             Err("Invalid random pattern".to_string())
         );
     }
+
+    #[test]
+    fn test_invalid_patterns() {
+        assert!(TaskPattern::parse("invalid").is_err());
+        assert!(TaskPattern::parse("10..5").is_err());
+        assert!(TaskPattern::parse("5:10..5").is_err());
+    }
 }

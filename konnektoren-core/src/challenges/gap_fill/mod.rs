@@ -164,4 +164,60 @@ mod tests {
         assert!(gap_fill.check_answer(&correct_answer));
         assert!(!gap_fill.check_answer(&wrong_answer));
     }
+
+    #[test]
+    fn test_get_feedback_correct_and_incorrect() {
+        let gap_fill = GapFill {
+            id: "test".to_string(),
+            name: "Test".to_string(),
+            description: "Test".to_string(),
+            lang: "de".to_string(),
+            questions: vec![GapFillQuestion {
+                sentence: "Ich __ nach Berlin __ (fahren).".to_string(),
+                gaps: vec![
+                    Gap {
+                        position: 0,
+                        options: vec!["bin".to_string(), "habe".to_string()],
+                        correct: "bin".to_string(),
+                    },
+                    Gap {
+                        position: 1,
+                        options: vec!["gefahren".to_string(), "gefahrt".to_string()],
+                        correct: "gefahren".to_string(),
+                    },
+                ],
+                hints: vec!["Test hint".to_string()],
+                translation: "Test translation".to_string(),
+                explanation: "Test explanation".to_string(),
+            }],
+        };
+
+        let correct_answer = GapFillAnswer {
+            question_index: 0,
+            answers: vec!["bin".to_string(), "gefahren".to_string()],
+        };
+        let wrong_answer = GapFillAnswer {
+            question_index: 0,
+            answers: vec!["habe".to_string(), "gefahren".to_string()],
+        };
+        let invalid_answer = GapFillAnswer {
+            question_index: 99,
+            answers: vec![],
+        };
+
+        assert!(
+            gap_fill
+                .get_feedback(&correct_answer)
+                .starts_with("Correct!")
+        );
+        assert!(
+            gap_fill
+                .get_feedback(&wrong_answer)
+                .starts_with("Incorrect.")
+        );
+        assert_eq!(
+            gap_fill.get_feedback(&invalid_answer),
+            "Invalid question index"
+        );
+    }
 }

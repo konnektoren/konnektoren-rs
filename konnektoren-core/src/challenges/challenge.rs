@@ -212,4 +212,16 @@ mod tests {
         let end_time = challenge.end_time().unwrap();
         assert!(end_time > start_time);
     }
+
+    #[test]
+    fn test_get_id_and_solved() {
+        let challenge_type = ChallengeType::default();
+        let challenge_config = ChallengeConfig::default();
+        let mut challenge = Challenge::new(&challenge_type, &challenge_config);
+        assert_eq!(challenge.get_id(), challenge_config.id);
+        assert!(!challenge.solved());
+        challenge.challenge_result =
+            ChallengeResult::MultipleChoice(vec![MultipleChoiceOption::default()]);
+        assert!(challenge.solved());
+    }
 }

@@ -181,4 +181,15 @@ mod tests {
 
         assert!(challenge_history.stars() > 0);
     }
+
+    #[test]
+    fn test_tuple_challenge_stats() {
+        let config = ChallengeConfig::default();
+        let mut history = ChallengeHistory::new();
+        let challenge = Challenge::new(&ChallengeType::default(), &config);
+        history.add_challenge(challenge);
+        let tuple_stats = (&config, &history);
+        assert_eq!(tuple_stats.challenges(), 1);
+        assert!(tuple_stats.solved());
+    }
 }

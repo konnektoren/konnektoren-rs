@@ -117,4 +117,13 @@ mod tests {
             ChallengeVariant::MultipleChoice
         );
     }
+
+    #[test]
+    fn test_all_variants_serde() {
+        for variant in ChallengeVariant::iter() {
+            let json = serde_json::to_string(&variant).unwrap();
+            let deserialized: ChallengeVariant = serde_json::from_str(&json).unwrap();
+            assert_eq!(variant, deserialized);
+        }
+    }
 }
