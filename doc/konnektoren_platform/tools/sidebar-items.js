@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["I18nChecker","I18nReport"]};
+window.SIDEBAR_ITEMS = {"enum":["I18nReportError"],"struct":["I18nChecker","I18nHumanFormatter","I18nJsonFormatter","I18nReport","I18nYamlFormatter","LanguageStats"],"trait":["I18nReportFormatter"]};
