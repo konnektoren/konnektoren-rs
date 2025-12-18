@@ -1,0 +1,1 @@
+rd_("A`konnektoren_coreAdkonnektoren_platformAakonnektoren_testsokonnektoren_tui")
