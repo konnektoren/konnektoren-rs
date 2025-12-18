@@ -5,10 +5,15 @@ version = { workspace = true }
 description = "BDD and integration tests for Konnektoren"
 keywords = ["konnektoren", "tests", "bdd"]
 
+[features]
+default = []
+output-json = ["cucumber/output-json"]
+output-junit = ["cucumber/output-junit"]
+
 [dependencies]
 base64 = { workspace = true }
 chrono = { workspace = true }
-cucumber = "0.20"
+cucumber = { version = "0.22" }
 konnektoren-core = { path = "../konnektoren-core" }
 konnektoren-platform = { path = "../konnektoren-platform" }
 log = { workspace = true }

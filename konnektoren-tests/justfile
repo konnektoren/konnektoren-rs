@@ -14,6 +14,16 @@ test:
 bdd:
     cargo test --test bdd_tests
 
+# Run BDD tests with JSON output
+bdd-json:
+    cargo test --test bdd_tests --no-default-features --features output-json
+    @echo "✓ JSON report generated at: target/cucumber-report.json"
+
+# Run BDD tests with JUnit XML output
+bdd-junit:
+    cargo test --test bdd_tests --no-default-features --features output-junit
+    @echo "✓ JUnit XML report generated at: target/junit-report.xml"
+
 # Run linter
 lint:
     cargo clippy -p konnektoren-tests -- -D warnings

@@ -3,7 +3,7 @@ use cucumber::{given, then, when};
 use konnektoren_core::prelude::*;
 use konnektoren_platform::i18n::{I18nConfig, JsonTranslationAsset, Language};
 use rust_embed::RustEmbed;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::collections::HashMap;
 
 // Define our test assets

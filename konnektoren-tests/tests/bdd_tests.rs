@@ -1,10 +1,8 @@
 use cucumber::World;
 use konnektoren_core::error::Result;
 pub mod steps;
-use cucumber::WriterExt;
 use konnektoren_core::controller::GameController;
 use konnektoren_core::prelude::*;
-use std::boxed::Box;
 use std::sync::Arc;
 
 #[derive(Debug, World)]
@@ -46,20 +44,61 @@ impl Default for BddWorld {
             game,
             unlocked_achievements: Vec::new(),
             achievement_notification: None,
-            controller: None, // Initialize controller as None
+            controller: None,
         }
     }
 }
 
 #[tokio::main]
 async fn main() {
-    BddWorld::cucumber()
-        .max_concurrent_scenarios(1)
-        .with_writer(
-            cucumber::writer::Basic::raw(std::io::stdout(), cucumber::writer::Coloring::Never, 0)
+    // ---- JUnit XML output ----
+    #[cfg(feature = "output-junit")]
+    {
+        let junit_file =
+            std::fs::File::create("junit-report.xml").expect("Failed to create JUnit XML file");
+
+        BddWorld::cucumber()
+            .max_concurrent_scenarios(1)
+            .with_writer(cucumber::writer::JUnit::new(junit_file, 0))
+            .run("tests/features")
+            .await;
+        // No run_and_exit, no summaries – JUnit is just a structured sink.
+        return;
+    }
+
+    // ---- JSON output ----
+    #[cfg(all(feature = "output-json", not(feature = "output-junit")))]
+    {
+        let json_file = std::fs::File::create("cucumber-report.json")
+            .expect("Failed to create JSON output file");
+
+        BddWorld::cucumber()
+            .max_concurrent_scenarios(1)
+            .with_writer(cucumber::writer::Json::new(json_file))
+            .run("tests/features")
+            .await;
+        // Same here: just write JSON events.
+        return;
+    }
+
+    // ---- Pretty terminal output (default / output-pretty) ----
+    #[cfg(any(
+        all(not(feature = "output-json"), not(feature = "output-junit"))
+    ))]
+    {
+        use cucumber::WriterExt;
+        BddWorld::cucumber()
+            .max_concurrent_scenarios(1)
+            .with_writer(
+                cucumber::writer::Basic::raw(
+                    std::io::stdout(),
+                    cucumber::writer::Coloring::Never,
+                    0,
+                )
                 .summarized()
                 .assert_normalized(),
-        )
-        .run_and_exit("tests/features")
-        .await;
+            )
+            .run_and_exit("tests/features")
+            .await;
+    }
 }
