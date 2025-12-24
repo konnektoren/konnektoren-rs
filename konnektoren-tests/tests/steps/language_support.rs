@@ -104,6 +104,7 @@ async fn a_challenge_with_language_set_to(world: &mut BddWorld, language_code: S
         unlock_points: 0,
         variant: None,
         position: None,
+        icon: None,
     };
 
     let challenge = Challenge::new(&world.challenge_type, &challenge_config);
@@ -236,6 +237,7 @@ async fn the_language_is_changed_to_english(world: &mut BddWorld) {
                 unlock_points: challenge.challenge_config.unlock_points,
                 variant: challenge.challenge_config.variant.clone(),
                 position: challenge.challenge_config.position,
+                icon: challenge.challenge_config.icon.clone(),
             };
 
             let new_challenge = Challenge::new(&world.challenge_type, &challenge_config);

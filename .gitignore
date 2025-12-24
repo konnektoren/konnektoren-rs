@@ -19,3 +19,4 @@ Cargo.lock
 
 *.cdx.xml
 cobertura.xml
+.DS_Store

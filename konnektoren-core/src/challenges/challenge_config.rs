@@ -12,6 +12,8 @@ pub struct ChallengeConfig {
     pub tasks: TaskPattern,
     pub unlock_points: usize,
     pub position: Option<(i32, i32)>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
 }
 
 impl Default for ChallengeConfig {
@@ -25,6 +27,7 @@ impl Default for ChallengeConfig {
             tasks: 10.into(),
             unlock_points: 0,
             position: Some((0, 0)),
+            icon: None,
         }
     }
 }
@@ -45,5 +48,6 @@ mod tests {
         assert_eq!(challenge_config.challenge, "konnektoren");
         assert_eq!(challenge_config.tasks, 10.into());
         assert_eq!(challenge_config.unlock_points, 0);
+        assert_eq!(challenge_config.icon, None);
     }
 }
