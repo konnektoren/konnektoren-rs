@@ -86,6 +86,21 @@ impl ChallengeCommand {
             return Err(CommandError::ChallengeError(ChallengeError::NoMoreTasks));
         }
 
+        // QUICKFIX: If current task wasn't answered, add a default answer to keep indices aligned
+        let result_len = state.challenge.challenge_result.len();
+        if result_len <= state.current_task_index {
+            // Add default answer (first option) for unanswered task
+            if let ChallengeType::MultipleChoice(ref mc) = state.challenge.challenge_type {
+                if let Some(first_option) = mc.options.first() {
+                    let default_input = ChallengeInput::MultipleChoice(MultipleChoiceOption {
+                        id: first_option.id,
+                        name: first_option.name.clone(),
+                    });
+                    let _ = state.challenge.challenge_result.add_input(default_input);
+                }
+            }
+        }
+
         state.current_task_index += 1;
         Ok(())
     }
@@ -144,7 +159,7 @@ impl ChallengeCommand {
 
         state
             .challenge
-            .solve(challenge_input)
+            .solve(challenge_input, state.current_task_index)
             .map_err(CommandError::ChallengeError)?;
 
         // Attempt to move to the next task, but ignore "no more tasks" errors

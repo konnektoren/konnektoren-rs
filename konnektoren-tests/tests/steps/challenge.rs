@@ -126,7 +126,9 @@ async fn the_multiple_choice_challenge_is_solved_with_option(world: &mut BddWorl
         id: option,
         name: "Option".to_string(),
     });
-    let result = challenge.solve(input);
+
+    // Add task_index parameter (0 for first task in this test)
+    let result = challenge.solve(input, 0);
     assert!(result.is_ok());
 
     world.challenge_result = Some(challenge.challenge_result.clone());

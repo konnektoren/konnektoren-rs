@@ -82,9 +82,7 @@ async fn main() {
     }
 
     // ---- Pretty terminal output (default / output-pretty) ----
-    #[cfg(any(
-        all(not(feature = "output-json"), not(feature = "output-junit"))
-    ))]
+    #[cfg(any(all(not(feature = "output-json"), not(feature = "output-junit"))))]
     {
         use cucumber::WriterExt;
         BddWorld::cucumber()

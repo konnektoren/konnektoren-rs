@@ -132,6 +132,7 @@ impl AssetLoader {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(feature = "csr")]
     use crate::asset_loader::AssetLoader;
 
     #[cfg(feature = "csr")]

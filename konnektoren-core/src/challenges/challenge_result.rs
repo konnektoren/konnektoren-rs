@@ -77,6 +77,85 @@ impl ChallengeResult {
         }
     }
 
+    /// Sets the input at a specific index, filling gaps with default values if needed
+    pub fn set_input(&mut self, index: usize, input: ChallengeInput) -> Result<()> {
+        match self {
+            ChallengeResult::MultipleChoice(options) => match input {
+                ChallengeInput::MultipleChoice(option) => {
+                    // Ensure we have enough slots, fill with default if needed
+                    while options.len() <= index {
+                        options.push(MultipleChoiceOption {
+                            id: 0,
+                            name: String::new(),
+                        });
+                    }
+                    options[index] = option;
+                    Ok(())
+                }
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected MultipleChoice input".to_string(),
+                )),
+            },
+            ChallengeResult::ContextualChoice(answers) => match input {
+                ChallengeInput::ContextualChoice(answer) => {
+                    while answers.len() <= index {
+                        answers.push(ContextItemChoiceAnswers { ids: vec![] });
+                    }
+                    answers[index] = answer;
+                    Ok(())
+                }
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected ContextualChoice input".to_string(),
+                )),
+            },
+            ChallengeResult::GapFill(answers) => match input {
+                ChallengeInput::GapFill(answer) => {
+                    while answers.len() <= index {
+                        answers.push(GapFillAnswer {
+                            question_index: 0,
+                            answers: vec![],
+                        });
+                    }
+                    answers[index] = answer;
+                    Ok(())
+                }
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected GapFill input".to_string(),
+                )),
+            },
+            ChallengeResult::SortTable(rows) => match input {
+                ChallengeInput::SortTable(row) => {
+                    while rows.len() <= index {
+                        rows.push(SortTableRow {
+                            id: 0,
+                            values: vec![],
+                        });
+                    }
+                    rows[index] = row;
+                    Ok(())
+                }
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected SortTable input".to_string(),
+                )),
+            },
+            ChallengeResult::Ordering(results) => match input {
+                ChallengeInput::Ordering(result) => {
+                    while results.len() <= index {
+                        results.push(OrderingResult { order: vec![] });
+                    }
+                    results[index] = result;
+                    Ok(())
+                }
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected Ordering input".to_string(),
+                )),
+            },
+            ChallengeResult::Informative => Ok(()),
+            ChallengeResult::Custom(_) => Ok(()),
+            ChallengeResult::Vocabulary => Ok(()),
+        }
+    }
+
     pub fn len(&self) -> usize {
         match self {
             ChallengeResult::MultipleChoice(options) => options.len(),
@@ -216,5 +295,90 @@ mod tests {
         let input = ChallengeInput::SortTable(SortTableRow::default());
         let err = result.add_input(input);
         assert!(err.is_err());
+    }
+
+    #[test]
+    fn test_set_input_multiple_choice() {
+        let mut challenge_result = ChallengeResult::default();
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption {
+            id: 2,
+            name: "Option 2".to_string(),
+        });
+
+        // Set at index 2 (will fill 0, 1 with defaults)
+        let result = challenge_result.set_input(2, input);
+        assert!(result.is_ok());
+
+        match challenge_result {
+            ChallengeResult::MultipleChoice(options) => {
+                assert_eq!(options.len(), 3);
+                assert_eq!(options[0].id, 0); // Default
+                assert_eq!(options[1].id, 0); // Default
+                assert_eq!(options[2].id, 2); // Our input
+                assert_eq!(options[2].name, "Option 2");
+            }
+            _ => panic!("Invalid challenge result"),
+        }
+    }
+
+    #[test]
+    fn test_set_input_replace_existing() {
+        let mut challenge_result = ChallengeResult::MultipleChoice(vec![
+            MultipleChoiceOption {
+                id: 1,
+                name: "Option 1".to_string(),
+            },
+            MultipleChoiceOption {
+                id: 2,
+                name: "Option 2".to_string(),
+            },
+        ]);
+
+        let new_input = ChallengeInput::MultipleChoice(MultipleChoiceOption {
+            id: 3,
+            name: "Option 3".to_string(),
+        });
+
+        // Replace index 1
+        let result = challenge_result.set_input(1, new_input);
+        assert!(result.is_ok());
+
+        match challenge_result {
+            ChallengeResult::MultipleChoice(options) => {
+                assert_eq!(options.len(), 2);
+                assert_eq!(options[0].id, 1); // Unchanged
+                assert_eq!(options[1].id, 3); // Replaced
+                assert_eq!(options[1].name, "Option 3");
+            }
+            _ => panic!("Invalid challenge result"),
+        }
+    }
+
+    #[test]
+    fn test_set_input_wrong_type() {
+        let mut result = ChallengeResult::MultipleChoice(vec![]);
+        let input = ChallengeInput::SortTable(SortTableRow::default());
+        let err = result.set_input(0, input);
+        assert!(err.is_err());
+    }
+
+    #[test]
+    fn test_set_input_ordering() {
+        let mut challenge_result = ChallengeResult::Ordering(Vec::new());
+        let input = ChallengeInput::Ordering(OrderingResult {
+            order: vec![2, 0, 1],
+        });
+
+        let result = challenge_result.set_input(1, input);
+        assert!(result.is_ok());
+
+        match challenge_result {
+            ChallengeResult::Ordering(results) => {
+                assert_eq!(results.len(), 2);
+                assert!(results[0].order.is_empty()); // Default
+                assert_eq!(results[1].order, vec![2, 0, 1]);
+            }
+            _ => panic!("Invalid challenge result"),
+        }
     }
 }

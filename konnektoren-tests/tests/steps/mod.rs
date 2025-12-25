@@ -8,3 +8,4 @@ pub mod game_progression;
 pub mod language_support;
 pub mod player_profile;
 pub mod session;
+pub mod task_navigation;

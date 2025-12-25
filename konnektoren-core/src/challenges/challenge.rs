@@ -1,8 +1,6 @@
 use crate::challenges::Timed;
-use crate::challenges::challenge_config::ChallengeConfig;
-use crate::challenges::challenge_result::ChallengeResult;
-use crate::challenges::challenge_type::ChallengeType;
 use crate::challenges::error::{ChallengeError, Result};
+use crate::challenges::{ChallengeConfig, ChallengeInput, ChallengeResult, ChallengeType};
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -38,74 +36,66 @@ impl Challenge {
 }
 
 impl Solvable for Challenge {
-    fn solve(&mut self, input: super::ChallengeInput) -> Result<bool> {
+    fn solve(&mut self, input: ChallengeInput, task_index: usize) -> Result<bool> {
         self.update_end_time();
 
-        match self.challenge_result.add_input(input.clone()) {
-            Ok(_) => {
-                let index = self.challenge_result.len() - 1; // Adjust index to be 0-based
-                match (&self.challenge_type, &self.challenge_result) {
-                    (
-                        ChallengeType::MultipleChoice(mc),
-                        ChallengeResult::MultipleChoice(results),
-                    ) => {
-                        if let (Some(question), Some(result)) =
-                            (mc.questions.get(index), results.get(index))
-                        {
-                            Ok(question.option == result.id)
-                        } else {
-                            Ok(false)
-                        }
+        match self.challenge_result.set_input(task_index, input.clone()) {
+            Ok(_) => match (&self.challenge_type, &self.challenge_result) {
+                (ChallengeType::MultipleChoice(mc), ChallengeResult::MultipleChoice(results)) => {
+                    if let (Some(question), Some(result)) =
+                        (mc.questions.get(task_index), results.get(task_index))
+                    {
+                        Ok(question.option == result.id)
+                    } else {
+                        Ok(false)
                     }
-                    (
-                        ChallengeType::ContextualChoice(cc),
-                        ChallengeResult::ContextualChoice(results),
-                    ) => {
-                        if let (Some(item), Some(choice)) =
-                            (cc.items.get(index), results.get(index))
-                        {
-                            Ok(item.choices.iter().zip(&choice.ids).all(|(c, &id)| {
-                                c.options
-                                    .get(id)
-                                    .is_some_and(|selected| *selected == c.correct_answer)
-                            }))
-                        } else {
-                            Ok(false)
-                        }
-                    }
-                    (ChallengeType::GapFill(gf), ChallengeResult::GapFill(results)) => {
-                        if let (Some(question), Some(answer)) =
-                            (gf.questions.get(index), results.get(index))
-                        {
-                            if question.gaps.len() != answer.answers.len() {
-                                return Ok(false);
-                            }
-
-                            Ok(question
-                                .gaps
-                                .iter()
-                                .zip(answer.answers.iter())
-                                .all(|(gap, ans)| gap.correct == *ans))
-                        } else {
-                            Ok(false)
-                        }
-                    }
-                    (ChallengeType::SortTable(st), ChallengeResult::SortTable(results)) => {
-                        if let (Some(row), Some(result)) = (st.rows.get(index), results.get(index))
-                        {
-                            Ok(row.values == result.values)
-                        } else {
-                            Ok(false)
-                        }
-                    }
-                    (ChallengeType::Informative(_), ChallengeResult::Informative) => Ok(true),
-                    (ChallengeType::Custom(_), ChallengeResult::Custom(_)) => {
-                        // Custom challenges might need special handling
-                        Ok(true)
-                    }
-                    _ => Err(ChallengeError::InvalidChallengeType),
                 }
-            }
+                (
+                    ChallengeType::ContextualChoice(cc),
+                    ChallengeResult::ContextualChoice(results),
+                ) => {
+                    if let (Some(item), Some(choice)) =
+                        (cc.items.get(task_index), results.get(task_index))
+                    {
+                        Ok(item.choices.iter().zip(&choice.ids).all(|(c, &id)| {
+                            c.options
+                                .get(id)
+                                .is_some_and(|selected| *selected == c.correct_answer)
+                        }))
+                    } else {
+                        Ok(false)
+                    }
+                }
+                (ChallengeType::GapFill(gf), ChallengeResult::GapFill(results)) => {
+                    if let (Some(question), Some(answer)) =
+                        (gf.questions.get(task_index), results.get(task_index))
+                    {
+                        if question.gaps.len() != answer.answers.len() {
+                            return Ok(false);
+                        }
+
+                        Ok(question
+                            .gaps
+                            .iter()
+                            .zip(answer.answers.iter())
+                            .all(|(gap, ans)| gap.correct == *ans))
+                    } else {
+                        Ok(false)
+                    }
+                }
+                (ChallengeType::SortTable(st), ChallengeResult::SortTable(results)) => {
+                    if let (Some(row), Some(result)) =
+                        (st.rows.get(task_index), results.get(task_index))
+                    {
+                        Ok(row.values == result.values)
+                    } else {
+                        Ok(false)
+                    }
+                }
+                (ChallengeType::Informative(_), ChallengeResult::Informative) => Ok(true),
+                (ChallengeType::Custom(_), ChallengeResult::Custom(_)) => Ok(true),
+                _ => Err(ChallengeError::InvalidChallengeType),
+            },
             Err(_) => Ok(false),
         }
     }
@@ -165,7 +155,7 @@ mod tests {
         let challenge_config = ChallengeConfig::default();
         let mut challenge = Challenge::new(&challenge_type, &challenge_config);
         let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
-        let result = challenge.solve(input);
+        let result = challenge.solve(input, 0); // ← Add task_index = 0
         assert!(result.is_ok());
         assert!(result.unwrap());
     }
@@ -177,7 +167,7 @@ mod tests {
         let mut challenge = Challenge::new(&challenge_type, &challenge_config);
         challenge.start();
         let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
-        let result = challenge.solve(input).unwrap();
+        let result = challenge.solve(input, 0).unwrap(); // ← Add task_index = 0
         assert!(result);
         let performance = challenge.performance(&challenge.challenge_result);
         let time_difference = challenge.end_time.unwrap() - challenge.start_time.unwrap();
@@ -192,7 +182,7 @@ mod tests {
         challenge.start();
         std::thread::sleep(std::time::Duration::from_millis(1));
         let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
-        let result = challenge.solve(input).unwrap();
+        let result = challenge.solve(input, 0).unwrap(); // ← Add task_index = 0
         assert!(result);
         let elapsed_time = challenge.elapsed_time().unwrap();
         assert!(elapsed_time > Duration::zero());
@@ -207,7 +197,7 @@ mod tests {
         let start_time = challenge.start_time().unwrap();
         std::thread::sleep(std::time::Duration::from_millis(1));
         let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
-        let result = challenge.solve(input).unwrap();
+        let result = challenge.solve(input, 0).unwrap(); // ← Add task_index = 0
         assert!(result);
         let end_time = challenge.end_time().unwrap();
         assert!(end_time > start_time);
