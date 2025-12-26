@@ -6,6 +6,7 @@ pub mod controller;
 pub mod game;
 pub mod game_progression;
 pub mod language_support;
+pub mod performance;
 pub mod player_profile;
 pub mod session;
 pub mod task_navigation;

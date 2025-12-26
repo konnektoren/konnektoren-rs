@@ -120,12 +120,6 @@ async fn the_task_count_should_be(world: &mut BddWorld, expected_count: usize) {
 
 #[when(expr = "all tasks in the range are solved")]
 async fn all_tasks_in_range_are_solved(world: &mut BddWorld) {
-    // First, collect all the information we need before mutably borrowing
-    let total_tasks = match &world.session.game_state.challenge.challenge_type {
-        ChallengeType::MultipleChoice(mc) => mc.questions.len(),
-        _ => panic!("Expected MultipleChoice challenge type"),
-    };
-
     // Collect all correct options first
     let correct_options: Vec<usize> = match &world.session.game_state.challenge.challenge_type {
         ChallengeType::MultipleChoice(mc) => mc.questions.iter().map(|q| q.option).collect(),

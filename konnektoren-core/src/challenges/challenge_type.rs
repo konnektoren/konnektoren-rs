@@ -217,7 +217,6 @@ impl Performance for ChallengeType {
             (ChallengeType::Placeholder(_), _) => 0,
             // Add this line to handle Vocabulary challenges
             (ChallengeType::Vocabulary(_), ChallengeResult::Vocabulary) => 100,
-            (ChallengeType::Vocabulary(_), ChallengeResult::Informative) => 100,
             _ => {
                 log::warn!(
                     "Unhandled challenge type/result combination: {:?}",

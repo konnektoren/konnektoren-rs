@@ -52,6 +52,6 @@ pub use performance_record::PerformanceRecord;
 pub use placeholder::{Placeholder, PlaceholderType};
 pub use review::Review;
 pub use solvable::Solvable;
-pub use sort_table::{SortTable, SortTableRow};
+pub use sort_table::{SortTable, SortTableColumn, SortTableRow};
 pub use timed::Timed;
 pub use vocabulary::{Vocabulary, VocabularyItem};

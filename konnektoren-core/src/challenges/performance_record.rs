@@ -55,15 +55,15 @@ impl PerformanceRecord {
                 .map(|d| d.num_milliseconds() as ChallengeTimeMilliseconds)
                 .unwrap_or(0);
 
-            let current_performance = best_performance.get(&id).map_or(0, |(_, p, _)| *p);
-
             best_performance
                 .entry(id.clone())
                 .and_modify(|(_id, p, t)| {
                     if performance > *p {
+                        // New best performance - update both performance and time
                         *p = performance;
                         *t = elapsed_time;
-                    } else if elapsed_time < *t && performance == current_performance {
+                    } else if performance == *p && elapsed_time < *t {
+                        // Same performance but faster time - update time only
                         *t = elapsed_time;
                     }
                 })
@@ -79,9 +79,19 @@ impl PerformanceRecord {
         // Sort by elapsed time in ascending order (lowest time first)
         challenges_performance.sort_by(|a, b| a.2.cmp(&b.2));
 
-        let solved_challenges = challenges_performance.len();
-        let performance_percentage =
-            ((solved_challenges as f64 / total_challenges as f64) * 100.0) as u8;
+        // Calculate overall performance percentage based on best performances
+        let performance_percentage = if !challenges_performance.is_empty() {
+            // Use the best performance for each unique challenge
+            let total_performance: u32 = challenges_performance
+                .iter()
+                .map(|(_, perf, _)| *perf as u32)
+                .sum();
+
+            // Average of best performances
+            (total_performance / challenges_performance.len() as u32) as u8
+        } else {
+            0
+        };
 
         PerformanceRecord {
             game_path_id,
@@ -181,7 +191,7 @@ mod tests {
         assert_eq!(performance_record.game_path_id, "game_path_id");
         assert_eq!(performance_record.profile_name, "profile_name");
         assert_eq!(performance_record.total_challenges, 1);
-        assert_eq!(performance_record.performance_percentage, 100);
+        assert_eq!(performance_record.performance_percentage, 0);
     }
 
     #[test]
@@ -209,7 +219,7 @@ mod tests {
         assert_eq!(performance_record.game_path_id, "game_path_id");
         assert_eq!(performance_record.profile_name, "profile_name");
         assert_eq!(performance_record.total_challenges, 1);
-        assert_eq!(performance_record.performance_percentage, 100);
+        assert_eq!(performance_record.performance_percentage, 0);
     }
 
     #[test]
@@ -237,7 +247,7 @@ mod tests {
         assert_eq!(performance_record.game_path_id, "game_path_id");
         assert_eq!(performance_record.profile_name, "profile_name");
         assert_eq!(performance_record.total_challenges, 1);
-        assert_eq!(performance_record.performance_percentage, 100);
+        assert_eq!(performance_record.performance_percentage, 0);
         assert_eq!(performance_record.challenges_performance[0].2, 10 * 1000);
     }
 
