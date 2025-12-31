@@ -1,6 +1,8 @@
 use crate::challenges::Timed;
 use crate::challenges::error::{ChallengeError, Result};
-use crate::challenges::{ChallengeConfig, ChallengeInput, ChallengeResult, ChallengeType};
+use crate::challenges::{
+    ChallengeConfig, ChallengeInput, ChallengeResult, ChallengeType, CustomChallengeResult,
+};
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -17,10 +19,23 @@ pub struct Challenge {
 
 impl Challenge {
     pub fn new(challenge_type: &ChallengeType, challenge_config: &ChallengeConfig) -> Self {
+        // Initialize the result based on the challenge type
+        let challenge_result = match challenge_type {
+            ChallengeType::MultipleChoice(_) => ChallengeResult::MultipleChoice(Vec::new()),
+            ChallengeType::ContextualChoice(_) => ChallengeResult::ContextualChoice(Vec::new()),
+            ChallengeType::GapFill(_) => ChallengeResult::GapFill(Vec::new()),
+            ChallengeType::SortTable(_) => ChallengeResult::SortTable(Vec::new()),
+            ChallengeType::Informative(_) => ChallengeResult::Informative,
+            ChallengeType::Ordering(_) => ChallengeResult::Ordering(Vec::new()),
+            ChallengeType::Custom(_) => ChallengeResult::Custom(CustomChallengeResult::default()),
+            ChallengeType::Placeholder(_) => ChallengeResult::MultipleChoice(Vec::new()), // Placeholder uses MC
+            ChallengeType::Vocabulary(_) => ChallengeResult::Vocabulary,
+        };
+
         Challenge {
             challenge_type: challenge_type.clone(),
             challenge_config: challenge_config.clone(),
-            challenge_result: ChallengeResult::default(),
+            challenge_result,
             start_time: None,
             end_time: None,
         }
@@ -136,8 +151,7 @@ impl Timed for Challenge {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::challenges::MultipleChoiceOption;
-    use crate::challenges::challenge_input::ChallengeInput;
+    use crate::challenges::*;
 
     #[test]
     fn new_challenge() {
@@ -213,5 +227,119 @@ mod tests {
         challenge.challenge_result =
             ChallengeResult::MultipleChoice(vec![MultipleChoiceOption::default()]);
         assert!(challenge.solved());
+    }
+
+    #[test]
+    fn test_challenge_result_initialization() {
+        // MultipleChoice
+        let mc_type = ChallengeType::MultipleChoice(MultipleChoice::default());
+        let mc_challenge = Challenge::new(&mc_type, &ChallengeConfig::default());
+        assert!(matches!(
+            mc_challenge.challenge_result,
+            ChallengeResult::MultipleChoice(_)
+        ));
+
+        // ContextualChoice
+        let cc_type = ChallengeType::ContextualChoice(ContextualChoice::default());
+        let cc_challenge = Challenge::new(&cc_type, &ChallengeConfig::default());
+        assert!(matches!(
+            cc_challenge.challenge_result,
+            ChallengeResult::ContextualChoice(_)
+        ));
+
+        // GapFill
+        let gf_type = ChallengeType::GapFill(GapFill::default());
+        let gf_challenge = Challenge::new(&gf_type, &ChallengeConfig::default());
+        assert!(matches!(
+            gf_challenge.challenge_result,
+            ChallengeResult::GapFill(_)
+        ));
+
+        // SortTable
+        let st_type = ChallengeType::SortTable(SortTable::default());
+        let st_challenge = Challenge::new(&st_type, &ChallengeConfig::default());
+        assert!(matches!(
+            st_challenge.challenge_result,
+            ChallengeResult::SortTable(_)
+        ));
+
+        // Informative
+        let inf_type = ChallengeType::Informative(Informative::default());
+        let inf_challenge = Challenge::new(&inf_type, &ChallengeConfig::default());
+        assert!(matches!(
+            inf_challenge.challenge_result,
+            ChallengeResult::Informative
+        ));
+
+        // Ordering
+        let ord_type = ChallengeType::Ordering(Ordering::default());
+        let ord_challenge = Challenge::new(&ord_type, &ChallengeConfig::default());
+        assert!(matches!(
+            ord_challenge.challenge_result,
+            ChallengeResult::Ordering(_)
+        ));
+
+        // Vocabulary
+        let voc_type = ChallengeType::Vocabulary(Vocabulary::default());
+        let voc_challenge = Challenge::new(&voc_type, &ChallengeConfig::default());
+        assert!(matches!(
+            voc_challenge.challenge_result,
+            ChallengeResult::Vocabulary
+        ));
+    }
+
+    #[test]
+    fn test_solve_contextual_choice() {
+        let contextual_choice = ContextualChoice {
+            id: "test".to_string(),
+            name: "Test".to_string(),
+            description: "Test".to_string(),
+            items: vec![ContextItem {
+                template: "Test {0} {1}".to_string(),
+                choices: vec![
+                    Choice {
+                        id: 0,
+                        options: vec!["correct".to_string(), "wrong".to_string()],
+                        correct_answer: "correct".to_string(),
+                    },
+                    Choice {
+                        id: 1,
+                        options: vec!["right".to_string(), "incorrect".to_string()],
+                        correct_answer: "right".to_string(),
+                    },
+                ],
+            }],
+        };
+
+        let challenge_type = ChallengeType::ContextualChoice(contextual_choice);
+        let mut challenge = Challenge::new(&challenge_type, &ChallengeConfig::default());
+
+        // Verify the challenge result was initialized correctly
+        assert!(
+            matches!(
+                challenge.challenge_result,
+                ChallengeResult::ContextualChoice(_)
+            ),
+            "Challenge result should be ContextualChoice type"
+        );
+
+        // Test correct answer
+        let correct_input = ChallengeInput::ContextualChoice(ContextItemChoiceAnswers {
+            ids: vec![0, 0], // Both correct (index 0 for both choices)
+        });
+
+        let result = challenge.solve(correct_input, 0);
+        assert!(result.is_ok(), "Solve should not error: {:?}", result);
+        assert!(result.unwrap(), "Should be correct");
+
+        // Test incorrect answer
+        let mut challenge2 = Challenge::new(&challenge_type, &ChallengeConfig::default());
+        let incorrect_input = ChallengeInput::ContextualChoice(ContextItemChoiceAnswers {
+            ids: vec![1, 0], // First wrong, second correct
+        });
+
+        let result = challenge2.solve(incorrect_input, 0);
+        assert!(result.is_ok(), "Solve should not error: {:?}", result);
+        assert!(!result.unwrap(), "Should be incorrect");
     }
 }

@@ -381,4 +381,51 @@ mod tests {
             _ => panic!("Invalid challenge result"),
         }
     }
+
+    #[test]
+    fn test_set_input_contextual_choice() {
+        let mut result = ChallengeResult::ContextualChoice(Vec::new());
+        let input = ChallengeInput::ContextualChoice(ContextItemChoiceAnswers { ids: vec![0, 1] });
+
+        let res = result.set_input(0, input);
+        assert!(res.is_ok());
+
+        match result {
+            ChallengeResult::ContextualChoice(answers) => {
+                assert_eq!(answers.len(), 1);
+                assert_eq!(answers[0].ids, vec![0, 1]);
+            }
+            _ => panic!("Expected ContextualChoice result"),
+        }
+    }
+
+    #[test]
+    fn test_set_input_fills_gaps_contextual_choice() {
+        let mut result = ChallengeResult::ContextualChoice(Vec::new());
+        let input = ChallengeInput::ContextualChoice(ContextItemChoiceAnswers { ids: vec![2] });
+
+        // Set at index 2, should fill 0 and 1 with defaults
+        let res = result.set_input(2, input);
+        assert!(res.is_ok());
+
+        match result {
+            ChallengeResult::ContextualChoice(answers) => {
+                assert_eq!(answers.len(), 3);
+                assert!(answers[0].ids.is_empty()); // Default
+                assert!(answers[1].ids.is_empty()); // Default
+                assert_eq!(answers[2].ids, vec![2]);
+            }
+            _ => panic!("Expected ContextualChoice result"),
+        }
+    }
+
+    #[test]
+    fn test_set_input_wrong_type_contextual_choice() {
+        let mut result = ChallengeResult::ContextualChoice(Vec::new());
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
+
+        let res = result.set_input(0, input);
+        assert!(res.is_err());
+        assert!(matches!(res.unwrap_err(), ChallengeError::InvalidInput(_)));
+    }
 }

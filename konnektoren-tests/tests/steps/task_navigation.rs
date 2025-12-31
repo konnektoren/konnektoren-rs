@@ -1,6 +1,10 @@
 use crate::BddWorld;
 use cucumber::{given, then, when};
-use konnektoren_core::challenges::task_pattern::TaskPattern;
+use konnektoren_core::challenges::{
+    Solvable,
+    contextual_choice::{Choice, ContextItem, ContextItemChoiceAnswers, ContextualChoice},
+    task_pattern::TaskPattern,
+};
 use konnektoren_core::commands::{ChallengeCommand, Command, CommandTrait};
 use konnektoren_core::prelude::*;
 
@@ -156,7 +160,58 @@ async fn tasks_should_be_completed(world: &mut BddWorld, expected_count: usize) 
                 results.len()
             );
         }
-        _ => panic!("Expected MultipleChoice result"),
+        ChallengeResult::ContextualChoice(results) => {
+            assert_eq!(
+                results.len(),
+                expected_count,
+                "Expected {} completed tasks, but got {}",
+                expected_count,
+                results.len()
+            );
+        }
+        ChallengeResult::GapFill(results) => {
+            assert_eq!(
+                results.len(),
+                expected_count,
+                "Expected {} completed tasks, but got {}",
+                expected_count,
+                results.len()
+            );
+        }
+        ChallengeResult::SortTable(results) => {
+            assert_eq!(
+                results.len(),
+                expected_count,
+                "Expected {} completed tasks, but got {}",
+                expected_count,
+                results.len()
+            );
+        }
+        ChallengeResult::Ordering(results) => {
+            assert_eq!(
+                results.len(),
+                expected_count,
+                "Expected {} completed tasks, but got {}",
+                expected_count,
+                results.len()
+            );
+        }
+        ChallengeResult::Informative => {
+            assert_eq!(0, expected_count, "Informative challenges don't have tasks");
+        }
+        ChallengeResult::Vocabulary => {
+            assert_eq!(
+                0, expected_count,
+                "Vocabulary challenges are always complete"
+            );
+        }
+        ChallengeResult::Custom(_) => {
+            // Custom challenges don't track individual task completion in the same way
+            assert_eq!(
+                0, expected_count,
+                "Custom challenges don't have tasks in the standard way"
+            );
+        }
     }
 }
 
@@ -454,4 +509,153 @@ async fn the_challenge_performance_should_be(world: &mut BddWorld, expected_perf
         "Expected performance {}%, but got {}%",
         expected_performance, actual_performance
     );
+}
+
+#[given(expr = "a contextual choice challenge with {int} items is loaded")]
+async fn a_contextual_choice_challenge_with_items(world: &mut BddWorld, item_count: usize) {
+    let mut items = Vec::new();
+
+    for i in 0..item_count {
+        items.push(ContextItem {
+            template: format!("Sentence {{0}} {{1}} example {}", i),
+            choices: vec![
+                Choice {
+                    id: 0,
+                    options: vec!["option1".to_string(), "option2".to_string()],
+                    correct_answer: "option1".to_string(),
+                },
+                Choice {
+                    id: 1,
+                    options: vec!["optionA".to_string(), "optionB".to_string()],
+                    correct_answer: "optionA".to_string(),
+                },
+            ],
+        });
+    }
+
+    let contextual_choice = ContextualChoice {
+        id: "test-cc".to_string(), // This is the challenge type ID
+        name: "Test Contextual Choice".to_string(),
+        description: "Test navigation".to_string(),
+        items,
+    };
+
+    let challenge_type = ChallengeType::ContextualChoice(contextual_choice);
+
+    // The challenge config ID must match the challenge type ID
+    let challenge_config = ChallengeConfig {
+        id: "contextual_test_config".to_string(),
+        name: "Contextual Test".to_string(),
+        description: "Test contextual challenge".to_string(),
+        challenge: "test-cc".to_string(), // This must match the challenge type ID
+        variant: None,
+        tasks: item_count.into(),
+        unlock_points: 0,
+        position: Some((0, 0)),
+        icon: None,
+    };
+
+    // Create factory and add the challenge type
+    let mut factory = ChallengeFactory::new();
+    factory.challenge_types.push(challenge_type.clone());
+
+    // IMPORTANT: Update the session's game factory too!
+    world.session.game_state.game.challenge_factory = factory.clone();
+
+    // Now create the challenge using the factory
+    let challenge = factory
+        .create_challenge(&challenge_config)
+        .expect("Failed to create challenge");
+
+    world.factory = Some(factory);
+    world.challenge = Some(challenge.clone());
+    world.challenge_type = challenge.challenge_type.clone();
+
+    // Update game state
+    world.session.game_state.challenge = challenge;
+    world.session.game_state.current_task_index = 0;
+
+    // Update the challenge config in the game path
+    let current_game_path_index = world.session.game_state.current_game_path;
+    let current_challenge_index = world.session.game_state.current_challenge_index;
+
+    world.session.game_state.game.game_paths[current_game_path_index].challenges
+        [current_challenge_index] = challenge_config;
+}
+
+#[when(expr = "the contextual choice task is solved correctly")]
+async fn the_contextual_choice_task_is_solved_correctly(world: &mut BddWorld) {
+    let current_index = world.session.game_state.current_task_index;
+
+    // Create correct input based on the challenge structure
+    let input = ChallengeInput::ContextualChoice(ContextItemChoiceAnswers {
+        ids: vec![0, 0], // First option from each choice (both correct)
+    });
+
+    // Use the solve method
+    match world
+        .session
+        .game_state
+        .challenge
+        .solve(input, current_index)
+    {
+        Ok(is_correct) => {
+            assert!(is_correct, "Answer should be correct");
+
+            // The solve method in challenge_command.rs handles incrementing task_index,
+            // but we need to use the command for that
+            let command = Command::Challenge(ChallengeCommand::NextTask);
+            let _ = command.execute(&mut world.session.game_state);
+        }
+        Err(e) => {
+            panic!("Failed to solve contextual choice task: {}", e);
+        }
+    }
+}
+
+#[then(expr = "task {int} should be answered correctly for contextual choice")]
+async fn task_n_should_be_answered_correctly_for_contextual_choice(
+    world: &mut BddWorld,
+    task_index: usize,
+) {
+    let challenge = &world.session.game_state.challenge;
+
+    match (&challenge.challenge_result, &challenge.challenge_type) {
+        (ChallengeResult::ContextualChoice(results), ChallengeType::ContextualChoice(cc)) => {
+            assert!(
+                task_index < results.len(),
+                "Task {} should be answered, but only {} tasks have been answered",
+                task_index,
+                results.len()
+            );
+
+            let answer = &results[task_index];
+            let item = &cc.items[task_index];
+
+            assert_eq!(
+                answer.ids.len(),
+                item.choices.len(),
+                "Answer should have same number of choices as item"
+            );
+
+            // Verify all choices are correct
+            for (i, (choice, &answer_id)) in item.choices.iter().zip(&answer.ids).enumerate() {
+                assert!(
+                    answer_id < choice.options.len(),
+                    "Answer id {} should be valid for choice {} (max {})",
+                    answer_id,
+                    i,
+                    choice.options.len() - 1
+                );
+
+                let selected_option = &choice.options[answer_id];
+                assert_eq!(
+                    selected_option, &choice.correct_answer,
+                    "Task {} choice {} should be answered correctly. Selected '{}', expected '{}'",
+                    task_index, i, selected_option, choice.correct_answer
+                );
+            }
+        }
+        _ => panic!("Expected ContextualChoice challenge type and result"),
+    }
 }

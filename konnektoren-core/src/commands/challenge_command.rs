@@ -5,7 +5,8 @@ use super::command_type::CommandType;
 use crate::challenges::Timed;
 use crate::challenges::error::ChallengeError;
 use crate::challenges::{
-    Challenge, ChallengeInput, ChallengeResult, ChallengeType, MultipleChoiceOption, Solvable,
+    Challenge, ChallengeInput, ChallengeResult, ChallengeType, ContextItemChoiceAnswers,
+    GapFillAnswer, MultipleChoiceOption, OrderingResult, Solvable, SortTableRow,
 };
 use crate::commands::error::{CommandError, Result};
 use crate::game::GamePath;
@@ -89,16 +90,45 @@ impl ChallengeCommand {
         // QUICKFIX: If current task wasn't answered, add a default answer to keep indices aligned
         let result_len = state.challenge.challenge_result.len();
         if result_len <= state.current_task_index {
-            // Add default answer (first option) for unanswered task
-            if let ChallengeType::MultipleChoice(ref mc) = state.challenge.challenge_type {
-                if let Some(first_option) = mc.options.first() {
-                    let default_input = ChallengeInput::MultipleChoice(MultipleChoiceOption {
-                        id: first_option.id,
-                        name: first_option.name.clone(),
-                    });
-                    let _ = state.challenge.challenge_result.add_input(default_input);
+            // Add default answer based on challenge type
+            let default_input = match &state.challenge.challenge_type {
+                ChallengeType::MultipleChoice(mc) => {
+                    if let Some(first_option) = mc.options.first() {
+                        ChallengeInput::MultipleChoice(MultipleChoiceOption {
+                            id: first_option.id,
+                            name: first_option.name.clone(),
+                        })
+                    } else {
+                        return Err(CommandError::ChallengeError(
+                            ChallengeError::InvalidChallengeType,
+                        ));
+                    }
                 }
-            }
+                ChallengeType::ContextualChoice(cc) => {
+                    if let Some(first_item) = cc.items.first() {
+                        // Create default answer with empty choices
+                        let ids = vec![0; first_item.choices.len()];
+                        ChallengeInput::ContextualChoice(ContextItemChoiceAnswers { ids })
+                    } else {
+                        return Err(CommandError::ChallengeError(
+                            ChallengeError::InvalidChallengeType,
+                        ));
+                    }
+                }
+                ChallengeType::GapFill(_) => ChallengeInput::GapFill(GapFillAnswer {
+                    question_index: state.current_task_index,
+                    answers: vec![],
+                }),
+                ChallengeType::SortTable(_) => ChallengeInput::SortTable(SortTableRow::default()),
+                ChallengeType::Ordering(_) => ChallengeInput::Ordering(OrderingResult::default()),
+                _ => {
+                    // For other types, don't add default input
+                    state.current_task_index += 1;
+                    return Ok(());
+                }
+            };
+
+            let _ = state.challenge.challenge_result.add_input(default_input);
         }
 
         state.current_task_index += 1;
