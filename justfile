@@ -4,15 +4,15 @@ default:
 
 # Core package commands
 core +COMMAND="build":
-    @just -f konnektoren-core/justfile {{COMMAND}}
+    @just -f konnektoren-core/justfile {{ COMMAND }}
 
 # Platform package commands
 platform +COMMAND="build":
-    @just -f konnektoren-platform/justfile {{COMMAND}}
+    @just -f konnektoren-platform/justfile {{ COMMAND }}
 
 # Tests package commands
 tests +COMMAND="test":
-    @just -f konnektoren-tests/justfile {{COMMAND}}
+    @just -f konnektoren-tests/justfile {{ COMMAND }}
 
 # Add this to run BDD tests specifically
 bdd:
@@ -46,7 +46,7 @@ docs-pdf:
 structurizr:
     docker run -it --rm -d \
       -p 8082:8080 \
-      -v {{justfile_directory()}}/docs:/usr/local/structurizr \
+      -v {{ justfile_directory() }}/docs:/usr/local/structurizr \
       --name structurizr-lite \
       structurizr/lite:latest
     @echo "Structurizr is starting at http://localhost:8082"
@@ -85,3 +85,6 @@ setup:
 
 # Pre-commit checks
 pre-commit: lint test
+
+tui:
+    cargo run -p konnektoren-tui
