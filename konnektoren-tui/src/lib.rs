@@ -11,5 +11,5 @@ mod tui;
 pub mod prelude {
     pub use crate::app::App;
     #[cfg(feature = "crossterm")]
-    pub use crate::tui::{init, restore, Tui};
+    pub use crate::tui::{Tui, init, restore};
 }

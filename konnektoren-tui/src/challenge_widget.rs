@@ -1,11 +1,15 @@
 use konnektoren_core::challenges::{Challenge, ChallengeType};
 use ratatui::{
-    prelude::*,
+    buffer::Buffer,
+    layout::{Constraint, Direction, Layout, Rect},
+    style::Stylize,
     symbols::border,
-    widgets::{block::Title, Block, Borders, Paragraph},
+    text::{Line, Text},
+    widgets::{Block, Paragraph, Widget},
 };
 
 use crate::{options_widget::OptionsWidget, results_widget::ResultsWidget};
+
 pub struct ChallengeWidget<'a> {
     pub challenge: &'a Challenge,
     pub show_help: bool,
@@ -21,26 +25,22 @@ impl Widget for ChallengeWidget<'_> {
                     .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
                     .split(area);
 
-                let title = Title::from(
-                    format!(
-                        " Question ({}/{})",
-                        self.current_question + 1,
-                        self.challenge.challenge_config.tasks
-                    )
-                    .bold(),
+                let title = format!(
+                    " Question ({}/{}) ",
+                    self.current_question + 1,
+                    self.challenge.challenge_config.tasks
                 );
 
-                let block = Block::default()
-                    .title(title.alignment(Alignment::Left))
-                    .borders(Borders::ALL)
+                let block = Block::bordered()
+                    .title(title.bold())
                     .border_set(border::ROUNDED);
 
                 let question = dataset.questions.get(self.current_question).unwrap();
                 let help = question.help.as_str();
 
-                let mut lines = vec![Line::from(vec![question.question.as_str().into()])];
+                let mut lines = vec![Line::from(question.question.as_str())];
                 if self.show_help {
-                    lines.push(Line::from(vec![help.into()]));
+                    lines.push(Line::from(help).dim());
                 }
 
                 let text = Text::from(lines);

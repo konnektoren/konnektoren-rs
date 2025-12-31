@@ -1,5 +1,5 @@
 #[cfg(feature = "crossterm")]
-use konnektoren_tui::prelude::{init, restore, App};
+use konnektoren_tui::prelude::{App, init, restore};
 
 #[cfg(feature = "crossterm")]
 fn main() -> Result<(), Box<dyn std::error::Error>> {

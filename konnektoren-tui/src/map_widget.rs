@@ -1,7 +1,9 @@
 use konnektoren_core::game::GamePath;
 use ratatui::{
     prelude::*,
-    widgets::{canvas::Line, canvas::*, Block},
+    style::Styled,
+    symbols::Marker,
+    widgets::{Block, canvas::Line, canvas::*},
 };
 
 pub struct MapWidget<'a> {

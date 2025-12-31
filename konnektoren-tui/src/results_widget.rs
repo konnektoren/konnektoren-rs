@@ -1,10 +1,10 @@
 use ratatui::{
     buffer::Buffer,
-    layout::{self, Alignment, Rect},
+    layout::{Constraint, Direction, Layout, Rect},
     style::Stylize,
     symbols::border,
     text::{Line, Text},
-    widgets::{block::Title, Block, Borders, Paragraph, Widget},
+    widgets::{Block, Paragraph, Widget},
 };
 
 use konnektoren_core::challenges::{Challenge, ChallengeResult, ChallengeType, Performance};
@@ -21,19 +21,13 @@ impl<'a> ResultsWidget<'a> {
 
 impl Widget for ResultsWidget<'_> {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        let layout = layout::Layout::default()
-            .direction(layout::Direction::Vertical)
-            .constraints(vec![
-                layout::Constraint::Percentage(20),
-                layout::Constraint::Percentage(80),
-            ])
+        let layout = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints(vec![Constraint::Percentage(20), Constraint::Percentage(80)])
             .split(area);
 
-        let title = Title::from(" Results ".bold());
-
-        let block = Block::default()
-            .title(title.alignment(Alignment::Left))
-            .borders(Borders::ALL)
+        let block = Block::bordered()
+            .title(" Results ".bold())
             .border_set(border::ROUNDED);
 
         let text: Text = match (
@@ -62,23 +56,17 @@ impl Widget for ResultsWidget<'_> {
         };
 
         let text = text.into_iter().rev().collect::<Vec<Line>>();
-
         Paragraph::new(text).block(block).render(layout[1], buf);
 
         let performance = self.challenge.performance(&self.challenge.challenge_result);
 
-        let title = Title::from(" Performance ".bold());
-
-        let block = Block::default()
-            .title(title.alignment(Alignment::Left))
-            .borders(Borders::ALL)
+        let perf_block = Block::bordered()
+            .title(" Performance ".bold())
             .border_set(border::ROUNDED);
 
-        let text = Text::from(vec![Line::from(vec![format!(
-            "Performance: {}",
-            performance
-        )
-        .into()])]);
-        Paragraph::new(text).block(block).render(layout[0], buf);
+        let perf_text = Text::from(vec![Line::from(format!("Performance: {}", performance))]);
+        Paragraph::new(perf_text)
+            .block(perf_block)
+            .render(layout[0], buf);
     }
 }

@@ -1,11 +1,11 @@
 use konnektoren_core::challenges::{Challenge, ChallengeType};
 use ratatui::{
     buffer::Buffer,
-    layout::{Alignment, Rect},
+    layout::Rect,
     style::Stylize,
     symbols::border,
     text::{Line, Text},
-    widgets::{block::Title, Block, Borders, Paragraph, Widget},
+    widgets::{Block, Paragraph, Widget},
 };
 
 pub struct OptionsWidget {
@@ -24,16 +24,14 @@ impl Widget for OptionsWidget {
     fn render(self, area: Rect, buf: &mut Buffer) {
         match self.challenge_type {
             ChallengeType::MultipleChoice(ref dataset) => {
-                let title = Title::from(" Options ".bold());
-
-                let block = Block::default()
-                    .title(title.alignment(Alignment::Left))
-                    .borders(Borders::ALL)
+                let block = Block::bordered()
+                    .title(" Options ".bold())
                     .border_set(border::ROUNDED);
 
-                let options = dataset.options.iter().map(|option| {
-                    Line::from(vec![format!("<{}> {}", option.id, option.name).into()])
-                });
+                let options = dataset
+                    .options
+                    .iter()
+                    .map(|option| Line::from(format!("<{}> {}", option.id, option.name)));
 
                 let text = Text::from(options.collect::<Vec<Line>>());
                 Paragraph::new(text).block(block).render(area, buf);
