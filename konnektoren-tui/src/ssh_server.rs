@@ -75,12 +75,18 @@ impl SshServer {
     }
 
     fn load_or_generate_key() -> russh::keys::PrivateKey {
-        let key_path = "ssh_host_key";
+        // Use /app/data if it exists (Docker), otherwise current directory
+        let key_dir = if std::path::Path::new("/app/data").exists() {
+            "/app/data"
+        } else {
+            "."
+        };
+        let key_path = format!("{}/ssh_host_key", key_dir);
 
         // Try to load existing key
-        if Path::new(key_path).exists() {
+        if Path::new(&key_path).exists() {
             info!("Loading existing SSH host key from {}", key_path);
-            match russh::keys::PrivateKey::read_openssh_file(Path::new(key_path)) {
+            match russh::keys::PrivateKey::read_openssh_file(Path::new(&key_path)) {
                 Ok(key) => return key,
                 Err(e) => {
                     log::warn!("Failed to load key, generating new one: {}", e);
@@ -94,7 +100,7 @@ impl SshServer {
             russh::keys::PrivateKey::random(&mut rand_core::OsRng, Algorithm::Ed25519).unwrap();
 
         // Save the key
-        if let Err(e) = key.write_openssh_file(Path::new(key_path), Default::default()) {
+        if let Err(e) = key.write_openssh_file(Path::new(&key_path), Default::default()) {
             log::warn!("Failed to save SSH host key: {}", e);
         } else {
             info!("SSH host key saved to {}", key_path);
