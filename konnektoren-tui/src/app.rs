@@ -28,6 +28,7 @@ use ratatui::{
 #[derive(Debug, Default)]
 pub struct App {
     title: String,
+    username: Option<String>,
     session: Session,
     show_map: bool,
     exit: bool,
@@ -37,8 +38,13 @@ impl App {
     pub fn new() -> Self {
         App {
             title: " Konnektoren ".into(),
+            username: None,
             ..Self::default()
         }
+    }
+
+    pub fn set_username(&mut self, username: String) {
+        self.username = Some(username);
     }
 
     #[cfg(feature = "crossterm")]
@@ -142,6 +148,12 @@ impl App {
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
+        let username_display = self
+            .username
+            .as_ref()
+            .map(|u| format!(" User: {} ", u))
+            .unwrap_or_else(|| " Konnektoren ".to_string());
+
         let instructions = Line::from(vec![
             " Previous ".into(),
             "<Left>".blue().bold(),
@@ -154,7 +166,7 @@ impl Widget for &App {
         ]);
 
         let block = Block::default()
-            .title(self.title.as_str().bold().into_centered_line())
+            .title(Line::from(username_display).bold().centered())
             .title_bottom(instructions.centered())
             .borders(Borders::ALL)
             .border_set(border::THICK);

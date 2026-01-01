@@ -2,10 +2,22 @@
 name = "konnektoren-tui"
 edition = { workspace = true }
 version = { workspace = true }
+default-run = "konnektoren-tui"
+
+[[bin]]
+name = "konnektoren-tui"
+path = "src/main.rs"
+required-features = ["crossterm"]
+
+[[bin]]
+name = "ssh-server"
+path = "src/bin/ssh-server.rs"
+required-features = ["ssh"]
 
 [features]
 default = ["crossterm"]
 crossterm = ["dep:crossterm", "ratatui/crossterm"]
+ssh = ["dep:russh", "dep:tokio", "ratatui/crossterm", "rand_core", "anyhow"]
 
 [dependencies]
 crossterm = { version = "0.29", optional = true }
@@ -13,3 +25,10 @@ ratatui = { version = "0.30", features = ["serde"], default-features = false }
 konnektoren-core = { path = "../konnektoren-core", default-features = false }
 thiserror = { workspace=true }
 log = { workspace=true }
+env_logger = "0.11"
+
+# SSH dependencies
+russh = { version = "0.56", optional = true }
+tokio = { version = "1", features = ["full"], optional = true }
+anyhow = { version = "1.0", optional = true }
+rand_core = { version = "0.6", optional = true }
