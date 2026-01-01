@@ -10,7 +10,7 @@ path = "src/main.rs"
 required-features = ["crossterm"]
 
 [[bin]]
-name = "ssh-server"
+name = "konnektoren-tui-ssh"
 path = "src/bin/ssh-server.rs"
 required-features = ["ssh"]
 

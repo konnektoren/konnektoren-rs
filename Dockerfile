@@ -1,5 +1,4 @@
-# Build stage
-FROM rust:1.91-bookworm as builder
+FROM rust:1.91-bookworm AS builder
 
 WORKDIR /app
 
@@ -7,6 +6,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libssl-dev \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy workspace manifest
@@ -28,10 +28,10 @@ RUN mkdir -p konnektoren-core/src && echo "pub fn dummy() {}" > konnektoren-core
     echo "fn main() {}" > konnektoren-tui/src/main.rs
 
 # Build dependencies (this layer will be cached)
-RUN cargo check --release -p konnektoren-tui --bin ssh-server --features ssh
+RUN cargo build --release -p konnektoren-tui --bin konnektoren-tui-ssh --features ssh || true
 
 # Remove dummy source files
-RUN rm -rf konnektoren-core/src konnektoren-platform/src konnektoren-tests/src konnektoren-tui/src
+RUN rm -rf konnektoren-core/src konnektoren-platform/src konnektoren-tests/src konnektoren-tests/tests konnektoren-tui/src
 
 # Copy actual source code
 COPY konnektoren-core ./konnektoren-core
@@ -40,10 +40,10 @@ COPY konnektoren-tests ./konnektoren-tests
 COPY konnektoren-tui ./konnektoren-tui
 
 # Build the application
-RUN cargo build --release -p konnektoren-tui --bin ssh-server --features ssh
+RUN cargo build --release -p konnektoren-tui --bin konnektoren-tui-ssh --features ssh
 
 # Runtime stage
-FROM debian:bookworm-slim
+FROM debian:bookworm-slim AS runtime
 
 WORKDIR /app
 
@@ -51,13 +51,21 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     netcat-openbsd \
+    libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the binary from builder
-COPY --from=builder /app/target/release/ssh-server /usr/local/bin/ssh-server
+COPY --from=builder /app/target/release/konnektoren-tui-ssh /usr/local/bin/konnektoren-tui-ssh
 
 # Create directory for SSH host key
 RUN mkdir -p /app/data
+
+# Create non-root user
+RUN useradd -m -u 1000 -s /bin/bash konnektoren && \
+    chown -R konnektoren:konnektoren /app
+
+# Switch to non-root user
+USER konnektoren
 
 # Expose SSH port
 EXPOSE 2222
@@ -65,5 +73,9 @@ EXPOSE 2222
 # Set environment variables
 ENV RUST_LOG=info
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD nc -z localhost 2222 || exit 1
+
 # Run the SSH server
-CMD ["/usr/local/bin/ssh-server"]
+CMD ["/usr/local/bin/konnektoren-tui-ssh"]

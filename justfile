@@ -89,5 +89,5 @@ pre-commit: lint test
 tui:
     cargo run -p konnektoren-tui
 
-ssh-server:
-    RUST_LOG=info cargo run -p konnektoren-tui --bin ssh-server --features="ssh"
+tui-ssh:
+    RUST_LOG=info cargo run -p konnektoren-tui --bin konnektoren-tui-ssh --features="ssh"
