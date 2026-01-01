@@ -15,8 +15,8 @@ services:
       - SSH_PORT=${SSH_PORT:-2222}
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2222"]
+      test: ["CMD-SHELL", "ss -ltn sport = :2222 | grep -q LISTEN"]
       interval: 30s
-      timeout: 10s
+      timeout: 5s
       retries: 3
       start_period: 10s

@@ -50,6 +50,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     netcat-openbsd \
+    iproute2 \
     libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
@@ -70,8 +71,8 @@ EXPOSE 2222
 ENV RUST_LOG=info
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD nc -z localhost 2222 || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD sh -c 'ss -ltn sport = :2222 | grep -q LISTEN'
 
 # Run the SSH server
 CMD ["/usr/local/bin/konnektoren-tui-ssh"]
