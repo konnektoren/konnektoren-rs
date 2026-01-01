@@ -28,7 +28,7 @@ RUN mkdir -p konnektoren-core/src && echo "pub fn dummy() {}" > konnektoren-core
     echo "fn main() {}" > konnektoren-tui/src/main.rs
 
 # Build dependencies (this layer will be cached)
-RUN cargo build --release -p konnektoren-tui --bin konnektoren-tui-ssh --features ssh || true
+RUN cargo check --release -p konnektoren-tui --bin konnektoren-tui-ssh --features ssh
 
 # Remove dummy source files
 RUN rm -rf konnektoren-core/src konnektoren-platform/src konnektoren-tests/src konnektoren-tests/tests konnektoren-tui/src
@@ -47,17 +47,14 @@ FROM debian:bookworm-slim AS runtime
 
 WORKDIR /app
 
-# Install runtime dependencies
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     netcat-openbsd \
     libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the binary from builder
 COPY --from=builder /app/target/release/konnektoren-tui-ssh /usr/local/bin/konnektoren-tui-ssh
 
-# Create directory for SSH host key
 RUN mkdir -p /app/data
 
 # Create non-root user
@@ -70,7 +67,6 @@ USER konnektoren
 # Expose SSH port
 EXPOSE 2222
 
-# Set environment variables
 ENV RUST_LOG=info
 
 # Health check
