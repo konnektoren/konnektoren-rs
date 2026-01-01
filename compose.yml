@@ -1,0 +1,22 @@
+services:
+  konnektoren-ssh:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: konnektoren-ssh-server
+    ports:
+      - "2222:2222"
+    volumes:
+      # Persist SSH host key
+      - ./data:/app/data
+    environment:
+      - RUST_LOG=info
+      - SSH_HOST=${SSH_HOST:-0.0.0.0}
+      - SSH_PORT=${SSH_PORT:-2222}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2222"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

@@ -1,0 +1,8 @@
+target/
+.git/
+.gitignore
+*.md
+Dockerfile
+docker-compose.yml
+.env
+ssh_host_key

@@ -90,4 +90,4 @@ tui:
     cargo run -p konnektoren-tui
 
 ssh-server:
-    cargo run -p konnektoren-tui --bin ssh-server --features="ssh"
+    RUST_LOG=info cargo run -p konnektoren-tui --bin ssh-server --features="ssh"
