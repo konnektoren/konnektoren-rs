@@ -88,3 +88,6 @@ pre-commit: lint test
 
 tui:
     cargo run -p konnektoren-tui
+
+ssh-server:
+    cargo run -p konnektoren-tui --bin ssh-server --features="ssh"
