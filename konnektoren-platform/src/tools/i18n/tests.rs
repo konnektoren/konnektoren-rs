@@ -327,15 +327,11 @@ fn i18n_patterns_macro_escapes_dot() {
 #[test]
 fn with_patterns_scans_custom_calling_convention() {
     let dir = tempfile::tempdir().unwrap();
-    fs::write(
-        dir.path().join("lib.rs"),
-        r#"config.t("CustomKey")"#,
-    )
-    .unwrap();
+    fs::write(dir.path().join("lib.rs"), r#"config.t("CustomKey")"#).unwrap();
 
     let config = make_config(&[("en", json!({"CustomKey": "Custom"}))]);
-    let report = I18nChecker::with_patterns(config, i18n_patterns!["config.t"])
-        .check_directory(dir.path());
+    let report =
+        I18nChecker::with_patterns(config, i18n_patterns!["config.t"]).check_directory(dir.path());
 
     assert!(report.source_keys.contains("CustomKey"));
 }
@@ -350,9 +346,8 @@ fn with_patterns_multiple_conventions_finds_all_keys() {
     .unwrap();
 
     let config = make_config(&[("en", json!({"KeyA": "A", "KeyB": "B"}))]);
-    let report =
-        I18nChecker::with_patterns(config, i18n_patterns!["i18n.t", "config.translate"])
-            .check_directory(dir.path());
+    let report = I18nChecker::with_patterns(config, i18n_patterns!["i18n.t", "config.translate"])
+        .check_directory(dir.path());
 
     assert!(report.source_keys.contains("KeyA"));
     assert!(report.source_keys.contains("KeyB"));
@@ -366,8 +361,7 @@ fn with_patterns_does_not_pick_up_default_pattern() {
 
     let config = make_config(&[("en", json!({}))]);
     let report =
-        I18nChecker::with_patterns(config, i18n_patterns!["config.t"])
-            .check_directory(dir.path());
+        I18nChecker::with_patterns(config, i18n_patterns!["config.t"]).check_directory(dir.path());
 
     assert!(!report.source_keys.contains("ShouldNotAppear"));
 }
@@ -378,10 +372,10 @@ fn with_patterns_does_not_pick_up_default_pattern() {
 fn platform_src_has_no_missing_translations() {
     let src = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src");
 
-    let config = I18nConfig::with_assets(
-        CombinedTranslationAsset::<I18nAssets>::new("i18n.yml"),
-    );
-    let report = I18nChecker::new(config).exclude_tests().check_directory(&src);
+    let config = I18nConfig::with_assets(CombinedTranslationAsset::<I18nAssets>::new("i18n.yml"));
+    let report = I18nChecker::new(config)
+        .exclude_tests()
+        .check_directory(&src);
 
     if report.has_errors {
         eprintln!("{}", report.as_report().expect("report format failed"));

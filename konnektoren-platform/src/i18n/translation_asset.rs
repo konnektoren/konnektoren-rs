@@ -1,9 +1,15 @@
+use super::error::AssetLoadError;
 use super::language::Language;
 use serde_json::{Value, json};
 use std::collections::HashMap;
 
 pub trait TranslationAsset {
     fn load_translations(&self) -> HashMap<String, Value>;
+
+    /// Like `load_translations`, but surfaces errors instead of silently returning empty data.
+    fn try_load_translations(&self) -> Result<HashMap<String, Value>, AssetLoadError> {
+        Ok(self.load_translations())
+    }
 }
 
 // Implementation for embedded JSON files
@@ -30,39 +36,38 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for JsonTranslationAsset<T> {
         let mut translations: HashMap<String, serde_json::Map<String, serde_json::Value>> =
             HashMap::new();
 
-        // Collect all files in the embedded folder
         for file in T::iter() {
             let filename = file.as_ref();
 
-            // Try to extract the language code from the filename
             // Accepts: de.json, level_a1_de.json, wortschatz_a1_begruessung_de.json, etc.
             if let Some(lang) = filename.strip_suffix(".json") {
-                // Try to match "de" or "level_a1_de"
                 let parts: Vec<&str> = lang.split('_').collect();
                 let lang_code = if parts.len() == 1 {
-                    // de
                     parts[0]
                 } else {
-                    // level_a1_de -> de
                     parts.last().copied().unwrap_or(lang)
                 };
 
-                // Only process if it's a known language code
                 if Language::builtin().iter().any(|l| l.code() == lang_code)
                     && let Some(content) = T::get(filename)
-                        && let Ok(json) = serde_json::from_slice::<
-                            serde_json::Map<String, serde_json::Value>,
-                        >(&content.data)
-                        {
+                {
+                    match serde_json::from_slice::<serde_json::Map<String, serde_json::Value>>(
+                        &content.data,
+                    ) {
+                        Ok(json) => {
                             translations
                                 .entry(lang_code.to_string())
                                 .and_modify(|existing| existing.extend(json.clone()))
                                 .or_insert(json);
                         }
+                        Err(e) => {
+                            log::error!("skipping '{}': JSON parse error: {}", filename, e);
+                        }
+                    }
+                }
             }
         }
 
-        // Convert to HashMap<String, Value>
         translations
             .into_iter()
             .map(|(k, v)| (k, serde_json::Value::Object(v)))
@@ -84,48 +89,73 @@ impl<T: rust_embed::RustEmbed> YamlTranslationAsset<T> {
         }
     }
 
-    fn load_yaml(&self) -> Option<HashMap<String, Value>> {
-        T::get(&self.filename).and_then(|file| {
-            String::from_utf8(file.data.to_vec())
-                .ok()
-                .and_then(|content| {
-                    serde_yaml::from_str::<serde_yaml::Value>(&content)
-                        .ok()
-                        .and_then(|yaml| {
-                            yaml.get("i18n").map(|i18n| {
-                                let mut translations = HashMap::new();
-                                if let Some(mapping) = i18n.as_mapping() {
-                                    for (key, translations_map) in mapping {
-                                        let key = key.as_str().unwrap_or_default();
-                                        if let Some(trans_map) = translations_map.as_mapping() {
-                                            for (lang, trans) in trans_map {
-                                                let lang = lang.as_str().unwrap_or_default();
-                                                let trans = trans.as_str().unwrap_or_default();
+    fn load_yaml(&self) -> Result<HashMap<String, Value>, AssetLoadError> {
+        let file = T::get(&self.filename)
+            .ok_or_else(|| AssetLoadError::NotFound(self.filename.clone()))?;
 
-                                                translations
-                                                    .entry(lang.to_string())
-                                                    .or_insert_with(|| json!({}))
-                                                    .as_object_mut()
-                                                    .unwrap()
-                                                    .insert(
-                                                        key.to_string(),
-                                                        Value::String(trans.to_string()),
-                                                    );
-                                            }
-                                        }
-                                    }
-                                }
-                                translations
-                            })
-                        })
-                })
-        })
+        let content =
+            String::from_utf8(file.data.to_vec()).map_err(|e| AssetLoadError::Utf8Error {
+                file: self.filename.clone(),
+                source: e,
+            })?;
+
+        let yaml = serde_yaml::from_str::<serde_yaml::Value>(&content).map_err(|e| {
+            AssetLoadError::YamlError {
+                file: self.filename.clone(),
+                source: e,
+            }
+        })?;
+
+        let i18n = yaml
+            .get("i18n")
+            .ok_or_else(|| AssetLoadError::InvalidStructure {
+                file: self.filename.clone(),
+                detail: "missing top-level 'i18n' key".into(),
+            })?;
+
+        let mapping = i18n
+            .as_mapping()
+            .ok_or_else(|| AssetLoadError::InvalidStructure {
+                file: self.filename.clone(),
+                detail: "'i18n' value is not a mapping".into(),
+            })?;
+
+        let mut translations: HashMap<String, Value> = HashMap::new();
+        for (key, translations_map) in mapping {
+            let key = key.as_str().unwrap_or_default();
+            if let Some(trans_map) = translations_map.as_mapping() {
+                for (lang, trans) in trans_map {
+                    let lang = lang.as_str().unwrap_or_default();
+                    let trans = trans.as_str().unwrap_or_default();
+                    if let Some(obj) = translations
+                        .entry(lang.to_string())
+                        .or_insert_with(|| json!({}))
+                        .as_object_mut()
+                    {
+                        obj.insert(key.to_string(), Value::String(trans.to_string()));
+                    }
+                }
+            }
+        }
+
+        Ok(translations)
     }
 }
 
 impl<T: rust_embed::RustEmbed> TranslationAsset for YamlTranslationAsset<T> {
     fn load_translations(&self) -> HashMap<String, Value> {
-        self.load_yaml().unwrap_or_default()
+        match self.load_yaml() {
+            Ok(t) => t,
+            Err(AssetLoadError::NotFound(_)) => HashMap::new(),
+            Err(e) => {
+                log::warn!("{}", e);
+                HashMap::new()
+            }
+        }
+    }
+
+    fn try_load_translations(&self) -> Result<HashMap<String, Value>, AssetLoadError> {
+        self.load_yaml()
     }
 }
 
@@ -148,17 +178,24 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for CombinedTranslationAsset<T> 
     fn load_translations(&self) -> HashMap<String, Value> {
         let mut translations = self.json_loader.load_translations();
 
-        if let Some(yaml_translations) = self.yaml_loader.load_yaml() {
-            for (lang, trans) in yaml_translations {
-                translations
-                    .entry(lang)
-                    .and_modify(|e| {
-                        if let Some(obj) = e.as_object_mut()
-                            && let Some(new_obj) = trans.as_object() {
+        match self.yaml_loader.load_yaml() {
+            Ok(yaml_translations) => {
+                for (lang, trans) in yaml_translations {
+                    translations
+                        .entry(lang)
+                        .and_modify(|e| {
+                            if let Some(obj) = e.as_object_mut()
+                                && let Some(new_obj) = trans.as_object()
+                            {
                                 obj.extend(new_obj.clone());
                             }
-                    })
-                    .or_insert(trans);
+                        })
+                        .or_insert(trans);
+                }
+            }
+            Err(AssetLoadError::NotFound(_)) => {}
+            Err(e) => {
+                log::error!("{}", e);
             }
         }
 
@@ -195,31 +232,34 @@ mod tests {
     }
 
     #[test]
+    fn test_yaml_try_load_ok() {
+        let asset = YamlTranslationAsset::<I18nAssets>::new("i18n.yml");
+        let result = asset.try_load_translations();
+        assert!(result.is_ok());
+        let translations = result.unwrap();
+        assert_eq!(translations["en"]["Description"], "Description");
+    }
+
+    #[test]
+    fn test_yaml_try_load_missing_file() {
+        let asset = YamlTranslationAsset::<I18nAssets>::new("non_existent.yml");
+        let result = asset.try_load_translations();
+        assert!(matches!(result, Err(AssetLoadError::NotFound(_))));
+    }
+
+    #[test]
     fn test_combined_asset_loading() {
         let asset = CombinedTranslationAsset::<I18nAssets>::new("i18n.yml");
         let translations = asset.load_translations();
 
-        // Test JSON translations
         assert!(translations.contains_key("en"));
         assert!(translations.contains_key("de"));
         assert_eq!(translations["en"]["Language"], "Language");
-
-        // Test YAML translations
         assert_eq!(translations["en"]["Description"], "Description");
 
-        // Test that both formats are merged correctly
-        assert!(
-            translations["en"]
-                .as_object()
-                .unwrap()
-                .contains_key("Language")
-        );
-        assert!(
-            translations["en"]
-                .as_object()
-                .unwrap()
-                .contains_key("Description")
-        );
+        let en = translations["en"].as_object().unwrap();
+        assert!(en.contains_key("Language"));
+        assert!(en.contains_key("Description"));
     }
 
     #[test]
@@ -237,10 +277,8 @@ mod tests {
         let asset = CombinedTranslationAsset::<I18nAssets>::new("i18n.yml");
         let translations = asset.load_translations();
 
-        // Test that YAML translations don't override JSON translations
         assert_eq!(translations["en"]["Language"], "Language");
 
-        // Test that both sources contribute to the final translations
         let en_trans = translations["en"].as_object().unwrap();
         assert!(en_trans.contains_key("Language")); // From JSON
         assert!(en_trans.contains_key("Description")); // From YAML
@@ -248,15 +286,12 @@ mod tests {
 
     #[test]
     fn test_json_asset_with_invalid_json() {
-        // Simulate a RustEmbed with an invalid JSON file
         #[derive(rust_embed::RustEmbed)]
         #[folder = "$CARGO_MANIFEST_DIR/assets/i18n/"]
         struct BadAssets;
 
-        // You'd need to add a file like "bad.json" with invalid content to assets/i18n for this test.
         let asset = JsonTranslationAsset::<BadAssets>::new();
         let translations = asset.load_translations();
-        // Should not panic, and should not include "bad" in the translations
         assert!(!translations.contains_key("bad"));
     }
 
@@ -266,10 +301,8 @@ mod tests {
         #[folder = "$CARGO_MANIFEST_DIR/assets/i18n/"]
         struct BadAssets;
 
-        // Add a file "bad.yml" with invalid YAML for this test.
         let asset = YamlTranslationAsset::<BadAssets>::new("bad.yml");
         let translations = asset.load_translations();
-        // Should not panic, and should be empty
         assert!(translations.is_empty());
     }
 }

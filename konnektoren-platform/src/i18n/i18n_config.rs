@@ -292,7 +292,10 @@ mod tests {
     #[test]
     fn test_try_t_with_lang_returns_none_when_missing() {
         let i18n = create_test_config();
-        assert_eq!(i18n.try_t_with_lang("NonExistent", &Language::from("de")), None);
+        assert_eq!(
+            i18n.try_t_with_lang("NonExistent", &Language::from("de")),
+            None
+        );
     }
 
     #[test]

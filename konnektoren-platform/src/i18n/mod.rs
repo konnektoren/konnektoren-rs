@@ -1,8 +1,10 @@
+pub mod error;
 pub mod i18n_config;
 pub mod language;
 pub mod translation;
 pub mod translation_asset;
 
+pub use error::AssetLoadError;
 pub use i18n_config::I18nConfig;
 pub use language::Language;
 pub use translation::Translation;

@@ -78,29 +78,30 @@ impl I18nReportFormatter for I18nHumanFormatter {
             writeln!(out, "-------------------").map_err(I18nReportError::FmtError)?;
             for lang in crate::i18n::Language::builtin() {
                 if let Some(missing) = report.missing_translations.get(lang.code())
-                    && !missing.is_empty() {
-                        writeln!(
-                            out,
-                            "{} ({}) - {} missing:",
-                            lang.native_name(),
-                            lang.code(),
-                            missing.len()
-                        )
-                        .map_err(I18nReportError::FmtError)?;
-                        for key in missing {
-                            if let Some(en_trans) = report
-                                .translations
-                                .get("en")
-                                .and_then(|t| t.get(key))
-                                .and_then(|v| v.as_str())
-                            {
-                                writeln!(out, "  - {}: \"{}\"", key, en_trans)
-                                    .map_err(I18nReportError::FmtError)?;
-                            } else {
-                                writeln!(out, "  - {}", key).map_err(I18nReportError::FmtError)?;
-                            }
+                    && !missing.is_empty()
+                {
+                    writeln!(
+                        out,
+                        "{} ({}) - {} missing:",
+                        lang.native_name(),
+                        lang.code(),
+                        missing.len()
+                    )
+                    .map_err(I18nReportError::FmtError)?;
+                    for key in missing {
+                        if let Some(en_trans) = report
+                            .translations
+                            .get("en")
+                            .and_then(|t| t.get(key))
+                            .and_then(|v| v.as_str())
+                        {
+                            writeln!(out, "  - {}: \"{}\"", key, en_trans)
+                                .map_err(I18nReportError::FmtError)?;
+                        } else {
+                            writeln!(out, "  - {}", key).map_err(I18nReportError::FmtError)?;
                         }
                     }
+                }
             }
         }
 

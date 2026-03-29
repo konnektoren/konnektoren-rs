@@ -128,9 +128,10 @@ impl I18nChecker {
             }
             if self.skip_test_files
                 && let Some(name) = path.file_name().and_then(|n| n.to_str())
-                    && (name == "tests.rs" || name.ends_with("_test.rs")) {
-                        continue;
-                    }
+                && (name == "tests.rs" || name.ends_with("_test.rs"))
+            {
+                continue;
+            }
             if let Ok(content) = std::fs::read_to_string(path) {
                 let effective = if self.skip_test_files {
                     Self::strip_test_blocks(&content)
@@ -194,9 +195,10 @@ impl I18nChecker {
         for lang in Language::builtin() {
             let lang_code = lang.code().to_string();
             if let Some(translations) = self.config.translations.get(&lang_code)
-                && let Some(obj) = translations.as_object() {
-                    translation_keys.insert(lang_code, obj.keys().cloned().collect());
-                }
+                && let Some(obj) = translations.as_object()
+            {
+                translation_keys.insert(lang_code, obj.keys().cloned().collect());
+            }
         }
         translation_keys
     }
