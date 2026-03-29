@@ -123,30 +123,29 @@ impl Timed for PerformanceRecord {
     }
 }
 
-impl PartialOrd for PerformanceRecord {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+impl Ord for PerformanceRecord {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         match other
             .performance_percentage
             .cmp(&self.performance_percentage)
         {
-            std::cmp::Ordering::Equal => Some(
-                self.elapsed_time()
-                    .and_then(|self_elapsed| {
-                        other
-                            .elapsed_time()
-                            .map(|other_elapsed| self_elapsed.cmp(&other_elapsed))
-                    })
-                    .map(|time_ord| time_ord.then_with(|| other.date.cmp(&self.date)))
-                    .unwrap_or(std::cmp::Ordering::Equal),
-            ),
-            other => Some(other),
+            std::cmp::Ordering::Equal => self
+                .elapsed_time()
+                .and_then(|self_elapsed| {
+                    other
+                        .elapsed_time()
+                        .map(|other_elapsed| self_elapsed.cmp(&other_elapsed))
+                })
+                .map(|time_ord| time_ord.then_with(|| other.date.cmp(&self.date)))
+                .unwrap_or(std::cmp::Ordering::Equal),
+            other => other,
         }
     }
 }
 
-impl Ord for PerformanceRecord {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.partial_cmp(other).unwrap()
+impl PartialOrd for PerformanceRecord {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 

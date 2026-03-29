@@ -22,28 +22,28 @@ impl Trend {
     }
 }
 
-impl PartialOrd for Trend {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+impl Ord for Trend {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         match (self, other) {
             // Improving is greater than everything except itself
-            (Trend::Improving, Trend::Improving) => Some(std::cmp::Ordering::Equal),
-            (Trend::Improving, _) => Some(std::cmp::Ordering::Greater),
+            (Trend::Improving, Trend::Improving) => std::cmp::Ordering::Equal,
+            (Trend::Improving, _) => std::cmp::Ordering::Greater,
 
             // Stable is less than Improving, greater than Declining
-            (Trend::Stable, Trend::Improving) => Some(std::cmp::Ordering::Less),
-            (Trend::Stable, Trend::Stable) => Some(std::cmp::Ordering::Equal),
-            (Trend::Stable, Trend::Declining) => Some(std::cmp::Ordering::Greater),
+            (Trend::Stable, Trend::Improving) => std::cmp::Ordering::Less,
+            (Trend::Stable, Trend::Stable) => std::cmp::Ordering::Equal,
+            (Trend::Stable, Trend::Declining) => std::cmp::Ordering::Greater,
 
             // Declining is less than everything except itself
-            (Trend::Declining, Trend::Declining) => Some(std::cmp::Ordering::Equal),
-            (Trend::Declining, _) => Some(std::cmp::Ordering::Less),
+            (Trend::Declining, Trend::Declining) => std::cmp::Ordering::Equal,
+            (Trend::Declining, _) => std::cmp::Ordering::Less,
         }
     }
 }
 
-impl Ord for Trend {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.partial_cmp(other).unwrap()
+impl PartialOrd for Trend {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 
