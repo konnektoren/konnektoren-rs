@@ -44,6 +44,7 @@ impl I18nReport {
 pub struct I18nChecker {
     config: I18nConfig,
     source_patterns: Vec<Regex>,
+    skip_test_files: bool,
 }
 
 /// Build a `Vec<Regex>` that matches `fn_name("key")` for each given name.
@@ -72,6 +73,7 @@ impl I18nChecker {
         Self {
             config,
             source_patterns: vec![SOURCE_PATTERN.clone()],
+            skip_test_files: false,
         }
     }
 
@@ -81,7 +83,14 @@ impl I18nChecker {
         Self {
             config,
             source_patterns: patterns,
+            skip_test_files: false,
         }
+    }
+
+    /// Skip files named `tests.rs` or ending in `_test.rs` during scanning.
+    pub fn exclude_tests(mut self) -> Self {
+        self.skip_test_files = true;
+        self
     }
 
     pub fn check_directory<P: AsRef<Path>>(&self, dir: P) -> I18nReport {
@@ -113,16 +122,71 @@ impl I18nChecker {
                     continue;
                 }
             };
-            if entry.path().extension().is_some_and(|ext| ext == "rs")
-                && let Ok(content) = std::fs::read_to_string(entry.path()) {
-                    for pattern in &self.source_patterns {
-                        for cap in pattern.captures_iter(&content) {
-                            keys.insert(cap[1].to_string());
+            let path = entry.path();
+            if path.extension().is_none_or(|ext| ext != "rs") {
+                continue;
+            }
+            if self.skip_test_files
+                && let Some(name) = path.file_name().and_then(|n| n.to_str())
+                    && (name == "tests.rs" || name.ends_with("_test.rs")) {
+                        continue;
+                    }
+            if let Ok(content) = std::fs::read_to_string(path) {
+                let effective = if self.skip_test_files {
+                    Self::strip_test_blocks(&content)
+                } else {
+                    content
+                };
+                for pattern in &self.source_patterns {
+                    for cap in pattern.captures_iter(&effective) {
+                        keys.insert(cap[1].to_string());
+                    }
+                }
+            }
+        }
+        keys
+    }
+
+    /// Remove `#[cfg(test)]` blocks from source content so that test-only
+    /// translation keys are not treated as production keys.
+    fn strip_test_blocks(content: &str) -> String {
+        let lines: Vec<&str> = content.lines().collect();
+        let mut result = String::with_capacity(content.len());
+        let mut i = 0;
+
+        while i < lines.len() {
+            let trimmed = lines[i].trim();
+            if trimmed.starts_with("#[cfg(test)]") {
+                // Skip this attribute line and the block that follows.
+                i += 1;
+                // Skip blank lines between the attribute and the block opener.
+                while i < lines.len() && lines[i].trim().is_empty() {
+                    i += 1;
+                }
+                // Consume lines until the cfg(test) block is fully closed.
+                if i < lines.len() && lines[i].contains('{') {
+                    let mut depth: i32 = 0;
+                    while i < lines.len() {
+                        for c in lines[i].chars() {
+                            match c {
+                                '{' => depth += 1,
+                                '}' => depth -= 1,
+                                _ => {}
+                            }
+                        }
+                        i += 1;
+                        if depth <= 0 {
+                            break;
                         }
                     }
                 }
+            } else {
+                result.push_str(lines[i]);
+                result.push('\n');
+                i += 1;
+            }
         }
-        keys
+        result
     }
 
     fn collect_translation_keys(&self) -> HashMap<String, HashSet<String>> {

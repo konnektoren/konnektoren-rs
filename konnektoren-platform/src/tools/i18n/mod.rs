@@ -6,7 +6,6 @@ mod report_format;
 mod tests;
 
 pub use checker::{I18nChecker, I18nReport};
-pub use crate::i18n_patterns;
 pub use error::I18nReportError;
 pub use report::LanguageStats;
 pub use report_format::{

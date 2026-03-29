@@ -1,5 +1,6 @@
 use super::*;
-use crate::i18n::{I18nConfig, Language};
+use crate::i18n::{CombinedTranslationAsset, I18nAssets, I18nConfig, Language};
+use crate::i18n_patterns;
 
 use serde_json::json;
 use std::collections::{HashMap, HashSet};
@@ -369,6 +370,23 @@ fn with_patterns_does_not_pick_up_default_pattern() {
             .check_directory(dir.path());
 
     assert!(!report.source_keys.contains("ShouldNotAppear"));
+}
+
+// --- Self-coverage integration test ---
+
+#[test]
+fn platform_src_has_no_missing_translations() {
+    let src = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src");
+
+    let config = I18nConfig::with_assets(
+        CombinedTranslationAsset::<I18nAssets>::new("i18n.yml"),
+    );
+    let report = I18nChecker::new(config).exclude_tests().check_directory(&src);
+
+    if report.has_errors {
+        eprintln!("{}", report.as_report().expect("report format failed"));
+        panic!("missing translations in konnektoren-platform/src — see report above");
+    }
 }
 
 #[test]
