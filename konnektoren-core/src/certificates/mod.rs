@@ -15,9 +15,8 @@ pub fn keypair_from_static_str() -> (SigningKey, VerifyingKey) {
     hasher.update(option_env!("SIGNATURE_PRIVATE_KEY").unwrap_or_default());
     let result = hasher.finalize();
 
-    let seed: [u8; 32] = result[..]
-        .try_into()
-        .expect("Hash output size does not match ed25519 seed size");
+    // Sha256 always produces 32 bytes; ed25519 seed is always 32 bytes — infallible.
+    let seed: [u8; 32] = result.into();
 
     let signing_key = SigningKey::from_bytes(&seed);
     let verify_key = signing_key.verifying_key();

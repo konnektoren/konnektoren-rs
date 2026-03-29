@@ -103,7 +103,7 @@ pub fn create_certificate(
     // Generate and draw identicon
     let identicon_image = {
         let data: Vec<u8> =
-            generate_png(certificate_data.to_base64().as_bytes(), 90).map_err(|e| {
+            generate_png(certificate_data.to_base64()?.as_bytes(), 90).map_err(|e| {
                 CertificateError::ImageProcessingError(format!(
                     "Failed to generate identicon: {}",
                     e

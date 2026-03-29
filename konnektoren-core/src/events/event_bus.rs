@@ -9,7 +9,7 @@ type EventHandler = Arc<dyn Fn(Event) + Send + Sync>;
 
 #[derive(Default, Clone)]
 pub struct EventBus {
-    pub listeners: Arc<Mutex<HashMap<EventType, Vec<EventHandler>>>>,
+    listeners: Arc<Mutex<HashMap<EventType, Vec<EventHandler>>>>,
 }
 
 impl EventBus {
@@ -21,15 +21,29 @@ impl EventBus {
     where
         F: Fn(Event) + Send + Sync + 'static,
     {
-        let mut listeners = self.listeners.lock().unwrap();
+        let mut listeners = self
+            .listeners
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         listeners
             .entry(event_type)
             .or_default()
             .push(Arc::new(callback));
     }
 
+    /// Returns the number of event types with registered listeners.
+    pub fn listener_count(&self) -> usize {
+        self.listeners
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .len()
+    }
+
     pub fn publish(&self, event: Event) {
-        let listeners = self.listeners.lock().unwrap();
+        let listeners = self
+            .listeners
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         if let Some(handlers) = listeners.get(&event.get_type()) {
             for handler in handlers {
                 handler(event.clone());

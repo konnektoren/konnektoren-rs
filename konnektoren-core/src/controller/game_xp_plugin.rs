@@ -48,9 +48,10 @@ impl ControllerPlugin for GameXpPlugin {
             .command_bus()
             .subscribe(CommandType::Challenge, move |command| {
                 if let Command::Challenge(ChallengeCommand::Finish(Some(result))) = command
-                    && let Err(e) = Self::update_game_xp(game_controller_clone.clone(), &result) {
-                        log::error!("Error updating game XP: {:?}", e);
-                    }
+                    && let Err(e) = Self::update_game_xp(game_controller_clone.clone(), &result)
+                {
+                    log::error!("Error updating game XP: {:?}", e);
+                }
             });
 
         Ok(())

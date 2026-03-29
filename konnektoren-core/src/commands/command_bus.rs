@@ -6,7 +6,7 @@ type CommandHandler = Arc<dyn Fn(Command) + Send + Sync>;
 
 #[derive(Default, Clone)]
 pub struct CommandBus {
-    pub listeners: Arc<Mutex<HashMap<CommandType, Vec<CommandHandler>>>>,
+    listeners: Arc<Mutex<HashMap<CommandType, Vec<CommandHandler>>>>,
 }
 
 impl CommandBus {
@@ -18,15 +18,29 @@ impl CommandBus {
     where
         F: Fn(Command) + Send + Sync + 'static,
     {
-        let mut listeners = self.listeners.lock().unwrap();
+        let mut listeners = self
+            .listeners
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         listeners
             .entry(command_type)
             .or_default()
             .push(Arc::new(callback));
     }
 
+    /// Returns the number of command types with registered listeners.
+    pub fn listener_count(&self) -> usize {
+        self.listeners
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .len()
+    }
+
     pub fn publish(&self, command: Command) {
-        let listeners = self.listeners.lock().unwrap();
+        let listeners = self
+            .listeners
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         if let Some(handlers) = listeners.get(&command.get_type()) {
             for handler in handlers {
                 handler(command.clone());

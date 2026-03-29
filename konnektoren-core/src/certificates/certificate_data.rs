@@ -52,27 +52,23 @@ impl CertificateData {
         }
     }
 
-    pub fn to_sha256(&self) -> Vec<u8> {
-        let data = self.to_base64();
-
+    pub fn to_sha256(&self) -> Result<Vec<u8>> {
+        let data = self.to_base64()?;
         let mut sha256 = Sha256::new();
         sha256.update(data);
-        format!("{:X}", sha256.finalize()).into_bytes()
+        Ok(format!("{:X}", sha256.finalize()).into_bytes())
     }
 
-    pub fn to_base64(&self) -> String {
+    pub fn to_base64(&self) -> Result<String> {
         let mut buf = Vec::new();
-
         self.serialize(&mut rmp_serde::Serializer::new(&mut buf))
             .map_err(|e| {
                 CertificateError::SerializationError(format!(
                     "Failed to serialize certificate data to msgpack: {}",
                     e
                 ))
-            })
-            .expect("Failed to serialize certificate data to msgpack.");
-
-        general_purpose::STANDARD.encode(buf).to_string()
+            })?;
+        Ok(general_purpose::STANDARD.encode(buf).to_string())
     }
 
     pub fn from_base64(encoded: &str) -> Result<Self> {
@@ -157,7 +153,7 @@ mod tests {
             "Player".to_string(),
             Utc::now(),
         );
-        let base64_encoded = certificate_data.to_base64();
+        let base64_encoded = certificate_data.to_base64().unwrap();
         let decoded_certificate_data = CertificateData::from_base64(&base64_encoded).unwrap();
 
         assert_eq!(certificate_data, decoded_certificate_data);
@@ -234,7 +230,7 @@ mod tests {
             "Player".to_string(),
             Utc::now(),
         );
-        let sha256 = certificate_data.to_sha256();
+        let sha256 = certificate_data.to_sha256().unwrap();
         assert_eq!(sha256.len(), 64);
     }
 

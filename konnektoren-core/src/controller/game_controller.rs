@@ -233,17 +233,17 @@ mod tests {
 
         // Check immutable getters
         assert_eq!(game_state.lock().unwrap().current_challenge_index, 0);
-        assert_eq!(event_bus.listeners.lock().unwrap().len(), 0);
-        assert_eq!(command_bus.listeners.lock().unwrap().len(), 0);
+        assert_eq!(event_bus.listener_count(), 0);
+        assert_eq!(command_bus.listener_count(), 0);
 
         // Using mutable getters
         {
             let event_bus_mut = controller.event_bus_mut();
-            assert_eq!(event_bus_mut.listeners.lock().unwrap().len(), 0);
+            assert_eq!(event_bus_mut.listener_count(), 0);
         }
         {
             let command_bus_mut = controller.command_bus_mut();
-            assert_eq!(command_bus_mut.listeners.lock().unwrap().len(), 0);
+            assert_eq!(command_bus_mut.listener_count(), 0);
         }
     }
 }
