@@ -1,5 +1,6 @@
 use crate::asset_loader::AssetLoader;
 use crate::challenges::{Package, PackageMetadata};
+use crate::error::KonnektorenError;
 use std::collections::HashMap;
 use std::io::{Cursor, Read};
 use zip::ZipArchive;
@@ -7,7 +8,7 @@ use zip::ZipArchive;
 pub struct PackageReader;
 
 impl PackageReader {
-    pub async fn download(url: &str) -> Result<Vec<u8>, String> {
+    pub async fn download(url: &str) -> Result<Vec<u8>, KonnektorenError> {
         let loader = AssetLoader::default();
         loader.load_binary(url).await
     }

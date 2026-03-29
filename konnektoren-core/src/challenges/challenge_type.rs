@@ -27,7 +27,8 @@ pub enum ChallengeType {
 impl Default for ChallengeType {
     fn default() -> Self {
         let data = include_str!("../../assets/konnektoren.yml");
-        serde_yaml::from_str(data).unwrap()
+        serde_yaml::from_str(data)
+            .expect("embedded konnektoren.yml is valid YAML — this is a build-time error")
     }
 }
 
@@ -35,7 +36,8 @@ impl ChallengeType {
     /// Get the JSON schema for creating challenges
     pub fn schema() -> serde_json::Value {
         let schema = schema_for!(ChallengeType);
-        serde_json::to_value(schema).unwrap()
+        serde_json::to_value(schema)
+            .expect("schemars Schema is always JSON-serializable")
     }
 
     /// Get the JSON schema for a specific challenge variant
@@ -51,12 +53,14 @@ impl ChallengeType {
             ChallengeType::Placeholder(_) => schema_for!(Placeholder),
             ChallengeType::Vocabulary(_) => schema_for!(Vocabulary),
         };
-        serde_json::to_value(schema).unwrap()
+        serde_json::to_value(schema)
+            .expect("schemars Schema is always JSON-serializable")
     }
 
     /// Get the JSON schema as a pretty-printed string
     pub fn schema_json(&self) -> String {
-        serde_json::to_string_pretty(&self.schema_for_variant()).unwrap()
+        serde_json::to_string_pretty(&self.schema_for_variant())
+            .expect("serde_json::Value is always serializable to string")
     }
 }
 

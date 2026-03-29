@@ -128,7 +128,11 @@ impl ChallengeCommand {
                 }
             };
 
-            let _ = state.challenge.challenge_result.add_input(default_input);
+            state
+                .challenge
+                .challenge_result
+                .add_input(default_input)
+                .map_err(CommandError::ChallengeError)?;
         }
 
         state.current_task_index += 1;
