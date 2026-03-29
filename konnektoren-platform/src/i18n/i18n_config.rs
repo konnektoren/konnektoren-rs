@@ -62,29 +62,36 @@ impl I18nConfig {
         result
     }
 
-    pub fn get_translation(&self, text: &str, lang: Option<&Language>) -> String {
+    /// Returns the translation for `text` in `lang`, or `None` if not found.
+    /// Does not fall back and does not log a warning.
+    pub fn find_translation(&self, text: &str, lang: Option<&Language>) -> Option<String> {
         let language = lang
             .map(|l| l.code().to_string())
             .unwrap_or_else(|| self.default_language.code().to_string());
 
-        let translation = self.translations.get(&language).unwrap_or(&Value::Null);
+        self.translations
+            .get(&language)
+            .and_then(|t| t.get(text))
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string())
+    }
 
-        // Check if translation exists
-        let result = translation[text].as_str().unwrap_or(text).to_string();
-
-        // Log a warning if the translation is missing (i.e., returns the original text)
-        if result == text {
-            // Safely truncate the text for logging if it's too long
-            let truncated_text = if text.chars().count() > 20 {
-                Self::safe_truncate(text, 17)
-            } else {
+    pub fn get_translation(&self, text: &str, lang: Option<&Language>) -> String {
+        match self.find_translation(text, lang) {
+            Some(t) => t,
+            None => {
+                let language = lang
+                    .map(|l| l.code().to_string())
+                    .unwrap_or_else(|| self.default_language.code().to_string());
+                let truncated = if text.chars().count() > 20 {
+                    Self::safe_truncate(text, 17)
+                } else {
+                    text.to_string()
+                };
+                log::warn!("⚠️ no '{}' in '{}'", truncated, language);
                 text.to_string()
-            };
-
-            log::warn!("⚠️ no '{}' in '{}'", truncated_text, language);
+            }
         }
-
-        result
     }
 
     pub fn merge_translation(&mut self, lang: &Language, translation: Value) {
@@ -126,6 +133,16 @@ impl I18nConfig {
 
     pub fn t_with_lang(&self, key: &str, lang: &Language) -> String {
         self.get_translation(key, Some(lang))
+    }
+
+    /// Returns `Some(translation)` if the key exists in the default language, `None` otherwise.
+    pub fn try_t(&self, key: &str) -> Option<String> {
+        self.find_translation(key, None)
+    }
+
+    /// Returns `Some(translation)` if the key exists in `lang`, `None` otherwise.
+    pub fn try_t_with_lang(&self, key: &str, lang: &Language) -> Option<String> {
+        self.find_translation(key, Some(lang))
     }
 }
 
@@ -249,6 +266,39 @@ mod tests {
         assert_eq!(i18n.t("Test"), "Test");
         assert_eq!(i18n.t("Hello"), "Hello");
         assert_eq!(i18n.t("NonExistent"), "NonExistent");
+    }
+
+    #[test]
+    fn test_try_t_returns_some_when_found() {
+        let i18n = create_test_config();
+        assert_eq!(i18n.try_t("Hello"), Some("Hello".to_string()));
+    }
+
+    #[test]
+    fn test_try_t_returns_none_when_missing() {
+        let i18n = create_test_config();
+        assert_eq!(i18n.try_t("NonExistent"), None);
+    }
+
+    #[test]
+    fn test_try_t_with_lang_returns_some_when_found() {
+        let i18n = create_test_config();
+        assert_eq!(
+            i18n.try_t_with_lang("Hello", &Language::from("de")),
+            Some("Hallo".to_string())
+        );
+    }
+
+    #[test]
+    fn test_try_t_with_lang_returns_none_when_missing() {
+        let i18n = create_test_config();
+        assert_eq!(i18n.try_t_with_lang("NonExistent", &Language::from("de")), None);
+    }
+
+    #[test]
+    fn test_try_t_with_lang_returns_none_for_unknown_language() {
+        let i18n = create_test_config();
+        assert_eq!(i18n.try_t_with_lang("Hello", &Language::from("fr")), None);
     }
 
     #[test]
