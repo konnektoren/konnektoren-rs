@@ -1,16 +1,26 @@
 use super::{Domain, DomainConfig};
 use serde::{Deserialize, Serialize};
 
-/// Example implementation for language learning domains
+/// Configuration for a language-learning domain (e.g. German, English, Spanish).
+///
+/// Implements [`DomainConfig`] and can be serialized to/from JSON and YAML.
+/// Typically constructed via [`LanguageDomain::new()`] or deserialized from config files.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct LanguageDomainConfig {
+    /// ISO 639-1 language code, e.g. `"de"`.
     pub code: String,
+    /// Human-readable name, e.g. `"Learn German"`.
     pub name: String,
+    /// URL base path, e.g. `"/de"`.
     pub base_path: String,
+    /// BCP 47 locale tag, e.g. `"de-DE"`.
     pub locale: String,
+    /// Flag or icon emoji representing the domain.
     pub icon: String,
+    /// Hostname serving this domain, e.g. `"konnektoren.help"`.
     pub hostname: String,
+    /// Optional short description of the domain.
     #[serde(default)]
     pub description: Option<String>,
 }
@@ -41,12 +51,20 @@ impl DomainConfig for LanguageDomainConfig {
     }
 }
 
+/// A concrete domain for language learning, wrapping a [`LanguageDomainConfig`].
+///
+/// Built-in defaults are provided for `"de"`, `"en"`, and `"es"`. Other codes
+/// receive a generic `"🌐"` icon and `konnektoren.help` hostname.
 #[derive(Debug, Clone)]
 pub struct LanguageDomain {
     config: LanguageDomainConfig,
 }
 
 impl LanguageDomain {
+    /// Creates a `LanguageDomain` with defaults derived from `code`.
+    ///
+    /// Known codes (`"de"`, `"en"`, `"es"`) get pre-filled icon, hostname, and description.
+    /// Unknown codes fall back to `"🌐"` and `"konnektoren.help"`.
     pub fn new(code: &str, name: &str, locale: &str) -> Self {
         Self {
             config: LanguageDomainConfig {
@@ -76,12 +94,14 @@ impl LanguageDomain {
         }
     }
 
+    /// Creates a `LanguageDomain` with a custom icon, overriding the default.
     pub fn with_icon(code: &str, name: &str, locale: &str, icon: &str) -> Self {
         let mut domain = Self::new(code, name, locale);
         domain.config.icon = icon.to_string();
         domain
     }
 
+    /// Creates a `LanguageDomain` with a custom hostname, overriding the default.
     pub fn with_hostname(code: &str, name: &str, locale: &str, hostname: &str) -> Self {
         let mut domain = Self::new(code, name, locale);
         domain.config.hostname = hostname.to_string();

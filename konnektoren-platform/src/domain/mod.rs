@@ -32,9 +32,8 @@ pub trait Domain {
         self.config().icon()
     }
 
-    /// Get the domain hostname
+    /// Get the domain hostname (e.g. `"konnektoren.help"`).
     fn hostname(&self) -> &str {
-        // or host
         self.config().hostname()
     }
 }

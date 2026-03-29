@@ -3,10 +3,22 @@ use super::language::Language;
 use serde_json::{Value, json};
 use std::collections::HashMap;
 
+/// A source of translation data that can be loaded into an [`I18nConfig`].
+///
+/// Implement this trait to add custom translation sources. Two implementations
+/// are provided out of the box:
+/// - [`JsonTranslationAsset`] — loads per-language JSON files embedded with `rust-embed`
+/// - [`YamlTranslationAsset`] — loads a single YAML file with an `i18n:` root key
+/// - [`CombinedTranslationAsset`] — merges both of the above
 pub trait TranslationAsset {
+    /// Loads all translations. Errors are logged with `log::error!` and the affected
+    /// language is omitted; the returned map is never `Err`.
     fn load_translations(&self) -> HashMap<String, Value>;
 
-    /// Like `load_translations`, but surfaces errors instead of silently returning empty data.
+    /// Like [`load_translations`](TranslationAsset::load_translations), but surfaces errors
+    /// as [`AssetLoadError`] instead of silently returning partial data.
+    /// The default implementation wraps `load_translations()` and always returns `Ok`.
+    /// Override for proper error propagation (e.g. [`YamlTranslationAsset`] does this).
     fn try_load_translations(&self) -> Result<HashMap<String, Value>, AssetLoadError> {
         Ok(self.load_translations())
     }

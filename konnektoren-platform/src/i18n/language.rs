@@ -3,6 +3,17 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
 
+/// A language supported by the platform.
+///
+/// Builtin languages (en, de, es, ar, zh, uk, pl, tr, vi) are represented as
+/// `Builtin` variants backed by [`isolang`]. Any other valid ISO 639-1 code can
+/// be stored as `Other` with a custom flag emoji and RTL flag.
+///
+/// # Construction
+/// - [`Language::builtin()`] — list of all built-in languages
+/// - [`Language::from_code()`] — infallible, falls back to `default()` on unknown codes
+/// - [`Language::try_from_code()`] / `FromStr` — returns `Err` on unknown codes
+/// - [`Language::new()`] — create a custom `Other` variant with a specific flag
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Language {
     Builtin(IsoLanguage),
@@ -104,18 +115,23 @@ impl FromStr for Language {
 }
 
 impl Language {
+    /// Returns the ISO 639-1 two-letter code, e.g. `"en"`, `"de"`. Falls back to `"und"` for
+    /// languages without a 639-1 code (should not happen for builtin languages).
     pub fn code(&self) -> &'static str {
         match self {
             Language::Builtin(iso) | Language::Other { iso, .. } => iso.to_639_1().unwrap_or("und"),
         }
     }
 
+    /// Returns the English name of the language, e.g. `"German"`.
     pub fn name(&self) -> &str {
         match self {
             Language::Builtin(iso) | Language::Other { iso, .. } => iso.to_name(),
         }
     }
 
+    /// Returns the language name in the language itself, e.g. `"Deutsch"` for German.
+    /// Falls back to the English name for languages without an explicit native name.
     pub fn native_name(&self) -> &str {
         match self {
             Language::Builtin(iso) | Language::Other { iso, .. } => match iso {
@@ -133,6 +149,7 @@ impl Language {
         }
     }
 
+    /// Returns the flag emoji for the language, e.g. `"🇩🇪"` for German.
     pub fn flag(&self) -> String {
         match self {
             Language::Builtin(iso) => self.iso_to_flag(iso).to_string(),
@@ -155,6 +172,7 @@ impl Language {
         }
     }
 
+    /// Returns `true` if the language is written right-to-left (Arabic, Hebrew).
     pub fn is_rtl(&self) -> bool {
         match self {
             Language::Builtin(iso) => matches!(iso, IsoLanguage::Ara | IsoLanguage::Heb),
@@ -162,6 +180,7 @@ impl Language {
         }
     }
 
+    /// Returns all languages with first-class platform support (en, de, es, ar, zh, uk, pl, tr, vi).
     pub fn builtin() -> Vec<Language> {
         vec![
             Language::Builtin(IsoLanguage::Eng),
@@ -176,6 +195,7 @@ impl Language {
         ]
     }
 
+    /// Returns builtin languages plus any additional ones provided.
     pub fn all(others: Option<Vec<Language>>) -> Vec<Language> {
         let mut languages = Self::builtin();
         if let Some(additional) = others {
@@ -184,6 +204,8 @@ impl Language {
         languages
     }
 
+    /// Creates a custom `Other` language with the given ISO 639-1 `code`, `flag` emoji, and
+    /// `rtl` direction. Returns `None` if `code` is not a valid ISO 639-1 code.
     pub fn new(code: &str, flag: impl Into<String>, rtl: bool) -> Option<Self> {
         IsoLanguage::from_639_1(code).map(|iso| Language::Other {
             iso,
@@ -192,10 +214,13 @@ impl Language {
         })
     }
 
+    /// Parses a language from an ISO 639-1 code. Falls back to `default()` for unknown codes.
+    /// Use [`Language::try_from_code()`] if you need to detect invalid codes.
     pub fn from_code(code: &str) -> Self {
         Self::from_str(code).unwrap_or_else(|_| Self::default())
     }
 
+    /// Parses a language from an ISO 639-1 code. Returns `Err` for unknown codes.
     pub fn try_from_code(code: &str) -> Result<Self, String> {
         Self::from_str(code)
     }

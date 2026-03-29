@@ -12,35 +12,66 @@ static SOURCE_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
         .expect("i18n source pattern is a valid regex")
 });
 
+/// The result of running [`I18nChecker::check_directory()`].
+///
+/// Inspect [`I18nReport::has_errors`] for a quick pass/fail signal, then use
+/// the formatting methods to get human-readable or machine-readable output.
 #[derive(Debug)]
 pub struct I18nReport {
+    /// All translation keys found in the scanned source files.
     pub source_keys: HashSet<String>,
+    /// Translation keys present in each language's translation file.
     pub translation_keys: HashMap<String, HashSet<String>>,
+    /// Keys that exist in source but are missing from a language, keyed by language code.
     pub missing_translations: HashMap<String, Vec<String>>,
+    /// Keys that exist in translation files but are not used in source.
     pub unused_translations: HashSet<String>,
+    /// Coverage statistics per language code.
     pub language_stats: HashMap<String, LanguageStats>,
+    /// `true` if any language has missing translations.
     pub has_errors: bool,
+    /// Raw translation data used for display (e.g. showing the English value of missing keys).
     pub translations: HashMap<String, serde_json::Value>,
 }
 
 impl I18nReport {
+    /// Formats the report using a custom [`I18nReportFormatter`](super::report_format::I18nReportFormatter).
     pub fn format_with<F: super::report_format::I18nReportFormatter + ?Sized>(
         &self,
         formatter: &F,
     ) -> Result<String, I18nReportError> {
         formatter.format(self)
     }
+    /// Returns a YAML snippet listing all missing keys, ready to paste into a translation file.
     pub fn missing_as_yaml(&self) -> Result<String, I18nReportError> {
         self.format_with(&super::report_format::I18nYamlFormatter)
     }
+    /// Returns a JSON object of missing keys grouped by language code.
     pub fn missing_as_json(&self) -> Result<String, I18nReportError> {
         self.format_with(&super::report_format::I18nJsonFormatter)
     }
+    /// Returns a human-readable translation coverage report.
     pub fn as_report(&self) -> Result<String, I18nReportError> {
         self.format_with(&super::report_format::I18nHumanFormatter)
     }
 }
 
+/// Scans Rust source files for i18n key usages and compares them against loaded translations.
+///
+/// # Basic usage
+/// ```rust,no_run
+/// use konnektoren_platform::i18n::{I18nConfig, CombinedTranslationAsset, I18nAssets};
+/// use konnektoren_platform::tools::{I18nChecker};
+///
+/// let config = I18nConfig::with_assets(CombinedTranslationAsset::<I18nAssets>::new("i18n.yml"));
+/// let report = I18nChecker::new(config)
+///     .exclude_tests()
+///     .check_directory("src/");
+///
+/// if report.has_errors {
+///     eprintln!("{}", report.as_report().unwrap());
+/// }
+/// ```
 pub struct I18nChecker {
     config: I18nConfig,
     source_patterns: Vec<Regex>,
@@ -93,6 +124,7 @@ impl I18nChecker {
         self
     }
 
+    /// Scans all `.rs` files under `dir` and returns a coverage report.
     pub fn check_directory<P: AsRef<Path>>(&self, dir: P) -> I18nReport {
         let source_keys = self.collect_source_keys(dir);
         let translation_keys = self.collect_translation_keys();

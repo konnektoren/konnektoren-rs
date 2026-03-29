@@ -3,9 +3,21 @@ use super::translation_asset::TranslationAsset;
 use serde_json::Value;
 use std::collections::HashMap;
 
+/// Runtime i18n configuration holding all loaded translations.
+///
+/// Typically created via [`I18nConfig::with_assets()`] by passing a
+/// [`TranslationAsset`] implementation, or built manually with
+/// [`I18nConfig::new()`] / [`I18nConfig::merge_translation()`].
+///
+/// # Looking up translations
+/// - [`I18nConfig::t()`] — returns the translation or the key itself as fallback
+/// - [`I18nConfig::try_t()`] — returns `None` when a key is missing
+/// - [`I18nConfig::t_with_lang()`] / [`I18nConfig::try_t_with_lang()`] — language-specific variants
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct I18nConfig {
+    /// All loaded translations, keyed by ISO 639-1 language code.
     pub translations: HashMap<String, Value>,
+    /// Language used when no explicit language is passed to `t()`.
     pub default_language: Language,
     additional_languages: Option<Vec<Language>>,
 }
@@ -23,6 +35,7 @@ impl I18nConfig {
         }
     }
 
+    /// Creates a config by loading translations from a [`TranslationAsset`].
     pub fn with_assets<T: TranslationAsset>(asset: T) -> Self {
         let mut config = Self::default();
         let translations = asset.load_translations();
@@ -40,6 +53,7 @@ impl I18nConfig {
         config
     }
 
+    /// Returns all supported languages (builtin + any additional ones configured).
     pub fn supported_languages(&self) -> Vec<Language> {
         Language::all(self.additional_languages.clone())
     }
@@ -76,6 +90,8 @@ impl I18nConfig {
             .map(|s| s.to_string())
     }
 
+    /// Returns the translation for `text` in `lang` (or default language), falling back to
+    /// `text` itself and logging a warning when the key is missing.
     pub fn get_translation(&self, text: &str, lang: Option<&Language>) -> String {
         match self.find_translation(text, lang) {
             Some(t) => t,
@@ -94,6 +110,8 @@ impl I18nConfig {
         }
     }
 
+    /// Merges `translation` (a JSON object) into the existing translations for `lang`.
+    /// Existing keys are preserved; only new keys from `translation` are added.
     pub fn merge_translation(&mut self, lang: &Language, translation: Value) {
         match self.translations.get(lang.code()) {
             Some(existing) => {
@@ -118,6 +136,7 @@ impl I18nConfig {
         }
     }
 
+    /// Returns ISO 639-1 codes for all supported languages.
     pub fn supported_codes(&self) -> Vec<&str> {
         self.supported_languages()
             .iter()
@@ -127,10 +146,12 @@ impl I18nConfig {
 }
 
 impl I18nConfig {
+    /// Translates `key` using the default language. Returns `key` itself when not found.
     pub fn t(&self, key: &str) -> String {
         self.get_translation(key, None)
     }
 
+    /// Translates `key` in the given `lang`. Returns `key` itself when not found.
     pub fn t_with_lang(&self, key: &str, lang: &Language) -> String {
         self.get_translation(key, Some(lang))
     }
