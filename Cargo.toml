@@ -1,5 +1,5 @@
 [workspace]
-resolver = "2"
+resolver = "3"
 
 members = [
     "konnektoren-core",
@@ -10,7 +10,7 @@ members = [
 
 [workspace.package]
 edition = "2024"
-version = "0.6.4"
+version = "0.7.0"
 license = "MIT"
 repository = "https://github.com/konnektoren/konnektoren-rs"
 authors = ["Christian M <chriamue@gmail.com>"]
