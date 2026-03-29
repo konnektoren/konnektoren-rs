@@ -291,6 +291,86 @@ fn checker_full_coverage_has_no_errors() {
     assert_eq!(en_stats.coverage_percentage, 100.0);
 }
 
+// --- i18n_patterns! macro + with_patterns tests ---
+
+#[test]
+fn i18n_patterns_macro_generates_patterns() {
+    let patterns = i18n_patterns!["i18n.t", "t_with_lang"];
+    assert_eq!(patterns.len(), 2);
+}
+
+#[test]
+fn i18n_patterns_macro_matches_method_call() {
+    let patterns = i18n_patterns!["i18n.t"];
+    let caps: Vec<_> = patterns[0]
+        .captures_iter(r#"i18n.t("Hello")"#)
+        .map(|c| c[1].to_string())
+        .collect();
+    assert_eq!(caps, vec!["Hello"]);
+}
+
+#[test]
+fn i18n_patterns_macro_does_not_match_wrong_receiver() {
+    let patterns = i18n_patterns!["i18n.t"];
+    // "config.t" should NOT be matched by a pattern for "i18n.t"
+    assert!(!patterns[0].is_match(r#"config.t("Hello")"#));
+}
+
+#[test]
+fn i18n_patterns_macro_escapes_dot() {
+    // Without escaping, "i18nXt" would match "i18n.t" pattern (. matches any char)
+    let patterns = i18n_patterns!["i18n.t"];
+    assert!(!patterns[0].is_match(r#"i18nXt("Hello")"#));
+}
+
+#[test]
+fn with_patterns_scans_custom_calling_convention() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(
+        dir.path().join("lib.rs"),
+        r#"config.t("CustomKey")"#,
+    )
+    .unwrap();
+
+    let config = make_config(&[("en", json!({"CustomKey": "Custom"}))]);
+    let report = I18nChecker::with_patterns(config, i18n_patterns!["config.t"])
+        .check_directory(dir.path());
+
+    assert!(report.source_keys.contains("CustomKey"));
+}
+
+#[test]
+fn with_patterns_multiple_conventions_finds_all_keys() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(
+        dir.path().join("lib.rs"),
+        r#"i18n.t("KeyA") config.translate("KeyB")"#,
+    )
+    .unwrap();
+
+    let config = make_config(&[("en", json!({"KeyA": "A", "KeyB": "B"}))]);
+    let report =
+        I18nChecker::with_patterns(config, i18n_patterns!["i18n.t", "config.translate"])
+            .check_directory(dir.path());
+
+    assert!(report.source_keys.contains("KeyA"));
+    assert!(report.source_keys.contains("KeyB"));
+}
+
+#[test]
+fn with_patterns_does_not_pick_up_default_pattern() {
+    let dir = tempfile::tempdir().unwrap();
+    // Only the default i18n.t call — but checker uses a custom pattern only
+    fs::write(dir.path().join("lib.rs"), r#"i18n.t("ShouldNotAppear")"#).unwrap();
+
+    let config = make_config(&[("en", json!({}))]);
+    let report =
+        I18nChecker::with_patterns(config, i18n_patterns!["config.t"])
+            .check_directory(dir.path());
+
+    assert!(!report.source_keys.contains("ShouldNotAppear"));
+}
+
 #[test]
 fn test_empty_report() {
     let report = I18nReport {

@@ -46,11 +46,41 @@ pub struct I18nChecker {
     source_patterns: Vec<Regex>,
 }
 
+/// Build a `Vec<Regex>` that matches `fn_name("key")` for each given name.
+/// Dots in names are escaped automatically, e.g. `"i18n.t"` → `i18n\.t\("([^"]+)"\)`.
+///
+/// # Example
+/// ```rust
+/// use konnektoren_platform::i18n_patterns;
+/// let patterns = i18n_patterns!["i18n.t", "config.t", "t_with_lang"];
+/// ```
+#[macro_export]
+macro_rules! i18n_patterns {
+    [$($name:literal),+ $(,)?] => {
+        vec![
+            $(
+                regex::Regex::new(
+                    &format!(r#"{}\("([^"]+)"\)"#, $name.replace('.', r"\."))
+                ).expect(concat!("valid i18n pattern for ", $name))
+            ),+
+        ]
+    };
+}
+
 impl I18nChecker {
     pub fn new(config: I18nConfig) -> Self {
         Self {
             config,
             source_patterns: vec![SOURCE_PATTERN.clone()],
+        }
+    }
+
+    /// Create a checker with custom scan patterns.
+    /// Use the [`i18n_patterns!`] macro to build the pattern list.
+    pub fn with_patterns(config: I18nConfig, patterns: Vec<Regex>) -> Self {
+        Self {
+            config,
+            source_patterns: patterns,
         }
     }
 
