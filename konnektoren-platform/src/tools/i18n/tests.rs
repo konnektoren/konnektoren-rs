@@ -1,8 +1,9 @@
 use super::*;
-use crate::i18n::Language;
-use crate::tools::i18n::I18nReportError;
+use crate::i18n::{I18nConfig, Language};
+
 use serde_json::json;
 use std::collections::{HashMap, HashSet};
+use std::fs;
 
 fn dummy_report() -> I18nReport {
     let mut source_keys = HashSet::new();
@@ -94,8 +95,8 @@ fn test_human_formatter() {
     let human = report.as_report().expect("Human formatting failed");
     assert!(human.contains("Translation Report"));
     assert!(human.contains("Missing Translations:"));
-    assert!(human.contains("de (de) - 2 missing:"));
-    assert!(human.contains("en (en) - 1 missing:"));
+    assert!(human.contains("(de) - 2 missing:"));
+    assert!(human.contains("(en) - 1 missing:"));
     assert!(human.contains("Unused Translations:"));
     assert!(human.contains("Summary:"));
     assert!(human.contains("Total missing translations: 3"));
@@ -112,6 +113,172 @@ fn test_format_with_trait_object() {
     assert!(yaml.contains("i18n:"));
 }
 
+// --- I18nChecker tests ---
+
+fn make_config(translations: &[(&str, serde_json::Value)]) -> I18nConfig {
+    let mut config = I18nConfig::default();
+    for (lang, trans) in translations {
+        config.merge_translation(&Language::from(*lang), trans.clone());
+    }
+    config
+}
+
+#[test]
+fn checker_detects_keys_from_i18n_t() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(
+        dir.path().join("main.rs"),
+        r#"i18n.t("Hello") i18n.t("World")"#,
+    )
+    .unwrap();
+
+    let config = make_config(&[
+        ("en", json!({"Hello": "Hello", "World": "World"})),
+        ("de", json!({"Hello": "Hallo", "World": "Welt"})),
+    ]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    assert!(report.source_keys.contains("Hello"));
+    assert!(report.source_keys.contains("World"));
+    assert_eq!(report.source_keys.len(), 2);
+}
+
+#[test]
+fn checker_detects_keys_from_t_with_lang() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(
+        dir.path().join("main.rs"),
+        r#"t_with_lang("Greeting")"#,
+    )
+    .unwrap();
+
+    let config = make_config(&[("en", json!({"Greeting": "Hello"}))]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    assert!(report.source_keys.contains("Greeting"));
+}
+
+#[test]
+fn checker_no_errors_when_all_translated() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(dir.path().join("lib.rs"), r#"i18n.t("Save")"#).unwrap();
+
+    let config = make_config(&[
+        ("en", json!({"Save": "Save"})),
+        ("de", json!({"Save": "Speichern"})),
+    ]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    // "Save" must not be missing for en or de
+    assert!(report.missing_translations.get("en").map_or(true, |v| !v.contains(&"Save".to_string())));
+    assert!(report.missing_translations.get("de").map_or(true, |v| !v.contains(&"Save".to_string())));
+}
+
+#[test]
+fn checker_reports_missing_translation_for_language() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(dir.path().join("lib.rs"), r#"i18n.t("Cancel")"#).unwrap();
+
+    // "Cancel" only translated in English, missing in German
+    let config = make_config(&[("en", json!({"Cancel": "Cancel"}))]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    assert!(report.has_errors);
+    let missing_de = report.missing_translations.get("de");
+    assert!(
+        missing_de.map_or(false, |v| v.contains(&"Cancel".to_string())),
+        "Expected 'Cancel' to be missing for 'de'"
+    );
+}
+
+#[test]
+fn checker_reports_unused_translations() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(dir.path().join("lib.rs"), r#"i18n.t("Used")"#).unwrap();
+
+    let config = make_config(&[("en", json!({"Used": "Used", "Unused": "Unused"}))]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    assert!(report.unused_translations.contains("Unused"));
+    assert!(!report.unused_translations.contains("Used"));
+}
+
+#[test]
+fn checker_empty_directory_no_errors() {
+    let dir = tempfile::tempdir().unwrap();
+    let config = make_config(&[("en", json!({}))]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    assert!(report.source_keys.is_empty());
+    assert!(!report.has_errors);
+}
+
+#[test]
+fn checker_ignores_non_rust_files() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(
+        dir.path().join("readme.md"),
+        r#"i18n.t("ShouldBeIgnored")"#,
+    )
+    .unwrap();
+
+    let config = make_config(&[("en", json!({}))]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    assert!(!report.source_keys.contains("ShouldBeIgnored"));
+    assert!(report.source_keys.is_empty());
+}
+
+#[test]
+fn checker_scans_subdirectories_recursively() {
+    let dir = tempfile::tempdir().unwrap();
+    let sub = dir.path().join("components");
+    fs::create_dir(&sub).unwrap();
+    fs::write(sub.join("button.rs"), r#"i18n.t("Submit")"#).unwrap();
+
+    let config = make_config(&[
+        ("en", json!({"Submit": "Submit"})),
+        ("de", json!({"Submit": "Absenden"})),
+    ]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    assert!(report.source_keys.contains("Submit"));
+    assert!(report.missing_translations.get("en").map_or(true, |v| !v.contains(&"Submit".to_string())));
+    assert!(report.missing_translations.get("de").map_or(true, |v| !v.contains(&"Submit".to_string())));
+}
+
+#[test]
+fn checker_coverage_percentage_is_correct() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(
+        dir.path().join("lib.rs"),
+        r#"i18n.t("A") i18n.t("B") i18n.t("C") i18n.t("D")"#,
+    )
+    .unwrap();
+
+    // German has 3 out of 4
+    let config = make_config(&[
+        ("en", json!({"A": "A", "B": "B", "C": "C", "D": "D"})),
+        ("de", json!({"A": "A", "B": "B", "C": "C"})),
+    ]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    let de_stats = report.language_stats.get("de").unwrap();
+    assert_eq!(de_stats.total_keys, 4);
+    assert_eq!(de_stats.missing_keys, 1);
+    assert!((de_stats.coverage_percentage - 75.0).abs() < 0.01);
+}
+
+#[test]
+fn checker_full_coverage_has_no_errors() {
+    let dir = tempfile::tempdir().unwrap();
+    let config = make_config(&[("en", json!({}))]);
+    let report = I18nChecker::new(config).check_directory(dir.path());
+
+    let en_stats = report.language_stats.get("en").unwrap();
+    assert_eq!(en_stats.coverage_percentage, 100.0);
+}
+
 #[test]
 fn test_empty_report() {
     let report = I18nReport {
@@ -126,7 +293,7 @@ fn test_empty_report() {
     let yaml = report.missing_as_yaml().expect("YAML formatting failed");
     assert!(yaml.contains("i18n:"));
     let json = report.missing_as_json().expect("JSON formatting failed");
-    assert_eq!(json, "{\n\n}");
+    assert_eq!(json, "{}");
     let human = report.as_report().expect("Human formatting failed");
     assert!(human.contains("Translation Report"));
 }

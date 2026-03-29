@@ -18,7 +18,7 @@ pub struct I18nReport {
 }
 
 impl I18nReport {
-    pub fn format_with<F: super::report_format::I18nReportFormatter>(
+    pub fn format_with<F: super::report_format::I18nReportFormatter + ?Sized>(
         &self,
         formatter: &F,
     ) -> Result<String, I18nReportError> {
