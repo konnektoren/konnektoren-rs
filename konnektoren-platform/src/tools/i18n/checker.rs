@@ -4,7 +4,13 @@ use crate::tools::i18n::I18nReportError;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
+use std::sync::LazyLock;
 use walkdir::WalkDir;
+
+static SOURCE_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r#"(?:i18n\.t|t_with_lang)\("([^"]+)"\)"#)
+        .expect("i18n source pattern is a valid regex")
+});
 
 #[derive(Debug)]
 pub struct I18nReport {
@@ -44,7 +50,7 @@ impl I18nChecker {
     pub fn new(config: I18nConfig) -> Self {
         Self {
             config,
-            source_patterns: vec![Regex::new(r#"(?:i18n\.t|t_with_lang)\("([^"]+)"\)"#).unwrap()],
+            source_patterns: vec![SOURCE_PATTERN.clone()],
         }
     }
 
@@ -70,7 +76,13 @@ impl I18nChecker {
     fn collect_source_keys<P: AsRef<Path>>(&self, dir: P) -> HashSet<String> {
         let mut keys = HashSet::new();
         for entry in WalkDir::new(dir) {
-            let entry = entry.unwrap();
+            let entry = match entry {
+                Ok(e) => e,
+                Err(err) => {
+                    log::warn!("skipping unreadable path: {}", err);
+                    continue;
+                }
+            };
             if entry.path().extension().map_or(false, |ext| ext == "rs") {
                 if let Ok(content) = std::fs::read_to_string(entry.path()) {
                     for pattern in &self.source_patterns {

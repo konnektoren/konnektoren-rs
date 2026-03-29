@@ -146,11 +146,7 @@ fn checker_detects_keys_from_i18n_t() {
 #[test]
 fn checker_detects_keys_from_t_with_lang() {
     let dir = tempfile::tempdir().unwrap();
-    fs::write(
-        dir.path().join("main.rs"),
-        r#"t_with_lang("Greeting")"#,
-    )
-    .unwrap();
+    fs::write(dir.path().join("main.rs"), r#"t_with_lang("Greeting")"#).unwrap();
 
     let config = make_config(&[("en", json!({"Greeting": "Hello"}))]);
     let report = I18nChecker::new(config).check_directory(dir.path());
@@ -170,8 +166,18 @@ fn checker_no_errors_when_all_translated() {
     let report = I18nChecker::new(config).check_directory(dir.path());
 
     // "Save" must not be missing for en or de
-    assert!(report.missing_translations.get("en").map_or(true, |v| !v.contains(&"Save".to_string())));
-    assert!(report.missing_translations.get("de").map_or(true, |v| !v.contains(&"Save".to_string())));
+    assert!(
+        report
+            .missing_translations
+            .get("en")
+            .map_or(true, |v| !v.contains(&"Save".to_string()))
+    );
+    assert!(
+        report
+            .missing_translations
+            .get("de")
+            .map_or(true, |v| !v.contains(&"Save".to_string()))
+    );
 }
 
 #[test]
@@ -216,11 +222,7 @@ fn checker_empty_directory_no_errors() {
 #[test]
 fn checker_ignores_non_rust_files() {
     let dir = tempfile::tempdir().unwrap();
-    fs::write(
-        dir.path().join("readme.md"),
-        r#"i18n.t("ShouldBeIgnored")"#,
-    )
-    .unwrap();
+    fs::write(dir.path().join("readme.md"), r#"i18n.t("ShouldBeIgnored")"#).unwrap();
 
     let config = make_config(&[("en", json!({}))]);
     let report = I18nChecker::new(config).check_directory(dir.path());
@@ -243,8 +245,18 @@ fn checker_scans_subdirectories_recursively() {
     let report = I18nChecker::new(config).check_directory(dir.path());
 
     assert!(report.source_keys.contains("Submit"));
-    assert!(report.missing_translations.get("en").map_or(true, |v| !v.contains(&"Submit".to_string())));
-    assert!(report.missing_translations.get("de").map_or(true, |v| !v.contains(&"Submit".to_string())));
+    assert!(
+        report
+            .missing_translations
+            .get("en")
+            .map_or(true, |v| !v.contains(&"Submit".to_string()))
+    );
+    assert!(
+        report
+            .missing_translations
+            .get("de")
+            .map_or(true, |v| !v.contains(&"Submit".to_string()))
+    );
 }
 
 #[test]

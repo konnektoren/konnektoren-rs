@@ -44,7 +44,7 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for JsonTranslationAsset<T> {
                     parts[0]
                 } else {
                     // level_a1_de -> de
-                    parts.last().unwrap()
+                    parts.last().copied().unwrap_or(lang)
                 };
 
                 // Only process if it's a known language code

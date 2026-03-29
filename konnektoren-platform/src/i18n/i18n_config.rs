@@ -90,12 +90,19 @@ impl I18nConfig {
     pub fn merge_translation(&mut self, lang: &Language, translation: Value) {
         match self.translations.get(lang.code()) {
             Some(existing) => {
-                let mut merged = existing.clone();
-                merged
-                    .as_object_mut()
-                    .unwrap()
-                    .extend(translation.as_object().unwrap().clone());
-                self.translations.insert(lang.code().to_string(), merged);
+                if let (Some(merged), Some(new_entries)) =
+                    (existing.as_object().cloned(), translation.as_object())
+                {
+                    let mut merged = merged;
+                    merged.extend(new_entries.clone());
+                    self.translations
+                        .insert(lang.code().to_string(), Value::Object(merged));
+                } else {
+                    log::warn!(
+                        "merge_translation: non-object value for '{}', skipping merge",
+                        lang.code()
+                    );
+                }
             }
             None => {
                 self.translations
