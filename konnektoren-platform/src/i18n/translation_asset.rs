@@ -48,9 +48,9 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for JsonTranslationAsset<T> {
                 };
 
                 // Only process if it's a known language code
-                if Language::builtin().iter().any(|l| l.code() == lang_code) {
-                    if let Some(content) = T::get(filename) {
-                        if let Ok(json) = serde_json::from_slice::<
+                if Language::builtin().iter().any(|l| l.code() == lang_code)
+                    && let Some(content) = T::get(filename)
+                        && let Ok(json) = serde_json::from_slice::<
                             serde_json::Map<String, serde_json::Value>,
                         >(&content.data)
                         {
@@ -59,8 +59,6 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for JsonTranslationAsset<T> {
                                 .and_modify(|existing| existing.extend(json.clone()))
                                 .or_insert(json);
                         }
-                    }
-                }
             }
         }
 
@@ -155,11 +153,10 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for CombinedTranslationAsset<T> 
                 translations
                     .entry(lang)
                     .and_modify(|e| {
-                        if let Some(obj) = e.as_object_mut() {
-                            if let Some(new_obj) = trans.as_object() {
+                        if let Some(obj) = e.as_object_mut()
+                            && let Some(new_obj) = trans.as_object() {
                                 obj.extend(new_obj.clone());
                             }
-                        }
                     })
                     .or_insert(trans);
             }

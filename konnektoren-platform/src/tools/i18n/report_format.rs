@@ -1,5 +1,4 @@
 use super::checker::I18nReport;
-use crate::i18n::Language;
 use crate::tools::i18n::I18nReportError;
 
 pub trait I18nReportFormatter {
@@ -78,8 +77,8 @@ impl I18nReportFormatter for I18nHumanFormatter {
             writeln!(out, "\nMissing Translations:").map_err(I18nReportError::FmtError)?;
             writeln!(out, "-------------------").map_err(I18nReportError::FmtError)?;
             for lang in crate::i18n::Language::builtin() {
-                if let Some(missing) = report.missing_translations.get(lang.code()) {
-                    if !missing.is_empty() {
+                if let Some(missing) = report.missing_translations.get(lang.code())
+                    && !missing.is_empty() {
                         writeln!(
                             out,
                             "{} ({}) - {} missing:",
@@ -102,7 +101,6 @@ impl I18nReportFormatter for I18nHumanFormatter {
                             }
                         }
                     }
-                }
             }
         }
 

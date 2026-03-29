@@ -83,15 +83,14 @@ impl I18nChecker {
                     continue;
                 }
             };
-            if entry.path().extension().map_or(false, |ext| ext == "rs") {
-                if let Ok(content) = std::fs::read_to_string(entry.path()) {
+            if entry.path().extension().is_some_and(|ext| ext == "rs")
+                && let Ok(content) = std::fs::read_to_string(entry.path()) {
                     for pattern in &self.source_patterns {
                         for cap in pattern.captures_iter(&content) {
                             keys.insert(cap[1].to_string());
                         }
                     }
                 }
-            }
         }
         keys
     }
@@ -100,11 +99,10 @@ impl I18nChecker {
         let mut translation_keys = HashMap::new();
         for lang in Language::builtin() {
             let lang_code = lang.code().to_string();
-            if let Some(translations) = self.config.translations.get(&lang_code) {
-                if let Some(obj) = translations.as_object() {
+            if let Some(translations) = self.config.translations.get(&lang_code)
+                && let Some(obj) = translations.as_object() {
                     translation_keys.insert(lang_code, obj.keys().cloned().collect());
                 }
-            }
         }
         translation_keys
     }
