@@ -16,13 +16,67 @@ repository = "https://github.com/konnektoren/konnektoren-rs"
 authors = ["Christian M <chriamue@gmail.com>"]
 
 [workspace.dependencies]
-base64 = "0.22.1"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-serde_yaml = "0.9.33"
-isolang = "2.4.0"
+# Core serialization and common utilities
+base64 = "0.22"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+serde_cbor = "0.11"
+serde-wasm-bindgen = "0.6"
+rmp-serde = "1"
+
+# Logging and errors
 log = "0.4"
-thiserror = "1.0"
-mockall = "0.13.0"
-env_logger = "0.10"
+thiserror = "2"
+env_logger = "0.11"
+anyhow = "1"
+
+# WASM dependencies - major versions only for flexibility
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+wasm-bindgen-test = "0.3"
+wasm-logger = "0.2"
+web-sys = "0.3"
+js-sys = "0.3"
+gloo = "0.12"
+
+# Common utilities
 chrono = { version = "0.4", features = ["serde"] }
+isolang = "2"
+rand = "0.8"
+rand_core = "0.6"
+regex = "1"
+rust-embed = "8"
+strum = "0.28"
+strum_macros = "0.28"
+uuid = "1"
+walkdir = "2"
+country-emoji = "0.3"
+eval = "0.4"
+names = { version = "0.15.0-dev", git = "https://github.com/jakswa/names", default-features = false }
+schemars = "1"
+zip = { version = "4", default-features = false }
+
+# Certificate and cryptography dependencies
+sha2 = "0.10"
+ed25519-dalek = { version = "2", default-features = false }
+qrcode = "0.14"
+
+# Image processing dependencies
+image = "0.25"
+imageproc = "0.26"
+ab_glyph = "0.2"
+plot_icon = "0.3"
+lazy_static = "1"
+
+# Testing dependencies
+mockall = "0.14"
+tempfile = "3"
+tempdir = "0.3"
+tokio = "1"
+cucumber = "0.22"
+
+# TUI dependencies
+crossterm = "0.29"
+ratatui = { version = "0.30", default-features = false }
+russh = "0.59"

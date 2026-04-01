@@ -39,51 +39,47 @@ js = [
 # Core dependencies
 base64 = { workspace = true }
 chrono = { workspace = true }
-country-emoji = "0.2.0"
-eval = { version = "0.4", optional = true }
+country-emoji = { workspace = true }
+eval = { workspace = true, optional = true }
 isolang = { workspace = true }
 log = { workspace = true }
-names = { version = "0.15.0-dev", git = "https://github.com/jakswa/names", default-features = false }
-rand = "0.8.5"
-rmp-serde = "1.1.2"
-schemars = "1.0.4"
+names = { workspace = true }
+rand = { workspace = true }
+rmp-serde = { workspace = true }
+schemars = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_yaml = { workspace = true }
-strum = "0.27"
-strum_macros = "0.27"
+strum = { workspace = true }
+strum_macros = { workspace = true }
 thiserror = { workspace = true }
-uuid = { version = "1.10.0", features = ["serde", "v4"] }
+uuid = { workspace = true, features = ["serde", "v4"] }
 
 # Certificate feature dependencies
-ab_glyph = { version = "0.2.28", optional = true }
-ed25519-dalek = { version = "2.1.1", default-features = false, optional = true }
-image = { version = "0.25.1", optional = true }
-imageproc = { version = "0.25", optional = true }
-lazy_static = { version = "1.4", optional = true }
-plot_icon = { version = "0.3.0", optional = true }
-qrcode = { version = "0.14.1", optional = true }
-serde_cbor = { version = "0.11.2", optional = true }
-sha2 = { version = "0.10.8", optional = true }
+ab_glyph = { workspace = true, optional = true }
+ed25519-dalek = { workspace = true, optional = true }
+image = { workspace = true, optional = true }
+imageproc = { workspace = true, optional = true }
+lazy_static = { workspace = true, optional = true }
+plot_icon = { workspace = true, optional = true }
+qrcode = { workspace = true, optional = true }
+serde_cbor = { workspace = true, optional = true }
+sha2 = { workspace = true, optional = true }
 
 # JS feature dependencies
-gloo = { version = "0.11.0", optional = true }
-js-sys = { version = "0.3.70", optional = true }
-serde-wasm-bindgen = { version = "0.6.5", optional = true }
-wasm-bindgen = { version = "0.2.93", optional = true, features = [
-    "serde-serialize",
-] }
-wasm-bindgen-futures = { version = "0.4.43", optional = true }
-web-sys = { version = "0.3.70", optional = true, features = ["Window"] }
-zip = { version = "4.3", optional = true, default-features = false, features = [
-    "deflate",
-] }
+gloo = { workspace = true, optional = true }
+js-sys = { workspace = true, optional = true }
+serde-wasm-bindgen = { workspace = true, optional = true }
+wasm-bindgen = { workspace = true, optional = true, features = ["serde-serialize"] }
+wasm-bindgen-futures = { workspace = true, optional = true }
+web-sys = { workspace = true, optional = true, features = ["Window"] }
+zip = { workspace = true, optional = true, features = ["deflate"] }
 
 [dev-dependencies]
 env_logger = { workspace = true }
 mockall = { workspace = true }
-tempdir = "0.3.7"
-tempfile = "3.19.1"
-tokio = { version = "1.0", features = ["rt", "macros"] }
-wasm-bindgen-test = { version = "0.3.43" }
-wasm-logger = { version = "0.2.0" }
+tempdir = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros"] }
+wasm-bindgen-test = { workspace = true }
+wasm-logger = { workspace = true }
