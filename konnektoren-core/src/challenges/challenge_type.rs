@@ -1,4 +1,5 @@
 use super::{ChallengeResult, ContextualChoice, Custom, Performance, Placeholder};
+use crate::challenges::dialog::Dialog;
 use crate::challenges::informative::Informative;
 use crate::challenges::multiple_choice::MultipleChoice;
 use crate::challenges::ordering::Ordering;
@@ -22,6 +23,7 @@ pub enum ChallengeType {
     Custom(Custom),
     Placeholder(Placeholder),
     Vocabulary(Vocabulary),
+    Dialog(Dialog),
 }
 
 impl Default for ChallengeType {
@@ -36,8 +38,7 @@ impl ChallengeType {
     /// Get the JSON schema for creating challenges
     pub fn schema() -> serde_json::Value {
         let schema = schema_for!(ChallengeType);
-        serde_json::to_value(schema)
-            .expect("schemars Schema is always JSON-serializable")
+        serde_json::to_value(schema).expect("schemars Schema is always JSON-serializable")
     }
 
     /// Get the JSON schema for a specific challenge variant
@@ -52,9 +53,9 @@ impl ChallengeType {
             ChallengeType::Custom(_) => schema_for!(Custom),
             ChallengeType::Placeholder(_) => schema_for!(Placeholder),
             ChallengeType::Vocabulary(_) => schema_for!(Vocabulary),
+            ChallengeType::Dialog(_) => schema_for!(Dialog),
         };
-        serde_json::to_value(schema)
-            .expect("schemars Schema is always JSON-serializable")
+        serde_json::to_value(schema).expect("schemars Schema is always JSON-serializable")
     }
 
     /// Get the JSON schema as a pretty-printed string
@@ -107,6 +108,7 @@ impl ChallengeType {
                 new_dataset.items = selected_items;
                 ChallengeType::Vocabulary(new_dataset)
             }
+            ChallengeType::Dialog(dataset) => ChallengeType::Dialog(dataset.clone()),
         }
     }
 
@@ -121,6 +123,7 @@ impl ChallengeType {
             ChallengeType::Custom(dataset) => &dataset.name,
             ChallengeType::Placeholder(dataset) => &dataset.name,
             ChallengeType::Vocabulary(dataset) => &dataset.name,
+            ChallengeType::Dialog(dataset) => &dataset.name,
         }
     }
 
@@ -135,6 +138,7 @@ impl ChallengeType {
             ChallengeType::Custom(dataset) => &dataset.id,
             ChallengeType::Placeholder(dataset) => &dataset.id,
             ChallengeType::Vocabulary(dataset) => &dataset.id,
+            ChallengeType::Dialog(dataset) => &dataset.id,
         }
     }
 }
@@ -221,6 +225,21 @@ impl Performance for ChallengeType {
             (ChallengeType::Placeholder(_), _) => 0,
             // Add this line to handle Vocabulary challenges
             (ChallengeType::Vocabulary(_), ChallengeResult::Vocabulary) => 100,
+            (ChallengeType::Dialog(dialog), ChallengeResult::Dialog(answers)) => {
+                let quiz_turns: Vec<_> = dialog.quiz_turns().collect();
+                if quiz_turns.is_empty() {
+                    return 100; // Observer mode — no quiz turns defined
+                }
+                let correct = quiz_turns
+                    .iter()
+                    .filter(|(i, turn)| {
+                        answers.iter().any(|a| {
+                            a.turn_index == *i && turn.correct_option == Some(a.selected_option)
+                        })
+                    })
+                    .count();
+                (100 * correct / quiz_turns.len()) as u32
+            }
             _ => {
                 log::warn!(
                     "Unhandled challenge type/result combination: {:?}",

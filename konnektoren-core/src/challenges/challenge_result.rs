@@ -1,6 +1,6 @@
 use crate::challenges::error::{ChallengeError, Result};
 use crate::challenges::{
-    ChallengeInput, ContextItemChoiceAnswers, CustomChallengeResult, GapFillAnswer,
+    ChallengeInput, ContextItemChoiceAnswers, CustomChallengeResult, DialogAnswer, GapFillAnswer,
     MultipleChoiceOption, OrderingResult, SortTableRow,
 };
 use serde::{Deserialize, Serialize};
@@ -15,6 +15,7 @@ pub enum ChallengeResult {
     Ordering(Vec<OrderingResult>),
     Custom(CustomChallengeResult),
     Vocabulary,
+    Dialog(Vec<DialogAnswer>),
 }
 
 impl Default for ChallengeResult {
@@ -74,6 +75,15 @@ impl ChallengeResult {
             ChallengeResult::Informative => Ok(()),
             ChallengeResult::Custom(_) => Ok(()),
             ChallengeResult::Vocabulary => Ok(()),
+            ChallengeResult::Dialog(answers) => match input {
+                ChallengeInput::Dialog(answer) => {
+                    answers.push(answer);
+                    Ok(())
+                }
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected Dialog input".to_string(),
+                )),
+            },
         }
     }
 
@@ -153,6 +163,15 @@ impl ChallengeResult {
             ChallengeResult::Informative => Ok(()),
             ChallengeResult::Custom(_) => Ok(()),
             ChallengeResult::Vocabulary => Ok(()),
+            ChallengeResult::Dialog(answers) => match input {
+                ChallengeInput::Dialog(answer) => {
+                    answers.push(answer);
+                    Ok(())
+                }
+                _ => Err(ChallengeError::InvalidInput(
+                    "Expected Dialog input".to_string(),
+                )),
+            },
         }
     }
 
@@ -166,6 +185,7 @@ impl ChallengeResult {
             ChallengeResult::Informative => 0,
             ChallengeResult::Custom(_) => 0,
             ChallengeResult::Vocabulary => 0,
+            ChallengeResult::Dialog(answers) => answers.len(),
         }
     }
 
@@ -179,6 +199,7 @@ impl ChallengeResult {
             ChallengeResult::Informative => true,
             ChallengeResult::Custom(_) => true,
             ChallengeResult::Vocabulary => true,
+            ChallengeResult::Dialog(answers) => answers.is_empty(),
         }
     }
 }
@@ -417,6 +438,50 @@ mod tests {
             }
             _ => panic!("Expected ContextualChoice result"),
         }
+    }
+
+    #[test]
+    fn test_dialog_add_input() {
+        let mut result = ChallengeResult::Dialog(Vec::new());
+        let input = ChallengeInput::Dialog(crate::challenges::DialogAnswer {
+            turn_index: 1,
+            selected_option: 0,
+        });
+        assert!(result.add_input(input).is_ok());
+        assert_eq!(result.len(), 1);
+        assert!(!result.is_empty());
+    }
+
+    #[test]
+    fn test_dialog_add_input_wrong_type() {
+        let mut result = ChallengeResult::Dialog(Vec::new());
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
+        assert!(result.add_input(input).is_err());
+    }
+
+    #[test]
+    fn test_dialog_set_input() {
+        let mut result = ChallengeResult::Dialog(Vec::new());
+        let input = ChallengeInput::Dialog(crate::challenges::DialogAnswer {
+            turn_index: 3,
+            selected_option: 2,
+        });
+        assert!(result.set_input(0, input).is_ok());
+        assert_eq!(result.len(), 1);
+    }
+
+    #[test]
+    fn test_dialog_set_input_wrong_type() {
+        let mut result = ChallengeResult::Dialog(Vec::new());
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
+        assert!(result.set_input(0, input).is_err());
+    }
+
+    #[test]
+    fn test_dialog_is_empty_initially() {
+        let result = ChallengeResult::Dialog(Vec::new());
+        assert!(result.is_empty());
+        assert_eq!(result.len(), 0);
     }
 
     #[test]

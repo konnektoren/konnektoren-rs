@@ -85,12 +85,12 @@ impl AssetLoader {
 
                 let url = format!("{}{}", base_url, normalized_path);
 
-                let response = Request::get(&url)
-                    .send()
-                    .await
-                    .map_err(|e| KonnektorenError::AssetLoader(
-                        format!("Failed to send request to {}: {}", url, e)
-                    ))?;
+                let response = Request::get(&url).send().await.map_err(|e| {
+                    KonnektorenError::AssetLoader(format!(
+                        "Failed to send request to {}: {}",
+                        url, e
+                    ))
+                })?;
 
                 if response.status() != 200 {
                     return Err(KonnektorenError::AssetLoader(format!(
@@ -100,12 +100,12 @@ impl AssetLoader {
                     )));
                 }
 
-                response
-                    .binary()
-                    .await
-                    .map_err(|e| KonnektorenError::AssetLoader(
-                        format!("Failed to read response from {}: {}", url, e)
+                response.binary().await.map_err(|e| {
+                    KonnektorenError::AssetLoader(format!(
+                        "Failed to read response from {}: {}",
+                        url, e
                     ))
+                })
             }
 
             AssetLoader::File { base_dirs } => {
@@ -114,9 +114,11 @@ impl AssetLoader {
                     let file_path = base_dir.join(path);
                     if file_path.exists() {
                         return std::fs::read(&file_path).map_err(|e| {
-                            KonnektorenError::AssetLoader(
-                                format!("Failed to read file {}: {}", file_path.display(), e)
-                            )
+                            KonnektorenError::AssetLoader(format!(
+                                "Failed to read file {}: {}",
+                                file_path.display(),
+                                e
+                            ))
                         });
                     }
                 }
@@ -125,18 +127,23 @@ impl AssetLoader {
                 let path_buf = PathBuf::from(path);
                 if path_buf.is_absolute() && path_buf.exists() {
                     return std::fs::read(&path_buf).map_err(|e| {
-                        KonnektorenError::AssetLoader(
-                            format!("Failed to read file {}: {}", path_buf.display(), e)
-                        )
+                        KonnektorenError::AssetLoader(format!(
+                            "Failed to read file {}: {}",
+                            path_buf.display(),
+                            e
+                        ))
                     });
                 }
 
-                Err(KonnektorenError::AssetLoader(format!("File not found: {}", path)))
+                Err(KonnektorenError::AssetLoader(format!(
+                    "File not found: {}",
+                    path
+                )))
             }
 
             #[allow(unreachable_patterns)]
             _ => Err(KonnektorenError::AssetLoader(
-                "Asset loading is not available in this configuration".to_string()
+                "Asset loading is not available in this configuration".to_string(),
             )),
         }
     }

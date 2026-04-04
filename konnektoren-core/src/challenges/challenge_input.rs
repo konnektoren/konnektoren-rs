@@ -1,5 +1,6 @@
 use crate::challenges::{
-    ContextItemChoiceAnswers, GapFillAnswer, MultipleChoiceOption, OrderingResult, SortTableRow,
+    ContextItemChoiceAnswers, DialogAnswer, GapFillAnswer, MultipleChoiceOption, OrderingResult,
+    SortTableRow,
 };
 use serde::{Deserialize, Serialize};
 
@@ -10,4 +11,5 @@ pub enum ChallengeInput {
     GapFill(GapFillAnswer),
     SortTable(SortTableRow),
     Ordering(OrderingResult),
+    Dialog(DialogAnswer),
 }

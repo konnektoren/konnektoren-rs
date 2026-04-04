@@ -57,3 +57,19 @@ challenges:
     tasks: 2
     unlock_points: 0
     position: [2, 3]
+  - id: "dialog-begruessung-observer"
+    name: "Begrüßung: Zuschauen 👀"
+    description: "Watch two neighbours say good morning."
+    challenge: "dialog_begruessung"
+    variant: dialog-observer
+    tasks: 1
+    unlock_points: 0
+    position: [3, 4]
+  - id: "dialog-begruessung-quiz"
+    name: "Begrüßung: Quiz ❓"
+    description: "Pick the correct replies in a morning greeting."
+    challenge: "dialog_begruessung"
+    variant: dialog-quiz
+    tasks: 1
+    unlock_points: 5
+    position: [4, 4]

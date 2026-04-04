@@ -1,0 +1,41 @@
+!dialog
+id: "dialog_begruessung"
+name: "Begrüßung am Morgen 👋"
+description: "Two neighbours meet on a Monday morning."
+lang: "de"
+image: "fa-solid fa-hand-wave"
+speakers:
+  - id: "anna"
+    name: "Anna"
+    icon: "fa-solid fa-user"
+  - id: "ben"
+    name: "Ben"
+    icon: "fa-solid fa-user"
+turns:
+  - speaker: "anna"
+    text: "Guten Morgen, Ben!"
+  - speaker: "ben"
+    text: "Guten Morgen, Anna! Wie geht's?"
+    options:
+      - "Guten Morgen, Anna! Wie geht's?"
+      - "Gute Nacht, Anna!"
+      - "Auf Wiedersehen, Anna!"
+    correct_option: 0
+  - speaker: "anna"
+    text: "Gut, danke! Und dir?"
+  - speaker: "ben"
+    text: "Auch gut, danke!"
+    options:
+      - "Schlecht, danke."
+      - "Ich weiß nicht."
+      - "Auch gut, danke!"
+    correct_option: 2
+  - speaker: "anna"
+    text: "Schön! Tschüss, Ben!"
+  - speaker: "ben"
+    text: "Tschüss! Einen schönen Tag noch!"
+    options:
+      - "Tschüss! Einen schönen Tag noch!"
+      - "Guten Morgen!"
+      - "Wie geht's?"
+    correct_option: 0

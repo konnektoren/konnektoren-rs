@@ -30,6 +30,7 @@ impl Challenge {
             ChallengeType::Custom(_) => ChallengeResult::Custom(CustomChallengeResult::default()),
             ChallengeType::Placeholder(_) => ChallengeResult::MultipleChoice(Vec::new()), // Placeholder uses MC
             ChallengeType::Vocabulary(_) => ChallengeResult::Vocabulary,
+            ChallengeType::Dialog(_) => ChallengeResult::Dialog(Vec::new()),
         };
 
         Challenge {
@@ -109,6 +110,21 @@ impl Solvable for Challenge {
                 }
                 (ChallengeType::Informative(_), ChallengeResult::Informative) => Ok(true),
                 (ChallengeType::Custom(_), ChallengeResult::Custom(_)) => Ok(true),
+                (ChallengeType::Dialog(dialog), ChallengeResult::Dialog(_)) => {
+                    if let ChallengeInput::Dialog(answer) = &input {
+                        match dialog.turns.get(answer.turn_index) {
+                            Some(turn) => Ok(turn.correct_option == Some(answer.selected_option)),
+                            None => Err(ChallengeError::InvalidInput(format!(
+                                "turn index {} out of bounds",
+                                answer.turn_index
+                            ))),
+                        }
+                    } else {
+                        Err(ChallengeError::InvalidInput(
+                            "Expected Dialog input".to_string(),
+                        ))
+                    }
+                }
                 _ => Err(ChallengeError::InvalidChallengeType),
             },
             Err(_) => Ok(false),
@@ -286,6 +302,108 @@ mod tests {
             voc_challenge.challenge_result,
             ChallengeResult::Vocabulary
         ));
+
+        // Dialog
+        let dlg_type = ChallengeType::Dialog(Dialog::default());
+        let dlg_challenge = Challenge::new(&dlg_type, &ChallengeConfig::default());
+        assert!(matches!(
+            dlg_challenge.challenge_result,
+            ChallengeResult::Dialog(_)
+        ));
+    }
+
+    #[test]
+    fn test_solve_dialog_observer() {
+        // Observer: no quiz turns → always correct
+        let mut observer = Dialog::default();
+        for turn in &mut observer.turns {
+            turn.options = None;
+            turn.correct_option = None;
+        }
+        let mut challenge = Challenge::new(
+            &ChallengeType::Dialog(observer),
+            &ChallengeConfig::default(),
+        );
+        // Observer dialogs produce no answers; performance is 100 % by convention.
+        // Calling solve with a valid DialogAnswer should still return Ok.
+        let input = ChallengeInput::Dialog(DialogAnswer {
+            turn_index: 0,
+            selected_option: 0,
+        });
+        let result = challenge.solve(input, 0);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_solve_dialog_quiz_correct() {
+        // Default dialog: turn 1 is a quiz turn with correct_option = 0
+        let dialog_type = ChallengeType::Dialog(Dialog::default());
+        let mut challenge = Challenge::new(&dialog_type, &ChallengeConfig::default());
+        let input = ChallengeInput::Dialog(DialogAnswer {
+            turn_index: 1,
+            selected_option: 0, // correct
+        });
+        let result = challenge.solve(input, 1);
+        assert!(result.is_ok());
+        assert!(
+            result.unwrap(),
+            "selecting correct_option should return true"
+        );
+    }
+
+    #[test]
+    fn test_solve_dialog_quiz_wrong() {
+        // Default dialog: turn 1 correct_option = 0; option 2 is wrong
+        let dialog_type = ChallengeType::Dialog(Dialog::default());
+        let mut challenge = Challenge::new(&dialog_type, &ChallengeConfig::default());
+        let input = ChallengeInput::Dialog(DialogAnswer {
+            turn_index: 1,
+            selected_option: 2, // wrong
+        });
+        let result = challenge.solve(input, 1);
+        assert!(result.is_ok());
+        assert!(
+            !result.unwrap(),
+            "selecting wrong option should return false"
+        );
+    }
+
+    #[test]
+    fn test_solve_dialog_quiz_out_of_bounds_turn() {
+        let dialog_type = ChallengeType::Dialog(Dialog::default());
+        let mut challenge = Challenge::new(&dialog_type, &ChallengeConfig::default());
+        let input = ChallengeInput::Dialog(DialogAnswer {
+            turn_index: 999, // no such turn
+            selected_option: 0,
+        });
+        let result = challenge.solve(input, 0);
+        assert!(result.is_err(), "out-of-bounds turn_index must be an error");
+    }
+
+    #[test]
+    fn test_solve_dialog_accumulates_answers() {
+        let dialog_type = ChallengeType::Dialog(Dialog::default());
+        let mut challenge = Challenge::new(&dialog_type, &ChallengeConfig::default());
+
+        // Answer turn 1 (quiz turn, correct_option = 0)
+        let _ = challenge.solve(
+            ChallengeInput::Dialog(DialogAnswer {
+                turn_index: 1,
+                selected_option: 0,
+            }),
+            1,
+        );
+        // Answer turn 3 (quiz turn, correct_option = 1)
+        let _ = challenge.solve(
+            ChallengeInput::Dialog(DialogAnswer {
+                turn_index: 3,
+                selected_option: 1,
+            }),
+            3,
+        );
+
+        assert_eq!(challenge.challenge_result.len(), 2);
+        assert!(challenge.solved());
     }
 
     #[test]

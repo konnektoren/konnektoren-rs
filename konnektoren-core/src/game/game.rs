@@ -69,7 +69,7 @@ mod tests {
         let game = Game::default();
         let challenge = game.create_challenge("unknown");
         assert!(challenge.is_err());
-        assert_eq!(game.game_paths[0].challenge_ids().len(), 8);
+        assert_eq!(game.game_paths[0].challenge_ids().len(), 10);
         assert_eq!(
             game.game_paths[0].challenge_ids(),
             vec![
@@ -80,7 +80,9 @@ mod tests {
                 "konnektoren-5",
                 "articles-1",
                 "past-tense-1",
-                "sentence-structure-1"
+                "sentence-structure-1",
+                "dialog-begruessung-observer",
+                "dialog-begruessung-quiz"
             ]
         );
         let challenge = game.create_challenge("konnektoren-1");

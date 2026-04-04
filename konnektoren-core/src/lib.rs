@@ -36,10 +36,14 @@ pub mod prelude {
     pub use crate::challenges::ChallengeResult;
     pub use crate::challenges::ChallengeType;
     pub use crate::challenges::ChallengeVariant;
+    pub use crate::challenges::Dialog;
+    pub use crate::challenges::DialogAnswer;
+    pub use crate::challenges::DialogTurn;
     pub use crate::challenges::MultipleChoice;
     pub use crate::challenges::MultipleChoiceOption;
     pub use crate::challenges::Performance;
     pub use crate::challenges::Question;
+    pub use crate::challenges::Speaker;
     pub use crate::commands::error::CommandError;
     pub use crate::controller::GameController;
     pub use crate::controller::error::ControllerError;

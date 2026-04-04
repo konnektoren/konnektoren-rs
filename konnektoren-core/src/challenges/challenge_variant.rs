@@ -18,6 +18,8 @@ pub enum ChallengeVariant {
     InformativeMarkdown,
     Custom,
     CustomPackage,
+    DialogObserver,
+    DialogQuiz,
 }
 
 impl fmt::Display for ChallengeVariant {
@@ -32,6 +34,8 @@ impl fmt::Display for ChallengeVariant {
             ChallengeVariant::InformativeMarkdown => "Informative Markdown",
             ChallengeVariant::Custom => "Custom",
             ChallengeVariant::CustomPackage => "Custom Package",
+            ChallengeVariant::DialogObserver => "Dialog Observer",
+            ChallengeVariant::DialogQuiz => "Dialog Quiz",
         };
         write!(f, "{}", s)
     }
@@ -88,10 +92,12 @@ mod tests {
     #[test]
     fn test_variant_iteration() {
         let variants: Vec<ChallengeVariant> = ChallengeVariant::iter().collect();
-        assert_eq!(variants.len(), 9);
+        assert_eq!(variants.len(), 11);
         assert!(variants.contains(&ChallengeVariant::MultipleChoice));
         assert!(variants.contains(&ChallengeVariant::MultipleChoice4));
         assert!(variants.contains(&ChallengeVariant::CustomPackage));
+        assert!(variants.contains(&ChallengeVariant::DialogObserver));
+        assert!(variants.contains(&ChallengeVariant::DialogQuiz));
     }
 
     #[test]
@@ -108,6 +114,26 @@ mod tests {
             ChallengeVariant::MultipleChoice4.to_string(),
             "Multiple Choice (4 Options)"
         );
+        assert_eq!(
+            ChallengeVariant::DialogObserver.to_string(),
+            "Dialog Observer"
+        );
+        assert_eq!(ChallengeVariant::DialogQuiz.to_string(), "Dialog Quiz");
+    }
+
+    #[test]
+    fn test_dialog_variant_serde() {
+        let observer = ChallengeVariant::DialogObserver;
+        let json = serde_json::to_string(&observer).unwrap();
+        assert_eq!(json, "\"dialog-observer\"");
+        let deserialized: ChallengeVariant = serde_json::from_str(&json).unwrap();
+        assert_eq!(deserialized, ChallengeVariant::DialogObserver);
+
+        let quiz = ChallengeVariant::DialogQuiz;
+        let json = serde_json::to_string(&quiz).unwrap();
+        assert_eq!(json, "\"dialog-quiz\"");
+        let deserialized: ChallengeVariant = serde_json::from_str(&json).unwrap();
+        assert_eq!(deserialized, ChallengeVariant::DialogQuiz);
     }
 
     #[test]
