@@ -3,6 +3,7 @@ pub mod base64_serialization;
 pub mod challenge;
 pub mod commands;
 pub mod controller;
+pub mod dialog;
 pub mod game;
 pub mod game_progression;
 pub mod language_support;

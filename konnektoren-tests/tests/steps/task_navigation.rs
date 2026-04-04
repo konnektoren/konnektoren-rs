@@ -212,6 +212,15 @@ async fn tasks_should_be_completed(world: &mut BddWorld, expected_count: usize) 
                 "Custom challenges don't have tasks in the standard way"
             );
         }
+        ChallengeResult::Dialog(answers) => {
+            assert_eq!(
+                answers.len(),
+                expected_count,
+                "Expected {} completed dialog turns, but got {}",
+                expected_count,
+                answers.len()
+            );
+        }
     }
 }
 
