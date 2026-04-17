@@ -24,3 +24,4 @@ cobertura.xml
 ssh_host_key
 data/
 .env
+schemas/

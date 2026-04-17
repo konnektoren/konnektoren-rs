@@ -8,6 +8,7 @@ keywords = ["konnektoren", "platform", "library"]
 [features]
 default = []
 tools = ["regex", "walkdir"]
+schema = ["konnektoren-core/schema"]
 
 [dependencies]
 isolang = { workspace = true }
