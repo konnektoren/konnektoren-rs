@@ -1,7 +1,9 @@
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct SortTable {
     /// Unique identifier for the challenge
     pub id: String,
@@ -22,7 +24,8 @@ impl Default for SortTable {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct SortTableColumn {
     /// Column identifier
     pub id: String,
@@ -32,7 +35,8 @@ pub struct SortTableColumn {
     pub description: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct SortTableRow {
     /// Row identifier
     pub id: usize,

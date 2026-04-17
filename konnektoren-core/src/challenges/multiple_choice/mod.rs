@@ -1,7 +1,9 @@
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct MultipleChoice {
     /// Unique identifier for the challenge
     pub id: String,
@@ -15,7 +17,8 @@ pub struct MultipleChoice {
     pub questions: Vec<Question>,
 }
 
-#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct MultipleChoiceOption {
     /// Option identifier
     pub id: usize,
@@ -23,7 +26,8 @@ pub struct MultipleChoiceOption {
     pub name: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Question {
     /// The question text
     pub question: String,

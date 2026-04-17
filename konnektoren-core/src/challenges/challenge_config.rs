@@ -1,14 +1,19 @@
 use super::challenge_variant::ChallengeVariant;
 use crate::challenges::task_pattern::TaskPattern;
+#[cfg(feature = "schema")]
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct ChallengeConfig {
     pub id: String,
     pub name: String,
     pub description: String,
     pub challenge: String,
     pub variant: Option<ChallengeVariant>,
+    /// Number or range of tasks to select (e.g. "10", "5:random", "1..5")
+    #[cfg_attr(feature = "schema", schemars(with = "String"))]
     pub tasks: TaskPattern,
     pub unlock_points: usize,
     pub position: Option<(i32, i32)>,

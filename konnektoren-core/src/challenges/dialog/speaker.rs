@@ -1,3 +1,4 @@
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -6,7 +7,8 @@ use serde::{Deserialize, Serialize};
 /// Every dialog has exactly two characters. Each turn in the dialog
 /// references one by its `id`. The game engine uses `Speaker` to render
 /// the correct name and avatar in the chat-bubble UI.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Speaker {
     /// Unique key used by [`DialogTurn::speaker`](super::turn::DialogTurn::speaker)
     /// to bind a turn to this character.

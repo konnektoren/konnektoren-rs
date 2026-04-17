@@ -6,11 +6,13 @@ use crate::challenges::ordering::Ordering;
 use crate::challenges::sort_table::SortTable;
 use crate::challenges::task_pattern::TaskPattern;
 use crate::challenges::{gap_fill::GapFill, vocabulary::Vocabulary};
+#[cfg(feature = "schema")]
 use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
 use strum_macros::{EnumIter, IntoStaticStr};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumIter, IntoStaticStr, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumIter, IntoStaticStr)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[serde(rename_all = "kebab-case")]
 #[strum(serialize_all = "kebab-case")]
 pub enum ChallengeType {
@@ -34,6 +36,7 @@ impl Default for ChallengeType {
     }
 }
 
+#[cfg(feature = "schema")]
 impl ChallengeType {
     /// Get the JSON schema for creating challenges
     pub fn schema() -> serde_json::Value {
@@ -493,6 +496,7 @@ pub mod tests {
         assert!(serialized.contains("multiple-choice"));
     }
 
+    #[cfg(feature = "schema")]
     #[test]
     fn test_schema() {
         let schema = ChallengeType::schema();
@@ -513,6 +517,7 @@ pub mod tests {
         assert!(schema_str.contains("MultipleChoice") || schema_str.contains("multiple-choice"));
     }
 
+    #[cfg(feature = "schema")]
     #[test]
     fn test_schema_for_variant() {
         let challenge = ChallengeType::default(); // This should be MultipleChoice
@@ -533,5 +538,63 @@ pub mod tests {
                 || schema_json.contains("id")
                 || schema_json.contains("name")
         );
+    }
+
+    #[test]
+    fn test_json_challenge_evaluation() {
+        // 1. Build a MultipleChoice challenge with known questions and correct options
+        let challenge_type = ChallengeType::MultipleChoice(MultipleChoice {
+            id: "test-json-eval".to_string(),
+            name: "JSON Evaluation Test".to_string(),
+            lang: "en".to_string(),
+            options: vec![
+                MultipleChoiceOption { id: 0, name: "Option A".to_string() },
+                MultipleChoiceOption { id: 1, name: "Option B".to_string() },
+                MultipleChoiceOption { id: 2, name: "Option C".to_string() },
+            ],
+            questions: vec![
+                Question { question: "Q1".to_string(), help: String::new(), image: None, option: 0 },
+                Question { question: "Q2".to_string(), help: String::new(), image: None, option: 2 },
+                Question { question: "Q3".to_string(), help: String::new(), image: None, option: 1 },
+            ],
+        });
+
+        // 2. Serialize to JSON -- the challenge must be exportable
+        let json = serde_json::to_string(&challenge_type)
+            .expect("ChallengeType should serialize to JSON");
+        assert!(!json.is_empty(), "JSON output must not be empty");
+
+        // 3. Deserialize back -- a third party should be able to reconstruct it
+        let from_json: ChallengeType = serde_json::from_str(&json)
+            .expect("ChallengeType should deserialize from JSON");
+        assert_eq!(challenge_type, from_json,
+            "round-trip through JSON must produce the same value");
+
+        // 4. Evaluate with ALL correct answers -> 100 %
+        let all_correct = ChallengeResult::MultipleChoice(vec![
+            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q1 correct
+            MultipleChoiceOption { id: 2, name: "Option C".to_string() }, // Q2 correct
+            MultipleChoiceOption { id: 1, name: "Option B".to_string() }, // Q3 correct
+        ]);
+        assert_eq!(from_json.performance(&all_correct), 100,
+            "all correct answers should yield 100% performance");
+
+        // 5. Evaluate with ONE correct answer (first) -> 33 %
+        let one_correct = ChallengeResult::MultipleChoice(vec![
+            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q1 correct
+            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q2 wrong (expected 2)
+            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q3 wrong (expected 1)
+        ]);
+        assert_eq!(from_json.performance(&one_correct), 33,
+            "one out of three correct should yield 33% performance");
+
+        // 6. Evaluate with NO correct answers -> 0 %
+        let none_correct = ChallengeResult::MultipleChoice(vec![
+            MultipleChoiceOption { id: 1, name: "Option B".to_string() }, // Q1 wrong (expected 0)
+            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q2 wrong (expected 2)
+            MultipleChoiceOption { id: 2, name: "Option C".to_string() }, // Q3 wrong (expected 1)
+        ]);
+        assert_eq!(from_json.performance(&none_correct), 0,
+            "no correct answers should yield 0% performance");
     }
 }

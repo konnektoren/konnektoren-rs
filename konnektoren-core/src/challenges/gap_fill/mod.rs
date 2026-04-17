@@ -1,7 +1,9 @@
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct GapFill {
     /// Unique identifier for the challenge
     pub id: String,
@@ -22,7 +24,8 @@ impl Default for GapFill {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct GapFillQuestion {
     /// The sentence with gaps
     pub sentence: String,
@@ -36,7 +39,8 @@ pub struct GapFillQuestion {
     pub explanation: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Gap {
     /// Position of the gap in the sentence
     pub position: usize,
@@ -46,7 +50,8 @@ pub struct Gap {
     pub correct: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct GapFillAnswer {
     /// Index of the question being answered
     pub question_index: usize,

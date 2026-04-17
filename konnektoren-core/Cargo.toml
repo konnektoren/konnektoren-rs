@@ -25,6 +25,7 @@ certificates = [
 marketplace = []
 csr = ["js"]
 ssr = []
+schema = ["schemars"]
 js = [
     "serde-wasm-bindgen",
     "wasm-bindgen",
@@ -46,7 +47,7 @@ log = { workspace = true }
 names = { workspace = true }
 rand = { workspace = true }
 rmp-serde = { workspace = true }
-schemars = { workspace = true }
+schemars = { workspace = true, optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_yaml = { workspace = true }

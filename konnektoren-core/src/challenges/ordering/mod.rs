@@ -1,7 +1,9 @@
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Ordering {
     /// Unique identifier for the challenge
     pub id: String,
@@ -20,7 +22,8 @@ impl Default for Ordering {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct OrderingItem {
     /// Elements to be ordered
     pub elements: Vec<String>,
@@ -28,7 +31,8 @@ pub struct OrderingItem {
     pub correct_order: Vec<usize>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct OrderingResult {
     /// User's ordering (indices)
     pub order: Vec<usize>,

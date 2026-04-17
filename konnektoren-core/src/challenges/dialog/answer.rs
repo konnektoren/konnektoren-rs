@@ -1,3 +1,4 @@
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -6,7 +7,8 @@ use serde::{Deserialize, Serialize};
 /// Recorded each time the player picks an option during a [`DialogQuiz`] run.
 /// A completed [`Dialog`] challenge accumulates one [`DialogAnswer`] per
 /// interactive turn the player acted on.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct DialogAnswer {
     /// Position of the turn in [`Dialog::turns`](super::dialog::Dialog::turns)
     /// that the player responded to.

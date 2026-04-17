@@ -1,12 +1,14 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::ops::RangeInclusive;
 
-#[derive(Debug, Clone, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
+#[cfg_attr(feature = "schema", serde(rename_all = "snake_case"))]
 pub enum TaskPattern {
     /// Exact number of tasks
     Exact(usize),

@@ -1,3 +1,4 @@
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -7,7 +8,8 @@ use serde::{Deserialize, Serialize};
 /// present.  In **Observer** mode those fields are ignored and the player watches
 /// the exchange unfold.  In **Quiz** mode the player must pick the correct
 /// option to score points before the line is revealed.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct DialogTurn {
     /// References `Speaker.id` — identifies which character delivers this line.
     pub speaker: String,

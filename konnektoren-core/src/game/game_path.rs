@@ -1,8 +1,11 @@
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::game::Map;
+#[cfg(feature = "schema")]
+use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct GamePath {
     pub id: String,
     pub name: String,
@@ -42,6 +45,21 @@ impl GamePath {
     }
 }
 
+#[cfg(feature = "schema")]
+impl GamePath {
+    /// Get the JSON schema for `GamePath` (for documentation / sharing with third parties)
+    pub fn schema() -> serde_json::Value {
+        let schema = schema_for!(GamePath);
+        serde_json::to_value(schema).expect("schemars Schema is always JSON-serializable")
+    }
+
+    /// Get the JSON schema as a pretty-printed string
+    pub fn schema_json() -> String {
+        serde_json::to_string_pretty(&Self::schema())
+            .expect("serde_json::Value is always serializable to string")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -74,5 +92,37 @@ mod tests {
         let game_path = GamePath::default();
         let next_challenge_id = game_path.next_challenge_id("konnektoren-1");
         assert_eq!(next_challenge_id, Some("konnektoren-2".to_string()));
+    }
+
+    #[test]
+    fn test_game_path_json_round_trip() {
+        let game_path = GamePath::default();
+
+        // Serialize to JSON
+        let json = serde_json::to_string(&game_path)
+            .expect("GamePath should serialize to JSON");
+        assert!(!json.is_empty());
+
+        // Deserialize back
+        let from_json: GamePath = serde_json::from_str(&json)
+            .expect("GamePath should deserialize from JSON");
+        assert_eq!(game_path, from_json);
+    }
+
+    #[cfg(feature = "schema")]
+    #[test]
+    fn test_game_path_json_schema() {
+        let schema = GamePath::schema();
+        assert!(schema.is_object());
+
+        let schema_str = serde_json::to_string_pretty(&schema)
+            .expect("schema should serialize to string");
+        // The schema must describe the key fields
+        assert!(schema_str.contains("challenges"), "schema should mention 'challenges'");
+        assert!(schema_str.contains("id"), "schema should mention 'id'");
+
+        // schema_json convenience method should produce the same output
+        let schema_json = GamePath::schema_json();
+        assert!(!schema_json.is_empty());
     }
 }

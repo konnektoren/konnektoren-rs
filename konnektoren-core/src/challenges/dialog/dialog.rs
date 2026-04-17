@@ -1,3 +1,4 @@
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -27,7 +28,8 @@ use super::turn::DialogTurn;
 /// * Any [`DialogTurn`] that has `options` **must** also carry `correct_option`.
 /// * `correct_option` must be a valid index into `options`.
 /// * `turn.speaker` must match one of the two [`Speaker::id`] values.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Dialog {
     /// Unique identifier used to reference this dialog from the game map,
     /// e.g. `"dialog_beim_baecker_a1"`.

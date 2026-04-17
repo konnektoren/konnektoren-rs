@@ -1,7 +1,9 @@
+#[cfg(feature = "schema")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct ContextualChoice {
     /// Unique identifier for the challenge
     pub id: String,
@@ -20,7 +22,8 @@ impl Default for ContextualChoice {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct ContextItem {
     /// Template string with placeholders like {0}, {1}
     pub template: String,
@@ -28,7 +31,8 @@ pub struct ContextItem {
     pub choices: Vec<Choice>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct Choice {
     /// Choice identifier
     pub id: usize,
@@ -38,7 +42,8 @@ pub struct Choice {
     pub correct_answer: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct ContextItemChoiceAnswers {
     /// Selected option IDs for each choice
     pub ids: Vec<usize>,
