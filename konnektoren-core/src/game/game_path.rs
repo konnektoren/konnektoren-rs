@@ -99,13 +99,12 @@ mod tests {
         let game_path = GamePath::default();
 
         // Serialize to JSON
-        let json = serde_json::to_string(&game_path)
-            .expect("GamePath should serialize to JSON");
+        let json = serde_json::to_string(&game_path).expect("GamePath should serialize to JSON");
         assert!(!json.is_empty());
 
         // Deserialize back
-        let from_json: GamePath = serde_json::from_str(&json)
-            .expect("GamePath should deserialize from JSON");
+        let from_json: GamePath =
+            serde_json::from_str(&json).expect("GamePath should deserialize from JSON");
         assert_eq!(game_path, from_json);
     }
 
@@ -115,10 +114,13 @@ mod tests {
         let schema = GamePath::schema();
         assert!(schema.is_object());
 
-        let schema_str = serde_json::to_string_pretty(&schema)
-            .expect("schema should serialize to string");
+        let schema_str =
+            serde_json::to_string_pretty(&schema).expect("schema should serialize to string");
         // The schema must describe the key fields
-        assert!(schema_str.contains("challenges"), "schema should mention 'challenges'");
+        assert!(
+            schema_str.contains("challenges"),
+            "schema should mention 'challenges'"
+        );
         assert!(schema_str.contains("id"), "schema should mention 'id'");
 
         // schema_json convenience method should produce the same output

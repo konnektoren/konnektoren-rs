@@ -548,53 +548,115 @@ pub mod tests {
             name: "JSON Evaluation Test".to_string(),
             lang: "en".to_string(),
             options: vec![
-                MultipleChoiceOption { id: 0, name: "Option A".to_string() },
-                MultipleChoiceOption { id: 1, name: "Option B".to_string() },
-                MultipleChoiceOption { id: 2, name: "Option C".to_string() },
+                MultipleChoiceOption {
+                    id: 0,
+                    name: "Option A".to_string(),
+                },
+                MultipleChoiceOption {
+                    id: 1,
+                    name: "Option B".to_string(),
+                },
+                MultipleChoiceOption {
+                    id: 2,
+                    name: "Option C".to_string(),
+                },
             ],
             questions: vec![
-                Question { question: "Q1".to_string(), help: String::new(), image: None, option: 0 },
-                Question { question: "Q2".to_string(), help: String::new(), image: None, option: 2 },
-                Question { question: "Q3".to_string(), help: String::new(), image: None, option: 1 },
+                Question {
+                    question: "Q1".to_string(),
+                    help: String::new(),
+                    image: None,
+                    option: 0,
+                },
+                Question {
+                    question: "Q2".to_string(),
+                    help: String::new(),
+                    image: None,
+                    option: 2,
+                },
+                Question {
+                    question: "Q3".to_string(),
+                    help: String::new(),
+                    image: None,
+                    option: 1,
+                },
             ],
         });
 
         // 2. Serialize to JSON -- the challenge must be exportable
-        let json = serde_json::to_string(&challenge_type)
-            .expect("ChallengeType should serialize to JSON");
+        let json =
+            serde_json::to_string(&challenge_type).expect("ChallengeType should serialize to JSON");
         assert!(!json.is_empty(), "JSON output must not be empty");
 
         // 3. Deserialize back -- a third party should be able to reconstruct it
-        let from_json: ChallengeType = serde_json::from_str(&json)
-            .expect("ChallengeType should deserialize from JSON");
-        assert_eq!(challenge_type, from_json,
-            "round-trip through JSON must produce the same value");
+        let from_json: ChallengeType =
+            serde_json::from_str(&json).expect("ChallengeType should deserialize from JSON");
+        assert_eq!(
+            challenge_type, from_json,
+            "round-trip through JSON must produce the same value"
+        );
 
         // 4. Evaluate with ALL correct answers -> 100 %
         let all_correct = ChallengeResult::MultipleChoice(vec![
-            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q1 correct
-            MultipleChoiceOption { id: 2, name: "Option C".to_string() }, // Q2 correct
-            MultipleChoiceOption { id: 1, name: "Option B".to_string() }, // Q3 correct
+            MultipleChoiceOption {
+                id: 0,
+                name: "Option A".to_string(),
+            }, // Q1 correct
+            MultipleChoiceOption {
+                id: 2,
+                name: "Option C".to_string(),
+            }, // Q2 correct
+            MultipleChoiceOption {
+                id: 1,
+                name: "Option B".to_string(),
+            }, // Q3 correct
         ]);
-        assert_eq!(from_json.performance(&all_correct), 100,
-            "all correct answers should yield 100% performance");
+        assert_eq!(
+            from_json.performance(&all_correct),
+            100,
+            "all correct answers should yield 100% performance"
+        );
 
         // 5. Evaluate with ONE correct answer (first) -> 33 %
         let one_correct = ChallengeResult::MultipleChoice(vec![
-            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q1 correct
-            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q2 wrong (expected 2)
-            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q3 wrong (expected 1)
+            MultipleChoiceOption {
+                id: 0,
+                name: "Option A".to_string(),
+            }, // Q1 correct
+            MultipleChoiceOption {
+                id: 0,
+                name: "Option A".to_string(),
+            }, // Q2 wrong (expected 2)
+            MultipleChoiceOption {
+                id: 0,
+                name: "Option A".to_string(),
+            }, // Q3 wrong (expected 1)
         ]);
-        assert_eq!(from_json.performance(&one_correct), 33,
-            "one out of three correct should yield 33% performance");
+        assert_eq!(
+            from_json.performance(&one_correct),
+            33,
+            "one out of three correct should yield 33% performance"
+        );
 
         // 6. Evaluate with NO correct answers -> 0 %
         let none_correct = ChallengeResult::MultipleChoice(vec![
-            MultipleChoiceOption { id: 1, name: "Option B".to_string() }, // Q1 wrong (expected 0)
-            MultipleChoiceOption { id: 0, name: "Option A".to_string() }, // Q2 wrong (expected 2)
-            MultipleChoiceOption { id: 2, name: "Option C".to_string() }, // Q3 wrong (expected 1)
+            MultipleChoiceOption {
+                id: 1,
+                name: "Option B".to_string(),
+            }, // Q1 wrong (expected 0)
+            MultipleChoiceOption {
+                id: 0,
+                name: "Option A".to_string(),
+            }, // Q2 wrong (expected 2)
+            MultipleChoiceOption {
+                id: 2,
+                name: "Option C".to_string(),
+            }, // Q3 wrong (expected 1)
         ]);
-        assert_eq!(from_json.performance(&none_correct), 0,
-            "no correct answers should yield 0% performance");
+        assert_eq!(
+            from_json.performance(&none_correct),
+            0,
+            "no correct answers should yield 0% performance"
+        );
     }
 }

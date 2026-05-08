@@ -117,8 +117,16 @@ mod tests {
             scenario: None,
             image: None,
             speakers: [
-                Speaker { id: "a".to_string(), name: "A".to_string(), icon: None },
-                Speaker { id: "b".to_string(), name: "B".to_string(), icon: None },
+                Speaker {
+                    id: "a".to_string(),
+                    name: "A".to_string(),
+                    icon: None,
+                },
+                Speaker {
+                    id: "b".to_string(),
+                    name: "B".to_string(),
+                    icon: None,
+                },
             ],
             turns: vec![
                 DialogTurn {
@@ -153,7 +161,11 @@ mod tests {
                     name: "Bäcker".to_string(),
                     icon: Some("fa-solid fa-bread-slice".to_string()),
                 },
-                Speaker { id: "kunde".to_string(), name: "Kunde".to_string(), icon: None },
+                Speaker {
+                    id: "kunde".to_string(),
+                    name: "Kunde".to_string(),
+                    icon: None,
+                },
             ],
             turns: vec![
                 DialogTurn {

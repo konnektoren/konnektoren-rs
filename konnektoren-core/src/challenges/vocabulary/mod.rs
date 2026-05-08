@@ -12,6 +12,7 @@ pub struct Vocabulary {
     /// Description of the vocabulary set
     pub description: String,
     /// Optional icon identifier
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub icon: Option<String>,
     /// Language code
     pub lang: String,
@@ -34,10 +35,13 @@ pub struct VocabularyItem {
     /// The word or phrase
     pub text: String,
     /// Translation of the word
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub translation: Option<String>,
     /// Optional icon identifier
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub icon: Option<String>,
     /// Phonetic pronunciation
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub phonetic: Option<String>,
 }
 
@@ -184,6 +188,30 @@ mod tests {
         assert_eq!(vocabulary.icon, Some("fa-solid fa-book-open".to_string()));
         assert_eq!(vocabulary.lang, "de");
         assert!(!vocabulary.items.is_empty());
+    }
+
+    #[test]
+    fn serialize_vocabulary_omits_none_fields() {
+        let vocabulary = Vocabulary {
+            id: "test-vocab".to_string(),
+            name: "Test".to_string(),
+            description: "Test vocabulary".to_string(),
+            icon: None,
+            lang: "en".to_string(),
+            items: vec![VocabularyItem {
+                id: 0,
+                text: "word".to_string(),
+                translation: None,
+                icon: None,
+                phonetic: None,
+            }],
+        };
+
+        let yaml = serde_yaml::to_string(&vocabulary).unwrap();
+        assert!(!yaml.contains("null"));
+        assert!(!yaml.contains("icon:"));
+        assert!(!yaml.contains("translation:"));
+        assert!(!yaml.contains("phonetic:"));
     }
 
     #[test]
