@@ -11,11 +11,13 @@ pub struct ChallengeConfig {
     pub name: String,
     pub description: String,
     pub challenge: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub variant: Option<ChallengeVariant>,
     /// Number or range of tasks to select (e.g. "10", "5:random", "1..5")
     #[cfg_attr(feature = "schema", schemars(with = "String"))]
     pub tasks: TaskPattern,
     pub unlock_points: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub position: Option<(i32, i32)>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub icon: Option<String>,

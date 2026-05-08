@@ -10,6 +10,7 @@ pub struct GamePath {
     pub id: String,
     pub name: String,
     pub challenges: Vec<ChallengeConfig>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub map: Option<Map>,
 }
 
@@ -32,6 +33,18 @@ impl GamePath {
             .iter()
             .map(|challenge| challenge.id.clone())
             .collect()
+    }
+
+    pub fn insert_before(&mut self, before_id: &str, config: ChallengeConfig) {
+        if let Some(pos) = self.challenges.iter().position(|c| c.id == before_id) {
+            self.challenges.insert(pos, config);
+        }
+    }
+
+    pub fn insert_after(&mut self, after_id: &str, config: ChallengeConfig) {
+        if let Some(pos) = self.challenges.iter().position(|c| c.id == after_id) {
+            self.challenges.insert(pos + 1, config);
+        }
     }
 
     pub fn next_challenge_id(&self, challenge_id: &str) -> Option<String> {
@@ -92,6 +105,77 @@ mod tests {
         let game_path = GamePath::default();
         let next_challenge_id = game_path.next_challenge_id("konnektoren-1");
         assert_eq!(next_challenge_id, Some("konnektoren-2".to_string()));
+    }
+
+    fn make_game_path(ids: &[&str]) -> GamePath {
+        GamePath {
+            id: "test".to_string(),
+            name: "Test".to_string(),
+            map: None,
+            challenges: ids
+                .iter()
+                .map(|id| ChallengeConfig {
+                    id: id.to_string(),
+                    ..ChallengeConfig::default()
+                })
+                .collect(),
+        }
+    }
+
+    fn challenge_ids(game_path: &GamePath) -> Vec<&str> {
+        game_path.challenges.iter().map(|c| c.id.as_str()).collect()
+    }
+
+    #[test]
+    fn test_insert_before() {
+        let mut game_path = make_game_path(&["a", "b", "c"]);
+        game_path.insert_before(
+            "b",
+            ChallengeConfig {
+                id: "x".to_string(),
+                ..ChallengeConfig::default()
+            },
+        );
+        assert_eq!(challenge_ids(&game_path), vec!["a", "x", "b", "c"]);
+    }
+
+    #[test]
+    fn test_insert_before_unknown_id_is_noop() {
+        let mut game_path = make_game_path(&["a", "b"]);
+        game_path.insert_before(
+            "z",
+            ChallengeConfig {
+                id: "x".to_string(),
+                ..ChallengeConfig::default()
+            },
+        );
+        assert_eq!(challenge_ids(&game_path), vec!["a", "b"]);
+    }
+
+    #[test]
+    fn test_insert_after() {
+        let mut game_path = make_game_path(&["a", "b", "c"]);
+        game_path.insert_after(
+            "b",
+            ChallengeConfig {
+                id: "x".to_string(),
+                ..ChallengeConfig::default()
+            },
+        );
+        assert_eq!(challenge_ids(&game_path), vec!["a", "b", "x", "c"]);
+    }
+
+    #[test]
+    fn test_insert_after_unknown_id_is_noop() {
+        let mut game_path = make_game_path(&["a", "b"]);
+        game_path.insert_after(
+            "z",
+            ChallengeConfig {
+                id: "x".to_string(),
+                ..ChallengeConfig::default()
+            },
+        );
+        assert_eq!(challenge_ids(&game_path), vec!["a", "b"]);
     }
 
     #[test]
