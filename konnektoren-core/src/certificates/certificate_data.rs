@@ -68,12 +68,16 @@ impl CertificateData {
                     e
                 ))
             })?;
-        Ok(general_purpose::STANDARD.encode(buf).to_string())
+        Ok(general_purpose::URL_SAFE_NO_PAD.encode(buf))
     }
 
     pub fn from_base64(encoded: &str) -> Result<Self> {
-        let decoded = general_purpose::STANDARD
+        // Try URL-safe base64 (no padding) first — the format produced by
+        // to_base64().  Fall back to STANDARD for certificates that were
+        // encoded before this change.
+        let decoded = general_purpose::URL_SAFE_NO_PAD
             .decode(encoded)
+            .or_else(|_| general_purpose::STANDARD.decode(encoded))
             .map_err(|_| CertificateError::DecodingError)?;
 
         rmp_serde::from_slice(&decoded).map_err(|e| {
@@ -157,6 +161,46 @@ mod tests {
         let decoded_certificate_data = CertificateData::from_base64(&base64_encoded).unwrap();
 
         assert_eq!(certificate_data, decoded_certificate_data);
+    }
+
+    /// to_base64() must emit URL_SAFE_NO_PAD: only '-', '_', and alphanumerics.
+    #[test]
+    fn test_to_base64_is_url_safe_no_pad() {
+        let certificate_data = CertificateData::new(
+            "Level A1".to_string(),
+            12,
+            10,
+            "Player".to_string(),
+            Utc::now(),
+        );
+        let encoded = certificate_data.to_base64().unwrap();
+
+        assert!(!encoded.contains('+'), "must not contain '+'");
+        assert!(!encoded.contains('/'), "must not contain '/'");
+        assert!(!encoded.contains('='), "must not contain '=' padding");
+    }
+
+    /// from_base64() must accept STANDARD-encoded certificates produced by
+    /// older versions of the app (backward compatibility).
+    #[test]
+    fn test_from_base64_accepts_standard_encoding() {
+        let certificate_data = CertificateData::new(
+            "Level A1".to_string(),
+            12,
+            10,
+            "Player".to_string(),
+            Utc::now(),
+        );
+
+        // Re-encode using STANDARD as legacy code did.
+        let mut buf = Vec::new();
+        certificate_data
+            .serialize(&mut rmp_serde::Serializer::new(&mut buf))
+            .unwrap();
+        let standard_encoded = general_purpose::STANDARD.encode(&buf);
+
+        let decoded = CertificateData::from_base64(&standard_encoded).unwrap();
+        assert_eq!(certificate_data, decoded);
     }
 
     #[test]
