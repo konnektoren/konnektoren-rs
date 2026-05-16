@@ -4,7 +4,7 @@ use konnektoren_tui::prelude::SshServer;
 #[cfg(feature = "ssh")]
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    env_logger::init();
+    tracing_subscriber::fmt::init();
 
     let host = std::env::var("SSH_HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
     let port = std::env::var("SSH_PORT")
@@ -12,26 +12,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .parse::<u16>()
         .unwrap_or(2222);
 
-    println!("╔═══════════════════════════════════════════════════════════╗");
-    println!("║        Konnektoren TUI SSH Server                         ║");
-    println!("╚═══════════════════════════════════════════════════════════╝");
-    println!();
-    log::info!("Starting Konnektoren SSH Server");
-    log::info!("Server listening on {}:{}", host, port);
-    println!();
-    println!("Connect with:");
-    println!(
-        "  ssh -p {} <username>@{}",
+    tracing::info!("Starting Konnektoren SSH Server");
+    tracing::info!(
+        host = %if host == "0.0.0.0" { "localhost" } else { &host },
         port,
-        if host == "0.0.0.0" {
-            "localhost"
-        } else {
-            &host
-        }
+        "Server listening — connect with: ssh -p {port} <username>@{}",
+        if host == "0.0.0.0" { "localhost" } else { &host }
     );
-    println!();
-    log::info!("Press Ctrl+C to stop the server");
-    println!("═══════════════════════════════════════════════════════════");
+    tracing::info!("Press Ctrl+C to stop the server");
 
     SshServer::run(&host, port).await?;
 

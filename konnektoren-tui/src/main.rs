@@ -3,7 +3,7 @@ use konnektoren_tui::prelude::{App, init, restore};
 
 #[cfg(feature = "crossterm")]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    env_logger::init();
+    tracing_subscriber::fmt::init();
 
     let mut app = App::new();
     let mut terminal = init()?;

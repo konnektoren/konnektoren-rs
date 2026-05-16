@@ -72,28 +72,28 @@ impl App {
     pub fn next_question(&mut self) {
         let command = Command::Challenge(ChallengeCommand::NextTask);
         if let Err(err) = command.execute(&mut self.session.game_state) {
-            log::error!("Failed to execute next question command: {}", err);
+            tracing::error!("Failed to execute next question command: {}", err);
         }
     }
 
     pub fn previous_question(&mut self) {
         let command = Command::Challenge(ChallengeCommand::PreviousTask);
         if let Err(err) = command.execute(&mut self.session.game_state) {
-            log::error!("Failed to execute previous question command: {}", err);
+            tracing::error!("Failed to execute previous question command: {}", err);
         }
     }
 
     pub fn next_challenge(&mut self) {
         let command = Command::Game(GameCommand::NextChallenge);
         if let Err(err) = command.execute(&mut self.session.game_state) {
-            log::error!("Failed to execute next challenge command: {}", err);
+            tracing::error!("Failed to execute next challenge command: {}", err);
         }
     }
 
     pub fn previous_challenge(&mut self) {
         let command = Command::Game(GameCommand::PreviousChallenge);
         if let Err(err) = command.execute(&mut self.session.game_state) {
-            log::error!("Failed to execute previous challenge command: {}", err);
+            tracing::error!("Failed to execute previous challenge command: {}", err);
         }
     }
 
@@ -137,7 +137,7 @@ impl App {
         match event::read().map_err(Error::IoError)? {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 if let Err(e) = self.handle_key_event(key_event) {
-                    log::error!("Error handling key event: {}", e);
+                    tracing::error!("Error handling key event: {}", e);
                 }
             }
             _ => {}

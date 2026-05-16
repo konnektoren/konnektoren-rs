@@ -1,4 +1,3 @@
-use log::info;
 use ratatui::backend::CrosstermBackend;
 use ratatui::layout::Rect;
 use ratatui::{Terminal, TerminalOptions, Viewport};
@@ -11,6 +10,7 @@ use std::path::Path;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
+use tracing::info;
 
 use crate::app::App;
 use crate::error::{Error, Result};
@@ -27,7 +27,7 @@ impl TerminalHandle {
         let (sender, mut receiver) = unbounded_channel::<Vec<u8>>();
         tokio::spawn(async move {
             while let Some(data) = receiver.recv().await {
-                let result = handle.data(channel_id, data.into()).await;
+                let result = handle.data(channel_id, data).await;
                 if result.is_err() {
                     eprintln!("Failed to send data: {result:?}");
                 }
@@ -89,7 +89,7 @@ impl SshServer {
             match russh::keys::PrivateKey::read_openssh_file(Path::new(&key_path)) {
                 Ok(key) => return key,
                 Err(e) => {
-                    log::warn!("Failed to load key, generating new one: {}", e);
+                    tracing::warn!("Failed to load key, generating new one: {}", e);
                 }
             }
         }
@@ -101,7 +101,7 @@ impl SshServer {
 
         // Save the key
         if let Err(e) = key.write_openssh_file(Path::new(&key_path), Default::default()) {
-            log::warn!("Failed to save SSH host key: {}", e);
+            tracing::warn!("Failed to save SSH host key: {}", e);
         } else {
             info!("SSH host key saved to {}", key_path);
         }
