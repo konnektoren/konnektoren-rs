@@ -56,7 +56,7 @@ impl ControllerPlugin for ChallengeFinishPlugin {
                     let challenge = match game_controller_clone.game_state().lock() {
                         Ok(state) => state.challenge.clone(),
                         Err(_) => {
-                            log::error!("Failed to lock game state in ChallengeFinishPlugin");
+                            tracing::error!("Failed to lock game state in ChallengeFinishPlugin");
                             return;
                         }
                     };
@@ -66,7 +66,7 @@ impl ControllerPlugin for ChallengeFinishPlugin {
                         &challenge,
                         &result,
                     ) {
-                        log::error!("Error in challenge finish handler: {:?}", e);
+                        tracing::error!("Error in challenge finish handler: {:?}", e);
                     }
                 }
             });

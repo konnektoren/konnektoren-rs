@@ -26,16 +26,16 @@ serde-wasm-bindgen = "0.6"
 rmp-serde = "1"
 
 # Logging and errors
-log = "0.4"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-wasm = "0.2"
 thiserror = "2"
-env_logger = "0.11"
 anyhow = "1"
 
 # WASM dependencies - major versions only for flexibility
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 wasm-bindgen-test = "0.3"
-wasm-logger = "0.2"
 web-sys = "0.3"
 js-sys = "0.3"
 gloo = "0.12"

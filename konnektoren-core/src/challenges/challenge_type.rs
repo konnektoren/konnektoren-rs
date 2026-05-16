@@ -244,7 +244,7 @@ impl Performance for ChallengeType {
                 (100 * correct / quiz_turns.len()) as u32
             }
             _ => {
-                log::warn!(
+                tracing::warn!(
                     "Unhandled challenge type/result combination: {:?}",
                     (self, result)
                 );

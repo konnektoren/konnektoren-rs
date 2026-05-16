@@ -55,7 +55,7 @@ fn test_expose_send_event() {
 
         konnektoren_js.expose_send_event(move |event: JsValue| {
             *event_received_clone.borrow_mut() = true;
-            log::info!("Received event: {:?}", event);
+            tracing::info!("Received event: {:?}", event);
         });
     }
 

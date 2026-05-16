@@ -70,7 +70,7 @@ impl GameController {
     pub fn init(mut self) -> Arc<Self> {
         // Initialize plugins before creating Arc
         if let Err(e) = self.plugin_manager.init_plugins() {
-            log::error!("Error initializing plugins: {:?}", e);
+            tracing::error!("Error initializing plugins: {:?}", e);
         }
 
         // Create Arc after initialization
@@ -81,7 +81,7 @@ impl GameController {
             .command_bus
             .subscribe(CommandType::Game, move |command| {
                 if let Err(e) = controller_clone.handle_command(command) {
-                    log::error!("Error handling game command: {:?}", e);
+                    tracing::error!("Error handling game command: {:?}", e);
                 }
             });
 
@@ -90,7 +90,7 @@ impl GameController {
             .command_bus
             .subscribe(CommandType::Challenge, move |command| {
                 if let Err(e) = controller_clone.handle_command(command) {
-                    log::error!("Error handling challenge command: {:?}", e);
+                    tracing::error!("Error handling challenge command: {:?}", e);
                 }
             });
 
@@ -99,7 +99,7 @@ impl GameController {
 
         // Load plugins with the trait object
         if let Err(e) = controller.plugin_manager.load_plugins(&controller_trait) {
-            log::error!("Error loading plugins: {:?}", e);
+            tracing::error!("Error loading plugins: {:?}", e);
         }
 
         controller

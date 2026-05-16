@@ -50,7 +50,7 @@ impl ControllerPlugin for GameXpPlugin {
                 if let Command::Challenge(ChallengeCommand::Finish(Some(result))) = command
                     && let Err(e) = Self::update_game_xp(game_controller_clone.clone(), &result)
                 {
-                    log::error!("Error updating game XP: {:?}", e);
+                    tracing::error!("Error updating game XP: {:?}", e);
                 }
             });
 

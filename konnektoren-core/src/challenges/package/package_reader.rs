@@ -62,18 +62,17 @@ impl PackageReader {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use env_logger;
     #[cfg(feature = "ssr")]
     use std::env;
 
     #[test]
     fn test_package_reader() {
-        env_logger::init();
+        let _ = tracing_subscriber::fmt::try_init();
         let package_data = include_bytes!("../../../assets/articles-pkg.zip");
         let package = PackageReader::read(package_data).unwrap();
 
         assert_eq!(package.files.len(), 5);
-        log::debug!("files {:?}", package.files.keys());
+        tracing::debug!("files {:?}", package.files.keys());
         assert!(package.get_html_file().is_some());
         assert!(package.get_css_file().is_some());
         assert!(package.get_js_file().is_some());

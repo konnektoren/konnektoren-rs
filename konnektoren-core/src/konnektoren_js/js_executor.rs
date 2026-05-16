@@ -14,7 +14,7 @@ impl<'a> JsExecutor<'a> {
 
     pub fn execute(&self, js_code: &str) {
         if let Err(err) = js_sys::eval(js_code) {
-            log::error!("JavaScript execution failed: {:?}", err);
+            tracing::error!("JavaScript execution failed: {:?}", err);
         }
     }
 
