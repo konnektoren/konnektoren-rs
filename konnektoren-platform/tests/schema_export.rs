@@ -29,8 +29,8 @@ fn generate_challenge_type_schema() {
     std::fs::write(&path, &content).expect("should write challenge_type.schema.json");
 
     // Sanity-check: file is non-empty and parses as a JSON object.
-    let parsed: serde_json::Value = serde_json::from_str(&content)
-        .expect("challenge_type schema must be valid JSON");
+    let parsed: serde_json::Value =
+        serde_json::from_str(&content).expect("challenge_type schema must be valid JSON");
     assert!(parsed.is_object());
 
     println!("wrote {}", path.display());
@@ -45,8 +45,8 @@ fn generate_game_path_schema() {
     let content = SchemaExporter::new().game_path();
     std::fs::write(&path, &content).expect("should write game_path.schema.json");
 
-    let parsed: serde_json::Value = serde_json::from_str(&content)
-        .expect("game_path schema must be valid JSON");
+    let parsed: serde_json::Value =
+        serde_json::from_str(&content).expect("game_path schema must be valid JSON");
     assert!(parsed.is_object());
 
     println!("wrote {}", path.display());
@@ -61,14 +61,11 @@ fn generate_all_schemas() {
     let content = SchemaExporter::new().all();
     std::fs::write(&path, &content).expect("should write all.schema.json");
 
-    let parsed: serde_json::Value = serde_json::from_str(&content)
-        .expect("all schema bundle must be valid JSON");
+    let parsed: serde_json::Value =
+        serde_json::from_str(&content).expect("all schema bundle must be valid JSON");
     assert!(parsed.get("challengeType").is_some());
     assert!(parsed.get("gamePath").is_some());
 
     println!("wrote {}", path.display());
-    println!(
-        "\nReview schema files in:\n  {}",
-        dir.display()
-    );
+    println!("\nReview schema files in:\n  {}", dir.display());
 }

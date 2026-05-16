@@ -150,7 +150,7 @@ impl I18nChecker {
             let entry = match entry {
                 Ok(e) => e,
                 Err(err) => {
-                    log::warn!("skipping unreadable path: {}", err);
+                    tracing::warn!("skipping unreadable path: {}", err);
                     continue;
                 }
             };

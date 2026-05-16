@@ -104,7 +104,7 @@ impl I18nConfig {
                 } else {
                     text.to_string()
                 };
-                log::warn!("⚠️ no '{}' in '{}'", truncated, language);
+                tracing::warn!("⚠️ no '{}' in '{}'", truncated, language);
                 text.to_string()
             }
         }
@@ -123,7 +123,7 @@ impl I18nConfig {
                     self.translations
                         .insert(lang.code().to_string(), Value::Object(merged));
                 } else {
-                    log::warn!(
+                    tracing::warn!(
                         "merge_translation: non-object value for '{}', skipping merge",
                         lang.code()
                     );

@@ -13,7 +13,7 @@ schema = ["konnektoren-core/schema"]
 [dependencies]
 isolang = { workspace = true }
 konnektoren-core = { path = "../konnektoren-core" }
-log = { workspace = true }
+tracing = { workspace = true }
 regex = { workspace = true, optional = true }
 rust-embed = { workspace = true, features = [
     "interpolate-folder-path",
@@ -26,6 +26,6 @@ thiserror = { workspace = true }
 walkdir = { workspace = true, optional = true }
 
 [dev-dependencies]
-env_logger = { workspace = true }
+tracing-subscriber = { workspace = true }
 mockall = { workspace = true }
 tempfile = { workspace = true }

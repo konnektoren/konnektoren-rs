@@ -17,17 +17,31 @@ pub struct SchemaExporter {
 }
 
 impl SchemaExporter {
-    pub fn new() -> Self { Self::default() }
-    pub fn compact(mut self) -> Self { self.format = SchemaFormat::JsonCompact; self }
-    pub fn pretty(mut self) -> Self { self.format = SchemaFormat::JsonPretty; self }
+    pub fn new() -> Self {
+        Self::default()
+    }
+    pub fn compact(mut self) -> Self {
+        self.format = SchemaFormat::JsonCompact;
+        self
+    }
+    pub fn pretty(mut self) -> Self {
+        self.format = SchemaFormat::JsonPretty;
+        self
+    }
     fn render(&self, value: &serde_json::Value) -> String {
         match self.format {
-            SchemaFormat::JsonPretty => serde_json::to_string_pretty(value).expect("always serializable"),
+            SchemaFormat::JsonPretty => {
+                serde_json::to_string_pretty(value).expect("always serializable")
+            }
             SchemaFormat::JsonCompact => serde_json::to_string(value).expect("always serializable"),
         }
     }
-    pub fn challenge_type(&self) -> String { self.render(&ChallengeType::schema()) }
-    pub fn game_path(&self) -> String { self.render(&GamePath::schema()) }
+    pub fn challenge_type(&self) -> String {
+        self.render(&ChallengeType::schema())
+    }
+    pub fn game_path(&self) -> String {
+        self.render(&GamePath::schema())
+    }
     pub fn all(&self) -> String {
         let bundle = serde_json::json!({
             "challengeType": ChallengeType::schema(),
@@ -64,7 +78,10 @@ mod tests {
     fn test_game_path_schema_describes_key_fields() {
         let exporter = SchemaExporter::new();
         let schema = exporter.game_path();
-        assert!(schema.contains("challenges"), "schema should describe challenges");
+        assert!(
+            schema.contains("challenges"),
+            "schema should describe challenges"
+        );
         assert!(schema.contains("id"), "schema should describe id");
         assert!(schema.contains("name"), "schema should describe name");
     }
@@ -83,7 +100,10 @@ mod tests {
     fn test_compact_output_has_no_newlines() {
         let exporter = SchemaExporter::new().compact();
         let schema = exporter.challenge_type();
-        assert!(!schema.contains('\n'), "compact output must not contain newlines");
+        assert!(
+            !schema.contains('\n'),
+            "compact output must not contain newlines"
+        );
     }
 
     #[test]
@@ -99,8 +119,14 @@ mod tests {
         let all = exporter.all();
         let value: serde_json::Value =
             serde_json::from_str(&all).expect("all() output must be valid JSON");
-        assert!(value.get("challengeType").is_some(), "bundle must contain challengeType");
-        assert!(value.get("gamePath").is_some(), "bundle must contain gamePath");
+        assert!(
+            value.get("challengeType").is_some(),
+            "bundle must contain challengeType"
+        );
+        assert!(
+            value.get("gamePath").is_some(),
+            "bundle must contain gamePath"
+        );
     }
 
     #[test]
@@ -109,6 +135,9 @@ mod tests {
             serde_json::from_str(&SchemaExporter::new().compact().game_path()).unwrap();
         let pretty: serde_json::Value =
             serde_json::from_str(&SchemaExporter::new().pretty().game_path()).unwrap();
-        assert_eq!(compact, pretty, "compact and pretty must represent the same schema");
+        assert_eq!(
+            compact, pretty,
+            "compact and pretty must represent the same schema"
+        );
     }
 }

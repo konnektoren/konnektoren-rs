@@ -11,7 +11,7 @@ use std::collections::HashMap;
 /// - [`YamlTranslationAsset`] — loads a single YAML file with an `i18n:` root key
 /// - [`CombinedTranslationAsset`] — merges both of the above
 pub trait TranslationAsset {
-    /// Loads all translations. Errors are logged with `log::error!` and the affected
+    /// Loads all translations. Errors are logged with `tracing::error!` and the affected
     /// language is omitted; the returned map is never `Err`.
     fn load_translations(&self) -> HashMap<String, Value>;
 
@@ -73,7 +73,7 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for JsonTranslationAsset<T> {
                                 .or_insert(json);
                         }
                         Err(e) => {
-                            log::error!("skipping '{}': JSON parse error: {}", filename, e);
+                            tracing::error!("skipping '{}': JSON parse error: {}", filename, e);
                         }
                     }
                 }
@@ -160,7 +160,7 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for YamlTranslationAsset<T> {
             Ok(t) => t,
             Err(AssetLoadError::NotFound(_)) => HashMap::new(),
             Err(e) => {
-                log::warn!("{}", e);
+                tracing::warn!("{}", e);
                 HashMap::new()
             }
         }
@@ -207,7 +207,7 @@ impl<T: rust_embed::RustEmbed> TranslationAsset for CombinedTranslationAsset<T> 
             }
             Err(AssetLoadError::NotFound(_)) => {}
             Err(e) => {
-                log::error!("{}", e);
+                tracing::error!("{}", e);
             }
         }
 
