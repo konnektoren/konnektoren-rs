@@ -16,7 +16,7 @@ chrono = { workspace = true }
 cucumber = { workspace = true }
 konnektoren-core = { path = "../konnektoren-core" }
 konnektoren-platform = { path = "../konnektoren-platform" }
-log = { workspace = true }
+tracing = { workspace = true }
 rust-embed = { workspace = true, features = [
     "interpolate-folder-path",
     "debug-embed",

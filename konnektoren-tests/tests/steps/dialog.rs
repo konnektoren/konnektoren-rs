@@ -52,15 +52,16 @@ async fn the_player_answers_all_interactive_turns_correctly(world: &mut BddWorld
     let challenge = world.challenge.as_mut().expect("no challenge loaded");
 
     // Asset dialog: turn 1 correct_option=0, turn 3 correct_option=2, turn 5 correct_option=0
-    let inputs = vec![
-        (1usize, 0usize),
-        (3usize, 2usize),
-        (5usize, 0usize),
-    ];
+    let inputs = vec![(1usize, 0usize), (3usize, 2usize), (5usize, 0usize)];
 
     for (turn_index, selected_option) in inputs {
-        let input = ChallengeInput::Dialog(DialogAnswer { turn_index, selected_option });
-        challenge.solve(input, turn_index).expect("solve should not error");
+        let input = ChallengeInput::Dialog(DialogAnswer {
+            turn_index,
+            selected_option,
+        });
+        challenge
+            .solve(input, turn_index)
+            .expect("solve should not error");
     }
 
     world.challenge_result = Some(challenge.challenge_result.clone());
@@ -70,7 +71,10 @@ async fn the_player_answers_all_interactive_turns_correctly(world: &mut BddWorld
 async fn the_player_answers_the_first_interactive_turn_correctly(world: &mut BddWorld) {
     let challenge = world.challenge.as_mut().expect("no challenge loaded");
     // Turn 1, correct_option = 0
-    let input = ChallengeInput::Dialog(DialogAnswer { turn_index: 1, selected_option: 0 });
+    let input = ChallengeInput::Dialog(DialogAnswer {
+        turn_index: 1,
+        selected_option: 0,
+    });
     challenge.solve(input, 1).expect("solve should not error");
     world.challenge_result = Some(challenge.challenge_result.clone());
 }
@@ -79,7 +83,10 @@ async fn the_player_answers_the_first_interactive_turn_correctly(world: &mut Bdd
 async fn the_player_answers_the_second_interactive_turn_incorrectly(world: &mut BddWorld) {
     let challenge = world.challenge.as_mut().expect("no challenge loaded");
     // Turn 3, correct_option = 2 — deliberately pick option 0 (wrong)
-    let input = ChallengeInput::Dialog(DialogAnswer { turn_index: 3, selected_option: 0 });
+    let input = ChallengeInput::Dialog(DialogAnswer {
+        turn_index: 3,
+        selected_option: 0,
+    });
     challenge.solve(input, 3).expect("solve should not error");
     world.challenge_result = Some(challenge.challenge_result.clone());
 }
@@ -91,8 +98,13 @@ async fn the_player_answers_interactive_turn_with_option(
     selected_option: usize,
 ) {
     let challenge = world.challenge.as_mut().expect("no challenge loaded");
-    let input = ChallengeInput::Dialog(DialogAnswer { turn_index, selected_option });
-    let result = challenge.solve(input, turn_index).expect("solve should not error");
+    let input = ChallengeInput::Dialog(DialogAnswer {
+        turn_index,
+        selected_option,
+    });
+    let result = challenge
+        .solve(input, turn_index)
+        .expect("solve should not error");
     world.last_solve_correct = Some(result);
     world.challenge_result = Some(challenge.challenge_result.clone());
 }
@@ -104,7 +116,10 @@ async fn the_player_answers_turn_with_option(
     selected_option: usize,
 ) {
     let challenge = world.challenge.as_mut().expect("no challenge loaded");
-    let input = ChallengeInput::Dialog(DialogAnswer { turn_index, selected_option });
+    let input = ChallengeInput::Dialog(DialogAnswer {
+        turn_index,
+        selected_option,
+    });
     match challenge.solve(input, turn_index) {
         Ok(correct) => {
             world.last_solve_correct = Some(correct);
@@ -113,9 +128,10 @@ async fn the_player_answers_turn_with_option(
         Err(_) => {
             world.last_solve_correct = None;
             world.last_command_result = Err(konnektoren_core::error::KonnektorenError::Challenge(
-                konnektoren_core::challenges::ChallengeError::InvalidInput(
-                    format!("turn index {} out of bounds", turn_index),
-                ),
+                konnektoren_core::challenges::ChallengeError::InvalidInput(format!(
+                    "turn index {} out of bounds",
+                    turn_index
+                )),
             ));
         }
     }
@@ -165,7 +181,10 @@ async fn the_answer_should_be_incorrect(world: &mut BddWorld) {
     let correct = world
         .last_solve_correct
         .expect("no solve result recorded — did you call a 'when the player answers' step?");
-    assert!(!correct, "expected the answer to be incorrect, but it was marked correct");
+    assert!(
+        !correct,
+        "expected the answer to be incorrect, but it was marked correct"
+    );
 }
 
 #[then(expr = "solving the dialog turn should return an error")]

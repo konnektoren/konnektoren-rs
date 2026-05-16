@@ -440,7 +440,7 @@ async fn the_task_is_solved_incorrectly(world: &mut BddWorld) {
         _ => panic!("Expected MultipleChoice challenge type"),
     };
 
-    log::debug!(
+    tracing::debug!(
         "Solving '{}' incorrectly with option {}",
         question_text,
         wrong_option
