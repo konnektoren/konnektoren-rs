@@ -10,8 +10,6 @@
 //! - `konnektoren-platform/schemas/game_path.schema.json`
 //! - `konnektoren-platform/schemas/all.schema.json`
 
-#![cfg(all(feature = "tools", feature = "schema"))]
-
 use konnektoren_platform::tools::SchemaExporter;
 use std::path::PathBuf;
 

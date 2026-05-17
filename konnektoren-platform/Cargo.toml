@@ -25,6 +25,14 @@ serde_yaml = { workspace = true }
 thiserror = { workspace = true }
 walkdir = { workspace = true, optional = true }
 
+[[test]]
+name = "challenge_i18n"
+required-features = ["tools"]
+
+[[test]]
+name = "schema_export"
+required-features = ["tools", "schema"]
+
 [dev-dependencies]
 tracing-subscriber = { workspace = true }
 mockall = { workspace = true }

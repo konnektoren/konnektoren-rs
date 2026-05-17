@@ -29,11 +29,12 @@ impl ChallengeI18nReport {
 /// language file is caught immediately.
 ///
 /// # Example
-/// ```rust,no_run
+/// ```rust,ignore
 /// use konnektoren_platform::tools::ChallengeI18nChecker;
 /// use konnektoren_platform::i18n::JsonTranslationAsset;
 /// use konnektoren_core::game::GamePath;
 ///
+/// // MyAssets is a #[derive(RustEmbed)] struct pointing at your i18n folder
 /// let asset = JsonTranslationAsset::<MyAssets>::new();
 /// let report = ChallengeI18nChecker::new(&asset).check(&GamePath::default());
 /// report.assert_complete();
