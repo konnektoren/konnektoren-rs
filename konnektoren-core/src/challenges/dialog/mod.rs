@@ -1,4 +1,5 @@
 pub mod answer;
+#[allow(clippy::module_inception)]
 pub mod dialog;
 pub mod speaker;
 pub mod turn;

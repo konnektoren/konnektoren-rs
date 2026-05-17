@@ -74,10 +74,10 @@ impl PerformanceRecord {
             best_performance.values().cloned().collect();
 
         // Sort by performance in descending order (highest performance first)
-        challenges_performance.sort_by(|a, b| b.1.cmp(&a.1));
+        challenges_performance.sort_by_key(|b| std::cmp::Reverse(b.1));
 
         // Sort by elapsed time in ascending order (lowest time first)
-        challenges_performance.sort_by(|a, b| a.2.cmp(&b.2));
+        challenges_performance.sort_by_key(|a| a.2);
 
         // Calculate overall performance percentage based on best performances
         let performance_percentage = if !challenges_performance.is_empty() {

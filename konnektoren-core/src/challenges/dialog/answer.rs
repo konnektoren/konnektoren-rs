@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 /// Recorded each time the player picks an option during a [`DialogQuiz`] run.
 /// A completed [`Dialog`] challenge accumulates one [`DialogAnswer`] per
 /// interactive turn the player acted on.
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Default, Serialize, Deserialize, Clone, PartialEq)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 pub struct DialogAnswer {
     /// Position of the turn in [`Dialog::turns`](super::dialog::Dialog::turns)
@@ -18,14 +18,6 @@ pub struct DialogAnswer {
     pub selected_option: usize,
 }
 
-impl Default for DialogAnswer {
-    fn default() -> Self {
-        DialogAnswer {
-            turn_index: 0,
-            selected_option: 0,
-        }
-    }
-}
 
 #[cfg(test)]
 mod tests {
