@@ -1,3 +1,4 @@
+mod challenge_checker;
 mod checker;
 mod error;
 mod report;
@@ -5,6 +6,7 @@ mod report_format;
 #[cfg(test)]
 mod tests;
 
+pub use challenge_checker::{ChallengeI18nChecker, ChallengeI18nReport};
 pub use checker::{I18nChecker, I18nReport};
 pub use error::I18nReportError;
 pub use report::LanguageStats;
