@@ -1,4 +1,5 @@
 pub mod domain;
+pub mod extensions;
 pub mod i18n;
 pub mod konnektoren;
 
@@ -7,31 +8,25 @@ use figment2::Figment;
 #[cfg(feature = "manifest")]
 use figment2::providers::{Format, Serialized, Yaml};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
+use std::fmt::Debug;
 
 pub use domain::DomainManifest;
+pub use extensions::{ManifestExtensions, ManifestSection, NoExtensions};
 pub use i18n::I18nManifest;
-pub use konnektoren::{KonnektorenManifest, KonnektorenMeta};
+pub use konnektoren::{KonnektorenManifest, KonnektorenSections};
 
-/// The default manifest shipped with this crate
-/// (`assets/konnektoren.manifest.yml`).
-///
-/// Declared in `[package.metadata.konnektoren] manifest = ...` in `Cargo.toml`.
+/// The default manifest shipped with this crate (`assets/konnektoren.manifest.yml`).
 pub const DEFAULT_MANIFEST: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/assets/konnektoren.manifest.yml"
 ));
 
 /// Identity of a deployment — mirrors Cargo's `[package]`.
-///
-/// Required: `id` and `name`. All other fields are optional.
 #[derive(Debug, Clone, PartialEq, Default, Deserialize, Serialize)]
 pub struct Package {
-    /// Unique identifier, e.g. `"konnektoren-de"`.
     pub id: String,
-    /// SemVer version string, e.g. `"1.0.0"`.
     #[serde(default)]
     pub version: String,
-    /// Human-readable display name, e.g. `"Konnektoren"`.
     pub name: String,
     #[serde(default)]
     pub description: Option<String>,
@@ -46,11 +41,8 @@ pub struct Package {
 }
 
 /// Where challenge/asset files live.
-///
-/// Analogous to path configuration in a Cargo build script.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Assets {
-    /// Sub-path within the asset root where challenge files are stored.
     #[serde(default = "default_asset_path")]
     pub path: String,
 }
@@ -69,48 +61,55 @@ fn default_asset_path() -> String {
 
 /// Base deployment manifest.
 ///
-/// Follows the structure of `Cargo.toml`:
-///
-/// | Cargo                  | Manifest              | Purpose                     |
-/// |------------------------|-----------------------|-----------------------------|
-/// | `[package]`            | `package`             | Identity & metadata         |
-/// | `[[bin]]` targets      | `game_paths`          | Ordered content to load     |
-/// | `[package.metadata.*]` | `metadata`            | Tool-specific extension     |
-///
-/// ## Extension via `M`
-///
-/// `M` is the typed extension point — identical in concept to
-/// `[package.metadata]` in `Cargo.toml`. Layers that don't need
-/// typed metadata use `M = ()` (the default). Downstream crates
-/// (bevy, web-game) define their own `M` and deserialize it from
-/// the `metadata:` section without changing this struct.
+/// `Ext` is a flat bundle of named sections — each field in `Ext` appears as a
+/// top-level YAML key. Build `Ext` with the [`manifest_extensions!`] macro.
 ///
 /// ```yaml
-/// # minimal — any consumer
+/// # konnektoren.manifest.yml
 /// package:
-///   id: konnektoren-de
-///   version: "1.0.0"
-///   name: Konnektoren
+///   id: my-game
+///   name: My Game
+///
+/// assets:
+///   path: challenges
 ///
 /// game_paths:
 ///   - level_a1.yml
-///   - level_a2.yml
 ///
-/// # bevy consumer adds its own typed section here
-/// metadata:
-///   title_key: games.konnektoren.title
+/// # sections from Ext — top-level, not nested:
+/// domain:
+///   hostname: my-game.example.com
+///
+/// i18n:
 ///   default_language: de
-///   splash:
-///     logo: images/logo.png
+///   languages: [de, en]
+/// ```
+///
+/// ## Defining a custom extension
+///
+/// ```rust,ignore
+/// use konnektoren_platform::{manifest_extensions, manifest_section};
+///
+/// #[derive(Debug, Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
+/// pub struct ThemeConfig { pub dark_mode: bool }
+/// manifest_section!(ThemeConfig, "theme");
+///
+/// manifest_extensions! {
+///     pub struct MyExtensions {
+///         pub theme: ThemeConfig,
+///     }
+/// }
+///
+/// type MyManifest = Manifest<MyExtensions>;
 /// ```
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[serde(bound(
-    deserialize = "M: Default + DeserializeOwned",
-    serialize = "M: Serialize"
+    deserialize = "Ext: Default + DeserializeOwned",
+    serialize = "Ext: Serialize"
 ))]
-pub struct Manifest<M = ()>
+pub struct Manifest<Ext = KonnektorenSections>
 where
-    M: Default + Serialize + DeserializeOwned,
+    Ext: ManifestExtensions,
 {
     #[serde(default)]
     pub package: Package,
@@ -118,45 +117,34 @@ where
     #[serde(default)]
     pub assets: Assets,
 
-    /// Domain configuration — hostname, routing base-path, icon, etc.
-    /// Absent by default; set in `konnektoren.manifest.yml` for deployments
-    /// that need it.
-    #[serde(default)]
-    pub domain: Option<DomainManifest>,
-
-    /// Internationalisation configuration — where translation files live,
-    /// which languages are supported, and the fallback language.
-    #[serde(default)]
-    pub i18n: I18nManifest,
-
-    /// Ordered list of game-path filenames to load — analogous to `[[bin]]`
-    /// targets in `Cargo.toml`. Each entry is resolved relative to `assets.path`.
+    /// Ordered list of game-path filenames, resolved relative to `assets.path`.
     #[serde(default)]
     pub game_paths: Vec<String>,
 
-    /// Tool/framework-specific configuration — like `[package.metadata]` in
-    /// `Cargo.toml`. Ignored by layers that don't recognize it; consumed by
-    /// those that do via a concrete `M`.
-    #[serde(default)]
-    pub metadata: M,
+    /// All extension sections, flattened to top-level YAML keys.
+    #[serde(flatten)]
+    pub ext: Ext,
 }
 
-/// Protocol all manifests satisfy, enabling generic framework code.
-///
-/// Implement this on any concrete manifest type to make it usable
-/// with loaders and validators that don't need to know about `M`.
+impl<Ext: ManifestExtensions> Default for Manifest<Ext> {
+    fn default() -> Self {
+        Self {
+            package: Package::default(),
+            assets: Assets::default(),
+            game_paths: vec![],
+            ext: Ext::default(),
+        }
+    }
+}
+
+/// Core accessors available on every manifest regardless of its extension type.
 pub trait ManifestConfig {
     fn package(&self) -> &Package;
     fn asset_path(&self) -> &str;
     fn game_paths(&self) -> &[String];
-    fn domain(&self) -> Option<&DomainManifest>;
-    fn i18n(&self) -> &I18nManifest;
 }
 
-impl<M> ManifestConfig for Manifest<M>
-where
-    M: Default + Serialize + DeserializeOwned,
-{
+impl<Ext: ManifestExtensions> ManifestConfig for Manifest<Ext> {
     fn package(&self) -> &Package {
         &self.package
     }
@@ -168,28 +156,18 @@ where
     fn game_paths(&self) -> &[String] {
         &self.game_paths
     }
-
-    fn domain(&self) -> Option<&DomainManifest> {
-        self.domain.as_ref()
-    }
-
-    fn i18n(&self) -> &I18nManifest {
-        &self.i18n
-    }
 }
 
 #[cfg(feature = "manifest")]
-impl<M> Manifest<M>
+impl<Ext> Manifest<Ext>
 where
-    M: Default + Serialize + DeserializeOwned,
+    Ext: ManifestExtensions + Serialize + Debug + Clone + PartialEq,
 {
-    /// Build a [`Figment`] layering `default_package` and i18n defaults under
-    /// the given YAML.
+    /// Build a [`Figment`] with all defaults seeded from `default_package` and
+    /// `Ext::default()`, then overlaid with the given YAML string.
     ///
-    /// Fields present in `yaml` override the defaults; absent fields fall
-    /// back to `default_package` — which should be constructed with the
-    /// [`cargo_package!`] macro so `env!("CARGO_PKG_*")` resolves in the
-    /// *calling* crate rather than in `konnektoren-platform`.
+    /// Use [`cargo_package!`] to supply `default_package` so the env vars
+    /// resolve in the *calling* crate.
     ///
     /// ```rust,ignore
     /// let manifest: KonnektorenManifest = Manifest::figment(
@@ -199,9 +177,12 @@ where
     /// .extract()?;
     /// ```
     pub fn figment(default_package: Package, yaml: &str) -> Figment {
+        let defaults = Self {
+            package: default_package,
+            ..Default::default()
+        };
         Figment::new()
-            .merge(Serialized::default("package", &default_package))
-            .merge(Serialized::default("i18n", &I18nManifest::default()))
+            .merge(Serialized::defaults(defaults))
             .merge(Yaml::string(yaml))
     }
 }
@@ -221,69 +202,51 @@ game_paths:
   - level_a2.yml
 "#;
 
-    const WITH_METADATA_YAML: &str = r#"
-package:
-  id: bevy-game
-  version: "0.1.0"
-  name: My Bevy Game
-  description: A bevy game manifest with typed metadata
-
-assets:
-  path: assets/challenges
-
-game_paths:
-  - level_a1.yml
-
-metadata:
-  title_key: games.my_game.title
-  default_language: de
-"#;
-
     #[test]
     fn test_minimal_manifest_deserializes() {
-        let manifest: Manifest = serde_yaml::from_str(MINIMAL_YAML).unwrap();
+        let manifest: Manifest<NoExtensions> = serde_yaml::from_str(MINIMAL_YAML).unwrap();
         assert_eq!(manifest.package.id, "test-deployment");
         assert_eq!(manifest.game_paths, vec!["level_a1.yml", "level_a2.yml"]);
-        assert_eq!(manifest.assets.path, "challenges"); // default
-        assert_eq!(manifest.metadata, ());
-    }
-
-    #[test]
-    fn test_manifest_with_typed_metadata() {
-        #[derive(Debug, Default, PartialEq, Deserialize, Serialize)]
-        struct BevyMeta {
-            title_key: String,
-            #[serde(default = "default_lang")]
-            default_language: String,
-        }
-        fn default_lang() -> String {
-            "en".to_string()
-        }
-
-        let manifest: Manifest<BevyMeta> = serde_yaml::from_str(WITH_METADATA_YAML).unwrap();
-
-        assert_eq!(manifest.package.id, "bevy-game");
-        assert_eq!(manifest.assets.path, "assets/challenges");
-        assert_eq!(manifest.metadata.title_key, "games.my_game.title");
-        assert_eq!(manifest.metadata.default_language, "de");
+        assert_eq!(manifest.assets.path, "challenges");
     }
 
     #[test]
     fn test_manifest_config_trait() {
-        let manifest: Manifest = serde_yaml::from_str(MINIMAL_YAML).unwrap();
+        let manifest: Manifest<NoExtensions> = serde_yaml::from_str(MINIMAL_YAML).unwrap();
         assert_eq!(manifest.package().id, "test-deployment");
         assert_eq!(manifest.asset_path(), "challenges");
         assert_eq!(manifest.game_paths().len(), 2);
     }
 
     #[test]
+    fn test_custom_extensions_with_macro() {
+        crate::manifest_extensions! {
+            pub struct TestExt {
+                pub theme: String,
+            }
+        }
+
+        let yaml = r#"
+package:
+  id: ext-game
+  name: Ext Game
+assets:
+  path: assets/challenges
+theme: dark
+game_paths:
+  - level_a1.yml
+"#;
+        let manifest: Manifest<TestExt> = serde_yaml::from_str(yaml).unwrap();
+        assert_eq!(manifest.package.id, "ext-game");
+        assert_eq!(manifest.assets.path, "assets/challenges");
+        assert_eq!(manifest.ext.theme, "dark");
+    }
+
+    #[test]
     fn test_default_manifest_parses() {
-        // DEFAULT_MANIFEST has no [package] — those come from cargo_package!().
-        // Without the manifest feature we can still parse the non-package fields.
         let manifest: KonnektorenManifest =
             serde_yaml::from_str(DEFAULT_MANIFEST).expect("DEFAULT_MANIFEST must be valid YAML");
         assert!(!manifest.game_paths.is_empty());
-        assert_eq!(manifest.konnektoren_file(), "konnektoren.yml");
     }
 
     #[cfg(feature = "manifest")]
@@ -297,7 +260,6 @@ metadata:
             ..Default::default()
         };
 
-        // YAML overrides only `assets.path`; package comes from defaults.
         let yaml = r#"
 assets:
   path: custom/challenges
@@ -305,13 +267,46 @@ game_paths:
   - level_a1.yml
 "#;
 
-        let manifest: Manifest<()> = Manifest::<()>::figment(default_package, yaml)
-            .extract()
-            .expect("figment extraction must succeed");
+        let manifest: Manifest<NoExtensions> =
+            Manifest::<NoExtensions>::figment(default_package, yaml)
+                .extract()
+                .expect("figment extraction must succeed");
 
         assert_eq!(manifest.package.id, "my-game");
         assert_eq!(manifest.package.version, "2.0.0");
         assert_eq!(manifest.assets.path, "custom/challenges");
         assert_eq!(manifest.game_paths, vec!["level_a1.yml"]);
+    }
+
+    #[cfg(feature = "manifest")]
+    #[test]
+    fn test_figment_sections_seeded_from_defaults() {
+        use crate::manifest::konnektoren::KonnektorenSections;
+
+        let default_package = Package {
+            id: "my-game".to_string(),
+            ..Default::default()
+        };
+
+        // YAML only overrides hostname; i18n defaults should still be present
+        let yaml = r#"
+domain:
+  code: test
+  name: Test
+  hostname: test.example.com
+"#;
+
+        let manifest: Manifest<KonnektorenSections> =
+            Manifest::<KonnektorenSections>::figment(default_package, yaml)
+                .extract()
+                .expect("figment extraction must succeed");
+
+        assert_eq!(
+            manifest.ext.domain.as_ref().unwrap().hostname,
+            "test.example.com"
+        );
+        // i18n defaults were seeded even though yaml didn't set them
+        assert_eq!(manifest.ext.i18n.default_language, "en");
+        assert_eq!(manifest.ext.i18n.path, "assets/i18n");
     }
 }

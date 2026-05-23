@@ -20,15 +20,7 @@ i18n:
     - zh
 
 assets:
-  path: challenges
+  path: .
 
 game_paths:
-  - level_a0.yml
-  - level_a1.yml
-  - level_a2.yml
-  - level_b1.yml
-  - level_b2.yml
-  - level_c1.yml
-
-metadata:
-  konnektoren_file: konnektoren.yml
+  - konnektoren.yml

@@ -39,6 +39,10 @@ name = "challenge_i18n"
 required-features = ["tools"]
 
 [[test]]
+name = "manifest"
+required-features = ["manifest"]
+
+[[test]]
 name = "schema_export"
 required-features = ["tools", "schema"]
 

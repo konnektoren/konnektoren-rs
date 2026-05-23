@@ -10,16 +10,6 @@ pub mod tools;
 ///
 /// Must be invoked in the *calling* crate so that `env!("CARGO_PKG_*")`
 /// resolves to that crate's values, not `konnektoren-platform`'s.
-///
-/// ```rust,ignore
-/// use konnektoren_platform::cargo_package;
-///
-/// let manifest = Manifest::figment(
-///     cargo_package!(),
-///     include_str!("../assets/konnektoren.manifest.yml"),
-/// )
-/// .extract::<KonnektorenManifest>()?;
-/// ```
 #[macro_export]
 macro_rules! cargo_package {
     () => {
@@ -56,7 +46,8 @@ macro_rules! cargo_package {
                     Some(l.to_string())
                 }
             },
-            keywords: env!("CARGO_PKG_KEYWORDS")
+            keywords: option_env!("CARGO_PKG_KEYWORDS")
+                .unwrap_or("")
                 .split(',')
                 .filter(|s| !s.is_empty())
                 .map(|s| s.trim().to_string())
@@ -65,40 +56,115 @@ macro_rules! cargo_package {
     };
 }
 
-/// Loads a [`manifest::KonnektorenManifest`] for the *calling* crate.
+/// Declare a type as a named top-level manifest section.
 ///
-/// # Behaviour
-///
-/// 1. Populates `package` from the calling crate's `Cargo.toml` via
-///    `cargo_package!()` — identical to how `cargo_package!()` works on its own.
-/// 2. Applies `i18n` defaults (`path = "assets/i18n"`, `default_language = "en"`).
-/// 3. If the calling crate ships `assets/konnektoren.manifest.yml` (the path
-///    declared in `[package.metadata.konnektoren] manifest = …`), that file is
-///    overlaid on top using **figment**, so any key present in the YAML wins
-///    over the defaults.
-///
-/// # Feature requirement
-///
-/// Requires the `manifest` feature of `konnektoren-platform`:
-///
-/// ```toml
-/// konnektoren-platform = { …, features = ["manifest"] }
-/// ```
+/// Implements [`manifest::ManifestSection`] for the type, setting `KEY` to the
+/// given string literal. The key becomes the YAML key when the section is
+/// included in a [`manifest_extensions!`] bundle.
 ///
 /// # Example
 ///
 /// ```rust,ignore
-/// use konnektoren_platform::load_manifest;
+/// use konnektoren_platform::manifest_section;
 ///
-/// let manifest = load_manifest!().expect("valid manifest");
-/// println!("hostname = {}", manifest.domain().map(|d| d.hostname()).unwrap_or("-"));
-/// println!("i18n path = {}", manifest.i18n().path);
+/// #[derive(Debug, Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
+/// pub struct ThemeConfig { pub primary_color: String }
+///
+/// manifest_section!(ThemeConfig, "theme");
+/// assert_eq!(<ThemeConfig as konnektoren_platform::manifest::ManifestSection>::KEY, "theme");
+/// ```
+#[macro_export]
+macro_rules! manifest_section {
+    ($type:ty, $key:literal) => {
+        impl $crate::manifest::ManifestSection for $type {
+            const KEY: &'static str = $key;
+        }
+    };
+}
+
+/// Declare a flat extension bundle for [`manifest::Manifest`].
+///
+/// Generates a struct whose fields are all flattened into `Manifest` at the
+/// top level — so each field appears as its own top-level YAML key, not nested
+/// under `metadata:`.
+///
+/// Each field type must implement [`Default`]. Fields are automatically
+/// wrapped with `#[serde(default)]`.
+///
+/// The generated struct implements [`manifest::ManifestExtensions`], which is
+/// the required bound for the `Ext` type parameter of `Manifest<Ext>`.
+///
+/// # Example
+///
+/// ```rust,ignore
+/// use konnektoren_platform::{manifest_extensions, manifest_section};
+///
+/// #[derive(Debug, Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
+/// pub struct ThemeConfig { pub dark_mode: bool }
+/// manifest_section!(ThemeConfig, "theme");
+///
+/// manifest_extensions! {
+///     pub struct MyExtensions {
+///         pub theme: ThemeConfig,
+///     }
+/// }
+///
+/// // In YAML:
+/// // theme:
+/// //   dark_mode: true
+/// ```
+#[macro_export]
+macro_rules! manifest_extensions {
+    (
+        $(#[$attr:meta])*
+        $vis:vis struct $name:ident {
+            $(
+                $(#[$field_attr:meta])*
+                pub $field:ident : $ty:ty
+            ),* $(,)?
+        }
+    ) => {
+        $(#[$attr])*
+        #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+        $vis struct $name {
+            $(
+                #[serde(default)]
+                $(#[$field_attr])*
+                pub $field: $ty,
+            )*
+        }
+
+        impl Default for $name {
+            fn default() -> Self {
+                Self {
+                    $( $field: Default::default(), )*
+                }
+            }
+        }
+
+        impl $crate::manifest::ManifestExtensions for $name {}
+    };
+}
+
+/// Loads a [`manifest::KonnektorenManifest`] for the *calling* crate.
+///
+/// Seeds package fields from `Cargo.toml`, applies all section defaults, then
+/// overlays `assets/konnektoren.manifest.yml` from the calling crate. Requires
+/// the `manifest` feature.
+///
+/// ```toml
+/// # Cargo.toml of the consuming crate
+/// [package.metadata.konnektoren]
+/// manifest = "assets/konnektoren.manifest.yml"
+///
+/// [dependencies]
+/// konnektoren-platform = { ..., features = ["manifest"] }
 /// ```
 #[macro_export]
 #[cfg(feature = "manifest")]
 macro_rules! load_manifest {
     () => {{
-        $crate::manifest::Manifest::figment(
+        $crate::manifest::Manifest::<$crate::manifest::KonnektorenSections>::figment(
             $crate::cargo_package!(),
             include_str!(concat!(
                 env!("CARGO_MANIFEST_DIR"),
@@ -114,6 +180,7 @@ pub mod prelude {
     pub use crate::i18n::Language;
     pub use crate::manifest::{
         Assets, DEFAULT_MANIFEST, DomainManifest, I18nManifest, KonnektorenManifest,
-        KonnektorenMeta, Manifest, ManifestConfig, Package,
+        KonnektorenSections, Manifest, ManifestConfig, ManifestExtensions, ManifestSection,
+        NoExtensions, Package,
     };
 }
