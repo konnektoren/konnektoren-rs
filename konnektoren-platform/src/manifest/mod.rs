@@ -7,6 +7,7 @@ pub mod konnektoren;
 use figment2::Figment;
 #[cfg(feature = "manifest")]
 use figment2::providers::{Format, Serialized, Yaml};
+use konnektoren_core::game::GamePath;
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::fmt::Debug;
 
@@ -142,6 +143,13 @@ pub trait ManifestConfig {
     fn package(&self) -> &Package;
     fn asset_path(&self) -> &str;
     fn game_paths(&self) -> &[String];
+
+    fn load_game_paths<F, E>(&self, mut loader: F) -> Result<Vec<GamePath>, E>
+    where
+        F: FnMut(&str) -> Result<GamePath, E>,
+    {
+        self.game_paths().iter().map(|p| loader(p)).collect()
+    }
 }
 
 impl<Ext: ManifestExtensions> ManifestConfig for Manifest<Ext> {
