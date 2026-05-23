@@ -39,7 +39,7 @@ impl Default for I18nManifest {
 }
 
 fn default_i18n_path() -> String {
-    "assets/i18n".to_string()
+    "i18n".to_string()
 }
 
 fn default_language() -> String {
@@ -51,7 +51,7 @@ mod tests {
     use super::*;
 
     const FULL_YAML: &str = r#"
-path: assets/i18n
+path: i18n
 default_language: de
 languages:
   - de
@@ -67,7 +67,7 @@ languages:
     #[test]
     fn test_deserializes_full() {
         let i: I18nManifest = serde_yaml::from_str(FULL_YAML).unwrap();
-        assert_eq!(i.path, "assets/i18n");
+        assert_eq!(i.path, "i18n");
         assert_eq!(i.default_language, "de");
         assert_eq!(i.languages.len(), 8);
         assert!(i.languages.contains(&"uk".to_string()));
@@ -76,7 +76,7 @@ languages:
     #[test]
     fn test_defaults_when_empty() {
         let i: I18nManifest = serde_yaml::from_str("{}").unwrap();
-        assert_eq!(i.path, "assets/i18n");
+        assert_eq!(i.path, "i18n");
         assert_eq!(i.default_language, "en");
         assert!(i.languages.is_empty());
     }
@@ -84,7 +84,7 @@ languages:
     #[test]
     fn test_default_impl() {
         let i = I18nManifest::default();
-        assert_eq!(i.path, "assets/i18n");
+        assert_eq!(i.path, "i18n");
         assert_eq!(i.default_language, "en");
     }
 
@@ -93,6 +93,6 @@ languages:
         let yaml = "default_language: tr\n";
         let i: I18nManifest = serde_yaml::from_str(yaml).unwrap();
         assert_eq!(i.default_language, "tr");
-        assert_eq!(i.path, "assets/i18n"); // still default
+        assert_eq!(i.path, "i18n"); // still default
     }
 }

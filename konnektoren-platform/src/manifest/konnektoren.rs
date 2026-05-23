@@ -27,6 +27,11 @@ impl KonnektorenManifest {
     pub fn i18n(&self) -> &I18nManifest {
         &self.ext.i18n
     }
+
+    pub fn i18n_path(&self) -> String {
+        use crate::manifest::ManifestConfig;
+        format!("{}/{}", self.asset_path(), self.ext.i18n.path)
+    }
 }
 
 #[cfg(test)]
@@ -92,7 +97,13 @@ game_paths:
         let manifest: KonnektorenManifest = serde_yaml::from_str(YAML_MINIMAL).unwrap();
         // I18nManifest::default() is used when the key is absent
         assert_eq!(manifest.i18n().default_language, "en");
-        assert_eq!(manifest.i18n().path, "assets/i18n");
+        assert_eq!(manifest.i18n().path, "i18n");
+    }
+
+    #[test]
+    fn test_i18n_path_combines_asset_base_and_i18n_subdir() {
+        let manifest: KonnektorenManifest = serde_yaml::from_str(YAML_MINIMAL).unwrap();
+        assert_eq!(manifest.i18n_path(), "assets/i18n");
     }
 
     #[test]
@@ -106,6 +117,7 @@ game_paths:
         let manifest: KonnektorenManifest = serde_yaml::from_str(YAML_WITH_ALL).unwrap();
         assert_eq!(manifest.package().id, "konnektoren-de");
         assert_eq!(manifest.game_paths(), &["level_a1.yml", "level_a2.yml"]);
-        assert_eq!(manifest.asset_path(), "challenges");
+        assert_eq!(manifest.asset_path(), "assets");
+        assert_eq!(manifest.challenges_path(), "assets/challenges");
     }
 }

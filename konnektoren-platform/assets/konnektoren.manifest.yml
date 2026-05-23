@@ -7,7 +7,7 @@ domain:
   description: German grammar learning platform
 
 i18n:
-  path: assets/i18n
+  path: i18n
   default_language: en
   languages:
     - de
@@ -20,7 +20,7 @@ i18n:
     - zh
 
 assets:
-  path: .
+  path: assets
 
 game_paths:
   - konnektoren.yml

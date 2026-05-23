@@ -57,7 +57,7 @@ impl Default for Assets {
 }
 
 fn default_asset_path() -> String {
-    "challenges".to_string()
+    "assets".to_string()
 }
 
 /// Base deployment manifest.
@@ -144,6 +144,10 @@ pub trait ManifestConfig {
     fn asset_path(&self) -> &str;
     fn game_paths(&self) -> &[String];
 
+    fn challenges_path(&self) -> String {
+        format!("{}/challenges", self.asset_path())
+    }
+
     fn load_game_paths<F, E>(&self, mut loader: F) -> Result<Vec<GamePath>, E>
     where
         F: FnMut(&str) -> Result<GamePath, E>,
@@ -215,14 +219,14 @@ game_paths:
         let manifest: Manifest<NoExtensions> = serde_yaml::from_str(MINIMAL_YAML).unwrap();
         assert_eq!(manifest.package.id, "test-deployment");
         assert_eq!(manifest.game_paths, vec!["level_a1.yml", "level_a2.yml"]);
-        assert_eq!(manifest.assets.path, "challenges");
+        assert_eq!(manifest.assets.path, "assets");
     }
 
     #[test]
     fn test_manifest_config_trait() {
         let manifest: Manifest<NoExtensions> = serde_yaml::from_str(MINIMAL_YAML).unwrap();
         assert_eq!(manifest.package().id, "test-deployment");
-        assert_eq!(manifest.asset_path(), "challenges");
+        assert_eq!(manifest.asset_path(), "assets");
         assert_eq!(manifest.game_paths().len(), 2);
     }
 
