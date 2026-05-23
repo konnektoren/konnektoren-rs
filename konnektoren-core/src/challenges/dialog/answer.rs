@@ -18,7 +18,6 @@ pub struct DialogAnswer {
     pub selected_option: usize,
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

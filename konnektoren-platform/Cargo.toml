@@ -4,13 +4,22 @@ edition = { workspace = true }
 version = { workspace = true }
 description = "Platform library for Konnektoren"
 keywords = ["konnektoren", "platform", "library"]
+include = ["src/**/*", "assets/**/*"]
+
+# Path to the default deployment manifest shipped with this crate.
+# Consuming crates can locate it with:
+#   include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/konnektoren.manifest.yml"))
+[package.metadata.konnektoren]
+manifest = "assets/konnektoren.manifest.yml"
 
 [features]
 default = []
+manifest = ["dep:figment2"]
 tools = ["regex", "walkdir"]
 schema = ["konnektoren-core/schema"]
 
 [dependencies]
+figment2 = { version = "0.11", features = ["yaml"], optional = true }
 isolang = { workspace = true }
 konnektoren-core = { path = "../konnektoren-core" }
 tracing = { workspace = true }
