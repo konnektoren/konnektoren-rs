@@ -1,5 +1,4 @@
 use crate::challenges::Timed;
-use crate::challenges::challenge_variant::ChallengeVariant;
 use crate::challenges::error::{ChallengeError, Result};
 use crate::challenges::{
     ChallengeConfig, ChallengeInput, ChallengeResult, ChallengeType, CustomChallengeResult,
@@ -31,13 +30,7 @@ impl Challenge {
             ChallengeType::Custom(_) => ChallengeResult::Custom(CustomChallengeResult::default()),
             ChallengeType::Placeholder(_) => ChallengeResult::MultipleChoice(Vec::new()), // Placeholder uses MC
             ChallengeType::Vocabulary(_) => ChallengeResult::Vocabulary,
-            ChallengeType::Dialog(_) => {
-                if challenge_config.variant == Some(ChallengeVariant::DialogObserver) {
-                    ChallengeResult::Informative
-                } else {
-                    ChallengeResult::Dialog(Vec::new())
-                }
-            }
+            ChallengeType::Dialog(_) => ChallengeResult::Dialog(Vec::new()),
         };
 
         Challenge {
