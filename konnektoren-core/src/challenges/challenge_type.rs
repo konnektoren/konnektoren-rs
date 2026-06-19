@@ -209,7 +209,7 @@ impl Performance for ChallengeType {
                 }
                 100 * score / dataset.rows.len() as u32
             }
-            (ChallengeType::Informative(_), _) => 100,
+            (ChallengeType::Informative(_), _) | (ChallengeType::Dialog(_), ChallengeResult::Informative) => 100,
             (ChallengeType::Ordering(dataset), ChallengeResult::Ordering(results)) => {
                 if dataset.items.is_empty() {
                     return 0;

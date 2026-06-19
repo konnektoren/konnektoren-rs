@@ -105,4 +105,19 @@ mod tests {
         let base64_data = factory.export_challenge_to_base64("konnektoren").unwrap();
         assert!(!base64_data.is_empty());
     }
+
+    #[test]
+    fn dialog_observer_performance_is_100() {
+        use crate::challenges::{ChallengeVariant, Performance};
+        let factory = ChallengeFactory::default();
+        let config = ChallengeConfig {
+            challenge: "dialog_begruessung".to_string(),
+            variant: Some(ChallengeVariant::DialogObserver),
+            tasks: 1.into(),
+            ..ChallengeConfig::default()
+        };
+        let challenge = factory.create_challenge(&config).unwrap();
+        let performance = challenge.challenge_type.performance(&challenge.challenge_result);
+        assert_eq!(performance, 100, "observer dialog with no answers must score 100");
+    }
 }
