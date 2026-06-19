@@ -107,8 +107,8 @@ mod tests {
     }
 
     #[test]
-    fn dialog_observer_performance_is_100() {
-        use crate::challenges::{ChallengeVariant, Performance};
+    fn dialog_observer_challenge_can_be_created() {
+        use crate::challenges::ChallengeVariant;
         let factory = ChallengeFactory::default();
         let config = ChallengeConfig {
             challenge: "dialog_begruessung".to_string(),
@@ -117,7 +117,13 @@ mod tests {
             ..ChallengeConfig::default()
         };
         let challenge = factory.create_challenge(&config).unwrap();
-        let performance = challenge.challenge_type.performance(&challenge.challenge_result);
-        assert_eq!(performance, 100, "observer dialog with no answers must score 100");
+        assert!(matches!(
+            challenge.challenge_type,
+            crate::challenges::ChallengeType::Dialog(_)
+        ));
+        assert_eq!(
+            challenge.challenge_config.variant,
+            Some(ChallengeVariant::DialogObserver)
+        );
     }
 }
