@@ -1,4 +1,4 @@
-//! A framework-free asset server built on `konnektoren_core::assets`.
+#![doc = include_str!("../README.md")]
 mod collection;
 mod error;
 mod server;
@@ -7,7 +7,11 @@ pub use collection::AssetCollection;
 pub use error::AssetLoadError;
 #[cfg(feature = "derive")]
 pub use konnektoren_asset_loader_derive::AssetCollection;
-pub use konnektoren_core::assets::{AssetFormat, AssetSource};
+#[cfg(feature = "csr")]
+pub use konnektoren_core::assets::UrlSource;
+pub use konnektoren_core::assets::{
+    AssetError, AssetFormat, AssetSource, DefaultAssetSource, EmbeddedSource, FileSource,
+};
 pub use server::AssetServer;
 #[cfg(feature = "zip")]
 pub use source::ZipSource;

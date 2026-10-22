@@ -6,6 +6,7 @@ use syn::{DeriveInput, LitStr, parse_macro_input};
 pub fn derive_asset_collection(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let name = input.ident;
+    let (impl_generics, type_generics, where_clause) = input.generics.split_for_impl();
     let mut folder = None;
     for attribute in input.attrs {
         if attribute.path().is_ident("asset")
@@ -27,7 +28,7 @@ pub fn derive_asset_collection(input: TokenStream) -> TokenStream {
             .into();
     };
     quote! {
-        impl ::konnektoren_asset_loader::AssetCollection for #name {
+        impl #impl_generics ::konnektoren_asset_loader::AssetCollection for #name #type_generics #where_clause {
             const FOLDER: &'static str = #folder;
         }
     }

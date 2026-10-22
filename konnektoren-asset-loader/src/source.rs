@@ -17,12 +17,18 @@ pub trait SourceLayer {
     ) -> Pin<Box<dyn Future<Output = Result<Vec<u8>, AssetError>> + 'a>>;
 }
 
-impl<T: AssetSource> SourceLayer for T {
+impl<T: AssetSource + ?Sized> SourceLayer for T {
     fn load_layer_bytes<'a>(
         &'a self,
         path: &'a str,
     ) -> Pin<Box<dyn Future<Output = Result<Vec<u8>, AssetError>> + 'a>> {
         Box::pin(self.load_bytes(path))
+    }
+}
+
+impl AssetSource for dyn SourceLayer {
+    async fn load_bytes(&self, path: &str) -> Result<Vec<u8>, AssetError> {
+        self.load_layer_bytes(path).await
     }
 }
 
@@ -54,11 +60,20 @@ impl AssetSource for LayeredSource {
 
 /// Serves entries from a ZIP archive supplied by another source.
 #[cfg(feature = "zip")]
-#[derive(Clone)]
 pub struct ZipSource<S: AssetSource + ?Sized> {
     source: Rc<S>,
     archive_path: String,
     entries: CachedZipEntries,
+}
+#[cfg(feature = "zip")]
+impl<S: AssetSource + ?Sized> Clone for ZipSource<S> {
+    fn clone(&self) -> Self {
+        Self {
+            source: self.source.clone(),
+            archive_path: self.archive_path.clone(),
+            entries: self.entries.clone(),
+        }
+    }
 }
 #[cfg(feature = "zip")]
 impl<S: AssetSource + ?Sized> ZipSource<S> {
@@ -100,7 +115,8 @@ impl<S: AssetSource + ?Sized> ZipSource<S> {
 #[cfg(feature = "zip")]
 impl<S: AssetSource + ?Sized> AssetSource for ZipSource<S> {
     async fn load_bytes(&self, path: &str) -> Result<Vec<u8>, AssetError> {
-        let entries = if let Some(entries) = self.entries.borrow().clone() {
+        let cached = self.entries.borrow().clone();
+        let entries = if let Some(entries) = cached {
             entries
         } else {
             let bytes = self.source.load_bytes(&self.archive_path).await?;

@@ -10,6 +10,10 @@ struct TextFormat;
 
 impl AssetFormat for TextFormat {
     type Asset = String;
+
+    fn cache_key(&self) -> Option<String> {
+        Some(String::new())
+    }
     type Error = std::string::FromUtf8Error;
 
     fn parse(&self, bytes: &[u8]) -> Result<Self::Asset, Self::Error> {

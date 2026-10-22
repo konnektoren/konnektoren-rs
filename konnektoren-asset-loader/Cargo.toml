@@ -9,6 +9,7 @@ authors = { workspace = true }
 
 [features]
 default = ["derive"]
+csr = ["konnektoren-core/csr"]
 derive = ["dep:konnektoren-asset-loader-derive"]
 zip = ["dep:zip"]
 
@@ -26,3 +27,4 @@ tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 [[test]]
 name = "asset_loader_bdd"
 harness = false
+required-features = ["derive"]
