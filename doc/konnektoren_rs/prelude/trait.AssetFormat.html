@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Turns raw bytes into a typed asset."><title>AssetFormat in konnektoren_rs::prelude - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="konnektoren_rs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.1 (58cf8f9c3 2026-10-13)" data-channel="1.99.1" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc trait"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">AssetFormat</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../konnektoren_rs/index.html">konnektoren_<wbr>rs</a><span class="version">0.8.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Asset<wbr>Format</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#relation-to-bevys-assetloader" title="Relation to bevy’s `AssetLoader`">Relation to bevy’s <code>AssetLoader</code></a></li><li><a href="#example" title="Example">Example</a></li></ul><h3><a href="#required-associated-types">Required Associated Types</a></h3><ul class="block"><li><a href="#associatedtype.Asset" title="Asset">Asset</a></li><li><a href="#associatedtype.Error" title="Error">Error</a></li></ul><h3><a href="#required-methods">Required Methods</a></h3><ul class="block"><li><a href="#tymethod.parse" title="parse">parse</a></li></ul><h3><a href="#provided-methods">Provided Methods</a></h3><ul class="block"><li><a href="#method.cache_key" title="cache_key">cache_key</a></li><li><a href="#method.extensions" title="extensions">extensions</a></li></ul><h3><a href="#implementors">Implementors</a></h3></section><div id="rustdoc-modnav"><h2><a href="index.html">In konnektoren_<wbr>rs::<wbr>prelude</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">konnektoren_rs</a>::<wbr><a href="index.html">prelude</a></div><h1>Trait <span class="trait">Asset<wbr>Format</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"></span></div><pre class="rust item-decl"><code>pub trait AssetFormat {
+    type <a href="#associatedtype.Asset" class="associatedtype">Asset</a>;
+    type <a href="#associatedtype.Error" class="associatedtype">Error</a>: <a class="trait" href="https://doc.rust-lang.org/1.99.1/core/error/trait.Error.html" title="trait core::error::Error">Error</a> + <a class="trait" href="https://doc.rust-lang.org/1.99.1/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + <a class="trait" href="https://doc.rust-lang.org/1.99.1/core/marker/trait.Sync.html" title="trait core::marker::Sync">Sync</a> + 'static;
+
+    // Required method
+    fn <a href="#tymethod.parse" class="fn">parse</a>(&amp;self, bytes: &amp;[<a class="primitive" href="https://doc.rust-lang.org/1.99.1/std/primitive.u8.html">u8</a>]) -&gt; <a class="enum" href="https://doc.rust-lang.org/1.99.1/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self::<a class="associatedtype" href="trait.AssetFormat.html#associatedtype.Asset" title="type konnektoren_rs::prelude::AssetFormat::Asset">Asset</a>, Self::<a class="associatedtype" href="trait.AssetFormat.html#associatedtype.Error" title="type konnektoren_rs::prelude::AssetFormat::Error">Error</a>&gt;;
+
+    // Provided methods
+    fn <a href="#method.extensions" class="fn">extensions</a>(&amp;self) -&gt; &amp;[&amp;<a class="primitive" href="https://doc.rust-lang.org/1.99.1/std/primitive.str.html">str</a>] { ... }
+<span class="item-spacer"></span>    fn <a href="#method.cache_key" class="fn">cache_key</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/1.99.1/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.99.1/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt; { ... }
+}</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Turns raw bytes into a typed asset.</p>
+<p>The contract that keeps frontend adapters thin: <strong>sync, bytes in, value
+out</strong> — no source knowledge, no async, no load context. A format written
+once serves every source (file, fetch, embedded) and every frontend (a
+bevy adapter is ~ten lines: read bytes, call <a href="trait.AssetFormat.html#tymethod.parse" title="method konnektoren_rs::prelude::AssetFormat::parse"><code>parse</code></a>,
+wrap in the engine’s asset newtype).</p>
+<h2 id="relation-to-bevys-assetloader"><a class="doc-anchor" href="#relation-to-bevys-assetloader">§</a>Relation to bevy’s <code>AssetLoader</code></h2>
+<p>Mirrors <a href="https://docs.rs/bevy/latest/bevy/asset/trait.AssetLoader.html"><code>bevy::asset::AssetLoader</code></a>
+where that helps a future adapter, and deliberately diverges where bevy
+solves engine problems this crate does not have:</p>
+<ul>
+<li><code>extensions()</code> matches bevy: advisory, defaults to an empty list, and
+loading a file with a non-matching extension is not an error.</li>
+<li><code>type Error</code> plays the role of bevy’s <code>Error: Into&lt;BevyError&gt;</code> — any
+<code>std::error::Error</code> value, type-erased into
+<a href="enum.AssetError.html#variant.Parse" title="variant konnektoren_rs::prelude::AssetError::Parse"><code>AssetError::Parse</code></a> by the caller.</li>
+<li>bevy’s <code>type Settings</code> (per-load configuration, driven by <code>.meta</code>
+files) has no counterpart: without a meta-file system, per-load
+configuration belongs in the format value itself — construct the
+format with fields instead of implementing a settings type.</li>
+<li>bevy’s <code>Reader</code> + <code>LoadContext</code> collapse to plain <code>&amp;[u8]</code>: no
+streaming, no sub-assets, which is what keeps <code>parse</code> pure and
+unit-testable.</li>
+</ul>
+<h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>konnektoren_core::assets::AssetFormat;
+
+<span class="doccomment">/// Per-format configuration lives on the value (bevy would use
+/// `type Settings`): this format can be lenient about trailing noise.
+</span><span class="kw">struct </span>LineCountFormat {
+    skip_blank: bool,
+}
+
+<span class="kw">impl </span>AssetFormat <span class="kw">for </span>LineCountFormat {
+    <span class="kw">type </span>Asset = usize;
+    <span class="kw">type </span>Error = std::str::Utf8Error;
+
+    <span class="kw">fn </span>extensions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>str] {
+        <span class="kw-2">&amp;</span>[<span class="string">"txt"</span>]
+    }
+
+    <span class="kw">fn </span>parse(<span class="kw-2">&amp;</span><span class="self">self</span>, bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>::Asset, <span class="self">Self</span>::Error&gt; {
+        <span class="kw">let </span>text = std::str::from_utf8(bytes)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(text
+            .lines()
+            .filter(|line| !<span class="self">self</span>.skip_blank || !line.trim().is_empty())
+            .count())
+    }
+}
+
+<span class="kw">let </span>format = LineCountFormat { skip_blank: <span class="bool-val">true </span>};
+<span class="macro">assert_eq!</span>(format.parse(<span class="string">b"a\n\nb\n"</span>).unwrap(), <span class="number">2</span>);</code></pre></div></div></details><h2 id="required-associated-types" class="section-header">Required Associated Types<a href="#required-associated-types" class="anchor">§</a></h2><div class="methods"><details class="toggle" open><summary><section id="associatedtype.Asset" class="method"><h4 class="code-header">type <a href="#associatedtype.Asset" class="associatedtype">Asset</a></h4></section></summary><div class="docblock"><p>The typed asset this format produces.</p>
+</div></details><details class="toggle" open><summary><section id="associatedtype.Error" class="method"><h4 class="code-header">type <a href="#associatedtype.Error" class="associatedtype">Error</a>: <a class="trait" href="https://doc.rust-lang.org/1.99.1/core/error/trait.Error.html" title="trait core::error::Error">Error</a> + <a class="trait" href="https://doc.rust-lang.org/1.99.1/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + <a class="trait" href="https://doc.rust-lang.org/1.99.1/core/marker/trait.Sync.html" title="trait core::marker::Sync">Sync</a> + 'static</h4></section></summary><div class="docblock"><p>The format’s own parse error; wrapped into
+<a href="enum.AssetError.html#variant.Parse" title="variant konnektoren_rs::prelude::AssetError::Parse"><code>AssetError::Parse</code></a> by
+<a href="trait.AssetSource.html#method.load" title="method konnektoren_rs::prelude::AssetSource::load"><code>AssetSource::load</code></a>.</p>
+</div></details></div><h2 id="required-methods" class="section-header">Required Methods<a href="#required-methods" class="anchor">§</a></h2><div class="methods"><details class="toggle method-toggle" open><summary><section id="tymethod.parse" class="method"><h4 class="code-header">fn <a href="#tymethod.parse" class="fn">parse</a>(&amp;self, bytes: &amp;[<a class="primitive" href="https://doc.rust-lang.org/1.99.1/std/primitive.u8.html">u8</a>]) -&gt; <a class="enum" href="https://doc.rust-lang.org/1.99.1/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;Self::<a class="associatedtype" href="trait.AssetFormat.html#associatedtype.Asset" title="type konnektoren_rs::prelude::AssetFormat::Asset">Asset</a>, Self::<a class="associatedtype" href="trait.AssetFormat.html#associatedtype.Error" title="type konnektoren_rs::prelude::AssetFormat::Error">Error</a>&gt;</h4></section></summary><div class="docblock"><p>Parses raw bytes into the typed asset.</p>
+</div></details></div><h2 id="provided-methods" class="section-header">Provided Methods<a href="#provided-methods" class="anchor">§</a></h2><div class="methods"><details class="toggle method-toggle" open><summary><section id="method.extensions" class="method"><h4 class="code-header">fn <a href="#method.extensions" class="fn">extensions</a>(&amp;self) -&gt; &amp;[&amp;<a class="primitive" href="https://doc.rust-lang.org/1.99.1/std/primitive.str.html">str</a>]</h4></section></summary><div class="docblock"><p>File extensions this format handles, without the leading dot
+(e.g. <code>["yml", "yaml"]</code>).</p>
+<p>Advisory, as in bevy: loading does not enforce them, and callers may
+parse files with non-matching extensions. Adapters and future
+collection derives use them for routing. Defaults to an empty list —
+the format claims no extensions.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.cache_key" class="method"><h4 class="code-header">fn <a href="#method.cache_key" class="fn">cache_key</a>(&amp;self) -&gt; <a class="enum" href="https://doc.rust-lang.org/1.99.1/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.99.1/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</h4></section></summary><div class="docblock"><p>Opts into parsed-asset caching and request coalescing.</p>
+<p>The server also keys by path, format type and asset type. This key must
+distinguish every setting that changes parsing. A stateless format can
+return <code>Some(String::new())</code>; configured formats should encode their
+settings. <code>None</code> (the default) loads afresh, avoiding accidental reuse
+when an implementation has not declared its cache identity.</p>
+</div></details></div><h2 id="dyn-compatibility" class="section-header">Dyn Compatibility<a href="#dyn-compatibility" class="anchor">§</a></h2><div class="dyn-compatibility-info"><p>This trait <b>is</b> <a href="https://doc.rust-lang.org/1.99.1/reference/items/traits.html#dyn-compatibility">dyn compatible</a>.</p><p><i>In older versions of Rust, dyn compatibility was called "object safety".</i></p></div><h2 id="implementors" class="section-header">Implementors<a href="#implementors" class="anchor">§</a></h2><div id="implementors-list"></div><script src="../../trait.impl/konnektoren_core/assets/format/trait.AssetFormat.js" async></script></section></div></main></body></html>
