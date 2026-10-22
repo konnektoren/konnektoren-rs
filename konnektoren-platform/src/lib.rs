@@ -1,4 +1,5 @@
 pub mod domain;
+pub mod game_loader;
 pub mod i18n;
 pub mod manifest;
 
@@ -177,6 +178,7 @@ macro_rules! load_manifest {
 
 pub mod prelude {
     pub use crate::domain::{Domain, DomainConfig, LanguageDomain, LanguageDomainConfig};
+    pub use crate::game_loader::{GameLoadError, GameLoader};
     pub use crate::i18n::Language;
     pub use crate::manifest::{
         Assets, DEFAULT_MANIFEST, DomainManifest, I18nManifest, KonnektorenManifest,
