@@ -39,6 +39,58 @@ fn layered_sources_obey_priority_and_fall_back_only_when_missing() {
 }
 
 #[test]
+fn empty_source_chain_reports_the_requested_path() {
+    block_on(async {
+        let source = LayeredSource::default();
+        assert!(matches!(
+            source.load_bytes("missing.yml").await,
+            Err(AssetError::NotFound { path }) if path == "missing.yml"
+        ));
+    });
+}
+
+#[test]
+fn arbitrary_number_of_sources_can_be_nested_and_combined() {
+    static THIRD: EmbeddedSource = EmbeddedSource::new(&[("third", b"third")]);
+    static FOURTH: EmbeddedSource = EmbeddedSource::new(&[("fourth", b"fourth")]);
+    block_on(async {
+        let nested = LayeredSource::default()
+            .with_source(PRIMARY)
+            .with_source(FALLBACK);
+        let source = LayeredSource::default()
+            .with_source(nested)
+            .with_source(THIRD)
+            .with_source(FOURTH);
+        for (path, expected) in [
+            ("same", "primary"),
+            ("other", "other"),
+            ("third", "third"),
+            ("fourth", "fourth"),
+        ] {
+            assert_eq!(source.load_bytes(path).await.unwrap(), expected.as_bytes());
+        }
+        assert!(matches!(
+            source.load_bytes("missing").await,
+            Err(AssetError::NotFound { .. })
+        ));
+    });
+}
+
+#[test]
+fn successful_lookup_does_not_consult_later_sources() {
+    block_on(async {
+        let source = LayeredSource::default()
+            .with_source(PRIMARY)
+            .with_source(Broken);
+        assert_eq!(source.load_bytes("same").await.unwrap(), b"primary");
+        assert!(matches!(
+            source.load_bytes("missing").await,
+            Err(AssetError::Load { .. })
+        ));
+    });
+}
+
+#[test]
 fn source_can_be_selected_at_runtime_without_wrapping_it_in_a_chain() {
     block_on(async {
         let source: Rc<dyn SourceLayer> = Rc::new(PRIMARY);

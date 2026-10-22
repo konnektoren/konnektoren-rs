@@ -32,7 +32,11 @@ impl AssetSource for dyn SourceLayer {
     }
 }
 
-/// Resolves sources in order, falling through only when a source has no entry.
+/// Combines any number of sources into one ordered asset namespace.
+///
+/// The first source containing a path wins. Only `NotFound` falls through;
+/// other errors stop lookup. Layers can themselves be `LayeredSource`s.
+/// An empty chain reports `NotFound` for every path.
 #[derive(Clone, Default)]
 pub struct LayeredSource {
     sources: Vec<Rc<dyn SourceLayer>>,
@@ -43,6 +47,12 @@ impl LayeredSource {
     }
     pub fn push(&mut self, source: Rc<dyn SourceLayer>) {
         self.sources.push(source);
+    }
+
+    /// Appends a source at lower priority, including another source chain.
+    pub fn with_source<S: AssetSource + 'static>(mut self, source: S) -> Self {
+        self.push(Rc::new(source));
+        self
     }
 }
 impl AssetSource for LayeredSource {

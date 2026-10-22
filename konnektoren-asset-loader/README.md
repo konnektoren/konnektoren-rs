@@ -50,6 +50,39 @@ for your embedded folder type and return its bytes or `AssetError::NotFound`.
 Neither extension requires changing this crate. `extensions()` is descriptive;
 the server uses the format supplied by the caller, without automatic dispatch.
 
+## Combining sources
+
+A `LayeredSource` presents any number of sources as a single source. Use the
+builder for known sources, or `new(Vec<Rc<dyn SourceLayer>>)` / `push` when the
+list is assembled at runtime. Different source types can be mixed and chains
+can be nested.
+
+```rust
+use konnektoren_asset_loader::{AssetSource, EmbeddedSource, LayeredSource};
+
+static PRIMARY: EmbeddedSource = EmbeddedSource::new(&[("same.yml", b"primary")]);
+static EXTRA: EmbeddedSource = EmbeddedSource::new(&[("extra.yml", b"extra")]);
+static FALLBACK: EmbeddedSource = EmbeddedSource::new(&[("same.yml", b"fallback")]);
+
+let project = LayeredSource::default()
+    .with_source(PRIMARY)
+    .with_source(EXTRA);
+let source = LayeredSource::default()
+    .with_source(project)
+    .with_source(FALLBACK);
+
+# futures::executor::block_on(async {
+assert_eq!(source.load_bytes("same.yml").await?, b"primary");
+assert_eq!(source.load_bytes("extra.yml").await?, b"extra");
+# Ok::<(), konnektoren_asset_loader::AssetError>(())
+# }).unwrap();
+```
+
+Pass the combined source to `AssetServer::new(Rc::new(source))`, just like any
+other source. Lookup stops at the first matching path; individual file contents
+are not merged. Only missing entries fall through. An empty chain reports
+`NotFound`. Nested chains preserve their own source order.
+
 ## Cache contract
 
 Caching is opt-in: `AssetFormat::cache_key()` defaults to `None`, which loads
