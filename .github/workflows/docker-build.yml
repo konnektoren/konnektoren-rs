@@ -48,7 +48,7 @@ jobs:
             # Tag with PR number
             type=ref,event=pr
             # Tag with short commit SHA (7 characters)
-            type=sha,prefix={{branch}}-,format=short
+            type=sha,prefix=sha-,format=short
             # Latest tag only for main branch
             type=raw,value=latest,enable={{is_default_branch}}
 
