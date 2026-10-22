@@ -195,7 +195,23 @@ impl UrlSource {
         &self.base_url
     }
 
+    fn check_status(status: u16, url: &str) -> Result<(), AssetError> {
+        match status {
+            200 => Ok(()),
+            404 => Err(AssetError::NotFound {
+                path: url.to_owned(),
+            }),
+            _ => Err(AssetError::Load {
+                path: url.to_owned(),
+                message: format!("status {status}"),
+            }),
+        }
+    }
+
     fn url_for(&self, path: &str) -> String {
+        if path.starts_with("http://") || path.starts_with("https://") || path.starts_with("//") {
+            return path.to_owned();
+        }
         let normalized_path = path.trim_start_matches('/');
         if self.base_url.ends_with('/') {
             format!("{}{}", self.base_url, normalized_path)
@@ -227,12 +243,7 @@ impl AssetSource for UrlSource {
                 message: format!("failed to send request: {}", e),
             })?;
 
-        if response.status() != 200 {
-            return Err(AssetError::Load {
-                path: url,
-                message: format!("status {}", response.status()),
-            });
-        }
+        Self::check_status(response.status(), &url)?;
 
         response.binary().await.map_err(|e| AssetError::Load {
             path: url,
@@ -386,6 +397,33 @@ mod tests {
                 UrlSource::new("https://example.com/static").url_for("konnektoren.yml"),
                 "https://example.com/static/konnektoren.yml"
             );
+        }
+
+        #[test]
+        fn url_source_preserves_absolute_urls() {
+            let source = UrlSource::default();
+            for url in [
+                "https://example.com/a.zip",
+                "http://localhost/a.yml",
+                "//cdn.example.com/a.bin",
+            ] {
+                assert_eq!(source.url_for(url), url);
+            }
+        }
+
+        #[test]
+        fn http_not_found_allows_fallback_but_other_failures_do_not() {
+            assert!(UrlSource::check_status(200, "/assets/a").is_ok());
+            assert!(matches!(
+                UrlSource::check_status(404, "/assets/a"),
+                Err(AssetError::NotFound { .. })
+            ));
+            for status in [401, 403, 500] {
+                assert!(matches!(
+                    UrlSource::check_status(status, "/assets/a"),
+                    Err(AssetError::Load { .. })
+                ));
+            }
         }
 
         #[wasm_bindgen_test]

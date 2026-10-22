@@ -28,6 +28,7 @@ csr = ["js"]
 ssr = []
 schema = ["schemars"]
 js = [
+    "uuid/js",
     "serde-wasm-bindgen",
     "wasm-bindgen",
     "wasm-bindgen-futures",

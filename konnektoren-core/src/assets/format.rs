@@ -76,6 +76,17 @@ pub trait AssetFormat {
         &[]
     }
 
+    /// Opts into parsed-asset caching and request coalescing.
+    ///
+    /// The server also keys by path, format type and asset type. This key must
+    /// distinguish every setting that changes parsing. A stateless format can
+    /// return `Some(String::new())`; configured formats should encode their
+    /// settings. `None` (the default) loads afresh, avoiding accidental reuse
+    /// when an implementation has not declared its cache identity.
+    fn cache_key(&self) -> Option<String> {
+        None
+    }
+
     /// Parses raw bytes into the typed asset.
     fn parse(&self, bytes: &[u8]) -> Result<Self::Asset, Self::Error>;
 }
