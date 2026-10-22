@@ -118,7 +118,8 @@ where
     #[serde(default)]
     pub assets: Assets,
 
-    /// Ordered list of game-path filenames, resolved relative to `assets.path`.
+    /// Ordered game-path filenames relative to `assets.path/challenges`.
+    /// Sources supplied to `GameLoader` are rooted at `assets.path`.
     #[serde(default)]
     pub game_paths: Vec<String>,
 
@@ -148,6 +149,8 @@ pub trait ManifestConfig {
         format!("{}/challenges", self.asset_path())
     }
 
+    /// Synchronous compatibility helper; the callback receives each filename
+    /// unchanged and is responsible for resolving its source-relative path.
     fn load_game_paths<F, E>(&self, mut loader: F) -> Result<Vec<GamePath>, E>
     where
         F: FnMut(&str) -> Result<GamePath, E>,

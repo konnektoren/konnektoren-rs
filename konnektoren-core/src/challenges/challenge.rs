@@ -109,7 +109,18 @@ impl Solvable for Challenge {
                     }
                 }
                 (ChallengeType::Informative(_), ChallengeResult::Informative) => Ok(true),
+                (ChallengeType::Ordering(ord), ChallengeResult::Ordering(results)) => {
+                    if let (Some(item), Some(result)) =
+                        (ord.items.get(task_index), results.get(task_index))
+                    {
+                        Ok(item.correct_order == result.order)
+                    } else {
+                        Ok(false)
+                    }
+                }
                 (ChallengeType::Custom(_), ChallengeResult::Custom(_)) => Ok(true),
+                (ChallengeType::Placeholder(_), ChallengeResult::MultipleChoice(_)) => Ok(true),
+                (ChallengeType::Vocabulary(_), ChallengeResult::Vocabulary) => Ok(true),
                 (ChallengeType::Dialog(dialog), ChallengeResult::Dialog(_)) => {
                     if let ChallengeInput::Dialog(answer) = &input {
                         match dialog.turns.get(answer.turn_index) {
@@ -459,5 +470,55 @@ mod tests {
         let result = challenge2.solve(incorrect_input, 0);
         assert!(result.is_ok(), "Solve should not error: {:?}", result);
         assert!(!result.unwrap(), "Should be incorrect");
+    }
+
+    #[test]
+    fn solve_ordering() {
+        let ordering = Ordering {
+            id: "ordering-1".to_string(),
+            name: "Test".to_string(),
+            description: "Description".to_string(),
+            items: vec![OrderingItem {
+                elements: vec!["A".to_string(), "B".to_string(), "C".to_string()],
+                correct_order: vec![0, 1, 2],
+            }],
+        };
+        let challenge_type = ChallengeType::Ordering(ordering);
+
+        let mut challenge = Challenge::new(&challenge_type, &ChallengeConfig::default());
+        let correct_input = ChallengeInput::Ordering(OrderingResult {
+            order: vec![0, 1, 2],
+        });
+        let result = challenge.solve(correct_input, 0);
+        assert!(result.is_ok(), "Solve should not error: {:?}", result);
+        assert!(result.unwrap(), "Should be correct");
+
+        let mut challenge2 = Challenge::new(&challenge_type, &ChallengeConfig::default());
+        let incorrect_input = ChallengeInput::Ordering(OrderingResult {
+            order: vec![2, 1, 0],
+        });
+        let result = challenge2.solve(incorrect_input, 0);
+        assert!(result.is_ok(), "Solve should not error: {:?}", result);
+        assert!(!result.unwrap(), "Should be incorrect");
+    }
+
+    #[test]
+    fn solve_placeholder() {
+        let challenge_type = ChallengeType::Placeholder(Placeholder::default());
+        let mut challenge = Challenge::new(&challenge_type, &ChallengeConfig::default());
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
+        let result = challenge.solve(input, 0);
+        assert!(result.is_ok(), "Solve should not error: {:?}", result);
+        assert!(result.unwrap(), "Placeholder has no wrong answer");
+    }
+
+    #[test]
+    fn solve_vocabulary() {
+        let challenge_type = ChallengeType::Vocabulary(Vocabulary::default());
+        let mut challenge = Challenge::new(&challenge_type, &ChallengeConfig::default());
+        let input = ChallengeInput::MultipleChoice(MultipleChoiceOption::default());
+        let result = challenge.solve(input, 0);
+        assert!(result.is_ok(), "Solve should not error: {:?}", result);
+        assert!(result.unwrap(), "Vocabulary has no wrong answer");
     }
 }

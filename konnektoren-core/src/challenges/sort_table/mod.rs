@@ -19,8 +19,13 @@ pub struct SortTable {
 
 impl Default for SortTable {
     fn default() -> Self {
-        let data = include_str!("../../../../assets/personal_pronouns.yml");
-        serde_yaml::from_str(data).unwrap()
+        crate::assets::default_asset("sort_table_default.yml").unwrap_or_else(|| Self {
+            id: String::new(),
+            name: String::new(),
+            description: String::new(),
+            columns: Vec::new(),
+            rows: Vec::new(),
+        })
     }
 }
 
@@ -92,7 +97,7 @@ mod tests {
 
     #[test]
     fn from_yaml() {
-        let yaml_data = include_str!("../../../../assets/personal_pronouns.yml");
+        let yaml_data = include_str!("../../../../assets/sort_table_default.yml");
         let dataset: SortTable = serde_yaml::from_str(yaml_data).unwrap();
         assert_eq!(dataset.id, "personal_pronouns");
         assert_eq!(dataset.name, "Personal Pronouns");

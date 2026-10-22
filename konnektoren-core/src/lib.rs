@@ -1,5 +1,5 @@
 pub mod analytics;
-pub mod asset_loader;
+pub mod assets;
 pub mod challenges;
 pub mod commands;
 pub mod controller;
@@ -29,6 +29,11 @@ pub type Xp = u32;
 pub mod prelude {
     pub use crate::Xp;
     pub use crate::analytics::metrics::Metric;
+    #[cfg(feature = "csr")]
+    pub use crate::assets::UrlSource;
+    pub use crate::assets::{
+        AssetError, AssetFormat, AssetSource, DefaultAssetSource, EmbeddedSource, FileSource,
+    };
     pub use crate::challenges::Challenge;
     pub use crate::challenges::ChallengeConfig;
     pub use crate::challenges::ChallengeFactory;
