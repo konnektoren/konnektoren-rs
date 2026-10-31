@@ -83,7 +83,7 @@ impl<C: GameChallenge> ChallengeCommand<C> {
         let challenge_config = &current_game_path.challenges[state.current_challenge_index];
         let max_questions = challenge_config.tasks.len();
 
-        if state.current_task_index >= max_questions - 1 {
+        if state.current_task_index.saturating_add(1) >= max_questions {
             return Err(CommandError::ChallengeError(ChallengeError::NoMoreTasks));
         }
 
@@ -193,7 +193,11 @@ impl<C: GameChallenge> ChallengeCommand<C> {
         if let Some(result) = custom_result {
             state.challenge.challenge_result = Some(result.clone());
         }
-        // Additional logic to mark the challenge as finished
+        // Record completion as part of the transition, even without plugins.
+        state
+            .game
+            .challenge_history
+            .add_challenge(state.challenge.clone());
         Ok(())
     }
 }

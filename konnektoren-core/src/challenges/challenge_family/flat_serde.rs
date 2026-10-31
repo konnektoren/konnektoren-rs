@@ -78,9 +78,16 @@ where
     E: EnumAccess<'de>,
 {
     let (name, variant) = data.variant::<String>()?;
-    if A::serialized_names().contains(&name.as_str()) {
+    let first = A::serialized_names().contains(&name.as_str());
+    let second = B::serialized_names().contains(&name.as_str());
+    if first && second {
+        return Err(de::Error::custom(format!(
+            "ambiguous variant `{name}` in challenge family"
+        )));
+    }
+    if first {
         A::deserialize(Replay { name, variant }).map(Branch::First)
-    } else if B::serialized_names().contains(&name.as_str()) {
+    } else if second {
         B::deserialize(Replay { name, variant }).map(Branch::Second)
     } else {
         Err(de::Error::custom(format!("unknown variant `{name}`")))
@@ -125,8 +132,27 @@ where
     }
 }
 
-impl<A: Serialize, B: Serialize> Serialize for ChallengeFamily<A, B> {
+fn ensure_unique_names<A: SerializedNames, B: SerializedNames, E: serde::ser::Error>()
+-> Result<(), E> {
+    let mut names = std::collections::HashSet::new();
+    for name in A::serialized_names()
+        .into_iter()
+        .chain(B::serialized_names())
+    {
+        if !names.insert(name) {
+            return Err(E::custom(format!(
+                "ambiguous variant `{name}` in challenge family"
+            )));
+        }
+    }
+    Ok(())
+}
+
+impl<A: Serialize + SerializedNames, B: Serialize + SerializedNames> Serialize
+    for ChallengeFamily<A, B>
+{
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        ensure_unique_names::<A, B, S::Error>()?;
         match self {
             Self::First(a) => a.serialize(serializer),
             Self::Second(b) => b.serialize(serializer),
@@ -150,8 +176,11 @@ where
     }
 }
 
-impl<A: Serialize, B: Serialize> Serialize for ChallengeFamilyResult<A, B> {
+impl<A: Serialize + SerializedNames, B: Serialize + SerializedNames> Serialize
+    for ChallengeFamilyResult<A, B>
+{
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        ensure_unique_names::<A, B, S::Error>()?;
         match self {
             Self::First(a) => a.serialize(serializer),
             Self::Second(b) => b.serialize(serializer),
