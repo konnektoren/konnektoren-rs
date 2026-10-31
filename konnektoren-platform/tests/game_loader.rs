@@ -400,6 +400,91 @@ mod external_formats {
     }
 
     #[derive(Clone)]
+    enum CombinedContent {
+        Core(konnektoren_core::challenges::ChallengeType),
+        External(ExternalContent),
+    }
+
+    impl ChallengeDefinition for CombinedContent {
+        type Result = ();
+
+        fn id(&self) -> &str {
+            match self {
+                Self::Core(content) => content.id(),
+                Self::External(content) => content.id(),
+            }
+        }
+
+        fn of_tasks(&self, tasks: &TaskPattern) -> Self {
+            match self {
+                Self::Core(content) => Self::Core(content.of_tasks(tasks)),
+                Self::External(content) => Self::External(content.of_tasks(tasks)),
+            }
+        }
+    }
+
+    #[derive(Clone)]
+    struct CombinedFormat;
+
+    impl AssetFormat for CombinedFormat {
+        type Asset = CombinedContent;
+        type Error = serde_yaml::Error;
+
+        fn parse(&self, bytes: &[u8]) -> Result<Self::Asset, Self::Error> {
+            let value: serde_yaml::Value = serde_yaml::from_slice(bytes)?;
+            match value {
+                serde_yaml::Value::Tagged(tagged) if tagged.tag == "!example" => {
+                    serde_yaml::from_value(tagged.value).map(CombinedContent::External)
+                }
+                other => serde_yaml::from_value(other).map(CombinedContent::Core),
+            }
+        }
+    }
+
+    #[test]
+    fn one_factory_loads_builtin_and_external_challenges() -> TestResult {
+        block_on(async {
+            const MIXED_FILES: &[(&str, &[u8])] = &[
+                (
+                    "challenges/mixed.yml",
+                    b"id: mixed\ndescription: Mixed content\nentries: [[first, shared], [second, extra]]",
+                ),
+                ("challenges/shared.yml", SHARED),
+                ("challenges/extra.yml", b"!example\nid: extra\nvalue: 5"),
+                ("challenges/broken.yml", b"!example\nid: broken\nvalue: invalid"),
+                ("challenges/unknown.yml", b"!unknown\nid: unknown"),
+            ];
+            let manifest: Manifest<NoExtensions> = serde_yaml::from_str("game_paths: [mixed.yml]")?;
+            let loader = GameLoader::from_manifest(&manifest, EmbeddedSource::new(MIXED_FILES))
+                .with_formats(Yaml::<ExternalLevel>::new(), CombinedFormat);
+            let factory = loader
+                .preload_factory(&loader.load_game_paths().await?)
+                .await?;
+            assert_eq!(factory.challenge_types.len(), 2);
+            for (id, is_core) in [("shared", true), ("extra", false)] {
+                let config = ChallengeConfig {
+                    challenge: id.into(),
+                    ..ChallengeConfig::default()
+                };
+                let challenge = factory.create_challenge(&config)?;
+                assert_eq!(challenge.challenge_type.id(), id);
+                assert_eq!(
+                    matches!(challenge.challenge_type, CombinedContent::Core(_)),
+                    is_core
+                );
+                assert!(challenge.challenge_result.is_none());
+            }
+            for id in ["broken", "unknown"] {
+                assert!(matches!(
+                    loader.load_challenge(id).await,
+                    Err(GameLoadError::Asset(AssetLoadError::Parse { .. }))
+                ));
+            }
+            Ok(())
+        })
+    }
+
+    #[derive(Clone)]
     struct ContentFormat {
         minimum: u32,
     }

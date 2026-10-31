@@ -74,6 +74,12 @@ also participate in the asset server's cache identity.
 `ChallengeType`, including custom parsers returning those types. External game
 state/controller integration and build-time validation are separate steps.
 
+An application can define an enum wrapping core and external content, implement
+`ChallengeDefinition` for it, and provide a format that dispatches flat YAML
+types to the appropriate parser. The mixed-content integration test demonstrates
+this without adding application-specific challenge types to core. Parsing an
+unknown or malformed type returns an asset error; it is not silently ignored.
+
 ## Paths and source selection
 
 Sources are rooted at `manifest.assets.path`. Source-relative paths are:
