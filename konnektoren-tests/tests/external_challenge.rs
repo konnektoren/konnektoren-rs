@@ -178,3 +178,44 @@ fn external_challenge_and_variant_load_from_yaml() -> Result<(), Box<dyn std::er
     assert_eq!(challenge.challenge_config, config);
     Ok(())
 }
+
+#[test]
+fn nested_challenge_families_keep_each_result_type() -> Result<(), Box<dyn std::error::Error>> {
+    use konnektoren_rs::core::challenges::{
+        ChallengeFamily, ChallengeFamilyResult, ChallengeResult, ChallengeType,
+    };
+    type AppContent =
+        ChallengeFamily<ChallengeType, ChallengeFamily<ExternalContent, TaskSequence>>;
+    let core: AppContent = ChallengeFamily::First(ChallengeType::default());
+    let external: AppContent =
+        ChallengeFamily::Second(ChallengeFamily::Second(TaskSequence(vec![1, 2, 3])));
+    let factory = ChallengeFactory {
+        challenge_types: vec![core, external],
+    };
+    let config = ChallengeConfig {
+        challenge: "tasks".into(),
+        tasks: TaskPattern::Exact(2),
+        ..ChallengeConfig::default()
+    };
+    let mut challenge = factory.create_challenge(&config)?;
+    match &challenge.challenge_type {
+        ChallengeFamily::Second(ChallengeFamily::Second(content)) => assert_eq!(content.0, [1, 2]),
+        _ => panic!("expected the external task sequence"),
+    }
+    challenge.challenge_result = Some(ChallengeFamilyResult::Second(
+        ChallengeFamilyResult::Second(vec![Some(1), None]),
+    ));
+    assert!(matches!(
+        challenge.challenge_result,
+        Some(ChallengeFamilyResult::Second(
+            ChallengeFamilyResult::Second(_)
+        ))
+    ));
+    let core_result: <AppContent as ChallengeDefinition>::Result =
+        ChallengeFamilyResult::First(ChallengeResult::default());
+    assert!(matches!(
+        core_result,
+        ChallengeFamilyResult::First(ChallengeResult::MultipleChoice(_))
+    ));
+    Ok(())
+}

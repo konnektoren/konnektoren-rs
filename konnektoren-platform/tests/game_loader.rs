@@ -362,7 +362,7 @@ mod external_formats {
     use super::*;
     use konnektoren_asset_loader::AssetFormat;
     use konnektoren_core::challenges::{
-        ChallengeConfig, ChallengeDefinition, task_pattern::TaskPattern,
+        ChallengeConfig, ChallengeDefinition, ChallengeFamily, task_pattern::TaskPattern,
     };
     use konnektoren_platform::game_loader::{LevelDefinition, Yaml};
     use serde::Deserialize;
@@ -399,29 +399,8 @@ mod external_formats {
         }
     }
 
-    #[derive(Clone)]
-    enum CombinedContent {
-        Core(konnektoren_core::challenges::ChallengeType),
-        External(ExternalContent),
-    }
-
-    impl ChallengeDefinition for CombinedContent {
-        type Result = ();
-
-        fn id(&self) -> &str {
-            match self {
-                Self::Core(content) => content.id(),
-                Self::External(content) => content.id(),
-            }
-        }
-
-        fn of_tasks(&self, tasks: &TaskPattern) -> Self {
-            match self {
-                Self::Core(content) => Self::Core(content.of_tasks(tasks)),
-                Self::External(content) => Self::External(content.of_tasks(tasks)),
-            }
-        }
-    }
+    type CombinedContent =
+        ChallengeFamily<konnektoren_core::challenges::ChallengeType, ExternalContent>;
 
     #[derive(Clone)]
     struct CombinedFormat;
@@ -434,9 +413,9 @@ mod external_formats {
             let value: serde_yaml::Value = serde_yaml::from_slice(bytes)?;
             match value {
                 serde_yaml::Value::Tagged(tagged) if tagged.tag == "!example" => {
-                    serde_yaml::from_value(tagged.value).map(CombinedContent::External)
+                    serde_yaml::from_value(tagged.value).map(CombinedContent::Second)
                 }
-                other => serde_yaml::from_value(other).map(CombinedContent::Core),
+                other => serde_yaml::from_value(other).map(CombinedContent::First),
             }
         }
     }
@@ -470,7 +449,7 @@ mod external_formats {
                 let challenge = factory.create_challenge(&config)?;
                 assert_eq!(challenge.challenge_type.id(), id);
                 assert_eq!(
-                    matches!(challenge.challenge_type, CombinedContent::Core(_)),
+                    matches!(challenge.challenge_type, CombinedContent::First(_)),
                     is_core
                 );
                 assert!(challenge.challenge_result.is_none());
