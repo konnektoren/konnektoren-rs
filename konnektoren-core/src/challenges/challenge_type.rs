@@ -735,6 +735,7 @@ impl ChallengeType {
 
 impl super::Playable for ChallengeType {
     type Input = super::ChallengeInput;
+    type Variant = super::ChallengeVariant;
 
     fn result_len(result: &ChallengeResult) -> usize {
         result.len()

@@ -1,21 +1,21 @@
 use super::GamePath;
 use crate::Xp;
 use crate::challenges::{
-    Challenge, ChallengeConfig, ChallengeDefinition, ChallengeFactory, ChallengeHistory,
-    ChallengeType, Performance,
+    Attempt, ChallengeConfig, ChallengeFactory, ChallengeHistory, ChallengeType, GameChallenge,
+    Performance,
 };
 use crate::game::error::{GameError, Result};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(bound(
-    serialize = "C: Serialize, C::Result: Serialize",
-    deserialize = "C: Deserialize<'de>, C::Result: Deserialize<'de>"
+    serialize = "C: Serialize, C::Result: Serialize, C::Variant: Serialize",
+    deserialize = "C: Deserialize<'de>, C::Result: Deserialize<'de>, C::Variant: Deserialize<'de>"
 ))]
-pub struct Game<C: ChallengeDefinition = ChallengeType> {
-    pub game_paths: Vec<GamePath>,
+pub struct Game<C: GameChallenge = ChallengeType> {
+    pub game_paths: Vec<GamePath<C::Variant>>,
     pub challenge_factory: ChallengeFactory<C>,
-    pub challenge_history: ChallengeHistory<Challenge<C, C::Result>>,
+    pub challenge_history: ChallengeHistory<Attempt<C>>,
     pub xp: Xp,
 }
 
@@ -31,7 +31,7 @@ impl Default for Game {
     }
 }
 
-impl<C: ChallengeDefinition> Game<C> {
+impl<C: GameChallenge> Game<C> {
     pub fn find_game_path_index(&self, challenge_id: &str) -> Option<usize> {
         self.game_paths.iter().position(|game_path| {
             game_path
@@ -40,7 +40,7 @@ impl<C: ChallengeDefinition> Game<C> {
         })
     }
 
-    pub fn create_challenge(&self, challenge_config_id: &str) -> Result<Challenge<C, C::Result>> {
+    pub fn create_challenge(&self, challenge_config_id: &str) -> Result<Attempt<C>> {
         let challenge_config = self
             .get_challenge_config(challenge_config_id)
             .ok_or_else(|| GameError::ChallengeNotFound(challenge_config_id.to_string()))?;
@@ -50,7 +50,10 @@ impl<C: ChallengeDefinition> Game<C> {
             .map_err(GameError::ChallengeError)
     }
 
-    pub fn get_challenge_config(&self, challenge_config_id: &str) -> Option<ChallengeConfig> {
+    pub fn get_challenge_config(
+        &self,
+        challenge_config_id: &str,
+    ) -> Option<ChallengeConfig<C::Variant>> {
         self.game_paths
             .iter()
             .map(|game_path| game_path.get_challenge_config(challenge_config_id))
@@ -59,7 +62,7 @@ impl<C: ChallengeDefinition> Game<C> {
             .cloned()
     }
 
-    pub fn calculate_xp_reward(&self, challenge: &Challenge<C, C::Result>) -> Xp
+    pub fn calculate_xp_reward(&self, challenge: &Attempt<C>) -> Xp
     where
         C: Performance<C::Result>,
     {

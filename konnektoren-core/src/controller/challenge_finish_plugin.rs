@@ -1,6 +1,6 @@
 use super::GameControllerTrait;
 use super::{ControllerPlugin, ControllerPluginError};
-use crate::challenges::{Challenge, GameChallenge};
+use crate::challenges::{Attempt, GameChallenge};
 use crate::commands::{ChallengeCommand, Command, CommandType};
 use crate::controller::ControllerError;
 use std::sync::Arc;
@@ -10,7 +10,7 @@ pub struct ChallengeFinishPlugin;
 impl ChallengeFinishPlugin {
     fn handle_challenge_finish<C: GameChallenge>(
         game_controller: Arc<dyn GameControllerTrait<C>>,
-        challenge: &Challenge<C, C::Result>,
+        challenge: &Attempt<C>,
         result: &C::Result,
     ) -> Result<(), ControllerError> {
         {

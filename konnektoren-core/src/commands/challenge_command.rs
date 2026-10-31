@@ -4,7 +4,7 @@ use super::command::CommandTrait;
 use super::command_type::CommandType;
 use crate::challenges::Timed;
 use crate::challenges::error::ChallengeError;
-use crate::challenges::{Challenge, ChallengeType, GameChallenge, Playable};
+use crate::challenges::{Attempt, ChallengeType, GameChallenge};
 use crate::commands::error::{CommandError, Result};
 use crate::game::GamePath;
 use crate::game::GameState;
@@ -13,8 +13,8 @@ use crate::game::error::GameError;
 /// Represents challenge-level commands that can be executed on the game state.
 #[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq)]
-pub enum ChallengeCommand<C: Playable = ChallengeType> {
-    Start(Challenge<C, C::Result>),
+pub enum ChallengeCommand<C: GameChallenge = ChallengeType> {
+    Start(Attempt<C>),
     /// Command to move to the next task within a challenge.
     NextTask,
     /// Command to move to the previous task within a challenge.
@@ -56,10 +56,7 @@ impl<C: GameChallenge> CommandTrait<C> for ChallengeCommand<C> {
 
 impl<C: GameChallenge> ChallengeCommand<C> {
     /// Starts a new challenge with the given challenge configuration.
-    fn start_challenge(
-        state: &mut GameState<C>,
-        challenge: &Challenge<C, C::Result>,
-    ) -> Result<()> {
+    fn start_challenge(state: &mut GameState<C>, challenge: &Attempt<C>) -> Result<()> {
         let mut challenge = challenge.clone();
         challenge.start();
         state.challenge = challenge;
@@ -77,7 +74,7 @@ impl<C: GameChallenge> ChallengeCommand<C> {
     ///
     /// A `Result` indicating success or containing an error if there are no more tasks.
     fn next_task(state: &mut GameState<C>) -> Result<()> {
-        let current_game_path: &GamePath = state
+        let current_game_path: &GamePath<C::Variant> = state
             .game
             .game_paths
             .get(state.current_game_path)

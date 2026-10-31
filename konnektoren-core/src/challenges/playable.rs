@@ -1,5 +1,5 @@
 use super::error::{ChallengeError, Result};
-use super::{Challenge, ChallengeDefinition};
+use super::{Attempt, ChallengeDefinition};
 
 /// What the game lifecycle needs from a challenge type to accept answers.
 ///
@@ -9,6 +9,10 @@ use super::{Challenge, ChallengeDefinition};
 pub trait Playable: ChallengeDefinition {
     /// A single answer to one task.
     type Input;
+
+    /// How a challenge is presented, chosen in the game path (`ChallengeConfig::variant`).
+    /// Applications can use their own enum here.
+    type Variant: Clone;
 
     /// Number of tasks that already have an answer in `result`.
     fn result_len(result: &Self::Result) -> usize;
@@ -27,7 +31,7 @@ pub trait Playable: ChallengeDefinition {
     /// Check `input` for the task at `task_index` and store it in the challenge's result.
     /// Returns whether the answer is correct.
     fn solve_task(
-        challenge: &mut Challenge<Self, Self::Result>,
+        challenge: &mut Attempt<Self>,
         input: Self::Input,
         task_index: usize,
     ) -> Result<bool>;

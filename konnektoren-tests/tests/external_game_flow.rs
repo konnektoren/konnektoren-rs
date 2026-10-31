@@ -1,7 +1,7 @@
 use konnektoren_rs::core::challenges::error::ChallengeError;
 use konnektoren_rs::core::challenges::task_pattern::TaskPattern;
 use konnektoren_rs::core::challenges::{
-    Challenge, ChallengeConfig, ChallengeDefinition, ChallengeFactory, Performance, Playable,
+    Attempt, ChallengeConfig, ChallengeDefinition, ChallengeFactory, Performance, Playable,
 };
 use konnektoren_rs::core::commands::{ChallengeCommand, Command, CommandError, GameCommand};
 use konnektoren_rs::core::controller::{
@@ -17,6 +17,14 @@ use std::sync::Arc;
 #[serde(rename_all = "kebab-case")]
 enum AppChallenge {
     Melody { id: String, notes: Vec<u8> },
+}
+
+/// How the app presents its melodies; chosen per game-path entry.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+enum AppVariant {
+    Staff,
+    Keyboard,
 }
 
 type Notes = Vec<u8>;
@@ -50,6 +58,7 @@ impl Performance<Notes> for AppChallenge {
 
 impl Playable for AppChallenge {
     type Input = u8;
+    type Variant = AppVariant;
 
     fn result_len(result: &Notes) -> usize {
         result.len()
@@ -69,7 +78,7 @@ impl Playable for AppChallenge {
     }
 
     fn solve_task(
-        challenge: &mut Challenge<Self, Notes>,
+        challenge: &mut Attempt<Self>,
         input: u8,
         task_index: usize,
     ) -> Result<bool, ChallengeError> {
@@ -94,7 +103,7 @@ fn melody(id: &str, notes: &[u8]) -> AppChallenge {
     }
 }
 
-fn config(id: &str, challenge: &str, tasks: usize) -> ChallengeConfig {
+fn config<V>(id: &str, challenge: &str, tasks: usize) -> ChallengeConfig<V> {
     ChallengeConfig {
         id: id.into(),
         name: id.into(),
@@ -102,6 +111,7 @@ fn config(id: &str, challenge: &str, tasks: usize) -> ChallengeConfig {
         tasks: TaskPattern::Exact(tasks),
         ..ChallengeConfig::default()
     }
+    .with_variant(None)
 }
 
 fn game() -> Game<AppChallenge> {
@@ -238,6 +248,7 @@ impl ChallengeDefinition for Quiz {
 
 impl Playable for Quiz {
     type Input = bool;
+    type Variant = ();
 
     fn result_len(result: &Vec<bool>) -> usize {
         result.len()
@@ -265,7 +276,7 @@ impl Playable for Quiz {
     }
 
     fn solve_task(
-        challenge: &mut Challenge<Self, Vec<bool>>,
+        challenge: &mut Attempt<Self>,
         input: bool,
         _task_index: usize,
     ) -> Result<bool, ChallengeError> {
@@ -486,4 +497,57 @@ fn finishing_the_same_attempt_twice_awards_xp_and_history_once() {
     let state = controller.game_state().lock().unwrap();
     assert_eq!(state.game.xp, 20);
     assert_eq!(state.game.challenge_history.len(), 2);
+}
+
+#[test]
+fn app_owned_variants_choose_presentation_and_survive_saving()
+-> Result<(), Box<dyn std::error::Error>> {
+    use konnektoren_rs::core::challenges::{ChallengeFamily, ChallengeFamilyVariant};
+
+    // The app's own variant is chosen in the game path and reaches the active attempt.
+    let mut game = game();
+    game.game_paths[0].challenges[0].variant = Some(AppVariant::Keyboard);
+    let state = GameState::new(game);
+    assert_eq!(
+        state.challenge.challenge_config.variant,
+        Some(AppVariant::Keyboard)
+    );
+    let json = serde_json::to_string(&state)?;
+    assert!(json.contains("\"keyboard\""));
+    assert_eq!(
+        serde_json::from_str::<GameState<AppChallenge>>(&json)?,
+        state
+    );
+
+    // In a family the variant is stored by itself, without a branch marker, in YAML too.
+    type Family = ChallengeFamily<AppChallenge, Quiz>;
+    let mut entry: ChallengeConfig<ChallengeFamilyVariant<AppVariant, ()>> =
+        config("scale-run", "scale", 3);
+    entry.variant = Some(ChallengeFamilyVariant::First(AppVariant::Staff));
+    let yaml = serde_yaml::to_string(&entry)?;
+    assert!(yaml.contains("variant: staff"));
+    assert_eq!(
+        serde_yaml::from_str::<ChallengeConfig<ChallengeFamilyVariant<AppVariant, ()>>>(&yaml)?,
+        entry
+    );
+
+    let game = Game::<Family> {
+        game_paths: vec![GamePath {
+            id: "mixed".into(),
+            name: "Mixed".into(),
+            challenges: vec![entry],
+            map: None,
+        }],
+        challenge_factory: ChallengeFactory {
+            challenge_types: vec![ChallengeFamily::First(melody("scale", &[60, 62, 64]))],
+        },
+        challenge_history: Default::default(),
+        xp: 0,
+    };
+    let state = GameState::new(game);
+    assert_eq!(
+        state.challenge.challenge_config.variant,
+        Some(ChallengeFamilyVariant::First(AppVariant::Staff))
+    );
+    Ok(())
 }

@@ -1,17 +1,17 @@
 use serde::{Deserialize, Serialize};
 
-use crate::challenges::{ChallengeType, GameChallenge};
+use crate::challenges::{Attempt, ChallengeType, GameChallenge};
 use crate::game::error::GameError;
 use crate::{game::Game, prelude::Challenge};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(bound(
-    serialize = "C: Serialize, C::Result: Serialize",
-    deserialize = "C: Deserialize<'de>, C::Result: Deserialize<'de>"
+    serialize = "C: Serialize, C::Result: Serialize, C::Variant: Serialize",
+    deserialize = "C: Deserialize<'de>, C::Result: Deserialize<'de>, C::Variant: Deserialize<'de>"
 ))]
 pub struct GameState<C: GameChallenge = ChallengeType> {
     pub game: Game<C>,
-    pub challenge: Challenge<C, C::Result>,
+    pub challenge: Attempt<C>,
     pub current_game_path: usize,
     pub current_challenge_index: usize,
     pub current_task_index: usize,

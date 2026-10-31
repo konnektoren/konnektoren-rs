@@ -1,3 +1,4 @@
+use crate::challenges::ChallengeVariant;
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::game::Map;
 #[cfg(feature = "schema")]
@@ -6,10 +7,10 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
-pub struct GamePath {
+pub struct GamePath<V = ChallengeVariant> {
     pub id: String,
     pub name: String,
-    pub challenges: Vec<ChallengeConfig>,
+    pub challenges: Vec<ChallengeConfig<V>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub map: Option<Map>,
 }
@@ -25,8 +26,8 @@ impl Default for GamePath {
     }
 }
 
-impl GamePath {
-    pub fn get_challenge_config(&self, challenge_config_id: &str) -> Option<&ChallengeConfig> {
+impl<V> GamePath<V> {
+    pub fn get_challenge_config(&self, challenge_config_id: &str) -> Option<&ChallengeConfig<V>> {
         self.challenges
             .iter()
             .find(|challenge| challenge.id == challenge_config_id)
@@ -39,13 +40,13 @@ impl GamePath {
             .collect()
     }
 
-    pub fn insert_before(&mut self, before_id: &str, config: ChallengeConfig) {
+    pub fn insert_before(&mut self, before_id: &str, config: ChallengeConfig<V>) {
         if let Some(pos) = self.challenges.iter().position(|c| c.id == before_id) {
             self.challenges.insert(pos, config);
         }
     }
 
-    pub fn insert_after(&mut self, after_id: &str, config: ChallengeConfig) {
+    pub fn insert_after(&mut self, after_id: &str, config: ChallengeConfig<V>) {
         if let Some(pos) = self.challenges.iter().position(|c| c.id == after_id) {
             self.challenges.insert(pos + 1, config);
         }

@@ -1,6 +1,6 @@
-use super::{ChallengeFamily, ChallengeFamilyInput, ChallengeFamilyResult};
+use super::{ChallengeFamily, ChallengeFamilyInput, ChallengeFamilyResult, ChallengeFamilyVariant};
 use crate::challenges::error::{ChallengeError, Result};
-use crate::challenges::{Challenge, Playable};
+use crate::challenges::{Attempt, Challenge, Playable};
 
 /// Splits a family attempt into the matching branch attempt, runs `solve` on it, and
 /// writes the outcome back. A mismatched branch is an error and leaves `challenge` untouched.
@@ -16,7 +16,13 @@ macro_rules! solve_branch {
         };
         let mut attempt = Challenge {
             challenge_type: $inner,
-            challenge_config: $challenge.challenge_config.clone(),
+            challenge_config: {
+                let variant = match &$challenge.challenge_config.variant {
+                    Some(ChallengeFamilyVariant::$branch(variant)) => Some(variant.clone()),
+                    _ => None,
+                };
+                $challenge.challenge_config.clone().with_variant(variant)
+            },
             challenge_result: stored,
             start_time: $challenge.start_time,
             end_time: $challenge.end_time,
@@ -31,6 +37,7 @@ macro_rules! solve_branch {
 
 impl<A: Playable + Clone, B: Playable + Clone> Playable for ChallengeFamily<A, B> {
     type Input = ChallengeFamilyInput<A::Input, B::Input>;
+    type Variant = ChallengeFamilyVariant<A::Variant, B::Variant>;
 
     fn result_len(result: &Self::Result) -> usize {
         match result {
@@ -95,24 +102,18 @@ impl<A: Playable + Clone, B: Playable + Clone> Playable for ChallengeFamily<A, B
     }
 
     fn solve_task(
-        challenge: &mut Challenge<Self, Self::Result>,
+        challenge: &mut Attempt<Self>,
         input: Self::Input,
         task_index: usize,
     ) -> Result<bool> {
         match (challenge.challenge_type.clone(), input) {
             (Self::First(inner), ChallengeFamilyInput::First(input)) => {
-                solve_branch!(challenge, inner, First, |attempt: &mut Challenge<
-                    A,
-                    A::Result,
-                >| {
+                solve_branch!(challenge, inner, First, |attempt: &mut Attempt<A>| {
                     A::solve_task(attempt, input, task_index)
                 })
             }
             (Self::Second(inner), ChallengeFamilyInput::Second(input)) => {
-                solve_branch!(challenge, inner, Second, |attempt: &mut Challenge<
-                    B,
-                    B::Result,
-                >| {
+                solve_branch!(challenge, inner, Second, |attempt: &mut Attempt<B>| {
                     B::solve_task(attempt, input, task_index)
                 })
             }

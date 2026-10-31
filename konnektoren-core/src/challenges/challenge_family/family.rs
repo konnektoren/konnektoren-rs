@@ -69,8 +69,10 @@ impl<A: Playable + Clone + 'static, B: Playable + Clone + 'static> ChallengeFami
 where
     A::Result: 'static,
     A::Input: 'static,
+    A::Variant: 'static,
     B::Result: 'static,
     B::Input: 'static,
+    B::Variant: 'static,
 {
     /// Embeds the first branch's challenges, results, and inputs.
     pub fn first_embedding() -> ChallengeEmbedding<A, Self> {
@@ -78,6 +80,7 @@ where
             Self::First,
             ChallengeFamilyResult::First,
             super::ChallengeFamilyInput::First,
+            super::ChallengeFamilyVariant::First,
         )
     }
 
@@ -87,6 +90,7 @@ where
             Self::Second,
             ChallengeFamilyResult::Second,
             super::ChallengeFamilyInput::Second,
+            super::ChallengeFamilyVariant::Second,
         )
     }
 }

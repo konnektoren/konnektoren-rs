@@ -51,7 +51,7 @@ impl GameCommand {
     ///
     /// A `Result` indicating success or containing an error if there are no more challenges.
     pub fn next_challenge<C: GameChallenge>(state: &mut GameState<C>) -> Result<()> {
-        let current_game_path: &GamePath = state
+        let current_game_path: &GamePath<C::Variant> = state
             .game
             .game_paths
             .get(state.current_game_path)
@@ -94,7 +94,7 @@ impl GameCommand {
 
         state.current_challenge_index -= 1;
 
-        let current_game_path: &GamePath = state
+        let current_game_path: &GamePath<C::Variant> = state
             .game
             .game_paths
             .get(state.current_game_path)

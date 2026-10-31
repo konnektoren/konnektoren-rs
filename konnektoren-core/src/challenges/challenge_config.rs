@@ -23,6 +23,39 @@ pub struct ChallengeConfig<V = ChallengeVariant> {
     pub icon: Option<String>,
 }
 
+impl<V> ChallengeConfig<V> {
+    /// The same configuration with another presentation variant (or none).
+    pub fn with_variant<W>(self, variant: Option<W>) -> ChallengeConfig<W> {
+        ChallengeConfig {
+            id: self.id,
+            name: self.name,
+            description: self.description,
+            challenge: self.challenge,
+            variant,
+            tasks: self.tasks,
+            unlock_points: self.unlock_points,
+            position: self.position,
+            icon: self.icon,
+        }
+    }
+
+    /// The same configuration with its presentation variant converted.
+    pub fn map_variant<W>(self, convert: impl FnOnce(V) -> W) -> ChallengeConfig<W> {
+        let converted = self.variant.map(convert);
+        ChallengeConfig {
+            id: self.id,
+            name: self.name,
+            description: self.description,
+            challenge: self.challenge,
+            variant: converted,
+            tasks: self.tasks,
+            unlock_points: self.unlock_points,
+            position: self.position,
+            icon: self.icon,
+        }
+    }
+}
+
 impl Default for ChallengeConfig {
     fn default() -> Self {
         ChallengeConfig {

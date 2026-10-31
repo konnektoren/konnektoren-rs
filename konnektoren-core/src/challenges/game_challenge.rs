@@ -4,8 +4,10 @@ use std::fmt::Debug;
 /// Everything the game lifecycle (state, commands, controller, plugins) needs from a
 /// challenge type. It is implemented automatically for every type that qualifies.
 pub trait GameChallenge:
-    Playable<Input: Clone + Debug + PartialEq + Send + Sync + 'static>
-    + ChallengeDefinition<Result: Clone + Debug + PartialEq + Send + Sync + 'static>
+    Playable<
+        Input: Clone + Debug + PartialEq + Send + Sync + 'static,
+        Variant: Clone + Debug + PartialEq + Send + Sync + 'static,
+    > + ChallengeDefinition<Result: Clone + Debug + PartialEq + Send + Sync + 'static>
     + Clone
     + Debug
     + PartialEq
@@ -16,8 +18,10 @@ pub trait GameChallenge:
 }
 
 impl<T> GameChallenge for T where
-    T: Playable<Input: Clone + Debug + PartialEq + Send + Sync + 'static>
-        + ChallengeDefinition<Result: Clone + Debug + PartialEq + Send + Sync + 'static>
+    T: Playable<
+            Input: Clone + Debug + PartialEq + Send + Sync + 'static,
+            Variant: Clone + Debug + PartialEq + Send + Sync + 'static,
+        > + ChallengeDefinition<Result: Clone + Debug + PartialEq + Send + Sync + 'static>
         + Clone
         + Debug
         + PartialEq
@@ -26,3 +30,10 @@ impl<T> GameChallenge for T where
         + 'static
 {
 }
+
+/// An attempt at a challenge of type `C`, configured with that type's own variants.
+pub type Attempt<C> = super::Challenge<
+    C,
+    <C as ChallengeDefinition>::Result,
+    super::ChallengeConfig<<C as Playable>::Variant>,
+>;
