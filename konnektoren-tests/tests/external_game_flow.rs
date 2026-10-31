@@ -329,3 +329,132 @@ fn family_dispatches_input_and_rejects_mismatched_branches() {
     let finish = ChallengeCommand::<Family>::Finish(Some(ChallengeFamilyResult::First(vec![60])));
     finish.execute(&mut state).unwrap();
 }
+
+#[test]
+fn commands_for_included_types_drive_the_larger_game() {
+    use konnektoren_rs::core::challenges::{
+        ChallengeFamily, ChallengeFamilyInput, ChallengeFamilyResult, ChallengeResult,
+        ChallengeType,
+    };
+    use konnektoren_rs::core::commands::CommandTrait;
+    type Inner = ChallengeFamily<AppChallenge, Quiz>;
+    type Outer = ChallengeFamily<ChallengeType, Inner>;
+
+    let builtin = ChallengeType::default();
+    let mut state = GameState::new(Game {
+        game_paths: vec![GamePath {
+            id: "mixed".into(),
+            name: "Mixed".into(),
+            challenges: vec![config("konnektoren-run", builtin.id(), 2)],
+            map: None,
+        }],
+        challenge_factory: ChallengeFactory {
+            challenge_types: vec![ChallengeFamily::First(builtin)],
+        },
+        challenge_history: Default::default(),
+        xp: 0,
+    });
+
+    // A command made by core's default UI for a built-in challenge, embedded as the
+    // larger type's command.
+    let builtin_branch = Outer::first_embedding();
+    Command::<ChallengeType>::Challenge(ChallengeCommand::SolveOption(0))
+        .embed(&builtin_branch)
+        .execute(&mut state)
+        .unwrap();
+    assert!(matches!(
+        state.challenge.challenge_result,
+        Some(ChallengeFamilyResult::First(ChallengeResult::MultipleChoice(ref answers)))
+            if answers.len() == 1
+    ));
+    let finish = Command::<ChallengeType>::Challenge(ChallengeCommand::Finish(Some(
+        ChallengeResult::MultipleChoice(vec![]),
+    )))
+    .embed(&builtin_branch);
+    finish.execute(&mut state).unwrap();
+
+    // Embedding composes through nested families.
+    let app_branch = Inner::first_embedding().then(&Outer::second_embedding());
+    let input = app_branch.input(60);
+    assert_eq!(
+        input,
+        ChallengeFamilyInput::Second(ChallengeFamilyInput::First(60))
+    );
+    assert_eq!(
+        app_branch.result(vec![60]),
+        ChallengeFamilyResult::Second(ChallengeFamilyResult::First(vec![60]))
+    );
+    // App-branch input against the built-in challenge is an explicit mismatch.
+    let wrong = ChallengeCommand::<Outer>::Solve(input);
+    assert!(matches!(
+        wrong.execute(&mut state),
+        Err(CommandError::ChallengeError(ChallengeError::FamilyMismatch))
+    ));
+}
+
+fn family_controller()
+-> Arc<GameController<konnektoren_rs::core::challenges::ChallengeFamily<AppChallenge, Quiz>>> {
+    use konnektoren_rs::core::challenges::ChallengeFamily;
+    let game = Game {
+        game_paths: vec![GamePath {
+            id: "mixed".into(),
+            name: "Mixed".into(),
+            challenges: vec![config("scale-run", "scale", 3)],
+            map: None,
+        }],
+        challenge_factory: ChallengeFactory {
+            challenge_types: vec![ChallengeFamily::First(melody("scale", &[60, 62, 64]))],
+        },
+        challenge_history: Default::default(),
+        xp: 0,
+    };
+    let persistence = Arc::new(MemoryPersistence::new(GameState::new(game.clone())));
+    let mut controller = GameController::new(game, persistence);
+    controller.register_plugin(Arc::new(ChallengeFinishPlugin));
+    controller.register_plugin(Arc::new(GameXpPlugin));
+    controller.init()
+}
+
+#[test]
+fn published_finish_with_a_wrong_family_branch_changes_nothing() {
+    use konnektoren_rs::core::challenges::ChallengeFamilyResult;
+    let controller = family_controller();
+    let before = controller.game_state().lock().unwrap().clone();
+
+    controller.publish_command(Command::Challenge(ChallengeCommand::Finish(Some(
+        ChallengeFamilyResult::Second(vec![true]),
+    ))));
+
+    let state = controller.game_state().lock().unwrap();
+    assert_eq!(*state, before);
+    assert!(state.game.challenge_history.is_empty());
+    assert_eq!(state.game.xp, 0);
+}
+
+#[test]
+fn published_finish_with_a_mismatched_builtin_result_changes_nothing() {
+    use konnektoren_rs::core::challenges::{ChallengeResult, ChallengeType};
+    use konnektoren_rs::core::commands::CommandTrait;
+
+    let persistence = Arc::new(MemoryPersistence::default());
+    let controller = GameController::new(Game::default(), persistence).init();
+    let before = controller.game_state().lock().unwrap().clone();
+    let wrong = Command::Challenge(ChallengeCommand::Finish(Some(ChallengeResult::Dialog(
+        vec![],
+    ))));
+
+    // Directly executed, the command reports the mismatch.
+    let mut copy = before.clone();
+    assert!(matches!(
+        CommandTrait::<ChallengeType>::execute(&wrong, &mut copy),
+        Err(CommandError::ChallengeError(
+            ChallengeError::InvalidChallengeType
+        ))
+    ));
+    // Published, the plugins never see it.
+    controller.publish_command(wrong);
+    let state = controller.game_state().lock().unwrap();
+    assert_eq!(*state, before);
+    assert!(state.game.challenge_history.is_empty());
+    assert_eq!(state.game.xp, 0);
+}

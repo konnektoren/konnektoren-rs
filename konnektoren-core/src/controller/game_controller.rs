@@ -135,14 +135,19 @@ impl<C: GameChallenge> GameControllerTrait<C> for GameController<C> {
     }
 
     fn handle_command(&self, command: Command<C>) -> Result<()> {
-        let mut state = self
-            .game_state
-            .lock()
-            .map_err(|_| ControllerError::StateLock)?;
+        {
+            let mut state = self
+                .game_state
+                .lock()
+                .map_err(|_| ControllerError::StateLock)?;
 
-        command
-            .execute(&mut state)
-            .map_err(ControllerError::CommandExecution)
+            command
+                .execute(&mut state)
+                .map_err(ControllerError::CommandExecution)?;
+        }
+        // Plugins react only to commands that changed the state.
+        self.command_bus.notify_executed(command);
+        Ok(())
     }
 
     fn publish_command(&self, command: Command<C>) {

@@ -1,5 +1,7 @@
 use super::{ChallengeFamilyResult, FamilyResultMismatch};
-use crate::challenges::{ChallengeDefinition, Performance, task_pattern::TaskPattern};
+use crate::challenges::{
+    ChallengeDefinition, ChallengeEmbedding, Performance, Playable, task_pattern::TaskPattern,
+};
 
 /// A challenge from either of two independently defined groups.
 ///
@@ -60,5 +62,31 @@ impl<A: ChallengeDefinition, B: ChallengeDefinition> ChallengeDefinition for Cha
             Self::First(challenge) => Self::First(challenge.of_tasks(tasks)),
             Self::Second(challenge) => Self::Second(challenge.of_tasks(tasks)),
         }
+    }
+}
+
+impl<A: Playable + Clone + 'static, B: Playable + Clone + 'static> ChallengeFamily<A, B>
+where
+    A::Result: 'static,
+    A::Input: 'static,
+    B::Result: 'static,
+    B::Input: 'static,
+{
+    /// Embeds the first branch's challenges, results, and inputs.
+    pub fn first_embedding() -> ChallengeEmbedding<A, Self> {
+        ChallengeEmbedding::new(
+            Self::First,
+            ChallengeFamilyResult::First,
+            super::ChallengeFamilyInput::First,
+        )
+    }
+
+    /// Embeds the second branch's challenges, results, and inputs.
+    pub fn second_embedding() -> ChallengeEmbedding<B, Self> {
+        ChallengeEmbedding::new(
+            Self::Second,
+            ChallengeFamilyResult::Second,
+            super::ChallengeFamilyInput::Second,
+        )
     }
 }

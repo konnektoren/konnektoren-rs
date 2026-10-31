@@ -3,6 +3,7 @@ pub mod challenge_command;
 pub mod command;
 pub mod command_bus;
 pub mod command_type;
+mod embed;
 pub mod error;
 
 #[cfg(feature = "js")]

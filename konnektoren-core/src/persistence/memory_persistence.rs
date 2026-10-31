@@ -2,12 +2,11 @@ use super::GameStatePersistence;
 use crate::challenges::{ChallengeType, GameChallenge};
 use crate::game::GameState;
 use crate::persistence::error::{PersistenceError, Result};
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::sync::Mutex;
 
 #[derive(Debug)]
 pub struct MemoryPersistence<C: GameChallenge = ChallengeType> {
-    game_state: Rc<RefCell<GameState<C>>>,
+    game_state: Mutex<GameState<C>>,
 }
 
 impl Default for MemoryPersistence {
@@ -16,35 +15,28 @@ impl Default for MemoryPersistence {
     }
 }
 
-unsafe impl<C: GameChallenge> Send for MemoryPersistence<C> {}
-unsafe impl<C: GameChallenge> Sync for MemoryPersistence<C> {}
-
 impl<C: GameChallenge> MemoryPersistence<C> {
     pub fn new(game_state: GameState<C>) -> Self {
         MemoryPersistence {
-            game_state: Rc::new(RefCell::new(game_state)),
+            game_state: Mutex::new(game_state),
         }
     }
 }
 
 impl<C: GameChallenge> GameStatePersistence<C> for MemoryPersistence<C> {
     fn save_game_state(&self, state: &GameState<C>) -> Result<()> {
-        match self.game_state.try_borrow_mut() {
-            Ok(mut gs) => {
-                *gs = state.clone();
-                Ok(())
-            }
-            Err(_) => Err(PersistenceError::AccessError(
-                "Failed to get mutable borrow of game state".to_string(),
-            )),
-        }
+        let mut stored = self.game_state.lock().map_err(|_| {
+            PersistenceError::AccessError("Stored game state is poisoned".to_string())
+        })?;
+        *stored = state.clone();
+        Ok(())
     }
 
     fn load_game_state(&self) -> Result<GameState<C>> {
         self.game_state
-            .try_borrow()
-            .map(|gs| gs.clone())
-            .map_err(|_| PersistenceError::AccessError("Failed to borrow game state".to_string()))
+            .lock()
+            .map(|stored| stored.clone())
+            .map_err(|_| PersistenceError::AccessError("Stored game state is poisoned".to_string()))
     }
 }
 
@@ -74,12 +66,18 @@ mod tests {
     }
 
     #[test]
-    fn test_concurrent_access_errors() {
+    fn test_poisoned_state_errors() {
         let persistence = MemoryPersistence::default();
         let state = GameState::default();
 
-        // Create a borrow that will cause subsequent borrows to fail
-        let _borrow = persistence.game_state.borrow_mut();
+        // A panic while the state is locked poisons it, so later access fails
+        let persistence = std::sync::Arc::new(persistence);
+        let poisoner = persistence.clone();
+        let _ = std::thread::spawn(move || {
+            let _guard = poisoner.game_state.lock().unwrap();
+            panic!("poison the stored game state");
+        })
+        .join();
 
         // This should fail with an AccessError
         let save_result = persistence.save_game_state(&state);
@@ -101,6 +99,25 @@ mod tests {
                 PersistenceError::AccessError(_) => {} // Expected error type
                 _ => panic!("Unexpected error type: {:?}", err),
             }
+        }
+    }
+
+    #[test]
+    fn concurrent_saves_and_loads_do_not_fail() {
+        let persistence = std::sync::Arc::new(MemoryPersistence::default());
+        let handles: Vec<_> = (0..8)
+            .map(|_| {
+                let persistence = persistence.clone();
+                std::thread::spawn(move || {
+                    for _ in 0..50 {
+                        persistence.save_game_state(&GameState::default()).unwrap();
+                        persistence.load_game_state().unwrap();
+                    }
+                })
+            })
+            .collect();
+        for handle in handles {
+            handle.join().unwrap();
         }
     }
 }

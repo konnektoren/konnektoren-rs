@@ -49,7 +49,7 @@ impl<C: GameChallenge> ControllerPlugin<C> for GameXpPlugin {
         let game_controller_clone = game_controller.clone();
         game_controller
             .command_bus()
-            .subscribe(CommandType::Challenge, move |command| {
+            .subscribe_executed(CommandType::Challenge, move |command| {
                 if let Command::Challenge(ChallengeCommand::Finish(Some(result))) = command
                     && let Err(e) = Self::update_game_xp(game_controller_clone.clone(), &result)
                 {

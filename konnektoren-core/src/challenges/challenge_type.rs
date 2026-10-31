@@ -685,6 +685,35 @@ pub mod tests {
 }
 
 impl ChallengeType {
+    /// Whether `result` has the shape this challenge type produces.
+    ///
+    /// Vocabulary also accepts `Informative`, which its default UI reports on completion.
+    pub fn accepts_result(&self, result: &ChallengeResult) -> bool {
+        matches!(
+            (self, result),
+            (
+                ChallengeType::MultipleChoice(_),
+                ChallengeResult::MultipleChoice(_)
+            ) | (
+                ChallengeType::ContextualChoice(_),
+                ChallengeResult::ContextualChoice(_)
+            ) | (ChallengeType::GapFill(_), ChallengeResult::GapFill(_))
+                | (ChallengeType::SortTable(_), ChallengeResult::SortTable(_))
+                | (ChallengeType::Informative(_), ChallengeResult::Informative)
+                | (ChallengeType::Ordering(_), ChallengeResult::Ordering(_))
+                | (ChallengeType::Custom(_), ChallengeResult::Custom(_))
+                | (
+                    ChallengeType::Placeholder(_),
+                    ChallengeResult::MultipleChoice(_)
+                )
+                | (
+                    ChallengeType::Vocabulary(_),
+                    ChallengeResult::Vocabulary | ChallengeResult::Informative
+                )
+                | (ChallengeType::Dialog(_), ChallengeResult::Dialog(_))
+        )
+    }
+
     /// A result with no answers yet, shaped for this challenge type.
     pub fn empty_result(&self) -> ChallengeResult {
         match self {
@@ -767,6 +796,9 @@ impl super::Playable for ChallengeType {
     }
 
     fn try_performance(&self, result: &ChallengeResult) -> super::error::Result<u32> {
+        if !self.accepts_result(result) {
+            return Err(super::error::ChallengeError::InvalidChallengeType);
+        }
         Ok(super::Performance::performance(self, result))
     }
 

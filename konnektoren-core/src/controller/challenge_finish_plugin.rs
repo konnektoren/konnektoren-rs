@@ -51,7 +51,7 @@ impl<C: GameChallenge> ControllerPlugin<C> for ChallengeFinishPlugin {
         let game_controller_clone = game_controller.clone();
         game_controller
             .command_bus()
-            .subscribe(CommandType::Challenge, move |command| {
+            .subscribe_executed(CommandType::Challenge, move |command| {
                 if let Command::Challenge(ChallengeCommand::Finish(Some(result))) = command {
                     let challenge = match game_controller_clone.game_state().lock() {
                         Ok(state) => state.challenge.clone(),
