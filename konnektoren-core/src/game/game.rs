@@ -1,16 +1,21 @@
 use super::GamePath;
 use crate::Xp;
 use crate::challenges::{
-    Challenge, ChallengeConfig, ChallengeFactory, ChallengeHistory, Performance,
+    Challenge, ChallengeConfig, ChallengeDefinition, ChallengeFactory, ChallengeHistory,
+    ChallengeType, Performance,
 };
 use crate::game::error::{GameError, Result};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Game {
+#[serde(bound(
+    serialize = "C: Serialize, C::Result: Serialize",
+    deserialize = "C: Deserialize<'de>, C::Result: Deserialize<'de>"
+))]
+pub struct Game<C: ChallengeDefinition = ChallengeType> {
     pub game_paths: Vec<GamePath>,
-    pub challenge_factory: ChallengeFactory,
-    pub challenge_history: ChallengeHistory,
+    pub challenge_factory: ChallengeFactory<C>,
+    pub challenge_history: ChallengeHistory<Challenge<C, C::Result>>,
     pub xp: Xp,
 }
 
@@ -26,7 +31,7 @@ impl Default for Game {
     }
 }
 
-impl Game {
+impl<C: ChallengeDefinition> Game<C> {
     pub fn find_game_path_index(&self, challenge_id: &str) -> Option<usize> {
         self.game_paths.iter().position(|game_path| {
             game_path
@@ -35,7 +40,7 @@ impl Game {
         })
     }
 
-    pub fn create_challenge(&self, challenge_config_id: &str) -> Result<Challenge> {
+    pub fn create_challenge(&self, challenge_config_id: &str) -> Result<Challenge<C, C::Result>> {
         let challenge_config = self
             .get_challenge_config(challenge_config_id)
             .ok_or_else(|| GameError::ChallengeNotFound(challenge_config_id.to_string()))?;
@@ -54,7 +59,10 @@ impl Game {
             .cloned()
     }
 
-    pub fn calculate_xp_reward(&self, challenge: &Challenge) -> Xp {
+    pub fn calculate_xp_reward(&self, challenge: &Challenge<C, C::Result>) -> Xp
+    where
+        C: Performance<C::Result>,
+    {
         challenge.performance(&challenge.challenge_result)
             * challenge.stars(&challenge.challenge_result)
     }

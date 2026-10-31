@@ -1,18 +1,23 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{game::Game, prelude::Challenge};
+use crate::{challenges::ChallengeDefinition, game::Game, prelude::Challenge};
+use crate::challenges::ChallengeType;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct GameState {
-    pub game: Game,
-    pub challenge: Challenge,
+#[serde(bound(
+    serialize = "C: Serialize, C::Result: Serialize",
+    deserialize = "C: Deserialize<'de>, C::Result: Deserialize<'de>"
+))]
+pub struct GameState<C: ChallengeDefinition = ChallengeType> {
+    pub game: Game<C>,
+    pub challenge: Challenge<C, C::Result>,
     pub current_game_path: usize,
     pub current_challenge_index: usize,
     pub current_task_index: usize,
 }
 
-impl GameState {
-    pub fn new(game: Game) -> Self {
+impl<C: ChallengeDefinition> GameState<C> {
+    pub fn new(game: Game<C>) -> Self {
         let challenge = game.create_challenge("konnektoren-1").unwrap();
 
         GameState {
