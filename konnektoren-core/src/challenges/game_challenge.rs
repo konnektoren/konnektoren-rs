@@ -37,3 +37,23 @@ pub type Attempt<C> = super::Challenge<
     <C as ChallengeDefinition>::Result,
     super::ChallengeConfig<<C as Playable>::Variant>,
 >;
+
+/// A [`GameChallenge`] whose content, results, and variants can be saved and loaded.
+/// Implemented automatically.
+pub trait SavedChallenge:
+    GameChallenge
+    + serde::Serialize
+    + serde::de::DeserializeOwned
+    + ChallengeDefinition<Result: serde::Serialize + serde::de::DeserializeOwned>
+    + Playable<Variant: serde::Serialize + serde::de::DeserializeOwned>
+{
+}
+
+impl<T> SavedChallenge for T where
+    T: GameChallenge
+        + serde::Serialize
+        + serde::de::DeserializeOwned
+        + ChallengeDefinition<Result: serde::Serialize + serde::de::DeserializeOwned>
+        + Playable<Variant: serde::Serialize + serde::de::DeserializeOwned>
+{
+}

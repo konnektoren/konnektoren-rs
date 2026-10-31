@@ -54,7 +54,7 @@ pub use custom::*;
 pub use dialog::{Dialog, DialogAnswer, DialogTurn, Speaker};
 pub use embedding::ChallengeEmbedding;
 pub use error::*;
-pub use game_challenge::{Attempt, GameChallenge};
+pub use game_challenge::{Attempt, GameChallenge, SavedChallenge};
 pub use gap_fill::{Gap, GapFill, GapFillAnswer, GapFillQuestion};
 pub use informative::{Informative, InformativeText};
 pub use multiple_choice::*;
