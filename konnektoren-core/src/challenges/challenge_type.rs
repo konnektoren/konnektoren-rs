@@ -766,6 +766,14 @@ impl super::Playable for ChallengeType {
             .add_input(input)
     }
 
+    fn solve_task(
+        challenge: &mut super::Challenge<Self, ChallengeResult>,
+        input: Self::Input,
+        task_index: usize,
+    ) -> super::error::Result<bool> {
+        super::Solvable::solve(challenge, input, task_index)
+    }
+
     fn option_input(&self, option_index: usize) -> super::error::Result<Self::Input> {
         use super::error::ChallengeError;
         match self {

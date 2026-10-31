@@ -1,27 +1,34 @@
 use super::GameStatePersistence;
+use crate::challenges::{ChallengeType, GameChallenge};
 use crate::game::GameState;
 use crate::persistence::error::{PersistenceError, Result};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-#[derive(Debug, Default)]
-pub struct MemoryPersistence {
-    game_state: Rc<RefCell<GameState>>,
+#[derive(Debug)]
+pub struct MemoryPersistence<C: GameChallenge = ChallengeType> {
+    game_state: Rc<RefCell<GameState<C>>>,
 }
 
-unsafe impl Send for MemoryPersistence {}
-unsafe impl Sync for MemoryPersistence {}
+impl Default for MemoryPersistence {
+    fn default() -> Self {
+        Self::new(GameState::default())
+    }
+}
 
-impl MemoryPersistence {
-    pub fn new(game_state: GameState) -> Self {
+unsafe impl<C: GameChallenge> Send for MemoryPersistence<C> {}
+unsafe impl<C: GameChallenge> Sync for MemoryPersistence<C> {}
+
+impl<C: GameChallenge> MemoryPersistence<C> {
+    pub fn new(game_state: GameState<C>) -> Self {
         MemoryPersistence {
             game_state: Rc::new(RefCell::new(game_state)),
         }
     }
 }
 
-impl GameStatePersistence for MemoryPersistence {
-    fn save_game_state(&self, state: &GameState) -> Result<()> {
+impl<C: GameChallenge> GameStatePersistence<C> for MemoryPersistence<C> {
+    fn save_game_state(&self, state: &GameState<C>) -> Result<()> {
         match self.game_state.try_borrow_mut() {
             Ok(mut gs) => {
                 *gs = state.clone();
@@ -33,7 +40,7 @@ impl GameStatePersistence for MemoryPersistence {
         }
     }
 
-    fn load_game_state(&self) -> Result<GameState> {
+    fn load_game_state(&self) -> Result<GameState<C>> {
         self.game_state
             .try_borrow()
             .map(|gs| gs.clone())

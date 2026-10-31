@@ -4,7 +4,7 @@ use super::command::CommandTrait;
 use super::command_type::CommandType;
 use crate::challenges::Timed;
 use crate::challenges::error::ChallengeError;
-use crate::challenges::{Challenge, ChallengeType, Playable, Solvable};
+use crate::challenges::{Challenge, ChallengeType, GameChallenge, Playable};
 use crate::commands::error::{CommandError, Result};
 use crate::game::GamePath;
 use crate::game::GameState;
@@ -27,13 +27,7 @@ pub enum ChallengeCommand<C: Playable = ChallengeType> {
     Finish(Option<C::Result>),
 }
 
-impl<C: Playable> CommandTrait<C> for ChallengeCommand<C>
-where
-    C: Clone,
-    C::Result: Clone,
-    C::Input: Clone,
-    Challenge<C, C::Result>: Solvable<C::Input>,
-{
+impl<C: GameChallenge> CommandTrait<C> for ChallengeCommand<C> {
     /// Executes the challenge command on the given game state.
     ///
     /// # Arguments
@@ -60,13 +54,7 @@ where
     }
 }
 
-impl<C: Playable> ChallengeCommand<C>
-where
-    C: Clone,
-    C::Result: Clone,
-    C::Input: Clone,
-    Challenge<C, C::Result>: Solvable<C::Input>,
-{
+impl<C: GameChallenge> ChallengeCommand<C> {
     /// Starts a new challenge with the given challenge configuration.
     fn start_challenge(
         state: &mut GameState<C>,
@@ -173,9 +161,7 @@ where
     }
 
     fn solve_input(state: &mut GameState<C>, input: C::Input) -> Result<()> {
-        state
-            .challenge
-            .solve(input, state.current_task_index)
+        C::solve_task(&mut state.challenge, input, state.current_task_index)
             .map_err(CommandError::ChallengeError)?;
 
         // Attempt to move to the next task, but ignore "no more tasks" errors

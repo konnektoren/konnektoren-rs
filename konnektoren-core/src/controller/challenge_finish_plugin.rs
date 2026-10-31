@@ -1,6 +1,6 @@
 use super::GameControllerTrait;
 use super::{ControllerPlugin, ControllerPluginError};
-use crate::challenges::{Challenge, ChallengeResult};
+use crate::challenges::{Challenge, GameChallenge};
 use crate::commands::{ChallengeCommand, Command, CommandType};
 use crate::controller::ControllerError;
 use std::sync::Arc;
@@ -8,10 +8,10 @@ use std::sync::Arc;
 pub struct ChallengeFinishPlugin;
 
 impl ChallengeFinishPlugin {
-    fn handle_challenge_finish(
-        game_controller: Arc<dyn GameControllerTrait>,
-        challenge: &Challenge,
-        result: &ChallengeResult,
+    fn handle_challenge_finish<C: GameChallenge>(
+        game_controller: Arc<dyn GameControllerTrait<C>>,
+        challenge: &Challenge<C, C::Result>,
+        result: &C::Result,
     ) -> Result<(), ControllerError> {
         {
             let mut game_state = game_controller
@@ -35,7 +35,7 @@ impl ChallengeFinishPlugin {
     }
 }
 
-impl ControllerPlugin for ChallengeFinishPlugin {
+impl<C: GameChallenge> ControllerPlugin<C> for ChallengeFinishPlugin {
     fn name(&self) -> &str {
         "ChallengeFinishPlugin"
     }
@@ -46,7 +46,7 @@ impl ControllerPlugin for ChallengeFinishPlugin {
 
     fn load(
         &self,
-        game_controller: Arc<dyn GameControllerTrait>,
+        game_controller: Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError> {
         let game_controller_clone = game_controller.clone();
         game_controller
@@ -76,7 +76,7 @@ impl ControllerPlugin for ChallengeFinishPlugin {
 
     fn unload(
         &self,
-        _game_controller: Arc<dyn GameControllerTrait>,
+        _game_controller: Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError> {
         Ok(())
     }

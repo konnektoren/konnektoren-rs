@@ -1,5 +1,6 @@
 use super::GameControllerTrait;
 use super::{ControllerPlugin, ControllerPluginError};
+use crate::challenges::GameChallenge;
 use crate::commands::CommandType;
 use std::sync::Arc;
 
@@ -12,7 +13,7 @@ impl DebugPlugin {
     }
 }
 
-impl ControllerPlugin for DebugPlugin {
+impl<C: GameChallenge> ControllerPlugin<C> for DebugPlugin {
     fn name(&self) -> &str {
         "DebugPlugin"
     }
@@ -21,7 +22,7 @@ impl ControllerPlugin for DebugPlugin {
     }
     fn load(
         &self,
-        game_controller: Arc<dyn GameControllerTrait>,
+        game_controller: Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError> {
         game_controller
             .command_bus()
@@ -40,7 +41,7 @@ impl ControllerPlugin for DebugPlugin {
 
     fn unload(
         &self,
-        _game_controller: Arc<dyn GameControllerTrait>,
+        _game_controller: Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError> {
         Ok(())
     }
@@ -55,7 +56,8 @@ mod test {
 
     #[test]
     fn test_debug_plugin() {
-        let mut mock_game_controller = MockGameControllerTrait::new();
+        let mut mock_game_controller =
+            MockGameControllerTrait::<crate::challenges::ChallengeType>::new();
 
         let command_bus = CommandBus::new();
 
@@ -65,8 +67,14 @@ mod test {
 
         let debug_plugin = DebugPlugin::new();
 
-        assert_eq!(debug_plugin.name(), "DebugPlugin");
-        assert_eq!(debug_plugin.init(), Ok(()));
+        assert_eq!(
+            ControllerPlugin::<crate::challenges::ChallengeType>::name(&debug_plugin),
+            "DebugPlugin"
+        );
+        assert_eq!(
+            ControllerPlugin::<crate::challenges::ChallengeType>::init(&debug_plugin),
+            Ok(())
+        );
         assert_eq!(debug_plugin.load(Arc::new(mock_game_controller)), Ok(()));
 
         command_bus.publish(Command::Game(GameCommand::NextChallenge));

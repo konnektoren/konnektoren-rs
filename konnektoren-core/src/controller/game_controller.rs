@@ -1,4 +1,5 @@
 use super::ControllerPlugin;
+use crate::challenges::{ChallengeType, GameChallenge};
 use crate::commands::{Command, CommandBus, CommandTrait, CommandType};
 use crate::controller::{ControllerError, PluginManager, Result};
 use crate::events::EventBus;
@@ -12,43 +13,43 @@ use std::sync::{Arc, Mutex};
 use mockall::{automock, predicate::*};
 
 #[cfg_attr(test, automock)]
-pub trait GameControllerTrait: Send + Sync {
+pub trait GameControllerTrait<C: GameChallenge = ChallengeType>: Send + Sync {
     fn save_game_state(&self) -> Result<()>;
     fn load_game_state(&self) -> Result<()>;
 
-    fn handle_command(&self, command: Command) -> Result<()>;
-    fn publish_command(&self, command: Command);
+    fn handle_command(&self, command: Command<C>) -> Result<()>;
+    fn publish_command(&self, command: Command<C>);
 
     // Getters for internal components
-    fn game_state(&self) -> &Arc<Mutex<GameState>>;
+    fn game_state(&self) -> &Arc<Mutex<GameState<C>>>;
     fn event_bus(&self) -> &EventBus;
     fn event_bus_mut(&mut self) -> &mut EventBus;
-    fn command_bus(&self) -> &CommandBus;
-    fn command_bus_mut(&mut self) -> &mut CommandBus;
+    fn command_bus(&self) -> &CommandBus<C>;
+    fn command_bus_mut(&mut self) -> &mut CommandBus<C>;
 }
 
-pub struct GameController {
-    game_state: Arc<Mutex<GameState>>,
+pub struct GameController<C: GameChallenge = ChallengeType> {
+    game_state: Arc<Mutex<GameState<C>>>,
     event_bus: EventBus,
-    command_bus: CommandBus,
-    persistence: Arc<dyn GameStatePersistence>,
-    plugin_manager: PluginManager,
+    command_bus: CommandBus<C>,
+    persistence: Arc<dyn GameStatePersistence<C>>,
+    plugin_manager: PluginManager<C>,
 }
 
-impl PartialEq for GameController {
+impl<C: GameChallenge> PartialEq for GameController<C> {
     fn eq(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.game_state, &other.game_state)
     }
 }
 
-impl Debug for GameController {
+impl<C: GameChallenge> Debug for GameController<C> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("GameController").finish()
     }
 }
 
-impl GameController {
-    pub fn new(game: Game, persistence: Arc<dyn GameStatePersistence>) -> Self {
+impl<C: GameChallenge> GameController<C> {
+    pub fn new(game: Game<C>, persistence: Arc<dyn GameStatePersistence<C>>) -> Self {
         let game_state = Arc::new(Mutex::new(GameState::new(game)));
         let event_bus = EventBus::new();
         let command_bus = CommandBus::new();
@@ -62,7 +63,7 @@ impl GameController {
         }
     }
 
-    pub fn register_plugin(&mut self, plugin: Arc<dyn ControllerPlugin>) {
+    pub fn register_plugin(&mut self, plugin: Arc<dyn ControllerPlugin<C>>) {
         self.plugin_manager.add_plugin(plugin);
     }
 
@@ -95,7 +96,7 @@ impl GameController {
             });
 
         // Cast Arc<GameController> to Arc<dyn GameControllerTrait>
-        let controller_trait: Arc<dyn GameControllerTrait> = controller.clone();
+        let controller_trait: Arc<dyn GameControllerTrait<C>> = controller.clone();
 
         // Load plugins with the trait object
         if let Err(e) = controller.plugin_manager.load_plugins(&controller_trait) {
@@ -106,7 +107,7 @@ impl GameController {
     }
 }
 
-impl GameControllerTrait for GameController {
+impl<C: GameChallenge> GameControllerTrait<C> for GameController<C> {
     fn save_game_state(&self) -> Result<()> {
         let game_state = self
             .game_state
@@ -133,7 +134,7 @@ impl GameControllerTrait for GameController {
         Ok(())
     }
 
-    fn handle_command(&self, command: Command) -> Result<()> {
+    fn handle_command(&self, command: Command<C>) -> Result<()> {
         let mut state = self
             .game_state
             .lock()
@@ -144,12 +145,12 @@ impl GameControllerTrait for GameController {
             .map_err(ControllerError::CommandExecution)
     }
 
-    fn publish_command(&self, command: Command) {
+    fn publish_command(&self, command: Command<C>) {
         self.command_bus.publish(command);
     }
 
     // Getter for game_state
-    fn game_state(&self) -> &Arc<Mutex<GameState>> {
+    fn game_state(&self) -> &Arc<Mutex<GameState<C>>> {
         &self.game_state
     }
 
@@ -164,12 +165,12 @@ impl GameControllerTrait for GameController {
     }
 
     // Getter for command_bus
-    fn command_bus(&self) -> &CommandBus {
+    fn command_bus(&self) -> &CommandBus<C> {
         &self.command_bus
     }
 
     // Mutable getter for command_bus
-    fn command_bus_mut(&mut self) -> &mut CommandBus {
+    fn command_bus_mut(&mut self) -> &mut CommandBus<C> {
         &mut self.command_bus
     }
 }

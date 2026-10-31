@@ -1,26 +1,27 @@
+use crate::challenges::{ChallengeType, GameChallenge};
 use crate::controller::game_controller::GameControllerTrait;
 use crate::controller::{ControllerPlugin, ControllerPluginError};
 use std::collections::HashMap;
 use std::sync::Arc;
 
-pub struct PluginManager {
-    plugins: HashMap<String, Arc<dyn ControllerPlugin>>,
+pub struct PluginManager<C: GameChallenge = ChallengeType> {
+    plugins: HashMap<String, Arc<dyn ControllerPlugin<C>>>,
 }
 
-impl Default for PluginManager {
+impl<C: GameChallenge> Default for PluginManager<C> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl PluginManager {
+impl<C: GameChallenge> PluginManager<C> {
     pub fn new() -> Self {
         Self {
             plugins: HashMap::new(),
         }
     }
 
-    pub fn add_plugin(&mut self, plugin: Arc<dyn ControllerPlugin>) {
+    pub fn add_plugin(&mut self, plugin: Arc<dyn ControllerPlugin<C>>) {
         self.plugins.insert(plugin.name().to_string(), plugin);
     }
 
@@ -33,7 +34,7 @@ impl PluginManager {
 
     pub fn load_plugins(
         &self,
-        game_controller: &Arc<dyn GameControllerTrait>,
+        game_controller: &Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError> {
         for plugin in self.plugins.values() {
             plugin.load(game_controller.clone())?;
@@ -43,7 +44,7 @@ impl PluginManager {
 
     pub fn unload_plugins(
         &self,
-        game_controller: &Arc<dyn GameControllerTrait>,
+        game_controller: &Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError> {
         for (_, plugin) in self.plugins.iter() {
             plugin.unload(game_controller.clone())?;

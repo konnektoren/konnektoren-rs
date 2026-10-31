@@ -1,22 +1,38 @@
 use super::{Command, CommandTrait, CommandType};
+use crate::challenges::{ChallengeType, GameChallenge};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
-type CommandHandler = Arc<dyn Fn(Command) + Send + Sync>;
+type CommandHandler<C> = Arc<dyn Fn(Command<C>) + Send + Sync>;
 
-#[derive(Default, Clone)]
-pub struct CommandBus {
-    listeners: Arc<Mutex<HashMap<CommandType, Vec<CommandHandler>>>>,
+pub struct CommandBus<C: GameChallenge = ChallengeType> {
+    listeners: Arc<Mutex<HashMap<CommandType, Vec<CommandHandler<C>>>>>,
 }
 
-impl CommandBus {
+impl<C: GameChallenge> Default for CommandBus<C> {
+    fn default() -> Self {
+        Self {
+            listeners: Default::default(),
+        }
+    }
+}
+
+impl<C: GameChallenge> Clone for CommandBus<C> {
+    fn clone(&self) -> Self {
+        Self {
+            listeners: self.listeners.clone(),
+        }
+    }
+}
+
+impl<C: GameChallenge> CommandBus<C> {
     pub fn new() -> Self {
         Self::default()
     }
 
     pub fn subscribe<F>(&self, command_type: CommandType, callback: F)
     where
-        F: Fn(Command) + Send + Sync + 'static,
+        F: Fn(Command<C>) + Send + Sync + 'static,
     {
         let mut listeners = self
             .listeners
@@ -36,7 +52,7 @@ impl CommandBus {
             .len()
     }
 
-    pub fn publish(&self, command: Command) {
+    pub fn publish(&self, command: Command<C>) {
         let listeners = self
             .listeners
             .lock()
@@ -60,7 +76,7 @@ mod tests {
 
     #[test]
     fn test_command_bus() {
-        let command_bus = CommandBus::new();
+        let command_bus: CommandBus = CommandBus::new();
         let counter = Arc::new(AtomicUsize::new(0));
         let counter_clone = counter.clone();
         command_bus.subscribe(CommandType::Game, move |command| {

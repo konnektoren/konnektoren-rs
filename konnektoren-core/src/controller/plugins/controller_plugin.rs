@@ -1,3 +1,4 @@
+use crate::challenges::{ChallengeType, GameChallenge};
 use crate::controller::GameControllerTrait;
 use std::sync::Arc;
 use thiserror::Error;
@@ -21,15 +22,15 @@ pub enum ControllerPluginError {
 use mockall::{automock, predicate::*};
 
 #[cfg_attr(test, automock)]
-pub trait ControllerPlugin: Send + Sync {
+pub trait ControllerPlugin<C: GameChallenge = ChallengeType>: Send + Sync {
     fn name(&self) -> &str;
     fn init(&self) -> Result<(), ControllerPluginError>;
     fn load(
         &self,
-        game_controller: Arc<dyn GameControllerTrait>,
+        game_controller: Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError>;
     fn unload(
         &self,
-        game_controller: Arc<dyn GameControllerTrait>,
+        game_controller: Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError>;
 }

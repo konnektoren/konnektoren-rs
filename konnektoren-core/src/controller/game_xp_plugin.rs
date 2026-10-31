@@ -1,6 +1,5 @@
 use super::{ControllerPlugin, ControllerPluginError, GameControllerTrait};
-use crate::challenges::ChallengeResult;
-use crate::challenges::Performance;
+use crate::challenges::{GameChallenge, Performance};
 use crate::commands::{ChallengeCommand, Command, CommandType};
 use crate::controller::ControllerError;
 use std::sync::Arc;
@@ -8,9 +7,9 @@ use std::sync::Arc;
 pub struct GameXpPlugin;
 
 impl GameXpPlugin {
-    fn update_game_xp(
-        game_controller: Arc<dyn GameControllerTrait>,
-        challenge_result: &ChallengeResult,
+    fn update_game_xp<C: GameChallenge>(
+        game_controller: Arc<dyn GameControllerTrait<C>>,
+        challenge_result: &C::Result,
     ) -> Result<(), ControllerError> {
         {
             let mut game_state = game_controller
@@ -30,7 +29,7 @@ impl GameXpPlugin {
     }
 }
 
-impl ControllerPlugin for GameXpPlugin {
+impl<C: GameChallenge> ControllerPlugin<C> for GameXpPlugin {
     fn name(&self) -> &str {
         "GameXpPlugin"
     }
@@ -41,7 +40,7 @@ impl ControllerPlugin for GameXpPlugin {
 
     fn load(
         &self,
-        game_controller: Arc<dyn GameControllerTrait>,
+        game_controller: Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError> {
         let game_controller_clone = game_controller.clone();
         game_controller
@@ -59,7 +58,7 @@ impl ControllerPlugin for GameXpPlugin {
 
     fn unload(
         &self,
-        _game_controller: Arc<dyn GameControllerTrait>,
+        _game_controller: Arc<dyn GameControllerTrait<C>>,
     ) -> Result<(), ControllerPluginError> {
         Ok(())
     }

@@ -4,11 +4,11 @@ use super::CommandType;
 use super::challenge_command::ChallengeCommand;
 use super::error::Result;
 use super::game_command::GameCommand;
-use crate::challenges::{ChallengeDefinition, ChallengeType};
+use crate::challenges::{ChallengeType, GameChallenge};
 use crate::game::GameState;
 
 /// A trait that defines the basic behavior for all commands in the game.
-pub trait CommandTrait<C: ChallengeDefinition = ChallengeType> {
+pub trait CommandTrait<C: GameChallenge = ChallengeType> {
     /// Executes the command on the given game state.
     ///
     /// # Arguments
@@ -29,14 +29,14 @@ pub trait CommandTrait<C: ChallengeDefinition = ChallengeType> {
 /// This enum serves as a unified interface for both game-level and challenge-level commands.
 #[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq)]
-pub enum Command {
+pub enum Command<C: GameChallenge = ChallengeType> {
     /// Represents a game-level command.
     Game(GameCommand),
     /// Represents a challenge-level command.
-    Challenge(ChallengeCommand),
+    Challenge(ChallengeCommand<C>),
 }
 
-impl CommandTrait for Command {
+impl<C: GameChallenge> CommandTrait<C> for Command<C> {
     /// Executes the command on the given game state.
     ///
     /// This implementation delegates the execution to either the game command
@@ -49,7 +49,7 @@ impl CommandTrait for Command {
     /// # Returns
     ///
     /// A `Result` indicating success or containing an error if the command execution failed.
-    fn execute(&self, state: &mut GameState) -> Result<()> {
+    fn execute(&self, state: &mut GameState<C>) -> Result<()> {
         match self {
             Command::Game(cmd) => cmd.execute(state),
             Command::Challenge(cmd) => cmd.execute(state),
