@@ -1,7 +1,7 @@
 use konnektoren_rs::core::challenges::task_pattern::TaskPattern;
 use konnektoren_rs::core::challenges::{
-    Challenge, ChallengeConfig, ChallengeDefinition, ChallengeFactory, ChallengeHistory,
-    Performance, Solvable, Timed,
+    Base64Serializable, Challenge, ChallengeConfig, ChallengeDefinition, ChallengeFactory,
+    ChallengeHistory, Performance, Solvable, Timed,
 };
 use serde::{Deserialize, Serialize};
 
@@ -20,6 +20,25 @@ enum ExternalVariant {
 #[serde(rename_all = "kebab-case")]
 enum ExternalContent {
     Example { id: String, value: u32 },
+}
+
+impl Base64Serializable for ExternalContent {}
+
+#[test]
+fn external_factory_imports_and_exports_content() -> Result<(), Box<dyn std::error::Error>> {
+    let content = ExternalContent::Example {
+        id: "external".into(),
+        value: 42,
+    };
+    let mut factory = ChallengeFactory::<ExternalContent>::empty();
+    factory.add_challenge_from_base64(&content.to_base64()?)?;
+    assert_eq!(factory.challenge_types, vec![content.clone()]);
+    let encoded = factory.export_challenge_to_base64("external")?;
+    assert_eq!(ExternalContent::from_base64(&encoded)?, content);
+    assert!(factory.export_challenge_to_base64("missing").is_err());
+    assert!(factory.add_challenge_from_base64("invalid!").is_err());
+    assert_eq!(factory.challenge_types.len(), 1);
+    Ok(())
 }
 
 impl ChallengeDefinition for ExternalContent {

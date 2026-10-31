@@ -4,6 +4,7 @@ use crate::challenges::challenge::Challenge;
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_type::ChallengeType;
 use crate::challenges::error::{ChallengeError, Result};
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -31,18 +32,33 @@ impl Default for ChallengeFactory {
 
 impl ChallengeFactory {
     pub fn new() -> Self {
-        ChallengeFactory {
-            challenge_types: vec![],
+        Self::empty()
+    }
+}
+
+impl<C> ChallengeFactory<C> {
+    /// An empty factory for any challenge definition type.
+    pub fn empty() -> Self {
+        Self {
+            challenge_types: Vec::new(),
         }
     }
 
-    pub fn add_challenge_from_base64(&mut self, base64_data: &str) -> Result<()> {
-        let challenge_type = ChallengeType::from_base64(base64_data)?;
+    pub fn add_challenge_from_base64(&mut self, base64_data: &str) -> Result<()>
+    where
+        C: Base64Serializable + DeserializeOwned,
+    {
+        let challenge_type = C::from_base64(base64_data)?;
         self.challenge_types.push(challenge_type);
         Ok(())
     }
+}
 
-    pub fn export_challenge_to_base64(&self, challenge_id: &str) -> Result<String> {
+impl<C: ChallengeDefinition> ChallengeFactory<C> {
+    pub fn export_challenge_to_base64(&self, challenge_id: &str) -> Result<String>
+    where
+        C: Base64Serializable + Serialize,
+    {
         let challenge_type = self
             .challenge_types
             .iter()
@@ -51,9 +67,6 @@ impl ChallengeFactory {
 
         challenge_type.to_base64()
     }
-}
-
-impl<C: ChallengeDefinition> ChallengeFactory<C> {
     pub fn create_challenge<V: Clone>(
         &self,
         challenge_config: &ChallengeConfig<V>,

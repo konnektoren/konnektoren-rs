@@ -80,6 +80,24 @@ types to the appropriate parser. The mixed-content integration test demonstrates
 this without adding application-specific challenge types to core. Parsing an
 unknown or malformed type returns an asset error; it is not silently ignored.
 
+`ChallengeFamilyFormat` combines two `TaggedChallengeFormat` parsers and
+dispatches by the top-level YAML type. `Yaml<ChallengeType>` supplies core's
+types, and `TaggedYaml<T>` registers an application's Serde type:
+
+```rust,ignore
+let challenges = ChallengeFamilyFormat::new(
+    Yaml::<ChallengeType>::new(),
+    TaggedYaml::<MyChallenge>::new(["my-challenge"]),
+)?;
+let loader = GameLoader::from_manifest(&manifest, source)
+    .with_formats(Yaml::<GamePath>::new(), challenges);
+```
+
+Family formats can be nested. Duplicate, empty, or `!`-prefixed registrations
+are rejected at construction. Tags route to exactly one parser: malformed data
+from that parser is reported, not retried as another type. This composes loading;
+family branches are not a saved-state serialization format.
+
 ## Validate assets during a build
 
 An application's `build.rs` can call `validate_assets()` to parse every level

@@ -35,6 +35,14 @@ impl Default for ChallengeType {
     }
 }
 
+impl ChallengeType {
+    /// Serialized type names supported by core's built-in challenges.
+    pub fn type_names() -> impl Iterator<Item = &'static str> {
+        use strum::IntoEnumIterator;
+        Self::iter().map(Into::into)
+    }
+}
+
 #[cfg(feature = "schema")]
 impl ChallengeType {
     /// Get the JSON schema for creating challenges
@@ -490,6 +498,18 @@ pub mod tests {
                 .iter()
                 .any(|v| matches!(v, ChallengeType::ContextualChoice(_)))
         );
+    }
+
+    #[test]
+    fn registered_type_names_match_serde_names() {
+        let registered: Vec<_> = ChallengeType::type_names().collect();
+        let serialized: Vec<_> = ChallengeType::iter()
+            .map(|challenge| {
+                let value = serde_json::to_value(challenge).unwrap();
+                value.as_object().unwrap().keys().next().unwrap().clone()
+            })
+            .collect();
+        assert_eq!(registered, serialized);
     }
 
     #[test]

@@ -364,7 +364,9 @@ mod external_formats {
     use konnektoren_core::challenges::{
         ChallengeConfig, ChallengeDefinition, ChallengeFamily, task_pattern::TaskPattern,
     };
-    use konnektoren_platform::game_loader::{LevelDefinition, Yaml};
+    use konnektoren_platform::game_loader::{
+        ChallengeFamilyFormat, FamilyFormatError, LevelDefinition, TaggedYaml, Yaml,
+    };
     use serde::Deserialize;
 
     #[derive(Clone, Deserialize)]
@@ -399,27 +401,6 @@ mod external_formats {
         }
     }
 
-    type CombinedContent =
-        ChallengeFamily<konnektoren_core::challenges::ChallengeType, ExternalContent>;
-
-    #[derive(Clone)]
-    struct CombinedFormat;
-
-    impl AssetFormat for CombinedFormat {
-        type Asset = CombinedContent;
-        type Error = serde_yaml::Error;
-
-        fn parse(&self, bytes: &[u8]) -> Result<Self::Asset, Self::Error> {
-            let value: serde_yaml::Value = serde_yaml::from_slice(bytes)?;
-            match value {
-                serde_yaml::Value::Tagged(tagged) if tagged.tag == "!example" => {
-                    serde_yaml::from_value(tagged.value).map(CombinedContent::Second)
-                }
-                other => serde_yaml::from_value(other).map(CombinedContent::First),
-            }
-        }
-    }
-
     #[test]
     fn one_factory_loads_builtin_and_external_challenges() -> TestResult {
         block_on(async {
@@ -434,8 +415,12 @@ mod external_formats {
                 ("challenges/unknown.yml", b"!unknown\nid: unknown"),
             ];
             let manifest: Manifest<NoExtensions> = serde_yaml::from_str("game_paths: [mixed.yml]")?;
+            let format = ChallengeFamilyFormat::new(
+                Yaml::<konnektoren_core::challenges::ChallengeType>::new(),
+                TaggedYaml::<ExternalContent>::new(["example"]),
+            )?;
             let loader = GameLoader::from_manifest(&manifest, EmbeddedSource::new(MIXED_FILES))
-                .with_formats(Yaml::<ExternalLevel>::new(), CombinedFormat);
+                .with_formats(Yaml::<ExternalLevel>::new(), format);
             loader.validate_assets().await?;
             let factory = loader
                 .preload_factory(&loader.load_game_paths().await?)
@@ -449,7 +434,7 @@ mod external_formats {
                 let challenge = factory.create_challenge(&config)?;
                 assert_eq!(challenge.challenge_type.id(), id);
                 assert_eq!(
-                    matches!(challenge.challenge_type, CombinedContent::First(_)),
+                    matches!(challenge.challenge_type, ChallengeFamily::First(_)),
                     is_core
                 );
                 assert!(challenge.challenge_result.is_none());
@@ -462,6 +447,48 @@ mod external_formats {
             }
             Ok(())
         })
+    }
+
+    #[test]
+    fn family_formats_compose_and_reject_conflicting_or_invalid_types() -> TestResult {
+        let core = Yaml::<konnektoren_core::challenges::ChallengeType>::new();
+        assert!(matches!(
+            ChallengeFamilyFormat::new(core.clone(), TaggedYaml::<ExternalContent>::new(["multiple-choice"])),
+            Err(FamilyFormatError::DuplicateOrInvalidType(name)) if name == "multiple-choice"
+        ));
+        assert!(matches!(
+            ChallengeFamilyFormat::new(TaggedYaml::<ExternalContent>::new(["same", "same"]), core.clone()),
+            Err(FamilyFormatError::DuplicateOrInvalidType(name)) if name == "same"
+        ));
+        let inner =
+            ChallengeFamilyFormat::new(core, TaggedYaml::<ExternalContent>::new(["example"]))?;
+        let nested =
+            ChallengeFamilyFormat::new(inner, TaggedYaml::<ExternalContent>::new(["more"]))?;
+        assert!(matches!(
+            nested.parse(b"!more\nid: other\nvalue: 7")?,
+            ChallengeFamily::Second(_)
+        ));
+        assert!(matches!(
+            nested.parse(b"!example\nid: other\nvalue: 7")?,
+            ChallengeFamily::First(ChallengeFamily::Second(_))
+        ));
+        assert!(matches!(
+            nested.parse(SHARED)?,
+            ChallengeFamily::First(ChallengeFamily::First(_))
+        ));
+        assert!(matches!(
+            nested.parse(b"!example\nid: other\nvalue: invalid"),
+            Err(FamilyFormatError::Parse { .. })
+        ));
+        assert!(matches!(
+            nested.parse(b"!unknown\nid: other"),
+            Err(FamilyFormatError::UnknownType(_))
+        ));
+        assert!(matches!(
+            nested.parse(b"id: other"),
+            Err(FamilyFormatError::MissingType)
+        ));
+        Ok(())
     }
 
     #[derive(Clone)]
