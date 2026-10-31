@@ -48,28 +48,29 @@ impl Widget for ResultsWidget<'_> {
             &self.challenge.challenge_type,
             &self.challenge.challenge_result,
         ) {
-            (ChallengeType::MultipleChoice(dataset), ChallengeResult::MultipleChoice(options)) => {
-                dataset.questions.iter().zip(options.iter()).fold(
-                    Text::default(),
-                    |mut text, (question, option)| {
-                        let label = if question.option == option.id {
-                            self.t("Correct")
-                        } else {
-                            self.t("Incorrect")
-                        };
-                        let correct = if question.option == option.id {
-                            label.green().bold()
-                        } else {
-                            label.red().bold()
-                        };
-                        text.push_line(Line::from(vec![
-                            format!(" {}: {} ", question.question, option.name).into(),
-                            correct,
-                        ]));
-                        text
-                    },
-                )
-            }
+            (
+                ChallengeType::MultipleChoice(dataset),
+                Some(ChallengeResult::MultipleChoice(options)),
+            ) => dataset.questions.iter().zip(options.iter()).fold(
+                Text::default(),
+                |mut text, (question, option)| {
+                    let label = if question.option == option.id {
+                        self.t("Correct")
+                    } else {
+                        self.t("Incorrect")
+                    };
+                    let correct = if question.option == option.id {
+                        label.green().bold()
+                    } else {
+                        label.red().bold()
+                    };
+                    text.push_line(Line::from(vec![
+                        format!(" {}: {} ", question.question, option.name).into(),
+                        correct,
+                    ]));
+                    text
+                },
+            ),
             _ => Text::from(self.t("No results")),
         };
 

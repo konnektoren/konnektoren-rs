@@ -42,9 +42,10 @@ async fn a_dialog_challenge_in_observer_mode_is_loaded(world: &mut BddWorld) {
 
 #[when(expr = "the dialog is observed")]
 async fn the_dialog_is_observed(world: &mut BddWorld) {
-    // Observer mode: no interaction — the result vec stays empty, score is 100 %.
-    let challenge = world.challenge.as_ref().expect("no challenge loaded");
-    world.challenge_result = Some(challenge.challenge_result.clone());
+    // Observation completes with an explicit empty set of quiz answers.
+    let challenge = world.challenge.as_mut().expect("no challenge loaded");
+    challenge.challenge_result = Some(ChallengeResult::Dialog(Vec::new()));
+    world.challenge_result = challenge.challenge_result.clone();
 }
 
 #[when(expr = "the player answers all interactive turns correctly")]
@@ -64,7 +65,7 @@ async fn the_player_answers_all_interactive_turns_correctly(world: &mut BddWorld
             .expect("solve should not error");
     }
 
-    world.challenge_result = Some(challenge.challenge_result.clone());
+    world.challenge_result = challenge.challenge_result.clone();
 }
 
 #[when(expr = "the player answers the first interactive turn correctly")]
@@ -76,7 +77,7 @@ async fn the_player_answers_the_first_interactive_turn_correctly(world: &mut Bdd
         selected_option: 0,
     });
     challenge.solve(input, 1).expect("solve should not error");
-    world.challenge_result = Some(challenge.challenge_result.clone());
+    world.challenge_result = challenge.challenge_result.clone();
 }
 
 #[when(expr = "the player answers the second interactive turn incorrectly")]
@@ -88,7 +89,7 @@ async fn the_player_answers_the_second_interactive_turn_incorrectly(world: &mut 
         selected_option: 0,
     });
     challenge.solve(input, 3).expect("solve should not error");
-    world.challenge_result = Some(challenge.challenge_result.clone());
+    world.challenge_result = challenge.challenge_result.clone();
 }
 
 #[when(expr = "the player answers interactive turn {int} with option {int}")]
@@ -106,7 +107,7 @@ async fn the_player_answers_interactive_turn_with_option(
         .solve(input, turn_index)
         .expect("solve should not error");
     world.last_solve_correct = Some(result);
-    world.challenge_result = Some(challenge.challenge_result.clone());
+    world.challenge_result = challenge.challenge_result.clone();
 }
 
 #[when(expr = "the player answers turn {int} with option {int}")]
@@ -123,7 +124,7 @@ async fn the_player_answers_turn_with_option(
     match challenge.solve(input, turn_index) {
         Ok(correct) => {
             world.last_solve_correct = Some(correct);
-            world.challenge_result = Some(challenge.challenge_result.clone());
+            world.challenge_result = challenge.challenge_result.clone();
         }
         Err(_) => {
             world.last_solve_correct = None;

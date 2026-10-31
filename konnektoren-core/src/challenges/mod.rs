@@ -2,6 +2,7 @@
 pub mod base64_serializable;
 pub mod challenge;
 pub mod challenge_config;
+pub mod challenge_definition;
 pub mod challenge_factory;
 pub mod challenge_history;
 pub mod challenge_input;
@@ -32,6 +33,7 @@ pub mod vocabulary;
 pub use base64_serializable::{Base64Serializable, RmpBase64Serializable};
 pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;
+pub use challenge_definition::ChallengeDefinition;
 pub use challenge_factory::ChallengeFactory;
 pub use challenge_history::ChallengeHistory;
 pub use challenge_input::ChallengeInput;

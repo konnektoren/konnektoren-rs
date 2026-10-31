@@ -18,7 +18,7 @@ impl GameXpPlugin {
                 .lock()
                 .map_err(|_| ControllerError::StateLock)?;
 
-            game_state.challenge.challenge_result = challenge_result.clone();
+            game_state.challenge.challenge_result = Some(challenge_result.clone());
             let performance = game_state.challenge.performance(challenge_result);
             let xp_reward = performance / 10;
 
@@ -78,7 +78,7 @@ mod tests {
 
         // Setup a challenge with 100% performance
         let mut challenge = Challenge::new(&ChallengeType::default(), &ChallengeConfig::default());
-        challenge.challenge_result = ChallengeResult::default();
+        challenge.challenge_result = Some(ChallengeResult::default());
 
         let mut game_state = crate::game::GameState::default();
         game_state.challenge = challenge.clone();

@@ -47,7 +47,7 @@ async fn user_starts_vocabulary_challenge(world: &mut BddWorld) {
 async fn user_completes_vocabulary_challenge(world: &mut BddWorld) {
     if let Some(challenge) = &mut world.challenge {
         challenge.start();
-        challenge.challenge_result = ChallengeResult::Vocabulary;
+        challenge.challenge_result = Some(ChallengeResult::Vocabulary);
         challenge.update_end_time();
     }
 }
@@ -143,7 +143,7 @@ async fn user_starts_informative_challenge(world: &mut BddWorld) {
 async fn user_completes_informative_challenge(world: &mut BddWorld) {
     if let Some(challenge) = &mut world.challenge {
         challenge.start();
-        challenge.challenge_result = ChallengeResult::Informative;
+        challenge.challenge_result = Some(ChallengeResult::Informative);
         challenge.update_end_time();
     }
 }
@@ -393,7 +393,7 @@ async fn user_answers_items_correctly_and_incorrectly(
             results.push(ContextItemChoiceAnswers { ids: vec![1] }); // incorrect
         }
 
-        challenge.challenge_result = ChallengeResult::ContextualChoice(results);
+        challenge.challenge_result = Some(ChallengeResult::ContextualChoice(results));
         challenge.update_end_time();
     }
 }
@@ -449,7 +449,7 @@ async fn user_orders_items_correctly_and_incorrectly(
             });
         }
 
-        challenge.challenge_result = ChallengeResult::Ordering(results);
+        challenge.challenge_result = Some(ChallengeResult::Ordering(results));
         challenge.update_end_time();
     }
 }
@@ -512,7 +512,7 @@ async fn user_sorts_rows_correctly_and_incorrectly(
             });
         }
 
-        challenge.challenge_result = ChallengeResult::SortTable(results);
+        challenge.challenge_result = Some(ChallengeResult::SortTable(results));
         challenge.update_end_time();
     }
 }

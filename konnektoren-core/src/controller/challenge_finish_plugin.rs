@@ -23,7 +23,7 @@ impl ChallengeFinishPlugin {
                 return Ok(());
             }
 
-            game_state.challenge.challenge_result = result.clone();
+            game_state.challenge.challenge_result = Some(result.clone());
             game_state
                 .game
                 .challenge_history

@@ -131,7 +131,7 @@ async fn the_multiple_choice_challenge_is_solved_with_option(world: &mut BddWorl
     let result = challenge.solve(input, 0);
     assert!(result.is_ok());
 
-    world.challenge_result = Some(challenge.challenge_result.clone());
+    world.challenge_result = challenge.challenge_result.clone();
 
     world
         .game

@@ -297,10 +297,12 @@ pub mod tests {
         challenge.start_time = Some(Utc.timestamp_opt(BASE_TIMESTAMP, 0).unwrap());
 
         // Add correct answer (id: 0)
-        challenge.challenge_result = ChallengeResult::MultipleChoice(vec![MultipleChoiceOption {
-            id: 0,
-            name: "Correct".to_string(),
-        }]);
+        challenge.challenge_result = Some(ChallengeResult::MultipleChoice(vec![
+            MultipleChoiceOption {
+                id: 0,
+                name: "Correct".to_string(),
+            },
+        ]));
 
         challenge.end_time = Some(Utc.timestamp_opt(BASE_TIMESTAMP + 3600, 0).unwrap()); // 1 hour later
         challenge
@@ -335,10 +337,12 @@ pub mod tests {
         challenge.start_time = Some(Utc.timestamp_opt(BASE_TIMESTAMP + 7200, 0).unwrap()); // 2 hours after base
 
         // Add wrong answer (id: 1)
-        challenge.challenge_result = ChallengeResult::MultipleChoice(vec![MultipleChoiceOption {
-            id: 1,
-            name: "Wrong".to_string(),
-        }]);
+        challenge.challenge_result = Some(ChallengeResult::MultipleChoice(vec![
+            MultipleChoiceOption {
+                id: 1,
+                name: "Wrong".to_string(),
+            },
+        ]));
 
         challenge.end_time = Some(Utc.timestamp_opt(BASE_TIMESTAMP + 10800, 0).unwrap()); // 3 hours after base
         challenge

@@ -1,5 +1,7 @@
+use konnektoren_rs::core::challenges::task_pattern::TaskPattern;
 use konnektoren_rs::core::challenges::{
-    Challenge, ChallengeConfig, ChallengeHistory, Performance, Solvable, Timed,
+    Challenge, ChallengeConfig, ChallengeDefinition, ChallengeFactory, ChallengeHistory,
+    Performance, Solvable, Timed,
 };
 use serde::{Deserialize, Serialize};
 
@@ -8,16 +10,59 @@ struct ExternalChallenge;
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 struct ExternalResult(u32);
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
-enum MusicVariant {
-    Melody,
+enum ExternalVariant {
+    Example,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
-enum MusicChallenge {
-    Melody { id: String, bpm: u32 },
+enum ExternalContent {
+    Example { id: String, value: u32 },
+}
+
+impl ChallengeDefinition for ExternalContent {
+    type Result = Vec<u8>;
+    fn id(&self) -> &str {
+        match self {
+            Self::Example { id, .. } => id,
+        }
+    }
+
+    fn of_tasks(&self, _tasks: &TaskPattern) -> Self {
+        self.clone()
+    }
+}
+
+struct TaskSequence(Vec<u8>);
+
+impl ChallengeDefinition for TaskSequence {
+    type Result = Vec<Option<u8>>;
+    fn id(&self) -> &str {
+        "tasks"
+    }
+
+    fn of_tasks(&self, tasks: &TaskPattern) -> Self {
+        Self(tasks.select_items(&self.0))
+    }
+}
+
+#[test]
+fn factory_selects_tasks_without_creating_a_result() -> Result<(), Box<dyn std::error::Error>> {
+    let factory = ChallengeFactory {
+        challenge_types: vec![TaskSequence(vec![60, 62, 64])],
+    };
+    let config = ChallengeConfig {
+        challenge: "tasks".into(),
+        tasks: TaskPattern::Exact(2),
+        ..ChallengeConfig::default()
+    };
+    let challenge = factory.create_challenge(&config)?;
+    assert_eq!(challenge.challenge_type.0, [60, 62]);
+    assert!(challenge.challenge_result.is_none());
+    assert_eq!(factory.challenge_types[0].0, [60, 62, 64]);
+    Ok(())
 }
 
 impl Performance<ExternalResult> for ExternalChallenge {
@@ -34,35 +79,35 @@ fn external_challenges_share_core_star_thresholds() {
     }
 }
 
-struct NoteChallenge {
+struct AnswerChallenge {
     expected: u8,
-    played: Option<u8>,
+    answer: Option<u8>,
 }
 
 #[derive(Debug, PartialEq)]
 struct InvalidTask;
 
-impl Solvable<u8, InvalidTask> for NoteChallenge {
+impl Solvable<u8, InvalidTask> for AnswerChallenge {
     fn solve(&mut self, input: u8, task_index: usize) -> Result<bool, InvalidTask> {
         if task_index != 0 {
             return Err(InvalidTask);
         }
-        self.played = Some(input);
+        self.answer = Some(input);
         Ok(input == self.expected)
     }
 }
 
 #[test]
 fn external_challenges_accept_their_own_input_and_error() {
-    let mut challenge = NoteChallenge {
+    let mut challenge = AnswerChallenge {
         expected: 60,
-        played: None,
+        answer: None,
     };
     assert_eq!(challenge.solve(61, 0), Ok(false));
     assert_eq!(challenge.solve(60, 0), Ok(true));
-    assert_eq!(challenge.played, Some(60));
+    assert_eq!(challenge.answer, Some(60));
     assert_eq!(challenge.solve(62, 1), Err(InvalidTask));
-    assert_eq!(challenge.played, Some(60));
+    assert_eq!(challenge.answer, Some(60));
 }
 
 #[test]
@@ -70,8 +115,8 @@ fn external_attempt_round_trips_with_timing_and_performance()
 -> Result<(), Box<dyn std::error::Error>> {
     let mut attempt = Challenge {
         challenge_type: ExternalChallenge,
-        challenge_config: "music".to_owned(),
-        challenge_result: ExternalResult(80),
+        challenge_config: "external".to_owned(),
+        challenge_result: Some(ExternalResult(80)),
         start_time: None,
         end_time: None,
     };
@@ -99,30 +144,37 @@ fn external_attempt_round_trips_with_timing_and_performance()
 
 #[test]
 fn external_challenge_and_variant_load_from_yaml() -> Result<(), Box<dyn std::error::Error>> {
-    let content: MusicChallenge = serde_yaml::from_str("!melody\nid: fais_dodo_a1\nbpm: 80\n")?;
+    let content: ExternalContent = serde_yaml::from_str("!example\nid: example-1\nvalue: 80\n")?;
     assert_eq!(
         content,
-        MusicChallenge::Melody {
-            id: "fais_dodo_a1".into(),
-            bpm: 80
+        ExternalContent::Example {
+            id: "example-1".into(),
+            value: 80
         }
     );
     assert_eq!(
-        serde_yaml::from_str::<MusicChallenge>(&serde_yaml::to_string(&content)?)?,
+        serde_yaml::from_str::<ExternalContent>(&serde_yaml::to_string(&content)?)?,
         content
     );
     assert_eq!(
-        serde_json::from_str::<MusicChallenge>(&serde_json::to_string(&content)?)?,
+        serde_json::from_str::<ExternalContent>(&serde_json::to_string(&content)?)?,
         content
     );
 
-    let config: ChallengeConfig<MusicVariant> = serde_yaml::from_str(
-        "id: lullaby\nname: Lullaby\ndescription: Play\nchallenge: fais_dodo_a1\nvariant: melody\ntasks: 1\nunlock_points: 0\n",
+    let config: ChallengeConfig<ExternalVariant> = serde_yaml::from_str(
+        "id: example-run\nname: Example\ndescription: Play\nchallenge: example-1\nvariant: example\ntasks: 1\nunlock_points: 0\n",
     )?;
-    assert_eq!(config.variant, Some(MusicVariant::Melody));
+    assert_eq!(config.variant, Some(ExternalVariant::Example));
     assert_eq!(
-        serde_yaml::from_str::<ChallengeConfig<MusicVariant>>(&serde_yaml::to_string(&config)?)?,
+        serde_yaml::from_str::<ChallengeConfig<ExternalVariant>>(&serde_yaml::to_string(&config)?)?,
         config
     );
+    let factory = ChallengeFactory {
+        challenge_types: vec![content.clone()],
+    };
+    let challenge = factory.create_challenge(&config)?;
+    assert_eq!(challenge.challenge_type, content);
+    assert!(challenge.challenge_result.is_none());
+    assert_eq!(challenge.challenge_config, config);
     Ok(())
 }

@@ -353,7 +353,11 @@ async fn the_controllers_challenge_result_should_have_answers(
             }
         };
 
-        let result_len = game_state.challenge.challenge_result.len();
+        let result_len = game_state
+            .challenge
+            .challenge_result
+            .as_ref()
+            .map_or(0, konnektoren_rs::core::challenges::ChallengeResult::len);
 
         // Check that we have at least one answer
         assert!(

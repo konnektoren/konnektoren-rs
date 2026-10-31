@@ -176,20 +176,20 @@ mod tests {
                     ..Default::default()
                 },
             );
-            challenge.challenge_result = challenge_result;
+            challenge.challenge_result = Some(challenge_result);
             game.challenge_history.add_challenge(challenge);
         }
 
         // Set performance for each challenge (this is a simplified version)
         for challenge in &mut game.challenge_history.challenges {
             match &mut challenge.challenge_result {
-                ChallengeResult::MultipleChoice(options) => {
+                Some(ChallengeResult::MultipleChoice(options)) => {
                     options[0].id = 0;
                 }
-                ChallengeResult::ContextualChoice(choices) => {
+                Some(ChallengeResult::ContextualChoice(choices)) => {
                     choices[0].ids = vec![0];
                 }
-                ChallengeResult::SortTable(rows) => {
+                Some(ChallengeResult::SortTable(rows)) => {
                     rows[0].values = vec!["".to_string()];
                 }
                 _ => {}

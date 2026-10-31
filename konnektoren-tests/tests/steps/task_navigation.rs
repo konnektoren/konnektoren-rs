@@ -151,7 +151,8 @@ async fn tasks_should_be_completed(world: &mut BddWorld, expected_count: usize) 
     let challenge = &world.session.game_state.challenge;
 
     match &challenge.challenge_result {
-        ChallengeResult::MultipleChoice(results) => {
+        None => assert_eq!(expected_count, 0, "No response has been submitted"),
+        Some(ChallengeResult::MultipleChoice(results)) => {
             assert_eq!(
                 results.len(),
                 expected_count,
@@ -160,7 +161,7 @@ async fn tasks_should_be_completed(world: &mut BddWorld, expected_count: usize) 
                 results.len()
             );
         }
-        ChallengeResult::ContextualChoice(results) => {
+        Some(ChallengeResult::ContextualChoice(results)) => {
             assert_eq!(
                 results.len(),
                 expected_count,
@@ -169,7 +170,7 @@ async fn tasks_should_be_completed(world: &mut BddWorld, expected_count: usize) 
                 results.len()
             );
         }
-        ChallengeResult::GapFill(results) => {
+        Some(ChallengeResult::GapFill(results)) => {
             assert_eq!(
                 results.len(),
                 expected_count,
@@ -178,7 +179,7 @@ async fn tasks_should_be_completed(world: &mut BddWorld, expected_count: usize) 
                 results.len()
             );
         }
-        ChallengeResult::SortTable(results) => {
+        Some(ChallengeResult::SortTable(results)) => {
             assert_eq!(
                 results.len(),
                 expected_count,
@@ -187,7 +188,7 @@ async fn tasks_should_be_completed(world: &mut BddWorld, expected_count: usize) 
                 results.len()
             );
         }
-        ChallengeResult::Ordering(results) => {
+        Some(ChallengeResult::Ordering(results)) => {
             assert_eq!(
                 results.len(),
                 expected_count,
@@ -196,23 +197,23 @@ async fn tasks_should_be_completed(world: &mut BddWorld, expected_count: usize) 
                 results.len()
             );
         }
-        ChallengeResult::Informative => {
+        Some(ChallengeResult::Informative) => {
             assert_eq!(0, expected_count, "Informative challenges don't have tasks");
         }
-        ChallengeResult::Vocabulary => {
+        Some(ChallengeResult::Vocabulary) => {
             assert_eq!(
                 0, expected_count,
                 "Vocabulary challenges are always complete"
             );
         }
-        ChallengeResult::Custom(_) => {
+        Some(ChallengeResult::Custom(_)) => {
             // Custom challenges don't track individual task completion in the same way
             assert_eq!(
                 0, expected_count,
                 "Custom challenges don't have tasks in the standard way"
             );
         }
-        ChallengeResult::Dialog(answers) => {
+        Some(ChallengeResult::Dialog(answers)) => {
             assert_eq!(
                 answers.len(),
                 expected_count,
@@ -229,7 +230,7 @@ async fn all_completed_tasks_should_have_valid_answers(world: &mut BddWorld) {
     let challenge = &world.session.game_state.challenge;
 
     match (&challenge.challenge_result, &challenge.challenge_type) {
-        (ChallengeResult::MultipleChoice(results), ChallengeType::MultipleChoice(mc)) => {
+        (Some(ChallengeResult::MultipleChoice(results)), ChallengeType::MultipleChoice(mc)) => {
             assert!(!results.is_empty(), "Should have completed some tasks");
 
             // Verify all results are valid options
@@ -385,7 +386,7 @@ async fn task_n_should_be_answered(world: &mut BddWorld, task_index: usize) {
     let challenge = &world.session.game_state.challenge;
 
     match &challenge.challenge_result {
-        ChallengeResult::MultipleChoice(results) => {
+        Some(ChallengeResult::MultipleChoice(results)) => {
             // Check if we have an answer for this task index
             assert!(
                 task_index < results.len(),
@@ -461,7 +462,7 @@ async fn task_n_should_be_answered_correctly(world: &mut BddWorld, task_index: u
     let challenge = &world.session.game_state.challenge;
 
     match (&challenge.challenge_result, &challenge.challenge_type) {
-        (ChallengeResult::MultipleChoice(results), ChallengeType::MultipleChoice(mc)) => {
+        (Some(ChallengeResult::MultipleChoice(results)), ChallengeType::MultipleChoice(mc)) => {
             assert!(
                 task_index < results.len(),
                 "Task {} should be answered, but only {} tasks have been answered",
@@ -487,7 +488,7 @@ async fn task_n_should_be_answered_incorrectly(world: &mut BddWorld, task_index:
     let challenge = &world.session.game_state.challenge;
 
     match (&challenge.challenge_result, &challenge.challenge_type) {
-        (ChallengeResult::MultipleChoice(results), ChallengeType::MultipleChoice(mc)) => {
+        (Some(ChallengeResult::MultipleChoice(results)), ChallengeType::MultipleChoice(mc)) => {
             assert!(
                 task_index < results.len(),
                 "Task {} should be answered, but only {} tasks have been answered",
@@ -630,7 +631,7 @@ async fn task_n_should_be_answered_correctly_for_contextual_choice(
     let challenge = &world.session.game_state.challenge;
 
     match (&challenge.challenge_result, &challenge.challenge_type) {
-        (ChallengeResult::ContextualChoice(results), ChallengeType::ContextualChoice(cc)) => {
+        (Some(ChallengeResult::ContextualChoice(results)), ChallengeType::ContextualChoice(cc)) => {
             assert!(
                 task_index < results.len(),
                 "Task {} should be answered, but only {} tasks have been answered",

@@ -1,4 +1,5 @@
 use crate::challenges::Base64Serializable;
+use crate::challenges::ChallengeDefinition;
 use crate::challenges::challenge::Challenge;
 use crate::challenges::challenge_config::ChallengeConfig;
 use crate::challenges::challenge_type::ChallengeType;
@@ -6,8 +7,8 @@ use crate::challenges::error::{ChallengeError, Result};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ChallengeFactory {
-    pub challenge_types: Vec<ChallengeType>,
+pub struct ChallengeFactory<C = ChallengeType> {
+    pub challenge_types: Vec<C>,
 }
 
 impl Default for ChallengeFactory {
@@ -35,18 +36,6 @@ impl ChallengeFactory {
         }
     }
 
-    pub fn create_challenge(&self, challenge_config: &ChallengeConfig) -> Result<Challenge> {
-        let challenge_type = self
-            .challenge_types
-            .iter()
-            .find(|challenge_type| challenge_type.id() == challenge_config.challenge)
-            .ok_or(ChallengeError::ChallengeTypeNotFound)?;
-        Ok(Challenge::new(
-            &challenge_type.of_tasks(&challenge_config.tasks),
-            challenge_config,
-        ))
-    }
-
     pub fn add_challenge_from_base64(&mut self, base64_data: &str) -> Result<()> {
         let challenge_type = ChallengeType::from_base64(base64_data)?;
         self.challenge_types.push(challenge_type);
@@ -61,6 +50,27 @@ impl ChallengeFactory {
             .ok_or_else(|| ChallengeError::ChallengeNotFound(challenge_id.to_string()))?;
 
         challenge_type.to_base64()
+    }
+}
+
+impl<C: ChallengeDefinition> ChallengeFactory<C> {
+    pub fn create_challenge<V: Clone>(
+        &self,
+        challenge_config: &ChallengeConfig<V>,
+    ) -> Result<Challenge<C, C::Result, ChallengeConfig<V>>> {
+        let challenge_type = self
+            .challenge_types
+            .iter()
+            .find(|challenge_type| challenge_type.id() == challenge_config.challenge)
+            .ok_or(ChallengeError::ChallengeTypeNotFound)?;
+        let challenge_type = challenge_type.of_tasks(&challenge_config.tasks);
+        Ok(Challenge {
+            challenge_type,
+            challenge_config: challenge_config.clone(),
+            challenge_result: None,
+            start_time: None,
+            end_time: None,
+        })
     }
 }
 

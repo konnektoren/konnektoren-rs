@@ -63,7 +63,9 @@ impl ChallengeStats for (&ChallengeConfig, &ChallengeHistory) {
             .iter()
             .filter(|c| {
                 c.challenge_config.id == self.0.id
-                    && c.challenge_result.len() == c.challenge_config.tasks.len()
+                    && c.challenge_result
+                        .as_ref()
+                        .is_some_and(|result| result.len() == c.challenge_config.tasks.len())
             })
             .count()
     }
@@ -136,7 +138,7 @@ mod tests {
         assert_eq!(challenge_history.completed_challenges(), 0);
 
         let mut challenge = Challenge::new(&ChallengeType::default(), &config);
-        challenge.challenge_result = ChallengeResult::MultipleChoice(vec![
+        challenge.challenge_result = Some(ChallengeResult::MultipleChoice(vec![
             MultipleChoiceOption {
                 id: 1,
                 name: "Option 1".to_string(),
@@ -149,7 +151,7 @@ mod tests {
                 id: 3,
                 name: "Option 3".to_string(),
             },
-        ]);
+        ]));
         challenge_history.add_challenge(challenge);
         assert_eq!(challenge_history.completed_challenges(), 1);
     }
@@ -163,7 +165,7 @@ mod tests {
         config.tasks = 3.into();
 
         let mut challenge = Challenge::new(&ChallengeType::default(), &config);
-        challenge.challenge_result = ChallengeResult::MultipleChoice(vec![
+        challenge.challenge_result = Some(ChallengeResult::MultipleChoice(vec![
             MultipleChoiceOption {
                 id: 1,
                 name: "Option 1".to_string(),
@@ -176,7 +178,7 @@ mod tests {
                 id: 3,
                 name: "Option 3".to_string(),
             },
-        ]);
+        ]));
         challenge_history.add_challenge(challenge);
 
         assert!(challenge_history.stars() > 0);

@@ -88,7 +88,11 @@ impl ChallengeCommand {
         }
 
         // QUICKFIX: If current task wasn't answered, add a default answer to keep indices aligned
-        let result_len = state.challenge.challenge_result.len();
+        let result_len = state
+            .challenge
+            .challenge_result
+            .as_ref()
+            .map_or(0, ChallengeResult::len);
         if result_len <= state.current_task_index {
             // Add default answer based on challenge type
             let default_input = match &state.challenge.challenge_type {
@@ -130,7 +134,7 @@ impl ChallengeCommand {
 
             state
                 .challenge
-                .challenge_result
+                .result_mut()
                 .add_input(default_input)
                 .map_err(CommandError::ChallengeError)?;
         }
@@ -210,7 +214,7 @@ impl ChallengeCommand {
         state.challenge.update_end_time();
         // Logic to handle finishing the challenge
         if let Some(result) = custom_result {
-            state.challenge.challenge_result = result.clone();
+            state.challenge.challenge_result = Some(result.clone());
         }
         // Additional logic to mark the challenge as finished
         Ok(())
