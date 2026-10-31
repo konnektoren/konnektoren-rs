@@ -1,6 +1,6 @@
 use super::{ControllerPlugin, ControllerPluginError, GameControllerTrait};
-use crate::challenges::{GameChallenge, Performance};
-use crate::commands::{ChallengeCommand, Command, CommandType};
+use crate::challenges::GameChallenge;
+use crate::commands::{ChallengeCommand, Command, CommandError, CommandType};
 use crate::controller::ControllerError;
 use std::sync::Arc;
 
@@ -17,8 +17,12 @@ impl GameXpPlugin {
                 .lock()
                 .map_err(|_| ControllerError::StateLock)?;
 
+            let performance = game_state
+                .challenge
+                .challenge_type
+                .try_performance(challenge_result)
+                .map_err(|e| ControllerError::CommandExecution(CommandError::ChallengeError(e)))?;
             game_state.challenge.challenge_result = Some(challenge_result.clone());
-            let performance = game_state.challenge.performance(challenge_result);
             let xp_reward = performance / 10;
 
             game_state.game.xp += xp_reward;

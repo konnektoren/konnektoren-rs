@@ -1,4 +1,4 @@
-use super::{ChallengeDefinition, Performance, Playable};
+use super::{ChallengeDefinition, Playable};
 use std::fmt::Debug;
 
 /// Everything the game lifecycle (state, commands, controller, plugins) needs from a
@@ -6,7 +6,6 @@ use std::fmt::Debug;
 pub trait GameChallenge:
     Playable<Input: Clone + Debug + PartialEq + Send + Sync + 'static>
     + ChallengeDefinition<Result: Clone + Debug + PartialEq + Send + Sync + 'static>
-    + Performance<<Self as ChallengeDefinition>::Result>
     + Clone
     + Debug
     + PartialEq
@@ -19,7 +18,6 @@ pub trait GameChallenge:
 impl<T> GameChallenge for T where
     T: Playable<Input: Clone + Debug + PartialEq + Send + Sync + 'static>
         + ChallengeDefinition<Result: Clone + Debug + PartialEq + Send + Sync + 'static>
-        + Performance<<T as ChallengeDefinition>::Result>
         + Clone
         + Debug
         + PartialEq

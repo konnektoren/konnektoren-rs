@@ -172,6 +172,14 @@ impl<C: GameChallenge> ChallengeCommand<C> {
 
     /// Finishes the current challenge with a custom result.
     fn finish_challenge(state: &mut GameState<C>, custom_result: &Option<C::Result>) -> Result<()> {
+        if let Some(result) = custom_result {
+            // A result for a different challenge is rejected, not stored.
+            state
+                .challenge
+                .challenge_type
+                .try_performance(result)
+                .map_err(CommandError::ChallengeError)?;
+        }
         state.challenge.update_end_time();
         // Logic to handle finishing the challenge
         if let Some(result) = custom_result {

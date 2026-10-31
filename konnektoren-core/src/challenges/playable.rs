@@ -20,6 +20,10 @@ pub trait Playable: ChallengeDefinition {
     /// Append `input` to `result`, creating an empty result first when none exists yet.
     fn record_input(&self, result: &mut Option<Self::Result>, input: Self::Input) -> Result<()>;
 
+    /// Score `result`, rejecting a result that does not belong to this challenge
+    /// instead of treating it as zero.
+    fn try_performance(&self, result: &Self::Result) -> Result<u32>;
+
     /// Check `input` for the task at `task_index` and store it in the challenge's result.
     /// Returns whether the answer is correct.
     fn solve_task(

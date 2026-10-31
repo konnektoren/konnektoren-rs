@@ -38,7 +38,9 @@ pub use challenge::Challenge;
 pub use challenge_config::ChallengeConfig;
 pub use challenge_definition::ChallengeDefinition;
 pub use challenge_factory::ChallengeFactory;
-pub use challenge_family::{ChallengeFamily, ChallengeFamilyResult, FamilyResultMismatch};
+pub use challenge_family::{
+    ChallengeFamily, ChallengeFamilyInput, ChallengeFamilyResult, FamilyResultMismatch,
+};
 pub use challenge_history::ChallengeHistory;
 pub use challenge_input::ChallengeInput;
 pub use challenge_result::ChallengeResult;

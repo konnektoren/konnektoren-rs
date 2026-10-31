@@ -766,6 +766,10 @@ impl super::Playable for ChallengeType {
             .add_input(input)
     }
 
+    fn try_performance(&self, result: &ChallengeResult) -> super::error::Result<u32> {
+        Ok(super::Performance::performance(self, result))
+    }
+
     fn solve_task(
         challenge: &mut super::Challenge<Self, ChallengeResult>,
         input: Self::Input,

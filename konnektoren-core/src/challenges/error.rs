@@ -23,6 +23,9 @@ pub enum ChallengeError {
     #[error("Invalid challenge type for operation")]
     InvalidChallengeType,
 
+    #[error("Challenge and result belong to different family branches")]
+    FamilyMismatch,
+
     #[error("Challenge validation failed: {0}")]
     ValidationFailed(String),
 
@@ -43,3 +46,9 @@ pub enum ChallengeError {
 }
 
 pub type Result<T> = std::result::Result<T, ChallengeError>;
+
+impl From<super::FamilyResultMismatch> for ChallengeError {
+    fn from(_: super::FamilyResultMismatch) -> Self {
+        ChallengeError::FamilyMismatch
+    }
+}

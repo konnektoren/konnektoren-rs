@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::challenges::{ChallengeType, GameChallenge};
+use crate::game::error::GameError;
 use crate::{game::Game, prelude::Challenge};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -17,16 +18,28 @@ pub struct GameState<C: GameChallenge = ChallengeType> {
 }
 
 impl<C: GameChallenge> GameState<C> {
-    pub fn new(game: Game<C>) -> Self {
-        let challenge = game.create_challenge("konnektoren-1").unwrap();
+    /// Start at the first challenge of the first game path.
+    pub fn try_new(game: Game<C>) -> Result<Self, GameError> {
+        let first_id = game
+            .game_paths
+            .first()
+            .and_then(|path| path.challenges.first())
+            .map(|config| config.id.clone())
+            .ok_or(GameError::GamePathNotFound)?;
+        let challenge = game.create_challenge(&first_id)?;
 
-        GameState {
+        Ok(GameState {
             game,
             challenge,
             current_game_path: 0,
             current_challenge_index: 0,
             current_task_index: 0,
-        }
+        })
+    }
+
+    /// Like [`GameState::try_new`], panicking when the game has no challenge to start with.
+    pub fn new(game: Game<C>) -> Self {
+        Self::try_new(game).expect("game must start with a creatable challenge")
     }
 }
 
