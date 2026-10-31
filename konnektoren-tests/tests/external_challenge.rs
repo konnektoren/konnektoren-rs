@@ -1,10 +1,22 @@
-use konnektoren_rs::core::challenges::{Challenge, Performance, Solvable, Timed};
+use konnektoren_rs::core::challenges::{Challenge, ChallengeConfig, Performance, Solvable, Timed};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct ExternalChallenge;
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct ExternalResult(u32);
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+enum MusicVariant {
+    Melody,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+enum MusicChallenge {
+    Melody { id: String, bpm: u32 },
+}
 
 impl Performance<ExternalResult> for ExternalChallenge {
     fn performance(&self, result: &ExternalResult) -> u32 {
@@ -73,5 +85,35 @@ fn external_attempt_round_trips_with_timing_and_performance()
     let restored: Challenge<ExternalChallenge, ExternalResult, String> =
         serde_json::from_str(&json)?;
     assert_eq!(restored, attempt);
+    Ok(())
+}
+
+#[test]
+fn external_challenge_and_variant_load_from_yaml() -> Result<(), Box<dyn std::error::Error>> {
+    let content: MusicChallenge = serde_yaml::from_str("!melody\nid: fais_dodo_a1\nbpm: 80\n")?;
+    assert_eq!(
+        content,
+        MusicChallenge::Melody {
+            id: "fais_dodo_a1".into(),
+            bpm: 80
+        }
+    );
+    assert_eq!(
+        serde_yaml::from_str::<MusicChallenge>(&serde_yaml::to_string(&content)?)?,
+        content
+    );
+    assert_eq!(
+        serde_json::from_str::<MusicChallenge>(&serde_json::to_string(&content)?)?,
+        content
+    );
+
+    let config: ChallengeConfig<MusicVariant> = serde_yaml::from_str(
+        "id: lullaby\nname: Lullaby\ndescription: Play\nchallenge: fais_dodo_a1\nvariant: melody\ntasks: 1\nunlock_points: 0\n",
+    )?;
+    assert_eq!(config.variant, Some(MusicVariant::Melody));
+    assert_eq!(
+        serde_yaml::from_str::<ChallengeConfig<MusicVariant>>(&serde_yaml::to_string(&config)?)?,
+        config
+    );
     Ok(())
 }

@@ -6,13 +6,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
-pub struct ChallengeConfig {
+pub struct ChallengeConfig<V = ChallengeVariant> {
     pub id: String,
     pub name: String,
     pub description: String,
     pub challenge: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub variant: Option<ChallengeVariant>,
+    pub variant: Option<V>,
     /// Number or range of tasks to select (e.g. "10", "5:random", "1..5")
     #[cfg_attr(feature = "schema", schemars(with = "String"))]
     pub tasks: TaskPattern,
