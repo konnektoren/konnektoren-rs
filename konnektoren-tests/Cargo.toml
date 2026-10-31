@@ -26,6 +26,7 @@ serde_json = { workspace = true }
 [dev-dependencies]
 rmp-serde = { workspace = true }
 strum = { workspace = true }
+strum_macros = { workspace = true }
 serde_yaml = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 

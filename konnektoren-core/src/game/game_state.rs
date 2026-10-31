@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::challenges::{Attempt, ChallengeType, GameChallenge};
+use crate::game::Game;
 use crate::game::error::GameError;
-use crate::{game::Game, prelude::Challenge};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(bound(

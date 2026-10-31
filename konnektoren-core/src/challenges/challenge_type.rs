@@ -9,9 +9,11 @@ use crate::challenges::{gap_fill::GapFill, vocabulary::Vocabulary};
 #[cfg(feature = "schema")]
 use schemars::{JsonSchema, schema_for};
 use serde::{Deserialize, Serialize};
-use strum_macros::{EnumIter, IntoStaticStr};
+use strum_macros::{EnumIter, IntoStaticStr, VariantNames};
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, EnumIter, IntoStaticStr)]
+#[derive(
+    Debug, Clone, Serialize, Deserialize, PartialEq, EnumIter, IntoStaticStr, VariantNames,
+)]
 #[cfg_attr(feature = "schema", derive(JsonSchema))]
 #[serde(rename_all = "kebab-case")]
 #[strum(serialize_all = "kebab-case")]

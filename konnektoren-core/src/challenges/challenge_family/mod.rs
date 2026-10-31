@@ -3,6 +3,7 @@ mod challenge_family_result;
 mod challenge_family_variant;
 mod error;
 mod family;
+mod flat_serde;
 mod playable;
 
 pub use challenge_family_input::ChallengeFamilyInput;
