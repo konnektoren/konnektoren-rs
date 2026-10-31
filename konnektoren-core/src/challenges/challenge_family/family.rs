@@ -67,12 +67,12 @@ impl<A: ChallengeDefinition, B: ChallengeDefinition> ChallengeDefinition for Cha
 
 impl<A: Playable + Clone + 'static, B: Playable + Clone + 'static> ChallengeFamily<A, B>
 where
-    A::Result: 'static,
+    A::Result: Clone + 'static,
     A::Input: 'static,
-    A::Variant: 'static,
-    B::Result: 'static,
+    A::Variant: Clone + 'static,
+    B::Result: Clone + 'static,
     B::Input: 'static,
-    B::Variant: 'static,
+    B::Variant: Clone + 'static,
 {
     /// Embeds the first branch's challenges, results, and inputs.
     pub fn first_embedding() -> ChallengeEmbedding<A, Self> {
@@ -81,6 +81,20 @@ where
             ChallengeFamilyResult::First,
             super::ChallengeFamilyInput::First,
             super::ChallengeFamilyVariant::First,
+        )
+        .with_extraction(
+            |family| match family {
+                Self::First(challenge) => Some(challenge.clone()),
+                Self::Second(_) => None,
+            },
+            |result| match result {
+                ChallengeFamilyResult::First(result) => Some(result.clone()),
+                ChallengeFamilyResult::Second(_) => None,
+            },
+            |variant| match variant {
+                super::ChallengeFamilyVariant::First(variant) => Some(variant.clone()),
+                super::ChallengeFamilyVariant::Second(_) => None,
+            },
         )
     }
 
@@ -91,6 +105,20 @@ where
             ChallengeFamilyResult::Second,
             super::ChallengeFamilyInput::Second,
             super::ChallengeFamilyVariant::Second,
+        )
+        .with_extraction(
+            |family| match family {
+                Self::Second(challenge) => Some(challenge.clone()),
+                Self::First(_) => None,
+            },
+            |result| match result {
+                ChallengeFamilyResult::Second(result) => Some(result.clone()),
+                ChallengeFamilyResult::First(_) => None,
+            },
+            |variant| match variant {
+                super::ChallengeFamilyVariant::Second(variant) => Some(variant.clone()),
+                super::ChallengeFamilyVariant::First(_) => None,
+            },
         )
     }
 }

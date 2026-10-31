@@ -551,3 +551,45 @@ fn app_owned_variants_choose_presentation_and_survive_saving()
     );
     Ok(())
 }
+
+#[test]
+fn embeddings_extract_the_included_part_of_an_attempt() {
+    use konnektoren_rs::core::challenges::{
+        Challenge, ChallengeFamily, ChallengeFamilyResult, ChallengeResult, ChallengeType,
+    };
+    type Inner = ChallengeFamily<AppChallenge, Quiz>;
+    type Outer = ChallengeFamily<ChallengeType, Inner>;
+
+    let builtin_branch = Outer::first_embedding();
+    let attempt = Challenge {
+        challenge_type: ChallengeFamily::First(ChallengeType::default()),
+        challenge_config: config("run", "konnektoren", 2),
+        challenge_result: Some(ChallengeFamilyResult::First(ChallengeResult::default())),
+        start_time: None,
+        end_time: None,
+    };
+    let extracted = builtin_branch.extract_attempt(&attempt).unwrap();
+    assert_eq!(extracted.challenge_type, ChallengeType::default());
+    assert_eq!(extracted.challenge_result, Some(ChallengeResult::default()));
+    // The extraction undoes the embedding.
+    assert_eq!(builtin_branch.attempt(extracted), attempt);
+
+    // An attempt of the other branch has no built-in part.
+    let app_attempt = Challenge {
+        challenge_type: ChallengeFamily::Second(ChallengeFamily::First(melody("m", &[60]))),
+        challenge_config: config("m-run", "m", 1),
+        challenge_result: None,
+        start_time: None,
+        end_time: None,
+    };
+    assert!(builtin_branch.extract_attempt(&app_attempt).is_none());
+    // Composed embeddings extract through both levels.
+    let app_branch = Inner::first_embedding().then(&Outer::second_embedding());
+    assert_eq!(
+        app_branch
+            .extract_attempt(&app_attempt)
+            .unwrap()
+            .challenge_type,
+        melody("m", &[60])
+    );
+}
