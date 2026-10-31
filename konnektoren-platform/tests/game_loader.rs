@@ -357,3 +357,133 @@ fn custom_manifest_extensions_are_not_part_of_the_loader_type() -> TestResult {
         Ok(())
     })
 }
+
+mod external_formats {
+    use super::*;
+    use konnektoren_asset_loader::AssetFormat;
+    use konnektoren_core::challenges::{
+        ChallengeConfig, ChallengeDefinition, task_pattern::TaskPattern,
+    };
+    use konnektoren_platform::game_loader::{LevelDefinition, Yaml};
+    use serde::Deserialize;
+
+    #[derive(Clone, Deserialize)]
+    struct ExternalLevel {
+        id: String,
+        description: String,
+        entries: Vec<(String, String)>,
+    }
+    impl LevelDefinition for ExternalLevel {
+        fn id(&self) -> &str {
+            &self.id
+        }
+        fn challenge_references(&self) -> impl Iterator<Item = (&str, &str)> {
+            self.entries
+                .iter()
+                .map(|(entry, content)| (entry.as_str(), content.as_str()))
+        }
+    }
+
+    #[derive(Clone, Deserialize)]
+    struct ExternalContent {
+        id: String,
+        value: u32,
+    }
+    impl ChallengeDefinition for ExternalContent {
+        type Result = Vec<bool>;
+        fn id(&self) -> &str {
+            &self.id
+        }
+        fn of_tasks(&self, _: &TaskPattern) -> Self {
+            self.clone()
+        }
+    }
+
+    #[derive(Clone)]
+    struct ContentFormat {
+        minimum: u32,
+    }
+    impl AssetFormat for ContentFormat {
+        type Asset = ExternalContent;
+        type Error = serde_json::Error;
+        fn cache_key(&self) -> Option<String> {
+            Some(self.minimum.to_string())
+        }
+        fn parse(&self, bytes: &[u8]) -> Result<Self::Asset, Self::Error> {
+            let content: ExternalContent = serde_json::from_slice(bytes)?;
+            if content.value < self.minimum {
+                return Err(serde::de::Error::custom("value below configured minimum"));
+            }
+            Ok(content)
+        }
+    }
+
+    const FILES: &[(&str, &[u8])] = &[
+        ("challenges/external.yml", b"id: external\ndescription: App metadata\nentries: [[first, shared], [second, shared]]"),
+        ("content/shared.json", br#"{"id":"shared","value":5}"#),
+        ("content/wrong.json", br#"{"id":"different","value":5}"#),
+    ];
+
+    #[test]
+    fn app_formats_preserve_metadata_and_preload_a_typed_factory() -> TestResult {
+        block_on(async {
+            let manifest: Manifest<NoExtensions> =
+                serde_yaml::from_str("game_paths: [external.yml]")?;
+            let loader = GameLoader::from_manifest(&manifest, EmbeddedSource::new(FILES))
+                .with_challenge_path_resolver(|id| format!("content/{id}.json"))
+                .with_formats(Yaml::<ExternalLevel>::new(), ContentFormat { minimum: 0 });
+            let levels = loader.load_game_paths().await?;
+            assert_eq!(levels[0].description, "App metadata");
+            let factory = loader.preload_factory(&levels).await?;
+            assert_eq!(factory.challenge_types.len(), 1);
+            let config = ChallengeConfig {
+                challenge: "shared".into(),
+                ..ChallengeConfig::default()
+            };
+            let challenge = factory.create_challenge(&config)?;
+            assert_eq!(challenge.challenge_type.value, 5);
+            assert!(challenge.challenge_result.is_none());
+            let first = loader.load_challenge("shared").await?;
+            assert!(Arc::ptr_eq(
+                &first,
+                &loader.clone().load_challenge("shared").await?
+            ));
+            assert!(matches!(
+                loader.load_challenge("wrong").await,
+                Err(GameLoadError::IdMismatch { .. })
+            ));
+            Ok(())
+        })
+    }
+
+    #[test]
+    fn configured_format_cache_and_reference_errors_remain_distinct() -> TestResult {
+        block_on(async {
+            let manifest: Manifest<NoExtensions> =
+                serde_yaml::from_str("game_paths: [external.yml]")?;
+            let loader = GameLoader::from_manifest(&manifest, EmbeddedSource::new(FILES))
+                .with_formats(Yaml::<ExternalLevel>::new(), ContentFormat { minimum: 0 })
+                .with_challenge_path_resolver(|id| format!("content/{id}.json"));
+            let levels = loader.load_game_paths().await?;
+            loader.load_challenge("shared").await?;
+            let strict =
+                loader.with_formats(Yaml::<ExternalLevel>::new(), ContentFormat { minimum: 10 });
+            match strict.preload_factory(&levels).await {
+                Err(GameLoadError::Reference {
+                    level_id,
+                    entry_id,
+                    source,
+                }) => {
+                    assert_eq!(level_id, "external");
+                    assert_eq!(entry_id, "first");
+                    assert!(matches!(
+                        *source,
+                        GameLoadError::Asset(AssetLoadError::Parse { .. })
+                    ));
+                }
+                _ => panic!("strict format must reject cached content parsed by lenient format"),
+            }
+            Ok(())
+        })
+    }
+}

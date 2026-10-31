@@ -44,6 +44,36 @@ that server. `level_paths()` exposes the manifest's ordered filenames;
 `load_game_path(filename)` loads one level and returns its cached `Arc<GamePath>`.
 `load_game_paths()` returns owned level metadata for direct use in `Game`.
 
+## Application-defined formats
+
+`GameLoader<S, L, C>` accepts a level format `L` and a challenge format `C`.
+Both default to the existing YAML parsers, so `GameLoader<S>` and its constructors
+retain their existing behavior. Select application parsers with:
+
+```rust,ignore
+let loader = GameLoader::from_manifest(&manifest, source)
+    .with_formats(AppLevelFormat, AppChallengeFormat);
+```
+
+Both formats implement `AssetFormat + Clone + 'static`. Their parsed assets must
+be `Clone + Send + Sync + 'static`, and challenge assets implement core's
+`ChallengeDefinition`. The public `Yaml<T>` format is available for Serde types
+that need no additional validation.
+
+`load_game_path` and `load_game_paths` retain the complete application level type.
+To use `preload_factory`, implement `LevelDefinition` on that level: provide its
+ID and an iterator of `(entry_id, content_id)` references. The resulting factory
+is `ChallengeFactory<C::Asset>`; no conversion back to core YAML is needed.
+
+`with_formats` retains the server, manifest order and filename resolver. Loader
+clones copy the format values and share the server. Formats that enable caching
+must include all parsing settings in their `cache_key()`; format and asset types
+also participate in the asset server's cache identity.
+
+`preload_game` remains available for formats producing core's `GamePath` and
+`ChallengeType`, including custom parsers returning those types. External game
+state/controller integration and build-time validation are separate steps.
+
 ## Paths and source selection
 
 Sources are rooted at `manifest.assets.path`. Source-relative paths are:
