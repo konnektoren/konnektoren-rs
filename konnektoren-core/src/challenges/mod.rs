@@ -63,7 +63,7 @@ pub use multiple_choice::*;
 pub use ordering::{Ordering, OrderingItem, OrderingResult};
 #[cfg(feature = "js")]
 pub use package::*;
-pub use performance::Performance;
+pub use performance::{Performance, stars_for};
 pub use performance_record::PerformanceRecord;
 pub use placeholder::{Placeholder, PlaceholderType};
 pub use playable::Playable;

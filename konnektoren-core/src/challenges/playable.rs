@@ -28,6 +28,11 @@ pub trait Playable: ChallengeDefinition {
     /// instead of treating it as zero.
     fn try_performance(&self, result: &Self::Result) -> Result<u32>;
 
+    /// The stars `result` earns, with the same thresholds as [`Performance::stars`].
+    fn try_stars(&self, result: &Self::Result) -> Result<u32> {
+        Ok(super::performance::stars_for(self.try_performance(result)?))
+    }
+
     /// Check `input` for the task at `task_index` and store it in the challenge's result.
     /// Returns whether the answer is correct.
     fn solve_task(

@@ -9,16 +9,20 @@ pub trait Performance<R = ChallengeResult> {
     /// 3 stars for 80% or more, 2 stars for 60% or more, 1 star for 40% or more, 0 stars otherwise.
     /// The performance is calculated by the `performance` method.
     fn stars(&self, result: &R) -> u32 {
-        let performance = self.performance(result);
-        if performance >= 80 {
-            3
-        } else if performance >= 60 {
-            2
-        } else if performance >= 40 {
-            1
-        } else {
-            0
-        }
+        stars_for(self.performance(result))
+    }
+}
+
+/// The stars a performance earns: three from 80, two from 60, one from 40.
+pub fn stars_for(performance: u32) -> u32 {
+    if performance >= 80 {
+        3
+    } else if performance >= 60 {
+        2
+    } else if performance >= 40 {
+        1
+    } else {
+        0
     }
 }
 

@@ -7,7 +7,7 @@ pub trait LevelDefinition {
     fn challenge_references(&self) -> impl Iterator<Item = (&str, &str)>;
 }
 
-impl LevelDefinition for GamePath {
+impl<V> LevelDefinition for GamePath<V> {
     fn id(&self) -> &str {
         &self.id
     }

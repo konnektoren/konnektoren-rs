@@ -2,7 +2,7 @@ use super::{GameLoadError, LevelDefinition, Yaml};
 use crate::manifest::ManifestConfig;
 use konnektoren_asset_loader::{AssetFormat, AssetServer, AssetSource};
 use konnektoren_core::{
-    challenges::{ChallengeDefinition, ChallengeFactory, ChallengeType},
+    challenges::{ChallengeDefinition, ChallengeFactory, ChallengeType, GameChallenge, Playable},
     game::{Game, GamePath},
 };
 use std::{collections::HashSet, rc::Rc, sync::Arc};
@@ -186,13 +186,14 @@ where
 impl<S, L, C> GameLoader<S, L, C>
 where
     S: AssetSource + ?Sized + 'static,
-    L: AssetFormat<Asset = GamePath> + Clone + 'static,
-    C: AssetFormat<Asset = ChallengeType> + Clone + 'static,
+    C: AssetFormat + Clone + 'static,
+    C::Asset: GameChallenge,
+    L: AssetFormat<Asset = GamePath<<C::Asset as Playable>::Variant>> + Clone + 'static,
 {
     /// Constructs a fresh game with all manifest content, zero XP and no history.
     /// App-specific repositories, saved progress and session initialization remain
     /// outside this loader.
-    pub async fn preload_game(&self) -> Result<Game, GameLoadError> {
+    pub async fn preload_game(&self) -> Result<Game<C::Asset>, GameLoadError> {
         let game_paths = self.load_game_paths().await?;
         let challenge_factory = self.preload_factory(&game_paths).await?;
         Ok(Game {
