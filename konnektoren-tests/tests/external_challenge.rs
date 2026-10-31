@@ -1,9 +1,11 @@
-use konnektoren_rs::core::challenges::{Challenge, ChallengeConfig, Performance, Solvable, Timed};
+use konnektoren_rs::core::challenges::{
+    Challenge, ChallengeConfig, ChallengeHistory, Performance, Solvable, Timed,
+};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 struct ExternalChallenge;
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 struct ExternalResult(u32);
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -85,6 +87,13 @@ fn external_attempt_round_trips_with_timing_and_performance()
     let restored: Challenge<ExternalChallenge, ExternalResult, String> =
         serde_json::from_str(&json)?;
     assert_eq!(restored, attempt);
+    let mut history = ChallengeHistory::default();
+    history.add_challenge(attempt.clone());
+    history.add_challenge(attempt);
+    assert_eq!(history.len(), 1);
+    let restored: ChallengeHistory<Challenge<ExternalChallenge, ExternalResult, String>> =
+        serde_yaml::from_str(&serde_yaml::to_string(&history)?)?;
+    assert_eq!(restored, history);
     Ok(())
 }
 

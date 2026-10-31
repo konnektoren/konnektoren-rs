@@ -2,18 +2,29 @@ use serde::{Deserialize, Serialize};
 
 use super::Challenge;
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
-pub struct ChallengeHistory {
-    pub challenges: Vec<Challenge>,
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ChallengeHistory<T = Challenge> {
+    pub challenges: Vec<T>,
+}
+
+impl<T> Default for ChallengeHistory<T> {
+    fn default() -> Self {
+        Self { challenges: vec![] }
+    }
 }
 
 impl ChallengeHistory {
     pub fn new() -> Self {
-        ChallengeHistory { challenges: vec![] }
+        Self::default()
     }
+}
 
+impl<T> ChallengeHistory<T> {
     /// Add a challenge to the history if it is different from the last one.
-    pub fn add_challenge(&mut self, challenge: Challenge) {
+    pub fn add_challenge(&mut self, challenge: T)
+    where
+        T: PartialEq,
+    {
         if let Some(last) = self.challenges.last() {
             if last != &challenge {
                 self.challenges.push(challenge);
@@ -31,11 +42,17 @@ impl ChallengeHistory {
         self.challenges.is_empty()
     }
 
-    pub fn extend(&mut self, other: &ChallengeHistory) {
+    pub fn extend(&mut self, other: &Self)
+    where
+        T: Clone,
+    {
         self.challenges.extend(other.challenges.iter().cloned());
     }
 
-    pub fn merge(&mut self, other: &ChallengeHistory) {
+    pub fn merge(&mut self, other: &Self)
+    where
+        T: Clone + PartialEq,
+    {
         for challenge in &other.challenges {
             if !self.challenges.contains(challenge) {
                 self.challenges.push(challenge.clone());
