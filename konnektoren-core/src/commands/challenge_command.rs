@@ -172,6 +172,17 @@ impl<C: GameChallenge> ChallengeCommand<C> {
 
     /// Finishes the current challenge with a custom result.
     fn finish_challenge(state: &mut GameState<C>, custom_result: &Option<C::Result>) -> Result<()> {
+        // An attempt that is already in the history was finished before; finishing it
+        // again must not award XP or add history again.
+        let attempt = &state.challenge;
+        if state.game.challenge_history.challenges.iter().any(|done| {
+            done.challenge_config.id == attempt.challenge_config.id
+                && done.start_time == attempt.start_time
+        }) {
+            return Err(CommandError::ChallengeError(
+                ChallengeError::AlreadyFinished,
+            ));
+        }
         if let Some(result) = custom_result {
             // A result for a different challenge is rejected, not stored.
             state

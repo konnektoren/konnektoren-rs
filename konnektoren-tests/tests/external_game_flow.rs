@@ -458,3 +458,32 @@ fn published_finish_with_a_mismatched_builtin_result_changes_nothing() {
     assert!(state.game.challenge_history.is_empty());
     assert_eq!(state.game.xp, 0);
 }
+
+#[test]
+fn finishing_the_same_attempt_twice_awards_xp_and_history_once() {
+    let controller = {
+        let game = game();
+        let persistence = Arc::new(MemoryPersistence::new(GameState::new(game.clone())));
+        let mut controller = GameController::new(game, persistence);
+        controller.register_plugin(Arc::new(ChallengeFinishPlugin));
+        controller.register_plugin(Arc::new(GameXpPlugin));
+        controller.init()
+    };
+    let finish = || Command::Challenge(ChallengeCommand::Finish(Some(vec![60, 62, 64])));
+
+    controller.publish_command(finish());
+    controller.publish_command(finish());
+    {
+        let state = controller.game_state().lock().unwrap();
+        assert_eq!(state.game.xp, 10);
+        assert_eq!(state.game.challenge_history.len(), 1);
+    }
+
+    // A fresh attempt of the same challenge is a new transition.
+    controller.publish_command(Command::Game(GameCommand::NextChallenge));
+    controller.publish_command(Command::Game(GameCommand::PreviousChallenge));
+    controller.publish_command(finish());
+    let state = controller.game_state().lock().unwrap();
+    assert_eq!(state.game.xp, 20);
+    assert_eq!(state.game.challenge_history.len(), 2);
+}

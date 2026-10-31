@@ -26,6 +26,9 @@ pub enum ChallengeError {
     #[error("Challenge and result belong to different family branches")]
     FamilyMismatch,
 
+    #[error("Challenge attempt was already finished")]
+    AlreadyFinished,
+
     #[error("Challenge validation failed: {0}")]
     ValidationFailed(String),
 
