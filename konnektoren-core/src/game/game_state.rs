@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{challenges::ChallengeDefinition, game::Game, prelude::Challenge};
 use crate::challenges::ChallengeType;
+use crate::{challenges::ChallengeDefinition, game::Game, prelude::Challenge};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(bound(

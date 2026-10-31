@@ -4,10 +4,7 @@ use super::command::CommandTrait;
 use super::command_type::CommandType;
 use crate::challenges::Timed;
 use crate::challenges::error::ChallengeError;
-use crate::challenges::{
-    Challenge, ChallengeInput, ChallengeResult, ChallengeType, ContextItemChoiceAnswers,
-    GapFillAnswer, MultipleChoiceOption, OrderingResult, Solvable, SortTableRow,
-};
+use crate::challenges::{Challenge, ChallengeType, Playable, Solvable};
 use crate::commands::error::{CommandError, Result};
 use crate::game::GamePath;
 use crate::game::GameState;
@@ -16,19 +13,27 @@ use crate::game::error::GameError;
 /// Represents challenge-level commands that can be executed on the game state.
 #[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq)]
-pub enum ChallengeCommand {
-    Start(Challenge),
+pub enum ChallengeCommand<C: Playable = ChallengeType> {
+    Start(Challenge<C, C::Result>),
     /// Command to move to the next task within a challenge.
     NextTask,
     /// Command to move to the previous task within a challenge.
     PreviousTask,
-    /// Command to solve a multiple choice option.
+    /// Command to solve the current task with the presented option at this index.
     SolveOption(usize),
+    /// Command to solve the current task with an input and move on.
+    Solve(C::Input),
     /// Command to finish the challenge with a custom result.
-    Finish(Option<ChallengeResult>),
+    Finish(Option<C::Result>),
 }
 
-impl CommandTrait for ChallengeCommand {
+impl<C: Playable> CommandTrait<C> for ChallengeCommand<C>
+where
+    C: Clone,
+    C::Result: Clone,
+    C::Input: Clone,
+    Challenge<C, C::Result>: Solvable<C::Input>,
+{
     /// Executes the challenge command on the given game state.
     ///
     /// # Arguments
@@ -38,12 +43,13 @@ impl CommandTrait for ChallengeCommand {
     /// # Returns
     ///
     /// A `Result` indicating success or containing an error if the command execution failed.
-    fn execute(&self, state: &mut GameState) -> Result<()> {
+    fn execute(&self, state: &mut GameState<C>) -> Result<()> {
         match self {
-            ChallengeCommand::Start(challenge_type) => Self::start_challenge(state, challenge_type),
+            ChallengeCommand::Start(challenge) => Self::start_challenge(state, challenge),
             ChallengeCommand::NextTask => Self::next_task(state),
             ChallengeCommand::PreviousTask => Self::previous_task(state),
             ChallengeCommand::SolveOption(option_index) => Self::solve_option(state, *option_index),
+            ChallengeCommand::Solve(input) => Self::solve(state, input),
             ChallengeCommand::Finish(result) => Self::finish_challenge(state, result),
         }
     }
@@ -54,9 +60,18 @@ impl CommandTrait for ChallengeCommand {
     }
 }
 
-impl ChallengeCommand {
+impl<C: Playable> ChallengeCommand<C>
+where
+    C: Clone,
+    C::Result: Clone,
+    C::Input: Clone,
+    Challenge<C, C::Result>: Solvable<C::Input>,
+{
     /// Starts a new challenge with the given challenge configuration.
-    fn start_challenge(state: &mut GameState, challenge: &Challenge) -> Result<()> {
+    fn start_challenge(
+        state: &mut GameState<C>,
+        challenge: &Challenge<C, C::Result>,
+    ) -> Result<()> {
         let mut challenge = challenge.clone();
         challenge.start();
         state.challenge = challenge;
@@ -73,7 +88,7 @@ impl ChallengeCommand {
     /// # Returns
     ///
     /// A `Result` indicating success or containing an error if there are no more tasks.
-    fn next_task(state: &mut GameState) -> Result<()> {
+    fn next_task(state: &mut GameState<C>) -> Result<()> {
         let current_game_path: &GamePath = state
             .game
             .game_paths
@@ -92,51 +107,21 @@ impl ChallengeCommand {
             .challenge
             .challenge_result
             .as_ref()
-            .map_or(0, ChallengeResult::len);
+            .map_or(0, C::result_len);
         if result_len <= state.current_task_index {
-            // Add default answer based on challenge type
-            let default_input = match &state.challenge.challenge_type {
-                ChallengeType::MultipleChoice(mc) => {
-                    if let Some(first_option) = mc.options.first() {
-                        ChallengeInput::MultipleChoice(MultipleChoiceOption {
-                            id: first_option.id,
-                            name: first_option.name.clone(),
-                        })
-                    } else {
-                        return Err(CommandError::ChallengeError(
-                            ChallengeError::InvalidChallengeType,
-                        ));
-                    }
-                }
-                ChallengeType::ContextualChoice(cc) => {
-                    if let Some(first_item) = cc.items.first() {
-                        // Create default answer with empty choices
-                        let ids = vec![0; first_item.choices.len()];
-                        ChallengeInput::ContextualChoice(ContextItemChoiceAnswers { ids })
-                    } else {
-                        return Err(CommandError::ChallengeError(
-                            ChallengeError::InvalidChallengeType,
-                        ));
-                    }
-                }
-                ChallengeType::GapFill(_) => ChallengeInput::GapFill(GapFillAnswer {
-                    question_index: state.current_task_index,
-                    answers: vec![],
-                }),
-                ChallengeType::SortTable(_) => ChallengeInput::SortTable(SortTableRow::default()),
-                ChallengeType::Ordering(_) => ChallengeInput::Ordering(OrderingResult::default()),
-                _ => {
-                    // For other types, don't add default input
-                    state.current_task_index += 1;
-                    return Ok(());
-                }
-            };
-
-            state
+            let default_input = state
                 .challenge
-                .result_mut()
-                .add_input(default_input)
+                .challenge_type
+                .default_input(state.current_task_index)
                 .map_err(CommandError::ChallengeError)?;
+
+            if let Some(input) = default_input {
+                state
+                    .challenge
+                    .challenge_type
+                    .record_input(&mut state.challenge.challenge_result, input)
+                    .map_err(CommandError::ChallengeError)?;
+            }
         }
 
         state.current_task_index += 1;
@@ -152,7 +137,7 @@ impl ChallengeCommand {
     /// # Returns
     ///
     /// A `Result` indicating success or containing an error if there are no previous tasks.
-    fn previous_task(state: &mut GameState) -> Result<()> {
+    fn previous_task(state: &mut GameState<C>) -> Result<()> {
         if state.current_task_index == 0 {
             return Err(CommandError::ChallengeError(
                 ChallengeError::NoPreviousTasks,
@@ -172,32 +157,25 @@ impl ChallengeCommand {
     /// # Returns
     ///
     /// A `Result` indicating success or containing an error if the solution is invalid.
-    fn solve_option(state: &mut GameState, option_index: usize) -> Result<()> {
-        let challenge_input = match state.challenge.challenge_type {
-            ChallengeType::MultipleChoice(ref dataset) => {
-                let option =
-                    dataset
-                        .options
-                        .get(option_index)
-                        .ok_or(CommandError::ChallengeError(
-                            ChallengeError::InvalidOptionId(option_index),
-                        ))?;
+    fn solve_option(state: &mut GameState<C>, option_index: usize) -> Result<()> {
+        let challenge_input = state
+            .challenge
+            .challenge_type
+            .option_input(option_index)
+            .map_err(CommandError::ChallengeError)?;
 
-                ChallengeInput::MultipleChoice(MultipleChoiceOption {
-                    id: option.id,
-                    name: option.name.clone(),
-                })
-            }
-            _ => {
-                return Err(CommandError::ChallengeError(
-                    ChallengeError::InvalidChallengeType,
-                ));
-            }
-        };
+        Self::solve_input(state, challenge_input)
+    }
 
+    /// Solves the current task with the given input and moves to the next task.
+    fn solve(state: &mut GameState<C>, input: &C::Input) -> Result<()> {
+        Self::solve_input(state, input.clone())
+    }
+
+    fn solve_input(state: &mut GameState<C>, input: C::Input) -> Result<()> {
         state
             .challenge
-            .solve(challenge_input, state.current_task_index)
+            .solve(input, state.current_task_index)
             .map_err(CommandError::ChallengeError)?;
 
         // Attempt to move to the next task, but ignore "no more tasks" errors
@@ -207,10 +185,7 @@ impl ChallengeCommand {
     }
 
     /// Finishes the current challenge with a custom result.
-    fn finish_challenge(
-        state: &mut GameState,
-        custom_result: &Option<ChallengeResult>,
-    ) -> Result<()> {
+    fn finish_challenge(state: &mut GameState<C>, custom_result: &Option<C::Result>) -> Result<()> {
         state.challenge.update_end_time();
         // Logic to handle finishing the challenge
         if let Some(result) = custom_result {

@@ -683,3 +683,105 @@ pub mod tests {
         );
     }
 }
+
+impl ChallengeType {
+    /// A result with no answers yet, shaped for this challenge type.
+    pub fn empty_result(&self) -> ChallengeResult {
+        match self {
+            ChallengeType::MultipleChoice(_) => ChallengeResult::MultipleChoice(Vec::new()),
+            ChallengeType::ContextualChoice(_) => ChallengeResult::ContextualChoice(Vec::new()),
+            ChallengeType::GapFill(_) => ChallengeResult::GapFill(Vec::new()),
+            ChallengeType::SortTable(_) => ChallengeResult::SortTable(Vec::new()),
+            ChallengeType::Informative(_) => ChallengeResult::Informative,
+            ChallengeType::Ordering(_) => ChallengeResult::Ordering(Vec::new()),
+            ChallengeType::Custom(_) => {
+                ChallengeResult::Custom(crate::challenges::CustomChallengeResult::default())
+            }
+            ChallengeType::Placeholder(_) => ChallengeResult::MultipleChoice(Vec::new()), // Placeholder uses MC
+            ChallengeType::Vocabulary(_) => ChallengeResult::Vocabulary,
+            ChallengeType::Dialog(_) => ChallengeResult::Dialog(Vec::new()),
+        }
+    }
+}
+
+impl super::Playable for ChallengeType {
+    type Input = super::ChallengeInput;
+
+    fn result_len(result: &ChallengeResult) -> usize {
+        result.len()
+    }
+
+    fn default_input(&self, task_index: usize) -> super::error::Result<Option<Self::Input>> {
+        use super::error::ChallengeError;
+        use super::{
+            ContextItemChoiceAnswers, GapFillAnswer, MultipleChoiceOption, OrderingResult,
+            SortTableRow,
+        };
+
+        Ok(match self {
+            ChallengeType::MultipleChoice(mc) => {
+                let first = mc
+                    .options
+                    .first()
+                    .ok_or(ChallengeError::InvalidChallengeType)?;
+                Some(super::ChallengeInput::MultipleChoice(
+                    MultipleChoiceOption {
+                        id: first.id,
+                        name: first.name.clone(),
+                    },
+                ))
+            }
+            ChallengeType::ContextualChoice(cc) => {
+                let first = cc
+                    .items
+                    .first()
+                    .ok_or(ChallengeError::InvalidChallengeType)?;
+                Some(super::ChallengeInput::ContextualChoice(
+                    ContextItemChoiceAnswers {
+                        ids: vec![0; first.choices.len()],
+                    },
+                ))
+            }
+            ChallengeType::GapFill(_) => Some(super::ChallengeInput::GapFill(GapFillAnswer {
+                question_index: task_index,
+                answers: vec![],
+            })),
+            ChallengeType::SortTable(_) => {
+                Some(super::ChallengeInput::SortTable(SortTableRow::default()))
+            }
+            ChallengeType::Ordering(_) => {
+                Some(super::ChallengeInput::Ordering(OrderingResult::default()))
+            }
+            _ => None,
+        })
+    }
+
+    fn record_input(
+        &self,
+        result: &mut Option<ChallengeResult>,
+        input: Self::Input,
+    ) -> super::error::Result<()> {
+        result
+            .get_or_insert_with(|| self.empty_result())
+            .add_input(input)
+    }
+
+    fn option_input(&self, option_index: usize) -> super::error::Result<Self::Input> {
+        use super::error::ChallengeError;
+        match self {
+            ChallengeType::MultipleChoice(dataset) => {
+                let option = dataset
+                    .options
+                    .get(option_index)
+                    .ok_or(ChallengeError::InvalidOptionId(option_index))?;
+                Ok(super::ChallengeInput::MultipleChoice(
+                    super::MultipleChoiceOption {
+                        id: option.id,
+                        name: option.name.clone(),
+                    },
+                ))
+            }
+            _ => Err(ChallengeError::InvalidChallengeType),
+        }
+    }
+}

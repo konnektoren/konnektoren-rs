@@ -39,22 +39,8 @@ impl Challenge {
     }
 
     pub(crate) fn result_mut(&mut self) -> &mut ChallengeResult {
-        self.challenge_result.get_or_insert_with(|| {
-            match &self.challenge_type {
-                ChallengeType::MultipleChoice(_) => ChallengeResult::MultipleChoice(Vec::new()),
-                ChallengeType::ContextualChoice(_) => ChallengeResult::ContextualChoice(Vec::new()),
-                ChallengeType::GapFill(_) => ChallengeResult::GapFill(Vec::new()),
-                ChallengeType::SortTable(_) => ChallengeResult::SortTable(Vec::new()),
-                ChallengeType::Informative(_) => ChallengeResult::Informative,
-                ChallengeType::Ordering(_) => ChallengeResult::Ordering(Vec::new()),
-                ChallengeType::Custom(_) => {
-                    ChallengeResult::Custom(crate::challenges::CustomChallengeResult::default())
-                }
-                ChallengeType::Placeholder(_) => ChallengeResult::MultipleChoice(Vec::new()), // Placeholder uses MC
-                ChallengeType::Vocabulary(_) => ChallengeResult::Vocabulary,
-                ChallengeType::Dialog(_) => ChallengeResult::Dialog(Vec::new()),
-            }
-        })
+        self.challenge_result
+            .get_or_insert_with(|| self.challenge_type.empty_result())
     }
     pub fn get_id(&self) -> String {
         self.challenge_config.id.clone()
