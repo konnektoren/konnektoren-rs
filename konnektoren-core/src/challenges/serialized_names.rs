@@ -21,3 +21,47 @@ impl SerializedNames for super::ChallengeResult {
         <Self as strum::VariantNames>::VARIANTS.to_vec()
     }
 }
+
+/// Whether no tag appears twice. Usable in constants, which is how `challenge_family!`
+/// rejects duplicate tags while compiling.
+pub const fn tags_are_distinct(tags: &[&str]) -> bool {
+    let mut first = 0;
+    while first < tags.len() {
+        let mut second = first + 1;
+        while second < tags.len() {
+            if same(tags[first].as_bytes(), tags[second].as_bytes()) {
+                return false;
+            }
+            second += 1;
+        }
+        first += 1;
+    }
+    true
+}
+
+const fn same(a: &[u8], b: &[u8]) -> bool {
+    if a.len() != b.len() {
+        return false;
+    }
+    let mut index = 0;
+    while index < a.len() {
+        if a[index] != b[index] {
+            return false;
+        }
+        index += 1;
+    }
+    true
+}
+
+#[cfg(test)]
+mod tests {
+    use super::tags_are_distinct;
+
+    #[test]
+    fn repeated_tags_are_found() {
+        assert!(tags_are_distinct(&[]));
+        assert!(tags_are_distinct(&["melody", "quiz", "melodies"]));
+        assert!(!tags_are_distinct(&["melody", "quiz", "melody"]));
+        assert!(!tags_are_distinct(&["same", "same"]));
+    }
+}

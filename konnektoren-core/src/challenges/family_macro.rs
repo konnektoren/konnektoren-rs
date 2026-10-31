@@ -14,8 +14,8 @@
 /// It also implements `ChallengeDefinition`, `Playable`, and `SerializedNames` by delegating
 /// to the member, and `Includes<Member>` so the member's commands can be embedded.
 ///
-/// Tags are the stable names used in saved games and assets. They must differ from each
-/// other and from the names of any type this one is combined with
+/// Tags are the stable names used in saved games and assets. Two members with the same tag
+/// do not compile; they must also differ from the names of any type this one is combined with
 /// (see `ChallengeFamily::duplicate_names`). All members must use the declared `variant` type.
 /// The crate using the macro needs a direct dependency on `serde`.
 ///
@@ -53,6 +53,11 @@ macro_rules! challenge_family {
         $vis enum $inputs {
             $( $member(<$ty as $crate::challenges::Playable>::Input), )+
         }
+
+        const _: () = ::std::assert!(
+            $crate::challenges::tags_are_distinct(&[ $( $tag ),+ ]),
+            "challenge_family!: two members share a tag",
+        );
 
         impl $crate::challenges::SerializedNames for $content {
             fn serialized_names() -> ::std::vec::Vec<&'static str> {

@@ -68,7 +68,7 @@ pub use performance_record::PerformanceRecord;
 pub use placeholder::{Placeholder, PlaceholderType};
 pub use playable::Playable;
 pub use review::Review;
-pub use serialized_names::SerializedNames;
+pub use serialized_names::{SerializedNames, tags_are_distinct};
 pub use solvable::Solvable;
 pub use sort_table::{SortTable, SortTableColumn, SortTableRow};
 pub use timed::Timed;
