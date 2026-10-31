@@ -6,8 +6,8 @@ use konnektoren_rs::core::challenges::error::{ChallengeError, Result};
 use konnektoren_rs::core::challenges::task_pattern::TaskPattern;
 use konnektoren_rs::core::challenges::{
     Attempt, ChallengeDefinition, ChallengeFamily, ChallengeFamilyInput, ChallengeFamilyResult,
-    ChallengeInput, ChallengeResult, ChallengeType, ChallengeVariant, MultipleChoiceOption,
-    Playable, SerializedNames,
+    ChallengeInput, ChallengeResult, ChallengeType, ChallengeVariant, Includes,
+    MultipleChoiceOption, Playable, SerializedNames,
 };
 use konnektoren_rs::core::commands::{ChallengeCommand, Command, CommandTrait, GameCommand};
 use konnektoren_rs::core::game::GameState;
@@ -21,95 +21,122 @@ struct Melody {
     notes: Vec<u8>,
 }
 
-/// The app's own challenges. Being an enum with names is all a family needs to save it.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, strum_macros::VariantNames)]
-#[serde(rename_all = "kebab-case")]
-#[strum(serialize_all = "kebab-case")]
-enum Own {
-    Melody(Melody),
-}
-
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, strum_macros::VariantNames)]
-#[serde(rename_all = "kebab-case")]
-#[strum(serialize_all = "kebab-case")]
-enum OwnAnswers {
-    Melody(Vec<u8>),
-}
-
-impl SerializedNames for Own {
-    fn serialized_names() -> Vec<&'static str> {
-        <Self as strum::VariantNames>::VARIANTS.to_vec()
-    }
-}
-
-impl SerializedNames for OwnAnswers {
-    fn serialized_names() -> Vec<&'static str> {
-        <Self as strum::VariantNames>::VARIANTS.to_vec()
-    }
-}
-
-impl ChallengeDefinition for Own {
-    type Result = OwnAnswers;
+impl ChallengeDefinition for Melody {
+    type Result = Vec<u8>;
 
     fn id(&self) -> &str {
-        let Own::Melody(melody) = self;
-        &melody.id
+        &self.id
     }
 
     fn of_tasks(&self, tasks: &TaskPattern) -> Self {
-        let Own::Melody(melody) = self;
-        Own::Melody(Melody {
-            id: melody.id.clone(),
-            notes: tasks.select_items(&melody.notes),
-        })
+        Melody {
+            id: self.id.clone(),
+            notes: tasks.select_items(&self.notes),
+        }
     }
 }
 
-impl Playable for Own {
+impl Playable for Melody {
     type Input = u8;
     type Variant = ChallengeVariant;
 
-    fn result_len(result: &OwnAnswers) -> usize {
-        let OwnAnswers::Melody(notes) = result;
-        notes.len()
+    fn result_len(result: &Vec<u8>) -> usize {
+        result.len()
     }
 
     fn default_input(&self, _task_index: usize) -> Result<Option<u8>> {
         Ok(Some(0))
     }
 
-    fn record_input(&self, result: &mut Option<OwnAnswers>, input: u8) -> Result<()> {
-        let OwnAnswers::Melody(notes) = result.get_or_insert(OwnAnswers::Melody(vec![]));
-        notes.push(input);
+    fn record_input(&self, result: &mut Option<Vec<u8>>, input: u8) -> Result<()> {
+        result.get_or_insert_with(Vec::new).push(input);
         Ok(())
     }
 
-    fn try_performance(&self, result: &OwnAnswers) -> Result<u32> {
-        let (Own::Melody(melody), OwnAnswers::Melody(played)) = (self, result);
-        let correct = melody
+    fn try_performance(&self, played: &Vec<u8>) -> Result<u32> {
+        let correct = self
             .notes
             .iter()
             .zip(played)
             .filter(|(a, b)| a == b)
             .count();
-        Ok((100 * correct / melody.notes.len().max(1)) as u32)
+        Ok((100 * correct / self.notes.len().max(1)) as u32)
     }
 
     fn solve_task(challenge: &mut Attempt<Self>, input: u8, task_index: usize) -> Result<bool> {
-        let Own::Melody(melody) = &challenge.challenge_type;
-        let expected = *melody
+        let expected = *challenge
+            .challenge_type
             .notes
             .get(task_index)
             .ok_or_else(|| ChallengeError::InvalidInput(format!("no task {task_index}")))?;
-        let OwnAnswers::Melody(played) = challenge
-            .challenge_result
-            .get_or_insert(OwnAnswers::Melody(vec![]));
+        let played = challenge.challenge_result.get_or_insert_with(Vec::new);
         if task_index < played.len() {
             played[task_index] = input;
         } else {
             played.push(input);
         }
         Ok(input == expected)
+    }
+}
+
+/// A second app challenge, to show members of different kinds side by side.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+struct Quiz {
+    id: String,
+    answer: bool,
+}
+
+impl ChallengeDefinition for Quiz {
+    type Result = Vec<bool>;
+
+    fn id(&self) -> &str {
+        &self.id
+    }
+
+    fn of_tasks(&self, _tasks: &TaskPattern) -> Self {
+        self.clone()
+    }
+}
+
+impl Playable for Quiz {
+    type Input = bool;
+    type Variant = ChallengeVariant;
+
+    fn result_len(result: &Vec<bool>) -> usize {
+        result.len()
+    }
+
+    fn default_input(&self, _task_index: usize) -> Result<Option<bool>> {
+        Ok(None)
+    }
+
+    fn record_input(&self, result: &mut Option<Vec<bool>>, input: bool) -> Result<()> {
+        result.get_or_insert_with(Vec::new).push(input);
+        Ok(())
+    }
+
+    fn try_performance(&self, given: &Vec<bool>) -> Result<u32> {
+        Ok(if given.first() == Some(&self.answer) {
+            100
+        } else {
+            0
+        })
+    }
+
+    fn solve_task(challenge: &mut Attempt<Self>, input: bool, _task_index: usize) -> Result<bool> {
+        challenge
+            .challenge_result
+            .get_or_insert_with(Vec::new)
+            .push(input);
+        Ok(input == challenge.challenge_type.answer)
+    }
+}
+
+// The app's own challenges as one saved type, with stable names.
+konnektoren_rs::core::challenge_family! {
+    enum Own, results OwnAnswers, inputs OwnInput, variant = ChallengeVariant {
+        Melody(Melody) = "melody",
+        Quiz(Quiz) = "quiz",
     }
 }
 
@@ -212,17 +239,36 @@ fn family_plays_both_branches_and_saves_without_branch_markers()
     let mut attempt = state.challenge.clone();
     attempt.challenge_type = ChallengeFamily::Second(Own::Melody(Melody {
         id: "scale".into(),
-        notes: vec![60, 62],
+        notes: vec![60, 62, 64],
     }));
     attempt.challenge_result = None;
     state.challenge = attempt;
     state.current_task_index = 0;
-    Command::Challenge(ChallengeCommand::Solve(ChallengeFamilyInput::Second(60)))
-        .execute(&mut state)?;
+    Command::Challenge(ChallengeCommand::Solve(ChallengeFamilyInput::Second(
+        OwnInput::Melody(60),
+    )))
+    .execute(&mut state)?;
     assert_eq!(
         state.challenge.challenge_result,
         Some(ChallengeFamilyResult::Second(OwnAnswers::Melody(vec![60])))
     );
+    // A command made for the melody type alone, embedded through the generated `Includes`.
+    let melody = <Own as Includes<Melody>>::embedding().then(&App::second_embedding());
+    Command::<Melody>::Challenge(ChallengeCommand::Solve(62))
+        .embed(&melody)
+        .execute(&mut state)?;
+    assert_eq!(
+        state.challenge.challenge_result,
+        Some(ChallengeFamilyResult::Second(OwnAnswers::Melody(vec![
+            60, 62
+        ])))
+    );
+    // And the melody can be pulled back out of the larger attempt.
+    let extracted = melody.extract_attempt(&state.challenge).unwrap();
+    assert_eq!(extracted.challenge_result, Some(vec![60, 62]));
+    // A member that is not the current one is not found.
+    let quiz = <Own as Includes<Quiz>>::embedding().then(&App::second_embedding());
+    assert!(quiz.extract_attempt(&state.challenge).is_none());
     // Input for the other branch is an explicit error.
     assert!(
         Command::Challenge(ChallengeCommand::Solve(ChallengeFamilyInput::First(
@@ -250,6 +296,7 @@ fn family_plays_both_branches_and_saves_without_branch_markers()
 #[test]
 fn names_must_differ_between_included_types_and_unknown_names_fail() {
     assert!(App::duplicate_names().is_empty());
+    assert_eq!(Own::serialized_names(), ["melody", "quiz"]);
     // Including a type twice is caught before it can silently pick the first branch.
     let duplicates = ChallengeFamily::<ChallengeType, ChallengeType>::duplicate_names();
     assert!(duplicates.contains(&"multiple-choice"));
@@ -257,4 +304,35 @@ fn names_must_differ_between_included_types_and_unknown_names_fail() {
     let error = serde_json::from_str::<App>("{\"no-such-challenge\": {}}").unwrap_err();
     assert!(error.to_string().contains("no-such-challenge"), "{error}");
     assert!(serde_json::from_str::<App>("\"melody\"").is_err());
+}
+
+#[test]
+fn declared_family_saves_each_member_under_its_tag_and_delegates() {
+    let quiz = Own::Quiz(Quiz {
+        id: "q".into(),
+        answer: true,
+    });
+    assert_eq!(
+        serde_json::to_string(&quiz).unwrap(),
+        r#"{"quiz":{"id":"q","answer":true}}"#
+    );
+    assert!(serde_yaml::to_string(&quiz).unwrap().starts_with("!quiz"));
+    assert_eq!(
+        serde_json::to_string(&OwnAnswers::Quiz(vec![true])).unwrap(),
+        r#"{"quiz":[true]}"#
+    );
+    assert_eq!(quiz.id(), "q");
+    // Results of the other member are rejected, never scored as zero.
+    assert_eq!(quiz.try_performance(&OwnAnswers::Quiz(vec![true])), Ok(100));
+    assert_eq!(
+        quiz.try_performance(&OwnAnswers::Melody(vec![60])),
+        Err(ChallengeError::FamilyMismatch)
+    );
+    // The quiz skips unanswered tasks, the melody pads them: each member decides.
+    assert_eq!(quiz.default_input(0), Ok(None));
+    let melody = Own::Melody(Melody {
+        id: "m".into(),
+        notes: vec![60],
+    });
+    assert_eq!(melody.default_input(0), Ok(Some(OwnInput::Melody(0))));
 }
