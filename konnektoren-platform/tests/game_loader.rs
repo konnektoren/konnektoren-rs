@@ -457,6 +457,7 @@ mod external_formats {
             let manifest: Manifest<NoExtensions> = serde_yaml::from_str("game_paths: [mixed.yml]")?;
             let loader = GameLoader::from_manifest(&manifest, EmbeddedSource::new(MIXED_FILES))
                 .with_formats(Yaml::<ExternalLevel>::new(), CombinedFormat);
+            loader.validate_assets().await?;
             let factory = loader
                 .preload_factory(&loader.load_game_paths().await?)
                 .await?;
@@ -549,11 +550,10 @@ mod external_formats {
             let loader = GameLoader::from_manifest(&manifest, EmbeddedSource::new(FILES))
                 .with_formats(Yaml::<ExternalLevel>::new(), ContentFormat { minimum: 0 })
                 .with_challenge_path_resolver(|id| format!("content/{id}.json"));
-            let levels = loader.load_game_paths().await?;
             loader.load_challenge("shared").await?;
             let strict =
                 loader.with_formats(Yaml::<ExternalLevel>::new(), ContentFormat { minimum: 10 });
-            match strict.preload_factory(&levels).await {
+            match strict.validate_assets().await {
                 Err(GameLoadError::Reference {
                     level_id,
                     entry_id,

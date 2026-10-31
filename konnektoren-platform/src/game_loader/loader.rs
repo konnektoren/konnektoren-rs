@@ -168,6 +168,19 @@ where
         }
         Ok(factory)
     }
+
+    /// Validate every level and referenced challenge using the configured formats.
+    ///
+    /// Build scripts can call this to reject invalid bundled assets. Cargo file
+    /// change tracking remains the build script's responsibility.
+    pub async fn validate_assets(&self) -> Result<(), GameLoadError>
+    where
+        L::Asset: LevelDefinition,
+    {
+        let levels = self.load_game_paths().await?;
+        self.preload_factory(&levels).await?;
+        Ok(())
+    }
 }
 
 impl<S, L, C> GameLoader<S, L, C>

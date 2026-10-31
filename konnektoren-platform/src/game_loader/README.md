@@ -72,13 +72,45 @@ also participate in the asset server's cache identity.
 
 `preload_game` remains available for formats producing core's `GamePath` and
 `ChallengeType`, including custom parsers returning those types. External game
-state/controller integration and build-time validation are separate steps.
+state/controller integration is a separate step.
 
 An application can define an enum wrapping core and external content, implement
 `ChallengeDefinition` for it, and provide a format that dispatches flat YAML
 types to the appropriate parser. The mixed-content integration test demonstrates
 this without adding application-specific challenge types to core. Parsing an
 unknown or malformed type returns an asset error; it is not silently ignored.
+
+## Validate assets during a build
+
+An application's `build.rs` can call `validate_assets()` to parse every level
+listed by the manifest and every unique referenced challenge. A parse error,
+missing file, or mismatched content ID fails the build. Use the same formats and
+path resolver that the application uses at runtime; challenge-specific semantic
+validation belongs in its format's `parse` method.
+
+```rust,no_run
+use konnektoren_asset_loader::FileSource;
+use konnektoren_platform::{game_loader::GameLoader, manifest::{Manifest, NoExtensions}};
+use std::path::PathBuf;
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let root = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR")?);
+    let manifest_path = root.join("assets/konnektoren.manifest.yml");
+    let manifest: Manifest<NoExtensions> = serde_yaml::from_slice(&std::fs::read(&manifest_path)?)?;
+    let asset_root = root.join(&manifest.assets.path);
+    println!("cargo:rerun-if-changed={}", manifest_path.display());
+    println!("cargo:rerun-if-changed={}", asset_root.display());
+    let loader = GameLoader::from_manifest(&manifest, FileSource::from_dir(asset_root));
+    futures::executor::block_on(loader.validate_assets())?;
+    Ok(())
+}
+```
+
+The consuming crate needs the loader, its application-specific format/model
+crate, `serde_yaml`, and an executor such as `futures` as build dependencies.
+The build script runs for the host; its format types must be usable there.
+Watching the asset directory lets Cargo rerun validation when files are added,
+removed, or changed. Runtime validation remains necessary for remote assets.
 
 ## Paths and source selection
 
