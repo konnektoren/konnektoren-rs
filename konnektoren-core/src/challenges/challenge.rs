@@ -9,10 +9,10 @@ use serde::{Deserialize, Serialize};
 use super::{Performance, Solvable};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
-pub struct Challenge {
-    pub challenge_type: ChallengeType,
-    pub challenge_config: ChallengeConfig,
-    pub challenge_result: ChallengeResult,
+pub struct Challenge<C = ChallengeType, R = ChallengeResult, Config = ChallengeConfig> {
+    pub challenge_type: C,
+    pub challenge_config: Config,
+    pub challenge_result: R,
     pub start_time: Option<DateTime<Utc>>,
     pub end_time: Option<DateTime<Utc>>,
 }
@@ -143,13 +143,13 @@ impl Solvable for Challenge {
     }
 }
 
-impl Performance for Challenge {
-    fn performance(&self, result: &ChallengeResult) -> u32 {
+impl<C: Performance<R>, R, Config> Performance<R> for Challenge<C, R, Config> {
+    fn performance(&self, result: &R) -> u32 {
         self.challenge_type.performance(result)
     }
 }
 
-impl Timed for Challenge {
+impl<C, R, Config> Timed for Challenge<C, R, Config> {
     fn start(&mut self) {
         self.start_time = Some(Utc::now());
     }

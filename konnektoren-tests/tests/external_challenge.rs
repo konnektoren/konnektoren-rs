@@ -1,6 +1,9 @@
-use konnektoren_rs::core::challenges::{Performance, Solvable};
+use konnektoren_rs::core::challenges::{Challenge, Performance, Solvable, Timed};
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct ExternalChallenge;
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct ExternalResult(u32);
 
 impl Performance<ExternalResult> for ExternalChallenge {
@@ -46,4 +49,29 @@ fn external_challenges_accept_their_own_input_and_error() {
     assert_eq!(challenge.played, Some(60));
     assert_eq!(challenge.solve(62, 1), Err(InvalidTask));
     assert_eq!(challenge.played, Some(60));
+}
+
+#[test]
+fn external_attempt_round_trips_with_timing_and_performance()
+-> Result<(), Box<dyn std::error::Error>> {
+    let mut attempt = Challenge {
+        challenge_type: ExternalChallenge,
+        challenge_config: "music".to_owned(),
+        challenge_result: ExternalResult(80),
+        start_time: None,
+        end_time: None,
+    };
+    attempt.start();
+    attempt.update_end_time();
+    assert!(attempt.elapsed_time().is_some());
+    assert_eq!(attempt.stars(&attempt.challenge_result), 3);
+    let yaml = serde_yaml::to_string(&attempt)?;
+    let restored: Challenge<ExternalChallenge, ExternalResult, String> =
+        serde_yaml::from_str(&yaml)?;
+    assert_eq!(restored, attempt);
+    let json = serde_json::to_string(&attempt)?;
+    let restored: Challenge<ExternalChallenge, ExternalResult, String> =
+        serde_json::from_str(&json)?;
+    assert_eq!(restored, attempt);
+    Ok(())
 }
