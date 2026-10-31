@@ -219,3 +219,117 @@ fn nested_challenge_families_keep_each_result_type() -> Result<(), Box<dyn std::
     ));
     Ok(())
 }
+
+impl Performance<Vec<u8>> for ExternalContent {
+    fn performance(&self, result: &Vec<u8>) -> u32 {
+        if result.is_empty() { 0 } else { 100 }
+    }
+}
+
+impl Performance<Vec<Option<u8>>> for TaskSequence {
+    fn performance(&self, result: &Vec<Option<u8>>) -> u32 {
+        if result.iter().flatten().eq(self.0.iter()) {
+            100
+        } else {
+            0
+        }
+    }
+}
+
+#[test]
+fn family_scoring_checks_each_nested_branch() -> Result<(), Box<dyn std::error::Error>> {
+    use konnektoren_rs::core::challenges::{
+        ChallengeFamily, ChallengeFamilyResult, ChallengeResult, ChallengeType,
+        FamilyResultMismatch,
+    };
+    type AppContent =
+        ChallengeFamily<ChallengeType, ChallengeFamily<ExternalContent, TaskSequence>>;
+    let challenge: AppContent =
+        ChallengeFamily::Second(ChallengeFamily::Second(TaskSequence(vec![1, 2])));
+    let result =
+        ChallengeFamilyResult::Second(ChallengeFamilyResult::Second(vec![Some(1), Some(2)]));
+    let score = challenge.try_with_result(
+        &result,
+        |core, answers| Ok(core.performance(answers)),
+        |group, answers| group.try_performance(answers),
+    )??;
+    assert_eq!(score, 100);
+
+    let wrong_outer = ChallengeFamilyResult::First(ChallengeResult::default());
+    assert_eq!(
+        challenge.try_with_result(&wrong_outer, |_, _| (), |_, _| ()),
+        Err(FamilyResultMismatch)
+    );
+    let wrong_inner = ChallengeFamilyResult::Second(ChallengeFamilyResult::First(vec![1]));
+    let inner_score = challenge.try_with_result(
+        &wrong_inner,
+        |core, answers| Ok(core.performance(answers)),
+        |group, answers| group.try_performance(answers),
+    )?;
+    assert_eq!(inner_score, Err(FamilyResultMismatch));
+    Ok(())
+}
+
+#[test]
+fn flat_app_types_load_legacy_history_and_round_trip_mixed_attempts()
+-> Result<(), Box<dyn std::error::Error>> {
+    use konnektoren_rs::core::challenges::{MultipleChoice, MultipleChoiceOption};
+
+    // An app-owned enum describes actual persisted types, not family positions.
+    #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+    struct Example {
+        id: String,
+        value: u32,
+    }
+    #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+    #[serde(rename_all = "kebab-case")]
+    enum FlatContent {
+        MultipleChoice(MultipleChoice),
+        Example(Example),
+    }
+    #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+    enum FlatResult {
+        MultipleChoice(Vec<MultipleChoiceOption>),
+        Example(Vec<u8>),
+    }
+    type Attempt = Challenge<FlatContent, FlatResult>;
+
+    let legacy_json: serde_json::Value = serde_json::from_str(include_str!(
+        "../../konnektoren-core/tests/fixtures/legacy-session.json"
+    ))?;
+    let original_history = legacy_json["game_state"]["game"]["challenge_history"].clone();
+    let mut history: ChallengeHistory<Attempt> = serde_json::from_value(original_history.clone())?;
+    assert_eq!(serde_json::to_value(&history)?, original_history);
+    let legacy_yaml: serde_yaml::Value = serde_yaml::from_str(include_str!(
+        "../../konnektoren-core/tests/fixtures/legacy-session.yml"
+    ))?;
+    let yaml_history: ChallengeHistory<Attempt> =
+        serde_yaml::from_value(legacy_yaml["game_state"]["game"]["challenge_history"].clone())?;
+    assert_eq!(yaml_history, history);
+
+    history.add_challenge(Challenge {
+        challenge_type: FlatContent::Example(Example {
+            id: "external".into(),
+            value: 42,
+        }),
+        challenge_config: ChallengeConfig::default(),
+        challenge_result: Some(FlatResult::Example(vec![1, 2])),
+        start_time: None,
+        end_time: None,
+    });
+    let json = serde_json::to_string(&history)?;
+    let decoded: ChallengeHistory<Attempt> = serde_json::from_str(&json)?;
+    assert_eq!(decoded, history);
+    assert!(!json.contains("family_branch"));
+    assert!(!json.contains("\"branch\""));
+    let yaml = serde_yaml::to_string(&history)?;
+    let decoded: ChallengeHistory<Attempt> = serde_yaml::from_str(&yaml)?;
+    assert_eq!(decoded, history);
+    assert!(yaml.contains("!multiple-choice"));
+    assert!(yaml.contains("!example"));
+    assert!(!yaml.contains("branch:"));
+    let mut invalid: serde_json::Value = serde_json::from_str(&json)?;
+    invalid["challenges"][1]["challenge_result"] = serde_json::json!({"Unknown": []});
+    assert!(serde_json::from_value::<ChallengeHistory<Attempt>>(invalid).is_err());
+    Ok(())
+}
