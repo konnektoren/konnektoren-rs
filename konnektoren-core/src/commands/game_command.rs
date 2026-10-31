@@ -2,7 +2,7 @@
 
 use super::command::CommandTrait;
 use super::command_type::CommandType;
-use crate::challenges::Timed;
+use crate::challenges::{ChallengeDefinition, Timed};
 use crate::commands::error::{CommandError, Result};
 use crate::game::GamePath;
 use crate::game::GameState;
@@ -17,7 +17,7 @@ pub enum GameCommand {
     PreviousChallenge,
 }
 
-impl CommandTrait for GameCommand {
+impl<C: ChallengeDefinition> CommandTrait<C> for GameCommand {
     /// Executes the game command on the given game state.
     ///
     /// # Arguments
@@ -27,7 +27,7 @@ impl CommandTrait for GameCommand {
     /// # Returns
     ///
     /// A `Result` indicating success or containing an error if the command execution failed.
-    fn execute(&self, state: &mut GameState) -> Result<()> {
+    fn execute(&self, state: &mut GameState<C>) -> Result<()> {
         match self {
             GameCommand::NextChallenge => Self::next_challenge(state),
             GameCommand::PreviousChallenge => Self::previous_challenge(state),
@@ -50,7 +50,7 @@ impl GameCommand {
     /// # Returns
     ///
     /// A `Result` indicating success or containing an error if there are no more challenges.
-    pub fn next_challenge(state: &mut GameState) -> Result<()> {
+    pub fn next_challenge<C: ChallengeDefinition>(state: &mut GameState<C>) -> Result<()> {
         let current_game_path: &GamePath = state
             .game
             .game_paths
@@ -85,7 +85,7 @@ impl GameCommand {
     /// # Returns
     ///
     /// A `Result` indicating success or containing an error if there are no previous challenges.
-    pub fn previous_challenge(state: &mut GameState) -> Result<()> {
+    pub fn previous_challenge<C: ChallengeDefinition>(state: &mut GameState<C>) -> Result<()> {
         if state.current_challenge_index == 0 {
             return Err(CommandError::GameError(GameError::InvalidGameState(
                 "No previous challenges".to_string(),

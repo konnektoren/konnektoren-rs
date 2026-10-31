@@ -4,10 +4,11 @@ use super::CommandType;
 use super::challenge_command::ChallengeCommand;
 use super::error::Result;
 use super::game_command::GameCommand;
+use crate::challenges::{ChallengeDefinition, ChallengeType};
 use crate::game::GameState;
 
 /// A trait that defines the basic behavior for all commands in the game.
-pub trait CommandTrait {
+pub trait CommandTrait<C: ChallengeDefinition = ChallengeType> {
     /// Executes the command on the given game state.
     ///
     /// # Arguments
@@ -17,7 +18,7 @@ pub trait CommandTrait {
     /// # Returns
     ///
     /// A `Result` indicating success or containing an error if the command execution failed.
-    fn execute(&self, state: &mut GameState) -> Result<()>;
+    fn execute(&self, state: &mut GameState<C>) -> Result<()>;
 
     /// Gets the type of the command.
     fn get_type(&self) -> CommandType;
