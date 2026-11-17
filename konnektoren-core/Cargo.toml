@@ -46,7 +46,7 @@ country-emoji = { workspace = true }
 eval = { workspace = true, optional = true }
 isolang = { workspace = true }
 tracing = { workspace = true }
-names = { workspace = true }
+petname = { workspace = true, features = ["default-rng", "default-words"] }
 rand = { workspace = true }
 rmp-serde = { workspace = true }
 schemars = { workspace = true, optional = true }

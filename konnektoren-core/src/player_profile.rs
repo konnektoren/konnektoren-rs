@@ -22,8 +22,7 @@ impl PlayerProfile {
 
 impl Default for PlayerProfile {
     fn default() -> Self {
-        let mut generator = names::Generator::default();
-        let name = generator.next().unwrap();
+        let name = petname::petname(2, "-").unwrap_or_default();
 
         PlayerProfile {
             id: "".to_string(),
