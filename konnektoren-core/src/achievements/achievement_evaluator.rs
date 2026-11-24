@@ -1,22 +1,34 @@
 use super::achievement_definition::{AchievementDefinition, AchievementDefinitions};
 use super::achievement_statistic::*;
 use super::game_statistics::GameStatistics;
+use crate::challenges::PerformanceScale;
 use crate::game::Game;
 use eval::{eval, to_value as eval_to_value};
 
 pub struct AchievementEvaluator {
     definitions: Vec<AchievementDefinition>,
+    scale: PerformanceScale,
 }
 impl AchievementEvaluator {
+    /// Conditions may use `total_challenges`, `average_performance`, `total_xp`,
+    /// `completed_game_paths`, `perfect_challenges`, `passed_challenges`,
+    /// `mastered_challenges` and `different_challenge_types_completed`.
     pub fn new(yaml_content: &str) -> Result<Self, serde_yaml::Error> {
         let definitions: AchievementDefinitions = serde_yaml::from_str(yaml_content)?;
         Ok(AchievementEvaluator {
             definitions: definitions.achievements,
+            scale: PerformanceScale::DEFAULT,
         })
     }
 
+    /// Judge `passed_challenges` and `mastered_challenges` on the app's `scale`.
+    pub fn with_scale(mut self, scale: PerformanceScale) -> Self {
+        self.scale = scale;
+        self
+    }
+
     pub fn evaluate(&self, game: &Game) -> Vec<&AchievementDefinition> {
-        let statistics = GameStatistics::new(game);
+        let statistics = GameStatistics::new(game).with_scale(self.scale);
         self.definitions
             .iter()
             .filter(|def| self.evaluate_condition(&def.condition, &statistics))
@@ -52,6 +64,14 @@ impl AchievementEvaluator {
                 &statistics.perfect_challenges().to_string(),
             )
             .replace(
+                "passed_challenges",
+                &statistics.passed_challenges().to_string(),
+            )
+            .replace(
+                "mastered_challenges",
+                &statistics.mastered_challenges().to_string(),
+            )
+            .replace(
                 "different_challenge_types_completed",
                 &statistics.different_challenge_types_completed().to_string(),
             )
@@ -84,6 +104,54 @@ mod tests {
         icon: 🧭
         condition: "completed_game_paths >= 3 && perfect_challenges >= 10"
     "#;
+
+    #[test]
+    fn passed_and_mastered_conditions_follow_the_scale() {
+        use crate::challenges::{
+            Challenge, ChallengeConfig, ChallengeResult, ChallengeType, MultipleChoice,
+            MultipleChoiceOption,
+        };
+        use crate::prelude::Question;
+        const YAML: &str = r#"
+        achievements:
+          - id: passed
+            name: Passed
+            description: Pass one challenge
+            icon: ✅
+            condition: "passed_challenges >= 1"
+          - id: mastered
+            name: Mastered
+            description: Master one challenge
+            icon: ⭐
+            condition: "mastered_challenges >= 1 & total_challenges >= 1"
+        "#;
+        let challenge_type = ChallengeType::MultipleChoice(MultipleChoice {
+            id: "mc".into(),
+            questions: vec![Question::default()],
+            options: vec![MultipleChoiceOption::default()],
+            ..Default::default()
+        });
+        let mut challenge = Challenge::new(&challenge_type, &ChallengeConfig::default());
+        challenge.challenge_result = Some(ChallengeResult::MultipleChoice(vec![
+            MultipleChoiceOption::default(),
+        ]));
+        let mut game = Game::default();
+        game.challenge_history.add_challenge(challenge);
+
+        let ids = |evaluator: &AchievementEvaluator| -> Vec<String> {
+            evaluator
+                .evaluate(&game)
+                .iter()
+                .map(|a| a.id.clone())
+                .collect()
+        };
+        let evaluator = AchievementEvaluator::new(YAML).unwrap();
+        assert_eq!(ids(&evaluator), ["passed", "mastered"]);
+        let strict = AchievementEvaluator::new(YAML)
+            .unwrap()
+            .with_scale(PerformanceScale::DEFAULT.with_mastered(101));
+        assert_eq!(ids(&strict), ["passed"]);
+    }
 
     #[test]
     fn test_achievement_evaluator() {

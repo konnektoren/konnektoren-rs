@@ -1,13 +1,14 @@
 use super::super::Trend;
 use super::metric::Metric;
 use crate::challenges::ChallengeHistory;
-use crate::challenges::Performance;
+use crate::challenges::{Performance, PerformanceScale};
 use chrono::{DateTime, Duration, Utc};
 
 #[derive(Clone, PartialEq, Default)]
 pub struct SuccessRateMetric {
     history: ChallengeHistory,
     reference_time: DateTime<Utc>,
+    scale: PerformanceScale,
 }
 
 impl SuccessRateMetric {
@@ -23,7 +24,19 @@ impl SuccessRateMetric {
         Self {
             history,
             reference_time,
+            scale: PerformanceScale::DEFAULT,
         }
+    }
+
+    /// Judge success on the app's `scale`; an attempt is successful when mastered.
+    pub fn with_scale(mut self, scale: PerformanceScale) -> Self {
+        self.scale = scale;
+        self
+    }
+
+    fn successful(&self, challenge: &crate::challenges::Challenge) -> bool {
+        self.scale
+            .is_mastered(challenge.performance(&challenge.challenge_result))
     }
 
     fn calculate(&self) -> f64 {
@@ -36,9 +49,7 @@ impl SuccessRateMetric {
             .history
             .challenges
             .iter()
-            .filter(|challenge| {
-                challenge.performance(&challenge.challenge_result) >= 80 // Consider 80% as success
-            })
+            .filter(|challenge| self.successful(challenge))
             .count();
 
         (successful_challenges as f64 / total_challenges as f64) * 100.0
@@ -63,7 +74,7 @@ impl SuccessRateMetric {
         // Calculate success rate for recent challenges
         let recent_success_count = recent_challenges
             .iter()
-            .filter(|c| c.performance(&c.challenge_result) >= 80)
+            .filter(|c| self.successful(c))
             .count();
         let recent_success_rate = recent_success_count as f64 / recent_challenges.len() as f64;
 
@@ -73,7 +84,7 @@ impl SuccessRateMetric {
         } else {
             let older_success_count = older_challenges
                 .iter()
-                .filter(|c| c.performance(&c.challenge_result) >= 80)
+                .filter(|c| self.successful(c))
                 .count();
             older_success_count as f64 / older_challenges.len() as f64
         };
@@ -120,6 +131,20 @@ mod tests {
             50.0,
             "Should have 50% success rate with one successful and one failed challenge"
         );
+    }
+
+    #[test]
+    fn success_follows_the_app_scale() {
+        let mut history = ChallengeHistory::new();
+        history.add_challenge(create_successful_challenge());
+        history.add_challenge(create_unsuccessful_challenge());
+        let failed = create_unsuccessful_challenge();
+        let failed_score = failed.performance(&failed.challenge_result);
+
+        // Counting the unsuccessful attempt as mastered makes everything successful.
+        let lenient = PerformanceScale::DEFAULT.with_mastered(failed_score);
+        let metric = SuccessRateMetric::new(history).with_scale(lenient);
+        assert_eq!(metric.value(), 100.0);
     }
 
     #[test]

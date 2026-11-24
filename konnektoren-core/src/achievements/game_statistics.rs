@@ -1,16 +1,39 @@
 use super::achievement_statistic::*;
 use crate::analytics::Metric;
 use crate::challenges::performance::Performance;
+use crate::challenges::{Challenge, PerformanceScale};
 use crate::game::{Game, GamePath};
 use std::collections::HashSet;
 
 pub struct GameStatistics<'a> {
     game: &'a Game,
+    scale: PerformanceScale,
 }
 
 impl<'a> GameStatistics<'a> {
+    /// Statistics on the [default scale](PerformanceScale::DEFAULT).
     pub fn new(game: &'a Game) -> Self {
-        GameStatistics { game }
+        GameStatistics {
+            game,
+            scale: PerformanceScale::DEFAULT,
+        }
+    }
+
+    /// Judge passed and mastered attempts on the app's `scale`.
+    pub fn with_scale(mut self, scale: PerformanceScale) -> Self {
+        self.scale = scale;
+        self
+    }
+
+    fn count_attempts(&self, admits: impl Fn(u32) -> bool) -> u32 {
+        self.game
+            .challenge_history
+            .challenges
+            .iter()
+            .filter(|challenge: &&Challenge| {
+                admits(challenge.performance(&challenge.challenge_result))
+            })
+            .count() as u32
     }
 }
 
@@ -76,6 +99,20 @@ impl PerfectChallenges for GameStatistics<'_> {
             .iter()
             .filter(|challenge| challenge.performance(&challenge.challenge_result) == 100)
             .count() as u32
+    }
+}
+
+/// Attempts at or above the scale's passed threshold.
+impl PassedChallenges for GameStatistics<'_> {
+    fn passed_challenges(&self) -> u32 {
+        self.count_attempts(|performance| self.scale.is_passed(performance))
+    }
+}
+
+/// Attempts at or above the scale's mastered threshold.
+impl MasteredChallenges for GameStatistics<'_> {
+    fn mastered_challenges(&self) -> u32 {
+        self.count_attempts(|performance| self.scale.is_mastered(performance))
     }
 }
 
@@ -225,6 +262,28 @@ mod tests {
         let game = create_mock_game(5, 100);
         let stats = GameStatistics::new(&game);
         assert_eq!(stats.perfect_challenges(), 5);
+    }
+
+    #[test]
+    fn test_passed_and_mastered_challenges_follow_the_scale() {
+        let game = create_mock_game(4, 100);
+        let stats = GameStatistics::new(&game);
+        assert_eq!(stats.passed_challenges(), 4);
+        assert_eq!(stats.mastered_challenges(), 4);
+
+        let mut game = create_mock_game(2, 100);
+        game.challenge_history.challenges[0].challenge_result = None;
+        let stats = GameStatistics::new(&game);
+        assert_eq!(stats.passed_challenges(), 1);
+        assert_eq!(stats.mastered_challenges(), 1);
+
+        // Nothing is good enough on an impossible scale.
+        let strict = PerformanceScale::DEFAULT
+            .with_passed(101)
+            .with_mastered(101);
+        let stats = GameStatistics::new(&game).with_scale(strict);
+        assert_eq!(stats.passed_challenges(), 0);
+        assert_eq!(stats.mastered_challenges(), 0);
     }
 
     #[test]

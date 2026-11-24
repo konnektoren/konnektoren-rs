@@ -68,6 +68,32 @@ pub trait PerfectChallenges: AchievementStatistic {
     }
 }
 
+pub trait PassedChallenges: AchievementStatistic {
+    fn name(&self) -> &str {
+        "passed_challenges"
+    }
+    fn description(&self) -> &str {
+        "Number of challenges passed"
+    }
+    fn passed_challenges(&self) -> u32;
+    fn value(&self) -> f64 {
+        self.passed_challenges() as f64
+    }
+}
+
+pub trait MasteredChallenges: AchievementStatistic {
+    fn name(&self) -> &str {
+        "mastered_challenges"
+    }
+    fn description(&self) -> &str {
+        "Number of challenges mastered"
+    }
+    fn mastered_challenges(&self) -> u32;
+    fn value(&self) -> f64 {
+        self.mastered_challenges() as f64
+    }
+}
+
 pub trait DifferentChallengeTypesCompleted: AchievementStatistic {
     fn name(&self) -> &str {
         "different_challenge_types_completed"
@@ -125,6 +151,16 @@ mod tests {
     impl PerfectChallenges for DummyStats {
         fn perfect_challenges(&self) -> u32 {
             7
+        }
+    }
+    impl PassedChallenges for DummyStats {
+        fn passed_challenges(&self) -> u32 {
+            9
+        }
+    }
+    impl MasteredChallenges for DummyStats {
+        fn mastered_challenges(&self) -> u32 {
+            6
         }
     }
     impl DifferentChallengeTypesCompleted for DummyStats {
@@ -191,6 +227,15 @@ mod tests {
         );
         assert_eq!(stats.perfect_challenges(), 7);
         assert_eq!(PerfectChallenges::value(&stats), 7.0);
+    }
+
+    #[test]
+    fn test_passed_and_mastered_challenges_traits() {
+        let stats = DummyStats;
+        assert_eq!(PassedChallenges::name(&stats), "passed_challenges");
+        assert_eq!(PassedChallenges::value(&stats), 9.0);
+        assert_eq!(MasteredChallenges::name(&stats), "mastered_challenges");
+        assert_eq!(MasteredChallenges::value(&stats), 6.0);
     }
 
     #[test]

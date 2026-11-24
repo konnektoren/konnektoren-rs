@@ -93,7 +93,15 @@ impl Performance<ExternalResult> for ExternalChallenge {
 #[test]
 fn external_challenges_share_core_star_thresholds() {
     let challenge = ExternalChallenge;
-    for (score, stars) in [(0, 0), (39, 0), (40, 1), (60, 2), (80, 3), (100, 3)] {
+    for (score, stars) in [
+        (0, 0),
+        (59, 0),
+        (60, 1),
+        (69, 1),
+        (70, 2),
+        (80, 3),
+        (100, 3),
+    ] {
         assert_eq!(challenge.stars(&ExternalResult(score)), stars);
     }
 }

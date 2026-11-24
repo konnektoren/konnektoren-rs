@@ -1,11 +1,19 @@
-use crate::challenges::{ChallengeConfig, ChallengeHistory, Performance};
+use crate::challenges::{ChallengeConfig, ChallengeHistory, Performance, PerformanceScale};
 
 pub trait ChallengeStats {
     fn challenges(&self) -> usize;
 
     fn completed_challenges(&self) -> usize;
 
-    fn stars(&self) -> u32;
+    /// Stars on the [default scale](PerformanceScale::DEFAULT).
+    fn stars(&self) -> u32 {
+        self.stars_with(&PerformanceScale::DEFAULT)
+    }
+
+    /// Stars on the app's `scale`.
+    fn stars_with(&self, scale: &PerformanceScale) -> u32 {
+        scale.stars(self.performance())
+    }
 
     fn performance(&self) -> u32;
 
@@ -19,19 +27,6 @@ impl ChallengeStats for ChallengeHistory {
 
     fn completed_challenges(&self) -> usize {
         self.challenges.iter().filter(|c| c.solved()).count()
-    }
-
-    fn stars(&self) -> u32 {
-        let performance = self.performance();
-        if performance >= 80 {
-            3
-        } else if performance >= 60 {
-            2
-        } else if performance >= 40 {
-            1
-        } else {
-            0
-        }
     }
 
     fn performance(&self) -> u32 {
@@ -68,19 +63,6 @@ impl ChallengeStats for (&ChallengeConfig, &ChallengeHistory) {
                         .is_some_and(|result| result.len() == c.challenge_config.tasks.len())
             })
             .count()
-    }
-
-    fn stars(&self) -> u32 {
-        let performance = self.performance();
-        if performance >= 80 {
-            3
-        } else if performance >= 60 {
-            2
-        } else if performance >= 40 {
-            1
-        } else {
-            0
-        }
     }
 
     fn performance(&self) -> u32 {

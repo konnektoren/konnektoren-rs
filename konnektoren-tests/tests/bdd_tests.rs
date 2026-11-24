@@ -19,6 +19,9 @@ pub struct BddWorld {
     pub unlocked_achievements: Vec<AchievementDefinition>,
     pub achievement_notification: Option<AchievementDefinition>,
     pub controller: Option<Arc<GameController>>,
+    pub scale: PerformanceScale,
+    pub judged_performance: Option<u32>,
+    pub achievement_yaml: Option<String>,
 }
 
 impl Default for BddWorld {
@@ -47,6 +50,9 @@ impl Default for BddWorld {
             unlocked_achievements: Vec::new(),
             achievement_notification: None,
             controller: None,
+            scale: PerformanceScale::DEFAULT,
+            judged_performance: None,
+            achievement_yaml: None,
         }
     }
 }

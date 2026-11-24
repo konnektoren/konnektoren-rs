@@ -1,29 +1,26 @@
-use super::ChallengeResult;
+use super::{ChallengeResult, PerformanceScale};
 
 /// Scores a challenge result. External challenges can supply their own result type.
 pub trait Performance<R = ChallengeResult> {
     /// Returns the performance in percentage.
     fn performance(&self, result: &R) -> u32;
 
-    /// Returns the number of stars based on the performance.
-    /// 3 stars for 80% or more, 2 stars for 60% or more, 1 star for 40% or more, 0 stars otherwise.
-    /// The performance is calculated by the `performance` method.
+    /// Stars on the [default scale](PerformanceScale::DEFAULT): three from 80 %, two
+    /// from 70 %, one from 60 %.
     fn stars(&self, result: &R) -> u32 {
-        stars_for(self.performance(result))
+        self.stars_with(result, &PerformanceScale::DEFAULT)
+    }
+
+    /// Stars on the app's `scale`.
+    fn stars_with(&self, result: &R, scale: &PerformanceScale) -> u32 {
+        scale.stars(self.performance(result))
     }
 }
 
-/// The stars a performance earns: three from 80, two from 60, one from 40.
+/// The stars a performance earns on the [default scale](PerformanceScale::DEFAULT):
+/// three from 80, two from 70, one from 60.
 pub fn stars_for(performance: u32) -> u32 {
-    if performance >= 80 {
-        3
-    } else if performance >= 60 {
-        2
-    } else if performance >= 40 {
-        1
-    } else {
-        0
-    }
+    PerformanceScale::DEFAULT.stars(performance)
 }
 
 #[cfg(test)]

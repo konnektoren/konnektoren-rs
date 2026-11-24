@@ -49,6 +49,7 @@ pub mod prelude {
     pub use crate::challenges::Performance;
     pub use crate::challenges::Question;
     pub use crate::challenges::Speaker;
+    pub use crate::challenges::{PerformanceBand, PerformanceScale};
     pub use crate::commands::error::CommandError;
     pub use crate::controller::GameController;
     pub use crate::controller::error::ControllerError;
