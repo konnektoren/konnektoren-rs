@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["AchievementDefinition","AchievementEvaluator","GameStatistics"],"trait":["AchievementStatistic","AveragePerformance","CompletedGamePaths","DifferentChallengeTypesCompleted","PerfectChallenges","TotalChallenges","TotalXp"]};
+window.SIDEBAR_ITEMS = {"struct":["AchievementDefinition","AchievementEvaluator","GameStatistics"],"trait":["AchievementStatistic","AveragePerformance","CompletedGamePaths","DifferentChallengeTypesCompleted","MasteredChallenges","PassedChallenges","PerfectChallenges","TotalChallenges","TotalXp"]};
