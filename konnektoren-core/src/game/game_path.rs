@@ -10,6 +10,12 @@ use serde::{Deserialize, Serialize};
 pub struct GamePath<V = ChallengeVariant> {
     pub id: String,
     pub name: String,
+    /// Short summary of the path, e.g. shown when hovering it in a level picker.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// URL or asset path of an image (e.g. an SVG) representing the path.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
     pub challenges: Vec<ChallengeConfig<V>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub map: Option<Map>,
@@ -20,6 +26,8 @@ impl Default for GamePath {
         crate::assets::default_asset("konnektoren_path.yml").unwrap_or_else(|| Self {
             id: String::new(),
             name: String::new(),
+            description: None,
+            icon: None,
             challenges: Vec::new(),
             map: None,
         })
@@ -116,6 +124,8 @@ mod tests {
         GamePath {
             id: "test".to_string(),
             name: "Test".to_string(),
+            description: None,
+            icon: None,
             map: None,
             challenges: ids
                 .iter()
@@ -195,6 +205,26 @@ mod tests {
         let from_json: GamePath =
             serde_json::from_str(&json).expect("GamePath should deserialize from JSON");
         assert_eq!(game_path, from_json);
+    }
+
+    #[test]
+    fn description_and_icon_are_optional() {
+        let yaml = "id: a0\nname: Level A0\nchallenges: []\n";
+        let game_path: GamePath = serde_yaml::from_str(yaml).unwrap();
+        assert_eq!(game_path.description, None);
+        assert_eq!(game_path.icon, None);
+
+        let yaml = "id: a0\nname: Level A0\ndescription: First notes\nicon: /assets/a0.svg\nchallenges: []\n";
+        let game_path: GamePath = serde_yaml::from_str(yaml).unwrap();
+        assert_eq!(game_path.description.as_deref(), Some("First notes"));
+        assert_eq!(game_path.icon.as_deref(), Some("/assets/a0.svg"));
+    }
+
+    #[test]
+    fn missing_description_and_icon_are_not_serialized() {
+        let json = serde_json::to_value(make_game_path(&["a"])).unwrap();
+        assert!(json.get("description").is_none());
+        assert!(json.get("icon").is_none());
     }
 
     #[cfg(feature = "schema")]

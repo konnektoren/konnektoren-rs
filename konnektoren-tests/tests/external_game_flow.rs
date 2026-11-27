@@ -119,6 +119,8 @@ fn game() -> Game<AppChallenge> {
         game_paths: vec![GamePath {
             id: "music".into(),
             name: "Music".into(),
+            description: None,
+            icon: None,
             challenges: vec![
                 config("scale-run", "scale", 3),
                 config("arpeggio-run", "arpeggio", 2),
@@ -300,6 +302,8 @@ fn family_dispatches_input_and_rejects_mismatched_branches() {
         game_paths: vec![GamePath {
             id: "mixed".into(),
             name: "Mixed".into(),
+            description: None,
+            icon: None,
             challenges: vec![config("scale-run", "scale", 3)],
             map: None,
         }],
@@ -356,6 +360,8 @@ fn commands_for_included_types_drive_the_larger_game() {
         game_paths: vec![GamePath {
             id: "mixed".into(),
             name: "Mixed".into(),
+            description: None,
+            icon: None,
             challenges: vec![config("konnektoren-run", builtin.id(), 2)],
             map: None,
         }],
@@ -410,6 +416,8 @@ fn family_controller()
         game_paths: vec![GamePath {
             id: "mixed".into(),
             name: "Mixed".into(),
+            description: None,
+            icon: None,
             challenges: vec![config("scale-run", "scale", 3)],
             map: None,
         }],
@@ -535,6 +543,8 @@ fn app_owned_variants_choose_presentation_and_survive_saving()
         game_paths: vec![GamePath {
             id: "mixed".into(),
             name: "Mixed".into(),
+            description: None,
+            icon: None,
             challenges: vec![entry],
             map: None,
         }],
